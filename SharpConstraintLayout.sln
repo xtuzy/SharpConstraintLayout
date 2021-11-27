@@ -1,0 +1,49 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.31911.260
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpConstraintLayout.Core", "SharpConstraintLayout.Core\SharpConstraintLayout.Core.csproj", "{327106EF-63D1-4EEC-9A84-65AB8F9F7CA1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpConstraintLayoutTests", "SharpConstraintLayoutTests\SharpConstraintLayoutTests.csproj", "{198A30AE-DB7E-410F-BEC7-58666F09C36E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpConstraintLayout.Example", "SharpConstraintLayout.Example\SharpConstraintLayout.Example.csproj", "{1FD6E48D-F0FA-4F0A-9D29-C2054BFCC5A4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpConstraintLayout.Wpf", "SharpConstraintLayout.Wpf\SharpConstraintLayout.Wpf.csproj", "{37F7D2F9-25E4-406D-A89D-2F20ACB773BB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpConstraintLayout.Example.Reload", "SharpConstraintLayout.Example.Reload\SharpConstraintLayout.Example.Reload.csproj", "{7D4B0715-5456-461C-9CFC-C3A5CAB67163}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{327106EF-63D1-4EEC-9A84-65AB8F9F7CA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{327106EF-63D1-4EEC-9A84-65AB8F9F7CA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{327106EF-63D1-4EEC-9A84-65AB8F9F7CA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{327106EF-63D1-4EEC-9A84-65AB8F9F7CA1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{198A30AE-DB7E-410F-BEC7-58666F09C36E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{198A30AE-DB7E-410F-BEC7-58666F09C36E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{198A30AE-DB7E-410F-BEC7-58666F09C36E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{198A30AE-DB7E-410F-BEC7-58666F09C36E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1FD6E48D-F0FA-4F0A-9D29-C2054BFCC5A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1FD6E48D-F0FA-4F0A-9D29-C2054BFCC5A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1FD6E48D-F0FA-4F0A-9D29-C2054BFCC5A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1FD6E48D-F0FA-4F0A-9D29-C2054BFCC5A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{37F7D2F9-25E4-406D-A89D-2F20ACB773BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37F7D2F9-25E4-406D-A89D-2F20ACB773BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37F7D2F9-25E4-406D-A89D-2F20ACB773BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37F7D2F9-25E4-406D-A89D-2F20ACB773BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D4B0715-5456-461C-9CFC-C3A5CAB67163}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D4B0715-5456-461C-9CFC-C3A5CAB67163}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D4B0715-5456-461C-9CFC-C3A5CAB67163}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D4B0715-5456-461C-9CFC-C3A5CAB67163}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D2676793-D0BA-4282-BFEA-B73DD1DFA0F6}
+	EndGlobalSection
+EndGlobal

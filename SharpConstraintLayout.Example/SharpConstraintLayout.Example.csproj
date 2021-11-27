@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net5.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <LangVersion>preview</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ReloadPreview" Version="1.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SharpConstraintLayout.Example.Reload\SharpConstraintLayout.Example.Reload.csproj" />
+    <ProjectReference Include="..\SharpConstraintLayout.Wpf\SharpConstraintLayout.Wpf.csproj" />
+  </ItemGroup>
+
+</Project>
