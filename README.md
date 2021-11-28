@@ -79,10 +79,21 @@ You have two way to create constraint
   
   ![newapi](https://github.com/xtuzy/SharpConstraintLayout/blob/master/Resources/NewApi.png)
 
-🦮 **Guidelines** allow reactive layout behavior with fixed or percentage based positioning for multiple widgets.
+🦮 **GuideLine** allow reactive layout behavior with fixed or percentage based positioning for multiple widgets.
 ```
 var VerticalCenterGuideline = new GuideLine() { Percent = 0.5f,Orientation=GuideLine.Orientations.VERTICAL };
 ```
+
+🚧 **BarrierLine** references multiple widgets to create a virtual guideline based on the most extreme widget on the specified side.
+
+```
+BarrierLine barrier = new BarrierLine() { BarrierSide = BarrierLine.Side.Bottom };
+Page.Children.Add(barrier);
+barrier.AddView(firstTextBox);
+barrier.AddView(secondTextBox);
+```
+
+
 
 More example see [ComplexLayoutTest](https://github.com/xtuzy/SharpConstraintLayout/blob/master/SharpConstraintLayout.Example.Reload/ComplexLayoutTestWindow.xaml.cs)
 
