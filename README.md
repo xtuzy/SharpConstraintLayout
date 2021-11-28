@@ -80,8 +80,23 @@ You have two way to create constraint
   ![newapi](https://github.com/xtuzy/SharpConstraintLayout/blob/master/Resources/NewApi.png)
 
 🦮 **Guidelines** allow reactive layout behavior with fixed or percentage based positioning for multiple widgets.
+```
+var VerticalCenterGuideline = new GuideLine() { Percent = 0.5f,Orientation=GuideLine.Orientations.VERTICAL };
+```
 
 More example see [ComplexLayoutTest](https://github.com/xtuzy/SharpConstraintLayout/blob/master/SharpConstraintLayout.Example.Reload/ComplexLayoutTestWindow.xaml.cs)
+
+
+## 🤝 Contributing
+
+If you'd like to get involved and contribute please read [CONTRIBUTING](CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
+
+## 💻 Authors
+
+- **John Hoford** : MotionLayout ([jafu888](https://github.com/jafu888))
+- **Nicolas Roard** : ConstraintLayout ([camaelon](https://github.com/camaelon))
+
+See also the list of [contributors](https://github.com/androidx/constraintlayout/graphs/contributors) who participated in this project.
 
 ## 🔖 License
 
