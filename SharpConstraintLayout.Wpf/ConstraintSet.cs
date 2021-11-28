@@ -118,11 +118,6 @@ namespace SharpConstraintLayout.Wpf
             var viewWidget = parent.GetWidget(view);
             viewWidget.resetAllConstraints();
         }
-
-        #region Better Api
-
-
-        #endregion
     }
 
     #region Better Api
@@ -178,7 +173,14 @@ namespace SharpConstraintLayout.Wpf
             fromWidget.connect(ConstraintAnchor.Type.CENTER_Y, toWidget, ConstraintAnchor.Type.CENTER_Y, 0);
             return fromView;
         }
-
+        /// <summary>
+        /// fromView left side position relate to toview left side
+        /// </summary>
+        /// <param name="fromView"></param>
+        /// <param name="toView"></param>
+        /// <param name="margin">LeftToX, At toView Left is negative</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
         public static FrameworkElement LeftToLeft(this FrameworkElement fromView, FrameworkElement toView, int margin = 0)
         {
             var parent = fromView.Parent is ConstraintLayout ? fromView.Parent as ConstraintLayout : throw new ArgumentException($"Parent of {fromView} is not ConstraintLayout");
@@ -187,6 +189,15 @@ namespace SharpConstraintLayout.Wpf
             fromWidget.connect(ConstraintAnchor.Type.LEFT, toWidget, ConstraintAnchor.Type.LEFT, margin);
             return fromView;
         }
+
+        /// <summary>
+        /// fromView left side position relate to toview right side
+        /// </summary>
+        /// <param name="fromView"></param>
+        /// <param name="toView"></param>
+        /// <param name="margin">LeftToX, At toView Left is negative</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
         public static FrameworkElement LeftToRight(this FrameworkElement fromView, FrameworkElement toView, int margin = 0)
         {
             var parent = fromView.Parent is ConstraintLayout ? fromView.Parent as ConstraintLayout : throw new ArgumentException($"Parent of {fromView} is not ConstraintLayout");
@@ -195,6 +206,14 @@ namespace SharpConstraintLayout.Wpf
             fromWidget.connect(ConstraintAnchor.Type.LEFT, toWidget, ConstraintAnchor.Type.RIGHT, margin);
             return fromView;
         }
+        /// <summary>
+        /// fromView right side position relate to toview left side
+        /// </summary>
+        /// <param name="fromView"></param>
+        /// <param name="toView"></param>
+        /// <param name="margin">RightToX, At toView Right is negative</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
         public static FrameworkElement RightToLeft(this FrameworkElement fromView, FrameworkElement toView, int margin = 0)
         {
             var parent = fromView.Parent is ConstraintLayout ? fromView.Parent as ConstraintLayout : throw new ArgumentException($"Parent of {fromView} is not ConstraintLayout");
@@ -203,6 +222,14 @@ namespace SharpConstraintLayout.Wpf
             fromWidget.connect(ConstraintAnchor.Type.RIGHT, toWidget, ConstraintAnchor.Type.LEFT, margin);
             return fromView;
         }
+        /// <summary>
+        /// fromView right side position relate to toview right side
+        /// </summary>
+        /// <param name="fromView"></param>
+        /// <param name="toView"></param>
+        /// <param name="margin">RightToX, At toView Right is negative</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
         public static FrameworkElement RightToRight(this FrameworkElement fromView, FrameworkElement toView, int margin = 0)
         {
             var parent = fromView.Parent is ConstraintLayout ? fromView.Parent as ConstraintLayout : throw new ArgumentException($"Parent of {fromView} is not ConstraintLayout");
@@ -212,6 +239,14 @@ namespace SharpConstraintLayout.Wpf
             return fromView;
         }
 
+        /// <summary>
+        /// fromView top side position relate to toview top side
+        /// </summary>
+        /// <param name="fromView"></param>
+        /// <param name="toView"></param>
+        /// <param name="margin">TopToX, At toView Top is negative</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
         public static FrameworkElement TopToTop(this FrameworkElement fromView, FrameworkElement toView, int margin = 0)
         {
             var parent = fromView.Parent is ConstraintLayout ? fromView.Parent as ConstraintLayout : throw new ArgumentException($"Parent of {fromView} is not ConstraintLayout");
@@ -220,6 +255,14 @@ namespace SharpConstraintLayout.Wpf
             fromWidget.connect(ConstraintAnchor.Type.TOP, toWidget, ConstraintAnchor.Type.TOP, margin);
             return fromView;
         }
+        /// <summary>
+        /// fromView top side position relate to toview bottom side
+        /// </summary>
+        /// <param name="fromView"></param>
+        /// <param name="toView"></param>
+        /// <param name="margin">TopToX, At toView Top is negative</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
         public static FrameworkElement TopToBottom(this FrameworkElement fromView, FrameworkElement toView, int margin = 0)
         {
             var parent = fromView.Parent is ConstraintLayout ? fromView.Parent as ConstraintLayout : throw new ArgumentException($"Parent of {fromView} is not ConstraintLayout");
@@ -228,6 +271,15 @@ namespace SharpConstraintLayout.Wpf
             fromWidget.connect(ConstraintAnchor.Type.TOP, toWidget, ConstraintAnchor.Type.BOTTOM, margin);
             return fromView;
         }
+
+        /// <summary>
+        /// fromView bottom side position relate to toview top side
+        /// </summary>
+        /// <param name="fromView"></param>
+        /// <param name="toView"></param>
+        /// <param name="margin">BottomToX, At toView Bottom is negative</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
         public static FrameworkElement BottomToTop(this FrameworkElement fromView, FrameworkElement toView, int margin = 0)
         {
             var parent = fromView.Parent is ConstraintLayout ? fromView.Parent as ConstraintLayout : throw new ArgumentException($"Parent of {fromView} is not ConstraintLayout");
@@ -236,6 +288,14 @@ namespace SharpConstraintLayout.Wpf
             fromWidget.connect(ConstraintAnchor.Type.BOTTOM, toWidget, ConstraintAnchor.Type.TOP, margin);
             return fromView;
         }
+        /// <summary>
+        /// fromView bottom side position relate to toview bottom side
+        /// </summary>
+        /// <param name="fromView"></param>
+        /// <param name="toView"></param>
+        /// <param name="margin">BottomToX, At toView Bottom is negative</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
         public static FrameworkElement BottomToBottom(this FrameworkElement fromView, FrameworkElement toView, int margin = 0)
         {
             var parent = fromView.Parent is ConstraintLayout ? fromView.Parent as ConstraintLayout : throw new ArgumentException($"Parent of {fromView} is not ConstraintLayout");
@@ -244,8 +304,9 @@ namespace SharpConstraintLayout.Wpf
             fromWidget.connect(ConstraintAnchor.Type.BOTTOM, toWidget, ConstraintAnchor.Type.BOTTOM, margin);
             return fromView;
         }
+
         /// <summary>
-        /// Set child
+        /// Set child width.
         /// </summary>
         /// <param name="fromView"></param>
         /// <param name="constraint"></param>
@@ -259,7 +320,7 @@ namespace SharpConstraintLayout.Wpf
             return fromView;
         }
         /// <summary>
-        /// Set ConstraintLayout self 
+        /// Set width of ConstraintLayout self 
         /// </summary>
         /// <param name="fromView"></param>
         /// <param name="constraint"></param>
@@ -303,7 +364,7 @@ namespace SharpConstraintLayout.Wpf
             return fromView;
         }
         /// <summary>
-        /// Set ConstraintLayout self 
+        /// Set height of ConstraintLayout self 
         /// </summary>
         /// <param name="root"></param>
         /// <param name="constraint"></param>
@@ -332,6 +393,7 @@ namespace SharpConstraintLayout.Wpf
             fromView.Height = constant;
             return fromView;
         }
+
         static readonly ConstraintWidget.DimensionBehaviour[] ConstraintSizeTypeDic = new ConstraintWidget.DimensionBehaviour[]
         {
             ConstraintWidget.DimensionBehaviour.FIXED,
@@ -340,6 +402,7 @@ namespace SharpConstraintLayout.Wpf
             ConstraintWidget.DimensionBehaviour.MATCH_PARENT,
         };
     }
+
     public enum ConstraintSizeType
     { 
         /*FIXED,

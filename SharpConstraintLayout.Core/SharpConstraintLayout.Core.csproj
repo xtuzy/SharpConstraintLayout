@@ -7,6 +7,9 @@
     <PackageProjectUrl>https://github.com/xtuzy/SharpConstraintLayout</PackageProjectUrl>
     <RepositoryUrl>https://github.com/xtuzy/SharpConstraintLayout</RepositoryUrl>
     <PackageTags>wpf;constraintlayout</PackageTags>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Version>1.1</Version>
   </PropertyGroup>
 
 </Project>

@@ -5,11 +5,13 @@
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <LangVersion>preview</LangVersion>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/xtuzy/SharpConstraintLayout</RepositoryUrl>
     <PackageTags>wpf;constraintlayout</PackageTags>
     <PackageProjectUrl>https://github.com/xtuzy/SharpConstraintLayout</PackageProjectUrl>
     <Description>C# port of ConstraintLayout</Description>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <Version>1.1</Version>
   </PropertyGroup>
 
   <ItemGroup>

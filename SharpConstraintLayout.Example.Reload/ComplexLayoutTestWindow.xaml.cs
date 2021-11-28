@@ -168,14 +168,14 @@ namespace SharpConstraintLayout.Example.Reload
 
             firstButton.Center(Page);
 
-            //LeftTo's, At Left is negative
+            //LeftToX, At toView Left is negative
             secondButton.LeftToLeft(firstButton,-20).BottomToTop(firstButton,60);
             thirdButton.LeftToLeft(firstButton,20).BottomToTop(firstButton,5);
 
             forthButton.LeftToRight(firstButton,-20).BottomToTop(firstButton,60);
             fifthButton.LeftToRight(firstButton,20).BottomToTop(firstButton,5);
 
-            //RightTo's, At Right is negative
+            //RightToX, At toView Right is negative
             var HorizontalCenterGuidline = new GuideLine() { Percent = 0.5f,Orientation=GuideLine.Orientations.HORIZONTAL };
             Page.Children.Add(HorizontalCenterGuidline);
             sixthButton.RightToLeft(firstButton, -20).BottomToTop(HorizontalCenterGuidline);
@@ -186,13 +186,13 @@ namespace SharpConstraintLayout.Example.Reload
 
             var VerticalCenterGuideline = new GuideLine() { Percent = 0.5f,Orientation=GuideLine.Orientations.VERTICAL };
             Page.Children.Add(VerticalCenterGuideline);
-            //TopTo's, At Top is negative
+            //TopToX, At toView Top is negative
             tenthButton.RightToLeft(eleventhButton).TopToTop(firstButton, -20);
             eleventhButton.RightToLeft(VerticalCenterGuideline,20).TopToTop(firstButton, 20);
 
             twelfthButton.RightToLeft(thirteenthButton).TopToBottom(firstButton, -20);
             thirteenthButton.RightToLeft(VerticalCenterGuideline,20).TopToBottom(firstButton, 20);
-            //BottomTo's, At Bottom is negative
+            //BottomToX, At toView Bottom is negative
             fourteenthButton.LeftToRight(VerticalCenterGuideline, 20).BottomToTop(firstButton, -20);
             fifteenthButton.LeftToRight(fourteenthButton).BottomToTop(firstButton, 20);
 
