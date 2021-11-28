@@ -66,6 +66,7 @@ namespace SharpConstraintLayout.Example.Reload
             var GridCompareConstraintNestListViewTestButton = new Button() { Content = "GridCompareConstraintNestListViewTest", Margin = new Thickness(10, 5, 0, 5) };
             var WarpPanelNestContraintLayoutTestButton = new Button() { Content = "WarpPanelNestContraintLayoutTest", Margin = new Thickness(10, 5, 0, 5) };
             var NewApiTestButton = new Button() { Content = "NewApiTest", Margin = new Thickness(10, 5, 0, 5) };
+            var BarrierTestButton = new Button() { Content = "BarrierTest", Margin = new Thickness(10, 5, 0, 5) };
 
             toolBar.Children.Add(RemoveConstraintTestButton);
             toolBar.Children.Add(RemoveViewTestButton);
@@ -78,6 +79,7 @@ namespace SharpConstraintLayout.Example.Reload
             toolBar.Children.Add(GridCompareConstraintNestListViewTestButton);
             toolBar.Children.Add(WarpPanelNestContraintLayoutTestButton);
             toolBar.Children.Add(NewApiTestButton);
+            toolBar.Children.Add(BarrierTestButton);
 
             RemoveConstraintTestButton.Click += (sender, e) =>
             {
@@ -124,6 +126,32 @@ namespace SharpConstraintLayout.Example.Reload
                 NewApiTest(testPanel);
             };
 
+            BarrierTestButton.Click += (sender, e) =>
+            {
+                BarrierTest(testPanel);
+            };
+
+
+        }
+
+        private void BarrierTest(ConstraintLayout Page)
+        {
+            Page.Children.Clear();
+            TextBox firstTextBox = new TextBox() { Text = "Line1" + Environment.NewLine + "Line2", Tag = "first",TextWrapping=TextWrapping.Wrap,MaxWidth=100, AcceptsReturn = true };
+            TextBox secondTextBox = new TextBox() { Text = "Second ", Tag = "second", AcceptsReturn = true };
+            Button thirdButton = new Button() { Content = "Third ", Tag = "third" };
+
+            Page.Children.Add(firstTextBox);
+            Page.Children.Add(secondTextBox);
+            Page.Children.Add(thirdButton);
+
+            BarrierLine barrier = new BarrierLine() { BarrierSide = BarrierLine.Side.Bottom };
+            Page.Children.Add(barrier);
+            barrier.AddView(firstTextBox);
+            barrier.AddView(secondTextBox);
+            firstTextBox.Center(Page);
+            secondTextBox.LeftToRight(firstTextBox,20).TopToTop(firstTextBox);
+            thirdButton.LeftToLeft(firstTextBox,20).TopToBottom(barrier);
         }
 
         private void NewApiTest(ConstraintLayout Page)

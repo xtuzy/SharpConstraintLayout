@@ -78,7 +78,17 @@ namespace SharpConstraintLayout.Wpf
                     idsToConstraintWidgets[id] = constraintWidget;
                     viewsToIds[comp] = id;
                 }
-
+                else if(visualAdded is BarrierLine)
+                {
+                    var comp = visualAdded as BarrierLine;
+                    string id = comp.GetHashCode().ToString();
+                    ConstraintWidget constraintWidget = comp.Barrier;
+                    mLayout.add(constraintWidget);
+                    constraintWidget.stringId = id;
+                    constraintWidget.CompanionWidget = comp;
+                    idsToConstraintWidgets[id] = constraintWidget;
+                    viewsToIds[comp] = id;
+                }
                 else
                 {
                     var comp = visualAdded as UIElement;

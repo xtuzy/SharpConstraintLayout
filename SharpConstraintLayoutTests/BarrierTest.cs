@@ -29,7 +29,7 @@ namespace androidx.constraintlayout.core
     /// <summary>
     /// Tests for Barriers
     /// </summary>
-	[TestFixture]
+    [TestFixture]
     public class BarrierTest
     {
 
@@ -206,7 +206,7 @@ namespace androidx.constraintlayout.core
             ConstraintWidget A = new ConstraintWidget(100, 20);
             ConstraintWidget B = new ConstraintWidget(150, 20);
             Barrier barrier = new Barrier();
-
+            
             root.setDebugSolverName(root.System, "root");
             A.setDebugSolverName(root.System, "A");
             B.setDebugSolverName(root.System, "B");

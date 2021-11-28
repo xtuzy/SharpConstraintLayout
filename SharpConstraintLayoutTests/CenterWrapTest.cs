@@ -60,7 +60,8 @@ namespace androidx.constraintlayout.core
             //        root.setVerticalDimensionBehaviour(ConstraintWidget.DimensionBehaviour.WRAP_CONTENT);
             root.OptimizationLevel = 0;
             root.layout();
-            Console.WriteLine("root: " + root + " A: " + A);
+            Console.WriteLine("root: " + root + " A: " + A +" B:"+B);//we can see conflict
+            Assert.AreEqual(800 * 0.3, A.Height);
         }
 
         //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
