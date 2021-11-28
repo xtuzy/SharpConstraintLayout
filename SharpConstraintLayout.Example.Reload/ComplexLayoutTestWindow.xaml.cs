@@ -65,6 +65,7 @@ namespace SharpConstraintLayout.Example.Reload
             var ListViewNestConstraintTestButton = new Button() { Content = "ListViewNestConstraintTest", Margin = new Thickness(10, 5, 0, 5) };
             var GridCompareConstraintNestListViewTestButton = new Button() { Content = "GridCompareConstraintNestListViewTest", Margin = new Thickness(10, 5, 0, 5) };
             var WarpPanelNestContraintLayoutTestButton = new Button() { Content = "WarpPanelNestContraintLayoutTest", Margin = new Thickness(10, 5, 0, 5) };
+            var NewApiTestButton = new Button() { Content = "NewApiTest", Margin = new Thickness(10, 5, 0, 5) };
 
             toolBar.Children.Add(RemoveConstraintTestButton);
             toolBar.Children.Add(RemoveViewTestButton);
@@ -76,6 +77,7 @@ namespace SharpConstraintLayout.Example.Reload
             toolBar.Children.Add(ListViewNestConstraintTestButton);
             toolBar.Children.Add(GridCompareConstraintNestListViewTestButton);
             toolBar.Children.Add(WarpPanelNestContraintLayoutTestButton);
+            toolBar.Children.Add(NewApiTestButton);
 
             RemoveConstraintTestButton.Click += (sender, e) =>
             {
@@ -116,6 +118,86 @@ namespace SharpConstraintLayout.Example.Reload
             {
                 WarpPanelNestContraintLayoutTest(testPanel);
             };
+
+            NewApiTestButton.Click += (sender, e) =>
+            {
+                NewApiTest(testPanel);
+            };
+
+        }
+
+        private void NewApiTest(ConstraintLayout Page)
+        {
+            Page.Children.Clear();
+            Button firstButton = new Button() { Content = "First", Tag = "first", Width = 600, Height = 300};
+            Button secondButton = new Button() { Content = "Second ", Tag = "second", Width = 60, Height = 50 };
+            Button thirdButton = new Button() { Content = "Third ", Tag = "third", Width = 60, Height = 50 };
+            Button forthButton = new Button() { Content = "Forth ", Tag = "forth", Width = 60, Height = 50 };
+            Button fifthButton = new Button() { Content = "Fifth ",  Width = 60, Height = 50 };
+            Button sixthButton = new Button() { Content = "Sixth ",  Width = 60, Height = 50 };
+            Button seventhButton = new Button() { Content = "Seventh ", Width = 60, Height = 50 };
+            Button eighthButton = new Button() { Content = "Eighth", Width = 60, Height = 50 };
+            Button ninthButton = new Button() { Content = "Ninth", Width = 60, Height = 50 };
+            Button tenthButton = new Button() { Content = "tenth", Width = 60, Height = 50 };
+            Button eleventhButton = new Button() { Content = "eleventh", Width = 60, Height = 50 };
+            Button twelfthButton = new Button() { Content = "twelfth", Width = 60, Height = 50 };
+            Button thirteenthButton = new Button() { Content = "thirteenth", Width = 60, Height = 50 };
+            Button fourteenthButton = new Button() { Content = "fourteenth", Width = 60, Height = 50 };
+            Button fifteenthButton = new Button() { Content = "fifteenth", Width = 60, Height = 50 };
+            Button sixteenthButton = new Button() { Content = "sixteenth", Width = 60, Height = 50 };
+            Button seventeenthButton = new Button() { Content = "seventeenth", Width = 60, Height = 50 };
+
+            Page.Children.Add(firstButton);
+            Page.Children.Add(secondButton);
+            Page.Children.Add(thirdButton);
+            Page.Children.Add(forthButton);
+            Page.Children.Add(fifthButton);
+            Page.Children.Add(sixthButton);
+            Page.Children.Add(seventhButton);
+            Page.Children.Add(eighthButton);
+            Page.Children.Add(ninthButton);
+            Page.Children.Add(tenthButton);
+            Page.Children.Add(eleventhButton);
+            Page.Children.Add(twelfthButton);
+            Page.Children.Add(thirteenthButton);
+            Page.Children.Add(fourteenthButton);
+            Page.Children.Add(fifteenthButton);
+            Page.Children.Add(sixteenthButton);
+            Page.Children.Add(seventeenthButton);
+            
+
+            firstButton.Center(Page);
+
+            //LeftTo's, At Left is negative
+            secondButton.LeftToLeft(firstButton,-20).BottomToTop(firstButton,60);
+            thirdButton.LeftToLeft(firstButton,20).BottomToTop(firstButton,5);
+
+            forthButton.LeftToRight(firstButton,-20).BottomToTop(firstButton,60);
+            fifthButton.LeftToRight(firstButton,20).BottomToTop(firstButton,5);
+
+            //RightTo's, At Right is negative
+            var HorizontalCenterGuidline = new GuideLine() { Percent = 0.5f,Orientation=GuideLine.Orientations.HORIZONTAL };
+            Page.Children.Add(HorizontalCenterGuidline);
+            sixthButton.RightToLeft(firstButton, -20).BottomToTop(HorizontalCenterGuidline);
+            seventhButton.RightToLeft(firstButton,20).TopToBottom(HorizontalCenterGuidline);
+        
+            eighthButton.RightToRight(firstButton,-20).BottomToTop(HorizontalCenterGuidline);
+            ninthButton.RightToRight(firstButton,20).TopToBottom(HorizontalCenterGuidline);
+
+            var VerticalCenterGuideline = new GuideLine() { Percent = 0.5f,Orientation=GuideLine.Orientations.VERTICAL };
+            Page.Children.Add(VerticalCenterGuideline);
+            //TopTo's, At Top is negative
+            tenthButton.RightToLeft(eleventhButton).TopToTop(firstButton, -20);
+            eleventhButton.RightToLeft(VerticalCenterGuideline,20).TopToTop(firstButton, 20);
+
+            twelfthButton.RightToLeft(thirteenthButton).TopToBottom(firstButton, -20);
+            thirteenthButton.RightToLeft(VerticalCenterGuideline,20).TopToBottom(firstButton, 20);
+            //BottomTo's, At Bottom is negative
+            fourteenthButton.LeftToRight(VerticalCenterGuideline, 20).BottomToTop(firstButton, -20);
+            fifteenthButton.LeftToRight(fourteenthButton).BottomToTop(firstButton, 20);
+
+            sixteenthButton.LeftToRight(VerticalCenterGuideline, 20).BottomToBottom(firstButton, -20);
+            seventeenthButton.LeftToRight(sixteenthButton).BottomToBottom(firstButton, 20);
         }
 
         private void WarpPanelNestContraintLayoutTest(ConstraintLayout Page)

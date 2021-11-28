@@ -8,6 +8,14 @@ using System.Windows;
 
 namespace SharpConstraintLayout.Wpf
 {
+    /// <summary>
+    /// Text orientation
+    /// </summary>
+    public enum TextOrientation
+    {
+        LeftToRight,
+        RightToLeft
+    }
     public class ConstraintSet
     {
         WeakReference<ConstraintLayout> Parent;//一个ConstraintSet基本只使用一次,需要时重新创建,所以直接弱引用避免内存泄漏
@@ -17,13 +25,13 @@ namespace SharpConstraintLayout.Wpf
             Parent = new WeakReference<ConstraintLayout>(parent);
         }
 
-        public ConstraintSet AddConnect(UIElement view, ConstraintAnchor.Type firstSide, UIElement secondView, ConstraintAnchor.Type secondSide, int margin)
+        public ConstraintSet AddConnect(UIElement fromView, ConstraintAnchor.Type fromSide, UIElement toView, ConstraintAnchor.Type toSide, int margin)
         {
             Parent.TryGetTarget(out var parent);
             if (parent == null) throw new NotImplementedException();
-            var viewWidget = parent.GetWidget(view);
-            var secondViewWidget = parent.GetWidget(secondView);
-            viewWidget.connect(firstSide, secondViewWidget, secondSide, margin);
+            var fromWidget = parent.GetWidget(fromView);
+            var toWidget = parent.GetWidget(toView);
+            fromWidget.connect(fromSide, toWidget, toSide, margin);
             return this;
         }
 
@@ -52,7 +60,7 @@ namespace SharpConstraintLayout.Wpf
             return this;
         }
 
-        public ConstraintSet SetWidth(UIElement view,int minWidth)
+        public ConstraintSet SetWidth(UIElement view, int minWidth)
         {
             Parent.TryGetTarget(out var parent);
             if (parent == null) throw new NotImplementedException();
@@ -85,7 +93,7 @@ namespace SharpConstraintLayout.Wpf
             //如果是Match_Parent,传递给子ConstraintLayout的应该是具体值,
             //如果是Warp_Content,那么应该指定子ConstraintLayout的Container为Match_Constraint
             //如果是Match_Constraint,那么父ConstraintLayout应该计算出具体值传递
-            
+
             return this;
         }
 
@@ -110,5 +118,238 @@ namespace SharpConstraintLayout.Wpf
             var viewWidget = parent.GetWidget(view);
             viewWidget.resetAllConstraints();
         }
+
+        #region Better Api
+
+
+        #endregion
     }
+
+    #region Better Api
+    public static class ConstraintSetExtensions
+    {
+        /// <summary>
+        /// fromView's center = toView's center
+        /// </summary>
+        /// <param name="fromView"></param>
+        /// <param name="toView"></param>
+        /// <param name="margin"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        public static FrameworkElement Center(this FrameworkElement fromView, FrameworkElement toView, int margin = 0)
+        {
+            var parent = fromView.Parent is ConstraintLayout ? fromView.Parent as ConstraintLayout : throw new ArgumentException($"Parent of {fromView} is not ConstraintLayout");
+            var fromWidget = parent.GetWidget(fromView);
+            var toWidget = parent.GetWidget(toView);
+            fromWidget.connect(ConstraintAnchor.Type.CENTER, toWidget, ConstraintAnchor.Type.CENTER, margin);
+            return fromView;
+        }
+
+        /// <summary>
+        /// at X, fromView's center = toView's center
+        /// </summary>
+        /// <param name="fromView"></param>
+        /// <param name="toView"></param>
+        /// <param name="margin"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        public static FrameworkElement CenterX(this FrameworkElement fromView, FrameworkElement toView)
+        {
+            var parent = fromView.Parent is ConstraintLayout ? fromView.Parent as ConstraintLayout : throw new ArgumentException($"Parent of {fromView} is not ConstraintLayout");
+            var fromWidget = parent.GetWidget(fromView);
+            var toWidget = parent.GetWidget(toView);
+            fromWidget.connect(ConstraintAnchor.Type.CENTER_X, toWidget, ConstraintAnchor.Type.CENTER_X, 0);
+            return fromView;
+        }
+
+        /// <summary>
+        /// at Y, fromView's center = toView's center
+        /// </summary>
+        /// <param name="fromView"></param>
+        /// <param name="toView"></param>
+        /// <param name="margin"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        public static FrameworkElement CenterY(this FrameworkElement fromView, FrameworkElement toView)
+        {
+            var parent = fromView.Parent is ConstraintLayout ? fromView.Parent as ConstraintLayout : throw new ArgumentException($"Parent of {fromView} is not ConstraintLayout");
+            var fromWidget = parent.GetWidget(fromView);
+            var toWidget = parent.GetWidget(toView);
+            fromWidget.connect(ConstraintAnchor.Type.CENTER_Y, toWidget, ConstraintAnchor.Type.CENTER_Y, 0);
+            return fromView;
+        }
+
+        public static FrameworkElement LeftToLeft(this FrameworkElement fromView, FrameworkElement toView, int margin = 0)
+        {
+            var parent = fromView.Parent is ConstraintLayout ? fromView.Parent as ConstraintLayout : throw new ArgumentException($"Parent of {fromView} is not ConstraintLayout");
+            var fromWidget = parent.GetWidget(fromView);
+            var toWidget = parent.GetWidget(toView);
+            fromWidget.connect(ConstraintAnchor.Type.LEFT, toWidget, ConstraintAnchor.Type.LEFT, margin);
+            return fromView;
+        }
+        public static FrameworkElement LeftToRight(this FrameworkElement fromView, FrameworkElement toView, int margin = 0)
+        {
+            var parent = fromView.Parent is ConstraintLayout ? fromView.Parent as ConstraintLayout : throw new ArgumentException($"Parent of {fromView} is not ConstraintLayout");
+            var fromWidget = parent.GetWidget(fromView);
+            var toWidget = parent.GetWidget(toView);
+            fromWidget.connect(ConstraintAnchor.Type.LEFT, toWidget, ConstraintAnchor.Type.RIGHT, margin);
+            return fromView;
+        }
+        public static FrameworkElement RightToLeft(this FrameworkElement fromView, FrameworkElement toView, int margin = 0)
+        {
+            var parent = fromView.Parent is ConstraintLayout ? fromView.Parent as ConstraintLayout : throw new ArgumentException($"Parent of {fromView} is not ConstraintLayout");
+            var fromWidget = parent.GetWidget(fromView);
+            var toWidget = parent.GetWidget(toView);
+            fromWidget.connect(ConstraintAnchor.Type.RIGHT, toWidget, ConstraintAnchor.Type.LEFT, margin);
+            return fromView;
+        }
+        public static FrameworkElement RightToRight(this FrameworkElement fromView, FrameworkElement toView, int margin = 0)
+        {
+            var parent = fromView.Parent is ConstraintLayout ? fromView.Parent as ConstraintLayout : throw new ArgumentException($"Parent of {fromView} is not ConstraintLayout");
+            var fromWidget = parent.GetWidget(fromView);
+            var toWidget = parent.GetWidget(toView);
+            fromWidget.connect(ConstraintAnchor.Type.RIGHT, toWidget, ConstraintAnchor.Type.RIGHT, margin);
+            return fromView;
+        }
+
+        public static FrameworkElement TopToTop(this FrameworkElement fromView, FrameworkElement toView, int margin = 0)
+        {
+            var parent = fromView.Parent is ConstraintLayout ? fromView.Parent as ConstraintLayout : throw new ArgumentException($"Parent of {fromView} is not ConstraintLayout");
+            var fromWidget = parent.GetWidget(fromView);
+            var toWidget = parent.GetWidget(toView);
+            fromWidget.connect(ConstraintAnchor.Type.TOP, toWidget, ConstraintAnchor.Type.TOP, margin);
+            return fromView;
+        }
+        public static FrameworkElement TopToBottom(this FrameworkElement fromView, FrameworkElement toView, int margin = 0)
+        {
+            var parent = fromView.Parent is ConstraintLayout ? fromView.Parent as ConstraintLayout : throw new ArgumentException($"Parent of {fromView} is not ConstraintLayout");
+            var fromWidget = parent.GetWidget(fromView);
+            var toWidget = parent.GetWidget(toView);
+            fromWidget.connect(ConstraintAnchor.Type.TOP, toWidget, ConstraintAnchor.Type.BOTTOM, margin);
+            return fromView;
+        }
+        public static FrameworkElement BottomToTop(this FrameworkElement fromView, FrameworkElement toView, int margin = 0)
+        {
+            var parent = fromView.Parent is ConstraintLayout ? fromView.Parent as ConstraintLayout : throw new ArgumentException($"Parent of {fromView} is not ConstraintLayout");
+            var fromWidget = parent.GetWidget(fromView);
+            var toWidget = parent.GetWidget(toView);
+            fromWidget.connect(ConstraintAnchor.Type.BOTTOM, toWidget, ConstraintAnchor.Type.TOP, margin);
+            return fromView;
+        }
+        public static FrameworkElement BottomToBottom(this FrameworkElement fromView, FrameworkElement toView, int margin = 0)
+        {
+            var parent = fromView.Parent is ConstraintLayout ? fromView.Parent as ConstraintLayout : throw new ArgumentException($"Parent of {fromView} is not ConstraintLayout");
+            var fromWidget = parent.GetWidget(fromView);
+            var toWidget = parent.GetWidget(toView);
+            fromWidget.connect(ConstraintAnchor.Type.BOTTOM, toWidget, ConstraintAnchor.Type.BOTTOM, margin);
+            return fromView;
+        }
+        /// <summary>
+        /// Set child
+        /// </summary>
+        /// <param name="fromView"></param>
+        /// <param name="constraint"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        public static FrameworkElement SetWidth(this FrameworkElement fromView, ConstraintSizeType constraint)
+        {
+            var parent = fromView.Parent is ConstraintLayout ? fromView.Parent as ConstraintLayout : throw new ArgumentException($"Parent of {fromView} is not ConstraintLayout");
+            var fromWidget = parent.GetWidget(fromView);
+            fromWidget.HorizontalDimensionBehaviour = ConstraintSizeTypeDic[(int)constraint];
+            return fromView;
+        }
+        /// <summary>
+        /// Set ConstraintLayout self 
+        /// </summary>
+        /// <param name="fromView"></param>
+        /// <param name="constraint"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        public static FrameworkElement SetWidth(this ConstraintLayout fromView, ConstraintSizeType constraint)
+        {
+            var fromWidget = fromView.Root;
+            fromWidget.HorizontalDimensionBehaviour = ConstraintSizeTypeDic[(int)constraint];
+            return fromView;
+        }
+
+        /// <summary>
+        /// Set child
+        /// </summary>
+        /// <param name="fromView"></param>
+        /// <param name="constant"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        public static FrameworkElement SetWidth(this FrameworkElement fromView, int constant)
+        {
+            var parent = fromView.Parent is ConstraintLayout ? fromView.Parent as ConstraintLayout : throw new ArgumentException($"Parent of {fromView} is not ConstraintLayout");
+            var fromWidget = parent.GetWidget(fromView);
+            fromWidget.HorizontalDimensionBehaviour = ConstraintWidget.DimensionBehaviour.FIXED;
+            fromWidget.Width = constant;
+            fromView.Width = constant;
+            return fromView;
+        }
+        /// <summary>
+        /// Set child
+        /// </summary>
+        /// <param name="fromView"></param>
+        /// <param name="constraint"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        public static FrameworkElement SetHeight(this FrameworkElement fromView, ConstraintSizeType constraint)
+        {
+            var parent = fromView.Parent is ConstraintLayout ? fromView.Parent as ConstraintLayout : throw new ArgumentException($"Parent of {fromView} is not ConstraintLayout");
+            var fromWidget = parent.GetWidget(fromView);
+            fromWidget.VerticalDimensionBehaviour = ConstraintSizeTypeDic[(int)constraint];
+            return fromView;
+        }
+        /// <summary>
+        /// Set ConstraintLayout self 
+        /// </summary>
+        /// <param name="root"></param>
+        /// <param name="constraint"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        public static FrameworkElement SetHeight(this ConstraintLayout root, ConstraintSizeType constraint)
+        {
+            var fromWidget = root.Root;
+            fromWidget.VerticalDimensionBehaviour = ConstraintSizeTypeDic[(int)constraint];
+            return root;
+        }
+
+        /// <summary>
+        /// Set child
+        /// </summary>
+        /// <param name="fromView"></param>
+        /// <param name="constant"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        public static FrameworkElement SetHeight(this FrameworkElement fromView, int constant)
+        {
+            var parent = fromView.Parent is ConstraintLayout ? fromView.Parent as ConstraintLayout : throw new ArgumentException($"Parent of {fromView} is not ConstraintLayout");
+            var fromWidget = parent.GetWidget(fromView);
+            fromWidget.VerticalDimensionBehaviour = ConstraintWidget.DimensionBehaviour.FIXED;
+            fromWidget.Height = constant;
+            fromView.Height = constant;
+            return fromView;
+        }
+        static readonly ConstraintWidget.DimensionBehaviour[] ConstraintSizeTypeDic = new ConstraintWidget.DimensionBehaviour[]
+        {
+            ConstraintWidget.DimensionBehaviour.FIXED,
+            ConstraintWidget.DimensionBehaviour.WRAP_CONTENT,
+            ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT,
+            ConstraintWidget.DimensionBehaviour.MATCH_PARENT,
+        };
+    }
+    public enum ConstraintSizeType
+    { 
+        /*FIXED,
+        WRAP_CONTENT,
+        MATCH_CONSTRAINT,
+        MATCH_PARENT*/
+        Fixed,
+        Wrap_Content,
+        Match_Constraint,
+        Match_Parent,
+    }
+    #endregion
 }
