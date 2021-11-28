@@ -31,12 +31,12 @@ You have two way to create constraint
 
 - Use ConstraintSet
 
-	```
-new ConstraintSet(constraintlayout)
-.AddConnect(firstButton, ConstraintAnchor.Type.CENTER, layout, ConstraintAnchor.Type.CENTER)
-.AddConnect(secondButton,ConstraintAnchor.Type.LEFT,firstdButton,ConstraintAnchor.Type.RIGHT)
-.AddConnect(secondButton, ConstraintAnchor.Type.TOP,firstButton,ConstraintAnchor.Type.BOTTOM);
-	```
+  ```
+  new ConstraintSet(constraintlayout)
+  .AddConnect(firstButton, ConstraintAnchor.Type.CENTER, layout, ConstraintAnchor.Type.CENTER)
+  .AddConnect(secondButton,ConstraintAnchor.Type.LEFT,firstdButton,ConstraintAnchor.Type.RIGHT)
+  .AddConnect(secondButton, ConstraintAnchor.Type.TOP,firstButton,ConstraintAnchor.Type.BOTTOM);
+  ```
 
 - Use new api, see [NewApiTest](https://github.com/xtuzy/SharpConstraintLayout/blob/6d2ca9be3273724e2355c6d5581b164228a5f719/SharpConstraintLayout.Example.Reload/ComplexLayoutTestWindow.xaml.cs#L129)
 
