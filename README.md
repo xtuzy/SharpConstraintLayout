@@ -79,9 +79,28 @@ You have two way to create constraint
   
   ![newapi](https://github.com/xtuzy/SharpConstraintLayout/blob/master/Resources/NewApi.png)
 
-🦮 **GuideLine** allow reactive layout behavior with fixed or percentage based positioning for multiple widgets.
+
+
+📐 **Ratio of Width with Height** defines one dimension of a widget as a ratio of the other one. If both `width` and `height` are set to `0dp` the system sets the largest dimensions that satisfy all constraints while maintaining the aspect ratio.
+
 ```
-var VerticalCenterGuideline = new GuideLine() { Percent = 0.5f,Orientation=GuideLine.Orientations.VERTICAL };
+Button firstButton = new Button() { Content = "First", Tag = "first", Height = 100 };
+Button secondButton = new Button() { Content = "Second ", Tag = "second", Width = 100 };
+Page.Children.Add(firstButton);
+Page.Children.Add(secondButton);
+firstButton.LeftToLeft(Page).RightToLeft(secondButton).CenterY(Page).SetWidthBaseOnHeight(2);
+secondButton.LeftToRight(firstButton).RightToRight(Page).CenterY(Page).SetHeightBaseOnWidth(2);
+```
+
+⛓️ **LayoutStyle(Chains)** provide group-like behavior in a single axis (horizontally or vertically). The other axis can be constrained independently.
+
+🦮 **GuideLine** allow reactive layout behavior with fixed or percentage based positioning for multiple widgets.
+
+```
+var VerticalCenterGuideline = new GuideLine() { 
+    Percent = 0.5f,
+    Orientation=GuideLine.Orientations.VERTICAL 
+};
 ```
 
 🚧 **BarrierLine** references multiple widgets to create a virtual guideline based on the most extreme widget on the specified side.

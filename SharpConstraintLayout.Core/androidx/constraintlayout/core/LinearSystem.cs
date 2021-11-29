@@ -53,24 +53,24 @@ namespace androidx.constraintlayout.core
         public static bool OPTIMIZED_ENGINE = false;
 
         /*
-		 * Default size for the object pools
-		 */
+         * Default size for the object pools
+         */
         private static int POOL_SIZE = 1000;
         public bool hasSimpleDefinition = false;
 
         /*
-		 * Variable counter
-		 */
+         * Variable counter
+         */
         internal int mVariablesID = 0;
 
         /*
-		 * Store a map between name->SolverVariable and SolverVariable->Float for the resolution.
-		 */
+         * Store a map between name->SolverVariable and SolverVariable->Float for the resolution.
+         */
         private Dictionary<string, SolverVariable> mVariables = null;
 
         /*
-		 * The goal that is used when minimizing the system.
-		 */
+         * The goal that is used when minimizing the system.
+         */
         private Row mGoal;
 
         private int TABLE_SIZE = 32; // default table size for the allocation
@@ -1049,13 +1049,13 @@ namespace androidx.constraintlayout.core
                             Console.WriteLine("optimizing: " + goal);
                         }
                         /*
-						try {
-						    enforceBFS(goal);
-						} catch (Exception e) {
-						    System.out.println("### EXCEPTION " + e);
-						    e.printStackTrace();
-						}
-						*/
+                        try {
+                            enforceBFS(goal);
+                        } catch (Exception e) {
+                            System.out.println("### EXCEPTION " + e);
+                            e.printStackTrace();
+                        }
+                        */
                         // now that we pivoted, we're going to continue looping on the next goal
                         // columns, until we exhaust all the possibilities of improving the system
                     }
@@ -1448,14 +1448,14 @@ namespace androidx.constraintlayout.core
         {
             string s = "Display Rows (" + mNumRows + "x" + mNumColumns + ")\n";
             /*
-			s += ":\n\t | C | ";
-			for (int i = 1; i <= mNumColumns; i++) {
-			    SolverVariable v = mCache.mIndexedVariables[i];
-			    s += v;
-			    s += " | ";
-			}
-			s += "\n";
-			*/
+            s += ":\n\t | C | ";
+            for (int i = 1; i <= mNumColumns; i++) {
+                SolverVariable v = mCache.mIndexedVariables[i];
+                s += v;
+                s += " | ";
+            }
+            s += "\n";
+            */
             Console.WriteLine(s);
         }
 

@@ -335,7 +335,7 @@ namespace SharpConstraintLayout.Wpf
             if (measure.horizontalBehavior == ConstraintWidget.DimensionBehaviour.WRAP_CONTENT)
             {
                 //measuredWidth = component.MinimumSize.width;
-                measuredWidth = (int)component.DesiredSize.Width;
+                measuredWidth = (int)(component.DesiredSize.Width+0.5);
             }
             else if (measure.horizontalBehavior == ConstraintWidget.DimensionBehaviour.MATCH_PARENT)
             {
@@ -344,7 +344,7 @@ namespace SharpConstraintLayout.Wpf
             if (measure.verticalBehavior == ConstraintWidget.DimensionBehaviour.WRAP_CONTENT)
             {
                 //measuredHeight = component.MinimumSize.height;
-                measuredHeight = (int)component.DesiredSize.Height;
+                measuredHeight = (int)(component.DesiredSize.Height+0.5);
             }
             else if (measure.verticalBehavior == ConstraintWidget.DimensionBehaviour.MATCH_PARENT)
             {

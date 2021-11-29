@@ -42,7 +42,8 @@ namespace SharpConstraintLayout.Example.Reload
             var testPanel = new ConstraintLayout()
             {
                 Tag = "TestPanel",
-                TEST = true,
+                //TEST = true,
+                //DEBUG = true,
             };
 
             page.Children.Add(toolBar);
@@ -67,6 +68,8 @@ namespace SharpConstraintLayout.Example.Reload
             var WarpPanelNestContraintLayoutTestButton = new Button() { Content = "WarpPanelNestContraintLayoutTest", Margin = new Thickness(10, 5, 0, 5) };
             var NewApiTestButton = new Button() { Content = "NewApiTest", Margin = new Thickness(10, 5, 0, 5) };
             var BarrierTestButton = new Button() { Content = "BarrierTest", Margin = new Thickness(10, 5, 0, 5) };
+            var ChainTestButton = new Button() { Content = "ChainTest", Margin = new Thickness(10, 5, 0, 5) };
+            var WidthHeightRatioTestButton = new Button() { Content = "WidthHeightRatioTest", Margin = new Thickness(10, 5, 0, 5) };
 
             toolBar.Children.Add(RemoveConstraintTestButton);
             toolBar.Children.Add(RemoveViewTestButton);
@@ -80,6 +83,8 @@ namespace SharpConstraintLayout.Example.Reload
             toolBar.Children.Add(WarpPanelNestContraintLayoutTestButton);
             toolBar.Children.Add(NewApiTestButton);
             toolBar.Children.Add(BarrierTestButton);
+            toolBar.Children.Add(ChainTestButton);
+            toolBar.Children.Add(WidthHeightRatioTestButton);
 
             RemoveConstraintTestButton.Click += (sender, e) =>
             {
@@ -130,7 +135,82 @@ namespace SharpConstraintLayout.Example.Reload
             {
                 BarrierTest(testPanel);
             };
+            ChainTestButton.Click += (sender, e) =>
+            {
+                ChainTest(testPanel);
+            };
+            WidthHeightRatioTestButton.Click += (sender, e) =>
+            {
+                WidthHeightRatioTest(testPanel);
+            };
 
+
+        }
+
+        private void WidthHeightRatioTest(ConstraintLayout Page)
+        {
+            Page.Children.Clear();
+
+            Button firstButton = new Button() { Content = "First", Tag = "first", Height = 100 };
+            Button secondButton = new Button() { Content = "Second ", Tag = "second", Width = 100 };
+            Page.Children.Add(firstButton);
+            Page.Children.Add(secondButton);
+            firstButton.LeftToLeft(Page).RightToLeft(secondButton).CenterY(Page)
+                .SetWidthBaseOnHeight(2);
+            secondButton.LeftToRight(firstButton).RightToRight(Page).CenterY(Page)
+                .SetHeightBaseOnWidth(2);
+        }
+
+        private void ChainTest(ConstraintLayout Page)
+        {
+            Page.Children.Clear();
+
+            Button firstButton = new Button() { Content = "First", Tag = "first", Height = 50 };
+            Button secondButton = new Button() { Content = "Second ", Tag = "second",  Height = 50 };
+            Button thirdButton = new Button() { Content = "Third ", Tag = "third", Height = 50 };
+            Button forthButton = new Button() { Content = "Forth ", Tag = "forth",  Height = 50 };
+            Button fifthButton = new Button() { Content = "Fifth ", Tag = "fifth",  Height = 50 };
+            Button sixthButton = new Button() { Content = "Sixth ",  Height = 50 };
+            Button seventhButton = new Button() { Content = "Seventh ",  Height = 50 };
+            Button eighthButton = new Button() { Content = "Eighth", Height = 50 };
+            Button ninthButton = new Button() { Content = "Ninth",  Height = 50 };
+            Button tenthButton = new Button() { Content = "tenth",Height = 50 };
+            Button eleventhButton = new Button() { Content = "eleventh",  Height = 50 };
+
+            Page.Children.Add(firstButton);
+            Page.Children.Add(secondButton);
+            Page.Children.Add(thirdButton);
+            Page.Children.Add(forthButton);
+            Page.Children.Add(fifthButton);
+            Page.Children.Add(sixthButton);
+            Page.Children.Add(seventhButton);
+            Page.Children.Add(eighthButton);
+            Page.Children.Add(ninthButton);
+            Page.Children.Add(tenthButton);
+            Page.Children.Add(eleventhButton);
+
+            //set weight,LeftToX and RightToX must all exist.
+            firstButton.LeftToLeft(Page).RightToLeft(secondButton).TopToTop(Page)
+                .SetWidth(ConstraintSizeType.Match_Constraint, 1f);
+            secondButton.LeftToRight(firstButton).RightToRight(Page).TopToTop(Page)
+                .SetWidth(ConstraintSizeType.Match_Constraint,0.5f);
+            //set chain spread,LeftToX and RightToX must all exist.
+            thirdButton.LeftToLeft(Page).RightToLeft(forthButton).CenterY(Page)
+                .SetHorizontalLayoutStyle(LayoutStyle.Chain_Spread);//it is default,you can not set
+            forthButton.LeftToRight(thirdButton).RightToLeft(fifthButton). CenterY(Page);
+            fifthButton.LeftToRight(forthButton).RightToRight(Page).CenterY(Page);
+
+            //set chain spread inside,LeftToX and RightToX must all exist.
+            sixthButton.LeftToLeft(Page).RightToLeft(seventhButton).TopToBottom(fifthButton,20)
+                .SetHorizontalLayoutStyle(LayoutStyle.Chain_Spread_Inside);
+            seventhButton.LeftToRight(sixthButton).RightToLeft(eighthButton).TopToTop(sixthButton);
+            eighthButton.LeftToRight(seventhButton).RightToRight(Page).TopToTop(sixthButton);
+
+            //set chain packed + bias
+            ninthButton.LeftToLeft(Page).RightToLeft(tenthButton).TopToBottom(eighthButton, 20)
+                .SetHorizontalLayoutStyle(LayoutStyle.Chain_Packed, 0.25f);
+            tenthButton.LeftToRight(ninthButton).RightToLeft(eleventhButton).TopToTop(ninthButton);
+            eleventhButton.LeftToRight(tenthButton).RightToRight(Page).TopToTop(ninthButton);
 
         }
 

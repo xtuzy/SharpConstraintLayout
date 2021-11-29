@@ -11,7 +11,7 @@
     <Description>C# port of ConstraintLayout</Description>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <Version>1.2</Version>
+    <Version>1.2.1</Version>
   </PropertyGroup>
 
   <ItemGroup>

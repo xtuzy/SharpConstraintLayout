@@ -14,7 +14,7 @@ namespace SharpConstraintLayout.Example
     /// </summary>
     public partial class App : Application
     {
-        public static string IP = "172.20.64.1";//"192.168.0.108";
+        public static string IP = "192.168.0.108";
         public static int Port = 450;
         public static ReloadClient ReloadClient;
         protected override void OnStartup(StartupEventArgs e)
