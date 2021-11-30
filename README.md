@@ -9,7 +9,7 @@ This is a C# port of [ConstraintLayout](https://github.com/androidx/constraintla
 
 ### ⬇️ Installation
 
-Search and install nuget **SharpConstraintLayout.Wpf**, it base on .NET5.
+Search and install nuget **SharpConstraintLayout.Wpf**, it base on .NET5. Please use **v1.3** or later,their api are more stable.
 
 If you want custom constraintlayout, you can install SharpConstraintLayout.Core, it base on .netstandard2.0.
 
