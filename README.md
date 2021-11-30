@@ -33,9 +33,9 @@ You have two way to create constraint
 
   ```
   new ConstraintSet(constraintlayout)
-  .AddConnect(firstButton, ConstraintAnchor.Type.CENTER, layout, ConstraintAnchor.Type.CENTER)
-  .AddConnect(secondButton,ConstraintAnchor.Type.LEFT,firstdButton,ConstraintAnchor.Type.RIGHT)
-  .AddConnect(secondButton, ConstraintAnchor.Type.TOP,firstButton,ConstraintAnchor.Type.BOTTOM);
+  .AddConnect(firstButton, ConstraintSet.Side.Center, layout, ConstraintSet.Side.Center)
+  .AddConnect(secondButton,ConstraintSet.Side.Left,firstdButton,ConstraintSet.Side.Right)
+  .AddConnect(secondButton, ConstraintSet.Side.Top,firstButton,ConstraintSet.Side.Bottom);
   ```
 
 - Use new api, see [NewApiTest](https://github.com/xtuzy/SharpConstraintLayout/blob/6d2ca9be3273724e2355c6d5581b164228a5f719/SharpConstraintLayout.Example.Reload/ComplexLayoutTestWindow.xaml.cs#L129)
@@ -51,7 +51,7 @@ You have two way to create constraint
   fifthButton.LeftToRight(firstButton,20).BottomToTop(firstButton,5);
   
   //RightToX, At toView Right is negative
-  var HorizontalCenterGuidline = new GuideLine() { Percent = 0.5f,Orientation=GuideLine.Orientations.HORIZONTAL };
+  var HorizontalCenterGuidline = new GuideLine() { Percent = 0.5f,Orientation=GuideLine.OrientationType.Horizontal };
   Page.Children.Add(HorizontalCenterGuidline);
   sixthButton.RightToLeft(firstButton, -20).BottomToTop(HorizontalCenterGuidline);
   seventhButton.RightToLeft(firstButton,20).TopToBottom(HorizontalCenterGuidline);
@@ -59,7 +59,7 @@ You have two way to create constraint
   eighthButton.RightToRight(firstButton,-20).BottomToTop(HorizontalCenterGuidline);
   ninthButton.RightToRight(firstButton,20).TopToBottom(HorizontalCenterGuidline);
   
-  var VerticalCenterGuideline = new GuideLine() { Percent = 0.5f,Orientation=GuideLine.Orientations.VERTICAL };
+  var VerticalCenterGuideline = new GuideLine() { Percent = 0.5f,Orientation=GuideLine.OrientationType.Vertical };
   Page.Children.Add(VerticalCenterGuideline);
   //TopToX, At toView Top is negative
   tenthButton.RightToLeft(eleventhButton).TopToTop(firstButton, -20);
@@ -99,7 +99,7 @@ secondButton.LeftToRight(firstButton).RightToRight(Page).CenterY(Page).SetHeight
 ```
 var VerticalCenterGuideline = new GuideLine() { 
     Percent = 0.5f,
-    Orientation=GuideLine.Orientations.VERTICAL 
+    Orientation=GuideLine.OrientationType.Vertical 
 };
 ```
 
@@ -112,7 +112,7 @@ barrier.AddView(firstTextBox);
 barrier.AddView(secondTextBox);
 ```
 
-
+🌊 **FlowBox** is a VirtualLayout that allows positioning of referenced widgets horizontally or vertically similar to a Chain. If the referenced elements do not fit within the given bounds it has the ability to wrap them and create multiple chains.
 
 More example see [ComplexLayoutTest](https://github.com/xtuzy/SharpConstraintLayout/blob/master/SharpConstraintLayout.Example.Reload/ComplexLayoutTestWindow.xaml.cs)
 
