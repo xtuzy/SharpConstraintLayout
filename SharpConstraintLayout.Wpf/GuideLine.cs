@@ -9,19 +9,28 @@ using System.Windows;
 namespace SharpConstraintLayout.Wpf
 {
     /// <summary>
-    /// A line no size,just for layout more easy.
-    /// It can layout view at position relative to parent view's percent.
+    /// <see href="https://developer.android.com/reference/androidx/constraintlayout/widget/Guideline">Android Guideline</see><br/>
+    /// Guideline is not displayed on device(they are marked as View.GONE) and are only used for layout purposes.They only work within a ConstraintLayout.
+    /// A Guideline can be either horizontal or vertical:
+    /// Vertical Guidelines have a width of zero and the height of their ConstraintLayout parent
+    /// Horizontal Guidelines have a height of zero and the width of their ConstraintLayout parent
+    /// Positioning a Guideline is possible in three different ways:
+    /// specifying a fixed distance from the left or the top of a layout (layout_constraintGuide_begin)
+    /// specifying a fixed distance from the right or the bottom of a layout (layout_constraintGuide_end)
+    /// specifying a percentage of the width or the height of a layout (layout_constraintGuide_percent)
+    /// Widgets can then be constrained to a Guideline, allowing multiple widgets to be positioned easily from one Guideline, or allowing reactive layout behavior by using percent positioning.
     /// </summary>
     public class GuideLine: FrameworkElement
     {
-        public Guideline Guideline = new Guideline();
+        public readonly Guideline Guideline = new Guideline();
 
-        public enum Orientations
+        public enum OrientationType
         {
-            HORIZONTAL = 0,
-            VERTICAL
+            Horizontal = 0,
+            Vertical
         }
-        public Orientations Orientation
+
+        public OrientationType Orientation
         {
             set
             {
@@ -29,11 +38,14 @@ namespace SharpConstraintLayout.Wpf
             }
             get
             {
-                return (Orientations)Guideline.Orientation;
+                return (OrientationType)Guideline.Orientation;
             }
         }
 
-        public int GuideBegin
+        /// <summary>
+        /// Set the guideline's distance from the top or left edge.
+        /// </summary>
+        public int GuideStart
         {
             set
             {
@@ -41,6 +53,9 @@ namespace SharpConstraintLayout.Wpf
             }
         }
 
+        /// <summary>
+        /// Set a guideline's distance to end.
+        /// </summary>
         public int GuideEnd
         {
             set

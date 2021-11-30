@@ -52,9 +52,9 @@ namespace SharpConstraintLayout.Example
             };
             Page.Children.Add(listView);
             new ConstraintSet(Page)
-                .AddConnect(listView, ConstraintAnchor.Type.CENTER, Page, ConstraintAnchor.Type.CENTER)
-                .SetWidth(listView, ConstraintWidget.DimensionBehaviour.MATCH_PARENT)
-                .SetHeight(listView, ConstraintWidget.DimensionBehaviour.MATCH_PARENT);
+                .AddConnect(listView, ConstraintSet.Side.Center, Page, ConstraintSet.Side.Center)
+                .SetWidth(listView, ConstraintSet.SizeType.MatchParent)
+                .SetHeight(listView, ConstraintSet.SizeType.MatchParent);
             for (var index = 0; index < 5000; index++)
             {
                 var item1 = new ListViewItem { Content = $"This is {index} item added programmatically." };

@@ -53,43 +53,37 @@ namespace SharpConstraintLayout.Example
             page.Children.Add(toolBar);
             page.Children.Add(testPanel);
             new ConstraintSet(page)
-                .AddConnect(toolBar, ConstraintAnchor.Type.TOP, page, ConstraintAnchor.Type.TOP)
-                .SetWidth(toolBar, ConstraintWidget.DimensionBehaviour.MATCH_PARENT)
-                .AddConnect(testPanel, ConstraintAnchor.Type.TOP, toolBar, ConstraintAnchor.Type.BOTTOM)
-                .AddConnect(testPanel, ConstraintAnchor.Type.BOTTOM, page, ConstraintAnchor.Type.BOTTOM)
-                .SetWidth(testPanel, ConstraintWidget.DimensionBehaviour.MATCH_PARENT)
-                .SetHeight(testPanel, ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT);
+                .AddConnect(toolBar, ConstraintSet.Side.Top, page, ConstraintSet.Side.Top)
+                .SetWidth(toolBar, ConstraintSet.SizeType.MatchParent)
+                .AddConnect(testPanel, ConstraintSet.Side.Top, toolBar, ConstraintSet.Side.Bottom)
+                .AddConnect(testPanel, ConstraintSet.Side.Bottom, page, ConstraintSet.Side.Bottom)
+                .SetWidth(testPanel, ConstraintSet.SizeType.MatchParent)
+                .SetHeight(testPanel, ConstraintSet.SizeType.MatchConstraint);
             //工具栏详细设置
             viewCountTextBox = new TextBox() { Text = "500"};
             Button LayoutALotOfViewsToDrawTestButton = new Button() { Content = "LayoutALotOfViewsToDrawTest" };
-            Button StartPureLayoutButton = new Button() { Content = "PureCalculateLayoutTime"};
             Button MultipleLevelNestTestButton = new Button() { Content = "MultipleLevelNestTest" };
 
             
-            toolBar.Children.Add(StartPureLayoutButton);
             toolBar.Children.Add(LayoutALotOfViewsToDrawTestButton);
             toolBar.Children.Add(viewCountTextBox);
             toolBar.Children.Add(MultipleLevelNestTestButton);
 
             new ConstraintSet(toolBar)
-                .AddConnect(viewCountTextBox, ConstraintAnchor.Type.CENTER_Y, toolBar, ConstraintAnchor.Type.CENTER_Y)
-                .AddConnect(viewCountTextBox, ConstraintAnchor.Type.LEFT, toolBar, ConstraintAnchor.Type.LEFT,20)
-                .AddConnect(LayoutALotOfViewsToDrawTestButton, ConstraintAnchor.Type.CENTER_Y, toolBar, ConstraintAnchor.Type.CENTER_Y)
-                .AddConnect(LayoutALotOfViewsToDrawTestButton, ConstraintAnchor.Type.LEFT, viewCountTextBox, ConstraintAnchor.Type.RIGHT,20)
-                .AddConnect(StartPureLayoutButton, ConstraintAnchor.Type.CENTER_Y, toolBar, ConstraintAnchor.Type.CENTER_Y)
-                .AddConnect(StartPureLayoutButton, ConstraintAnchor.Type.LEFT, LayoutALotOfViewsToDrawTestButton, ConstraintAnchor.Type.RIGHT, 20)
-                .AddConnect(MultipleLevelNestTestButton, ConstraintAnchor.Type.CENTER_Y,toolBar,ConstraintAnchor.Type.CENTER_Y)
-                .AddConnect(MultipleLevelNestTestButton,ConstraintAnchor.Type.LEFT,StartPureLayoutButton,ConstraintAnchor.Type.RIGHT,20)
+                .AddConnect(viewCountTextBox, ConstraintSet.Side.CenterY, toolBar, ConstraintSet.Side.CenterY)
+                .AddConnect(viewCountTextBox, ConstraintSet.Side.Left, toolBar, ConstraintSet.Side.Left,20)
+                .AddConnect(LayoutALotOfViewsToDrawTestButton, ConstraintSet.Side.CenterY, toolBar, ConstraintSet.Side.CenterY)
+                .AddConnect(LayoutALotOfViewsToDrawTestButton, ConstraintSet.Side.Left, viewCountTextBox, ConstraintSet.Side.Right,20)
+               
+                .AddConnect(MultipleLevelNestTestButton, ConstraintSet.Side.CenterY,toolBar,ConstraintSet.Side.CenterY)
+                .AddConnect(MultipleLevelNestTestButton,ConstraintSet.Side.Left,LayoutALotOfViewsToDrawTestButton,ConstraintSet.Side.Right,20)
                 ;
 
             LayoutALotOfViewsToDrawTestButton.Click += (sender, e) =>
             {
                 LayoutALotOfViewsToDrawTest(testPanel);
             };
-            StartPureLayoutButton.Click += (sender, e) =>
-            {
-                PureCalculateLayoutTime();
-            };
+
             MultipleLevelNestTestButton.Click += (sender, e) =>
             {
                 MultipleLevelNestTest(testPanel);
@@ -105,9 +99,9 @@ namespace SharpConstraintLayout.Example
             };
             Page.Children.Add(preview);
             new ConstraintSet(Page)
-                .AddConnect(preview, ConstraintAnchor.Type.CENTER, Page, ConstraintAnchor.Type.CENTER)
-                .SetWidth(preview, ConstraintWidget.DimensionBehaviour.MATCH_PARENT)
-                .SetHeight(preview, ConstraintWidget.DimensionBehaviour.MATCH_PARENT);
+                .AddConnect(preview, ConstraintSet.Side.Center, Page, ConstraintSet.Side.Center)
+                .SetWidth(preview, ConstraintSet.SizeType.MatchParent)
+                .SetHeight(preview, ConstraintSet.SizeType.MatchParent);
             for(var index = 0; index < viewCount; index++)
             {
                 var view = new ConstraintLayout()
@@ -116,12 +110,12 @@ namespace SharpConstraintLayout.Example
                 };
                 preview.Children.Add(view);
                 new ConstraintSet(preview)
-                    .AddConnect(view, ConstraintAnchor.Type.RIGHT, preview, ConstraintAnchor.Type.RIGHT, 1)
-                    .AddConnect(view, ConstraintAnchor.Type.BOTTOM, preview, ConstraintAnchor.Type.BOTTOM, 1)
-                    .AddConnect(view, ConstraintAnchor.Type.LEFT, preview, ConstraintAnchor.Type.LEFT,2)
-                    .AddConnect(view, ConstraintAnchor.Type.TOP, preview, ConstraintAnchor.Type.TOP,2)
-                    .SetWidth(view, ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT)
-                    .SetHeight(view, ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT)
+                    .AddConnect(view, ConstraintSet.Side.Right, preview, ConstraintSet.Side.Right, 1)
+                    .AddConnect(view, ConstraintSet.Side.Bottom, preview, ConstraintSet.Side.Bottom, 1)
+                    .AddConnect(view, ConstraintSet.Side.Left, preview, ConstraintSet.Side.Left,2)
+                    .AddConnect(view, ConstraintSet.Side.Top, preview, ConstraintSet.Side.Top,2)
+                    .SetWidth(view, ConstraintSet.SizeType.MatchConstraint)
+                    .SetHeight(view, ConstraintSet.SizeType.MatchConstraint)
                     ;
                 preview = view;
             }
@@ -144,21 +138,21 @@ namespace SharpConstraintLayout.Example
             previousView.Background = new SolidColorBrush(Colors.Cyan);
             DrawPanel.Children.Add(previousView);
             var set = new ConstraintSet(DrawPanel);
-            set.AddConnect(previousView, ConstraintAnchor.Type.BOTTOM, DrawPanel, ConstraintAnchor.Type.BOTTOM);
-            set.AddConnect(previousView, ConstraintAnchor.Type.LEFT, DrawPanel, ConstraintAnchor.Type.LEFT, 10);
-            set.SetWidth(previousView, ConstraintWidget.DimensionBehaviour.WRAP_CONTENT);
-            set.SetHeight(previousView, ConstraintWidget.DimensionBehaviour.WRAP_CONTENT);
+            set.AddConnect(previousView, ConstraintSet.Side.Bottom, DrawPanel, ConstraintSet.Side.Bottom);
+            set.AddConnect(previousView, ConstraintSet.Side.Left, DrawPanel, ConstraintSet.Side.Left, 10);
+            set.SetWidth(previousView, ConstraintSet.SizeType.WrapContent);
+            set.SetHeight(previousView, ConstraintSet.SizeType.WrapContent);
 
             for (var i = 0; i < viewCount; i++)
             {
                 Canvas view = new Canvas();
                 DrawPanel.Children.Add(view);
-                set.AddConnect(view, ConstraintAnchor.Type.TOP, previousView, ConstraintAnchor.Type.TOP, -1);
-                set.AddConnect(view, ConstraintAnchor.Type.BOTTOM, previousView, ConstraintAnchor.Type.BOTTOM,1);
-                set.AddConnect(view, ConstraintAnchor.Type.LEFT, previousView, ConstraintAnchor.Type.LEFT, 1);
-                set.AddConnect(view, ConstraintAnchor.Type.RIGHT, previousView, ConstraintAnchor.Type.RIGHT, -1);
-                set.SetWidth(view, ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT);
-                set.SetHeight(view, ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT);
+                set.AddConnect(view, ConstraintSet.Side.Top, previousView, ConstraintSet.Side.Top, -1);
+                set.AddConnect(view, ConstraintSet.Side.Bottom, previousView, ConstraintSet.Side.Bottom,1);
+                set.AddConnect(view, ConstraintSet.Side.Left, previousView, ConstraintSet.Side.Left, 1);
+                set.AddConnect(view, ConstraintSet.Side.Right, previousView, ConstraintSet.Side.Right, -1);
+                set.SetWidth(view, ConstraintSet.SizeType.MatchConstraint);
+                set.SetHeight(view, ConstraintSet.SizeType.MatchConstraint);
                 view.Background = new SolidColorBrush(RandomColor());
                 previousView = view;
             }
@@ -173,53 +167,6 @@ namespace SharpConstraintLayout.Example
             int g = ran.Next(0, 255);
             int b = ran.Next(0, 255);
             return Color.FromRgb((byte)r, (byte)g, (byte)b);
-        }
-        
-        void PureCalculateLayoutTime()
-        {
-            List<long> data = new List<long>();
-            for (var index = 0; index < 10; index++)
-            {
-                Stopwatch sw = new Stopwatch();
-                sw.Start();
-                ConstraintWidgetContainer root = new ConstraintWidgetContainer(0, 0, 1000, 600);
-                ConstraintWidget preview = new ConstraintWidget(100, 40);
-                root.add(preview);
-                preview.connect(ConstraintAnchor.Type.LEFT, root, ConstraintAnchor.Type.LEFT);
-                preview.connect(ConstraintAnchor.Type.BOTTOM, root, ConstraintAnchor.Type.BOTTOM);
-                preview.HorizontalDimensionBehaviour = ConstraintWidget.DimensionBehaviour.WRAP_CONTENT;
-                preview.VerticalDimensionBehaviour = ConstraintWidget.DimensionBehaviour.WRAP_CONTENT;
-                for (var i = 0; i < viewCount; i++)
-                {
-                    var view = new ConstraintWidget(100, 40);
-                    root.add(view);
-                    view.connect(ConstraintAnchor.Type.LEFT, preview, ConstraintAnchor.Type.LEFT, 1);
-                    view.connect(ConstraintAnchor.Type.RIGHT, preview, ConstraintAnchor.Type.RIGHT, 1);
-                    view.connect(ConstraintAnchor.Type.TOP, preview, ConstraintAnchor.Type.TOP, 1);
-                    view.connect(ConstraintAnchor.Type.BOTTOM, preview, ConstraintAnchor.Type.BOTTOM, 1);
-                    view.HorizontalDimensionBehaviour = ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT;
-                    view.VerticalDimensionBehaviour = ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT;
-                    preview = view;
-                }
-
-                root.layout();
-                sw.Stop();
-                data.Add(sw.ElapsedMilliseconds);
-            }
-            string message = "";
-            long sum = 0;
-            foreach (var num in data)
-            {
-                sum += num;
-                message+=num.ToString()+" ";
-            }
-                
-            long result = sum/ data.Count;
-            // Configure the message box to be displayed
-            string caption = "Test Result";
-            MessageBoxButton button = MessageBoxButton.YesNoCancel;
-            MessageBoxImage icon = MessageBoxImage.Warning;
-            MessageBox.Show("All Data:"+message+"Average:" + result+" ms", caption, button, icon);
         }
     }
 }

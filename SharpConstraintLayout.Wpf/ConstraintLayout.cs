@@ -78,11 +78,22 @@ namespace SharpConstraintLayout.Wpf
                     idsToConstraintWidgets[id] = constraintWidget;
                     viewsToIds[comp] = id;
                 }
-                else if(visualAdded is BarrierLine)
+                else if (visualAdded is BarrierLine)
                 {
                     var comp = visualAdded as BarrierLine;
                     string id = comp.GetHashCode().ToString();
                     ConstraintWidget constraintWidget = comp.Barrier;
+                    mLayout.add(constraintWidget);
+                    constraintWidget.stringId = id;
+                    constraintWidget.CompanionWidget = comp;
+                    idsToConstraintWidgets[id] = constraintWidget;
+                    viewsToIds[comp] = id;
+                }
+                else if (visualAdded is FlowBox)
+                {
+                    var comp = visualAdded as FlowBox;
+                    string id = comp.GetHashCode().ToString();
+                    ConstraintWidget constraintWidget = comp.Flow;
                     mLayout.add(constraintWidget);
                     constraintWidget.stringId = id;
                     constraintWidget.CompanionWidget = comp;
@@ -236,7 +247,7 @@ namespace SharpConstraintLayout.Wpf
 
             if (DEBUG)
                 Debug.WriteLine($"{this.Tag as string},finalSize {finalSize}, DesiredSize {this.DesiredSize}");
-            
+
             //recalculate?,because when constraintlayout size be define by parent,it size need parent to arrange
             //such as it as child of listview,listview will send double.infinity to measure,if you set listview's content to strenth,
             //you need get that size at Arrage. 
@@ -304,7 +315,7 @@ namespace SharpConstraintLayout.Wpf
             return this.idsToConstraintWidgets[this.viewsToIds[view]];
         }
 
-        //convert from java
+        //copy from swing
         private class MeasurerAnonymousInnerClass : BasicMeasure.Measurer
         {
             private readonly ConstraintLayout outerInstance;
@@ -316,7 +327,10 @@ namespace SharpConstraintLayout.Wpf
 
             public virtual void measure(ConstraintWidget widget, BasicMeasure.Measure measure)
             {
-                outerInstance.innerMeasure(widget, measure);
+                if (widget is VirtualLayout)
+                    outerInstance.measureFlow(widget, measure);
+                else
+                    outerInstance.innerMeasure(widget, measure);
             }
 
             public virtual void didMeasures()
@@ -325,6 +339,11 @@ namespace SharpConstraintLayout.Wpf
             }
         }
 
+        /// <summary>
+        /// copy from swing
+        /// </summary>
+        /// <param name="constraintWidget"></param>
+        /// <param name="measure"></param>
         private void innerMeasure(ConstraintWidget constraintWidget, BasicMeasure.Measure measure)
         {
             UIElement component = (UIElement)constraintWidget.CompanionWidget;
@@ -335,7 +354,7 @@ namespace SharpConstraintLayout.Wpf
             if (measure.horizontalBehavior == ConstraintWidget.DimensionBehaviour.WRAP_CONTENT)
             {
                 //measuredWidth = component.MinimumSize.width;
-                measuredWidth = (int)(component.DesiredSize.Width+0.5);
+                measuredWidth = (int)(component.DesiredSize.Width + 0.5);
             }
             else if (measure.horizontalBehavior == ConstraintWidget.DimensionBehaviour.MATCH_PARENT)
             {
@@ -344,7 +363,7 @@ namespace SharpConstraintLayout.Wpf
             if (measure.verticalBehavior == ConstraintWidget.DimensionBehaviour.WRAP_CONTENT)
             {
                 //measuredHeight = component.MinimumSize.height;
-                measuredHeight = (int)(component.DesiredSize.Height+0.5);
+                measuredHeight = (int)(component.DesiredSize.Height + 0.5);
             }
             else if (measure.verticalBehavior == ConstraintWidget.DimensionBehaviour.MATCH_PARENT)
             {
@@ -352,6 +371,62 @@ namespace SharpConstraintLayout.Wpf
             }
             measure.measuredWidth = measuredWidth;
             measure.measuredHeight = measuredHeight;
+        }
+
+        /// <summary>
+        /// copy from FlowTest
+        /// </summary>
+        /// <param name="widget"></param>
+        /// <param name="measure"></param>
+        private void measureFlow(ConstraintWidget widget, BasicMeasure.Measure measure)
+        {
+            ConstraintWidget.DimensionBehaviour horizontalBehavior = measure.horizontalBehavior;
+            ConstraintWidget.DimensionBehaviour verticalBehavior = measure.verticalBehavior;
+            int horizontalDimension = measure.horizontalDimension;
+            int verticalDimension = measure.verticalDimension;
+
+            if (widget is VirtualLayout)
+            {
+                VirtualLayout layout = (VirtualLayout)widget;
+                int widthMode = BasicMeasure.UNSPECIFIED;
+                int heightMode = BasicMeasure.UNSPECIFIED;
+                int widthSize = 0;
+                int heightSize = 0;
+                if (layout.HorizontalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.MATCH_PARENT)
+                {
+                    widthSize = layout.Parent != null ? layout.Parent.Width : 0;
+                    widthMode = BasicMeasure.EXACTLY;
+                }
+                else if (horizontalBehavior == ConstraintWidget.DimensionBehaviour.FIXED)
+                {
+                    widthSize = horizontalDimension;
+                    widthMode = BasicMeasure.EXACTLY;
+                }
+                if (layout.VerticalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.MATCH_PARENT)
+                {
+                    heightSize = layout.Parent != null ? layout.Parent.Height : 0;
+                    heightMode = BasicMeasure.EXACTLY;
+                }
+                else if (verticalBehavior == ConstraintWidget.DimensionBehaviour.FIXED)
+                {
+                    heightSize = verticalDimension;
+                    heightMode = BasicMeasure.EXACTLY;
+                }
+                layout.measure(widthMode, widthSize, heightMode, heightSize);
+                measure.measuredWidth = layout.MeasuredWidth;
+                measure.measuredHeight = layout.MeasuredHeight;
+            }
+            else
+            {
+                if (horizontalBehavior == ConstraintWidget.DimensionBehaviour.FIXED)
+                {
+                    measure.measuredWidth = horizontalDimension;
+                }
+                if (verticalBehavior == ConstraintWidget.DimensionBehaviour.FIXED)
+                {
+                    measure.measuredHeight = verticalDimension;
+                }
+            }
         }
     }
 }

@@ -8,9 +8,30 @@ using System.Windows;
 
 namespace SharpConstraintLayout.Wpf
 {
-    
+
     public class ConstraintSet
     {
+        static readonly ConstraintAnchor.Type[] ConstraintAnchorTypeDic = new ConstraintAnchor.Type[]
+        {
+            ConstraintAnchor.Type.NONE,
+            ConstraintAnchor.Type.LEFT,
+            ConstraintAnchor.Type.TOP,
+            ConstraintAnchor.Type.RIGHT,
+            ConstraintAnchor.Type.BOTTOM,
+            ConstraintAnchor.Type.BASELINE,
+            ConstraintAnchor.Type.CENTER,
+            ConstraintAnchor.Type.CENTER_X,
+            ConstraintAnchor.Type.CENTER_Y
+        };
+
+        static readonly ConstraintWidget.DimensionBehaviour[] ConstraintSizeTypeDic = new ConstraintWidget.DimensionBehaviour[]
+        {
+            ConstraintWidget.DimensionBehaviour.FIXED,
+            ConstraintWidget.DimensionBehaviour.WRAP_CONTENT,
+            ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT,
+            ConstraintWidget.DimensionBehaviour.MATCH_PARENT,
+        };
+
         /// <summary>
         /// Text orientation
         /// </summary>
@@ -46,9 +67,9 @@ namespace SharpConstraintLayout.Wpf
             MATCH_CONSTRAINT,
             MATCH_PARENT*/
             Fixed,
-            Wrap_Content,
-            Match_Constraint,
-            Match_Parent,
+            WrapContent,
+            MatchConstraint,
+            MatchParent,
         }
 
         public enum LayoutStyle
@@ -59,11 +80,34 @@ namespace SharpConstraintLayout.Wpf
             /// <summary>
             /// default style
             /// </summary>
-            Chain_Spread,
-            Chain_Spread_Inside,
-            Chain_Packed
+            ChainSpread,
+            ChainSpreadInside,
+            ChainPacked
         }
 
+        public enum Side
+        {
+            None,
+            Left,
+            Top,
+            Right,
+            Bottom,
+            /// <summary>
+            /// TODO:Wpf no baseline property,how to custom.
+            /// </summary>
+            Baseline,
+            Center,
+            CenterX,
+            CenterY,
+            /// <summary>
+            /// TODO for RTF
+            /// </summary>
+            Start,
+            /// <summary>
+            /// TODO for RTF
+            /// </summary>
+            End,
+        }
 
         WeakReference<ConstraintLayout> Parent;//一个ConstraintSet基本只使用一次,需要时重新创建,所以直接弱引用避免内存泄漏
 
@@ -72,17 +116,17 @@ namespace SharpConstraintLayout.Wpf
             Parent = new WeakReference<ConstraintLayout>(parent);
         }
 
-        public ConstraintSet AddConnect(UIElement fromView, ConstraintAnchor.Type fromSide, UIElement toView, ConstraintAnchor.Type toSide, int margin)
+        public ConstraintSet AddConnect(UIElement fromView, Side fromSide, UIElement toView, Side toSide, int margin)
         {
             Parent.TryGetTarget(out var parent);
             if (parent == null) throw new NotImplementedException();
             var fromWidget = parent.GetWidget(fromView);
             var toWidget = parent.GetWidget(toView);
-            fromWidget.connect(fromSide, toWidget, toSide, margin);
+            fromWidget.connect(ConstraintAnchorTypeDic[(int)fromSide], toWidget, ConstraintAnchorTypeDic[(int)toSide], margin);
             return this;
         }
 
-        public ConstraintSet AddConnect(UIElement view, ConstraintAnchor.Type firstSide, UIElement secondView, ConstraintAnchor.Type secondSide)
+        public ConstraintSet AddConnect(UIElement view, Side firstSide, UIElement secondView, Side secondSide)
         {
             return AddConnect(view, firstSide, secondView, secondSide, 0);
         }
@@ -94,15 +138,15 @@ namespace SharpConstraintLayout.Wpf
         /// or FrameworkElement.Width <see cref="ConstraintWidget.DimensionBehaviour.WRAP_CONTENT"></see><br/>
         /// </summary>
         /// <param name="view"></param>
-        /// <param name="behaviour">Set view's width according to Constraint or Parent or FrameworkElement.Width</param>
+        /// <param name="sizeType">Set view's width according to Constraint or Parent or FrameworkElement.Width</param>
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
-        public ConstraintSet SetWidth(UIElement view, ConstraintWidget.DimensionBehaviour behaviour)
+        public ConstraintSet SetWidth(UIElement view, SizeType sizeType)
         {
             Parent.TryGetTarget(out var parent);
             if (parent == null) throw new NotImplementedException();
             var viewWidget = parent.GetWidget(view);
-            viewWidget.HorizontalDimensionBehaviour = behaviour;
+            viewWidget.HorizontalDimensionBehaviour = ConstraintSizeTypeDic[(int)sizeType];
 
             return this;
         }
@@ -123,15 +167,15 @@ namespace SharpConstraintLayout.Wpf
         /// or FrameworkElement.Width <see cref="ConstraintWidget.DimensionBehaviour.WRAP_CONTENT"></see><br/>
         /// </summary>
         /// <param name="view"></param>
-        /// <param name="behaviour"></param>
+        /// <param name="sizeType"></param>
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
-        public ConstraintSet SetHeight(UIElement view, ConstraintWidget.DimensionBehaviour behaviour)
+        public ConstraintSet SetHeight(UIElement view, SizeType sizeType)
         {
             Parent.TryGetTarget(out var parent);
             if (parent == null) throw new NotImplementedException();
             var viewWidget = parent.GetWidget(view);
-            viewWidget.VerticalDimensionBehaviour = behaviour;
+            viewWidget.VerticalDimensionBehaviour = ConstraintSizeTypeDic[(int)sizeType];
 
             //TODO:如果嵌套了ConstraintLayout,需要对子ConstraintLayout的Container也进行同步设置.
             //子ConstraintLayout一般需要指定宽高才能布局,
@@ -397,11 +441,11 @@ namespace SharpConstraintLayout.Wpf
         /// </summary>
         /// <param name="fromView"></param>
         /// <param name="toView"> the target view we will use as the center of the circle</param>
-        /// <param name="angle">  the angle (from 0 to 360) </param>
+        /// <param name="angle">  the angle (from 0 to 360),0 at Top </param>
         /// <param name="radius"> the radius used </param>
         /// <returns></returns>
         /// <exception cref="ArgumentException">Parent of fromView is not ConstraintLayout</exception>
-        public static FrameworkElement CenterToCircle(this FrameworkElement fromView, FrameworkElement toView, float angle, int radius)
+        public static FrameworkElement CircleToCenter(this FrameworkElement fromView, FrameworkElement toView, float angle, int radius)
         {
             var parent = fromView.Parent is ConstraintLayout ? fromView.Parent as ConstraintLayout : throw new ArgumentException($"Parent of {fromView} is not ConstraintLayout");
             var fromWidget = parent.GetWidget(fromView);
@@ -520,7 +564,7 @@ namespace SharpConstraintLayout.Wpf
             return fromView;
         }
         /// <summary>
-        /// Create constraint for Width, Width = ratio * Height.
+        /// Create constraint for Width base on height, Width = ratio * Height.
         /// </summary>
         /// <param name="fromView"></param>
         /// <param name="ratio"></param>
@@ -537,7 +581,7 @@ namespace SharpConstraintLayout.Wpf
         }
 
         /// <summary>
-        /// Create constraint for Height, Height = ratio * Width.
+        /// Create constraint for Height base on width, Height = ratio * Width.
         /// </summary>
         /// <param name="fromView"></param>
         /// <param name="ratio"></param>
@@ -593,6 +637,6 @@ namespace SharpConstraintLayout.Wpf
             ConstraintWidget.DimensionBehaviour.MATCH_PARENT,
         };
     }
-    
+
     #endregion
 }

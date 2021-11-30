@@ -8,15 +8,20 @@ using System.Windows;
 
 namespace SharpConstraintLayout.Wpf
 {
+    /// <summary>
+    /// A BarrierLine takes multiple views
+    /// </summary>
     public class BarrierLine : FrameworkElement
     {
-        public Barrier Barrier = new Barrier();
+
+        public readonly Barrier Barrier = new Barrier();
+
         public enum Side
         {
-            Left = 0,
-            Right = 1,
-            Top = 2,
-            Bottom = 3,
+            Left,
+            Right,
+            Top,
+            Bottom,
         }
 
         /// <summary>
@@ -36,7 +41,8 @@ namespace SharpConstraintLayout.Wpf
         }
 
         /// <summary>
-        /// Set barrier at view.
+        /// Set barrier at view.<br/>
+        /// it not add to visualtree, just add in flow to calculate layout.So you also should add view to ConstraintLayout.
         /// </summary>
         /// <param name="view"></param>
         /// <exception cref="ArgumentException"></exception>
@@ -48,7 +54,8 @@ namespace SharpConstraintLayout.Wpf
         }
 
         /// <summary>
-        /// Set barrier at views.
+        /// Set barrier at views.<br/>
+        /// it not add to visualtree, just add in flow to calculate layout.So you also should add view to ConstraintLayout.
         /// </summary>
         /// <param name="views"></param>
         /// <exception cref="ArgumentException"></exception>

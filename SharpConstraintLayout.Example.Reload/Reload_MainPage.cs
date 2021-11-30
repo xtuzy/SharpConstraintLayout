@@ -47,45 +47,18 @@ namespace SharpConstraintLayout.Example.Reload
                 new ComplexLayoutTestWindow().Show();
             };
 
-            GuideLine firsttLineGuideline = new GuideLine() {
-                Orientation = GuideLine.Orientations.HORIZONTAL,
-                Percent = 0.5f
-            };
-
-            Button ZLayoutTestButton = new Button()
-            {
-                Content = "ComplexLayoutTest - ZLayout",
-                Height = 100,
-                BorderBrush = new SolidColorBrush(Colors.White),
-                Background = new SolidColorBrush(Colors.White),
-            };
-            ZLayoutTestButton.Click += (sender, e) =>
-            {
-                new ZWindow().Show();
-            };
-
-
             MainPage.Children.Add(pressureTestButton);
             MainPage.Children.Add(complexLayoutRemoveAndAddTestButton);
-            MainPage.Children.Add(firsttLineGuideline);
-            MainPage.Children.Add(ZLayoutTestButton);
+
 
             ConstraintSet set = new ConstraintSet(MainPage);
-            set.AddConnect(pressureTestButton, ConstraintAnchor.Type.TOP, MainPage, ConstraintAnchor.Type.TOP)
-                .AddConnect(pressureTestButton, ConstraintAnchor.Type.BOTTOM, firsttLineGuideline, ConstraintAnchor.Type.TOP)
-                .AddConnect(pressureTestButton, ConstraintAnchor.Type.LEFT, MainPage, ConstraintAnchor.Type.LEFT,20)
-                .SetWidth(pressureTestButton, ConstraintWidget.DimensionBehaviour.WRAP_CONTENT)
-                .SetHeight(pressureTestButton, ConstraintWidget.DimensionBehaviour.WRAP_CONTENT);
-            set.AddConnect(complexLayoutRemoveAndAddTestButton, ConstraintAnchor.Type.BOTTOM, firsttLineGuideline, ConstraintAnchor.Type.TOP)
-                .AddConnect(complexLayoutRemoveAndAddTestButton,ConstraintAnchor.Type.TOP, MainPage, ConstraintAnchor.Type.TOP)
-                .AddConnect(complexLayoutRemoveAndAddTestButton, ConstraintAnchor.Type.LEFT, pressureTestButton, ConstraintAnchor.Type.RIGHT, 20)
-                .SetHeight(complexLayoutRemoveAndAddTestButton, ConstraintWidget.DimensionBehaviour.WRAP_CONTENT)
-                .SetWidth(complexLayoutRemoveAndAddTestButton, ConstraintWidget.DimensionBehaviour.WRAP_CONTENT);
-            set.AddConnect(ZLayoutTestButton, ConstraintAnchor.Type.TOP, firsttLineGuideline, ConstraintAnchor.Type.BOTTOM)
-                .AddConnect(ZLayoutTestButton, ConstraintAnchor.Type.BOTTOM, MainPage, ConstraintAnchor.Type.BOTTOM)
-                .AddConnect(ZLayoutTestButton, ConstraintAnchor.Type.LEFT, MainPage, ConstraintAnchor.Type.LEFT, 20)
-                .SetHeight(ZLayoutTestButton, ConstraintWidget.DimensionBehaviour.WRAP_CONTENT)
-                .SetWidth(ZLayoutTestButton, ConstraintWidget.DimensionBehaviour.WRAP_CONTENT);
+            set.AddConnect(pressureTestButton, ConstraintSet.Side.CenterY, MainPage, ConstraintSet.Side.CenterY)
+                .AddConnect(pressureTestButton, ConstraintSet.Side.Left, MainPage, ConstraintSet.Side.Left)
+                .AddConnect(pressureTestButton, ConstraintSet.Side.Right, complexLayoutRemoveAndAddTestButton, ConstraintSet.Side.Left);
+
+            set.AddConnect(complexLayoutRemoveAndAddTestButton, ConstraintSet.Side.CenterY, MainPage, ConstraintSet.Side.CenterY)
+                .AddConnect(complexLayoutRemoveAndAddTestButton, ConstraintSet.Side.Left, pressureTestButton, ConstraintSet.Side.Right, 20)
+                .AddConnect(complexLayoutRemoveAndAddTestButton, ConstraintSet.Side.Right, MainPage, ConstraintSet.Side.Right);
         }
 
 
