@@ -19,6 +19,9 @@ namespace SharpConstraintLayout.Wpf
             Bottom = 3,
         }
 
+        /// <summary>
+        /// At this side set barrier
+        /// </summary>
         public Side BarrierSide
         {
             get
@@ -32,6 +35,11 @@ namespace SharpConstraintLayout.Wpf
             }
         }
 
+        /// <summary>
+        /// Set barrier at view.
+        /// </summary>
+        /// <param name="view"></param>
+        /// <exception cref="ArgumentException"></exception>
         public void AddView(FrameworkElement view)
         {
             var parent = Parent is ConstraintLayout ? Parent as ConstraintLayout : throw new ArgumentException($"{this} is not constraintlayout child");
@@ -39,6 +47,11 @@ namespace SharpConstraintLayout.Wpf
             Barrier.add(widget);
         }
 
+        /// <summary>
+        /// Set barrier at views.
+        /// </summary>
+        /// <param name="views"></param>
+        /// <exception cref="ArgumentException"></exception>
         public void AddViews(FrameworkElement[] views)
         {
             var parent = Parent is ConstraintLayout ? Parent as ConstraintLayout : throw new ArgumentException($"{this} is not constraintlayout child");

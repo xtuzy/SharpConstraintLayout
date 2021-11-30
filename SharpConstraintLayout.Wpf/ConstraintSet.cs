@@ -8,16 +8,54 @@ using System.Windows;
 
 namespace SharpConstraintLayout.Wpf
 {
-    /// <summary>
-    /// Text orientation
-    /// </summary>
-    public enum TextOrientation
-    {
-        LeftToRight,
-        RightToLeft
-    }
+    
     public class ConstraintSet
     {
+        /// <summary>
+        /// Text orientation
+        /// </summary>
+        public enum TextOrientation
+        {
+            LeftToRight,
+            RightToLeft
+        }
+
+        public enum Visibility
+        {
+            /*public const int VISIBLE = 0;
+            public const int INVISIBLE = 4;
+            public const int GONE = 8;*/
+            Visible = 0,
+            Invisible = 4,
+            Gone = 8,
+        }
+
+        public enum SizeType
+        {
+            /*FIXED,
+            WRAP_CONTENT,
+            MATCH_CONSTRAINT,
+            MATCH_PARENT*/
+            Fixed,
+            Wrap_Content,
+            Match_Constraint,
+            Match_Parent,
+        }
+
+        public enum LayoutStyle
+        {
+            /*public const int CHAIN_SPREAD = 0;
+            public const int CHAIN_SPREAD_INSIDE = 1;
+            public const int CHAIN_PACKED = 2;*/
+            /// <summary>
+            /// default style
+            /// </summary>
+            Chain_Spread,
+            Chain_Spread_Inside,
+            Chain_Packed
+        }
+
+
         WeakReference<ConstraintLayout> Parent;//一个ConstraintSet基本只使用一次,需要时重新创建,所以直接弱引用避免内存泄漏
 
         public ConstraintSet(ConstraintLayout parent)
@@ -69,8 +107,6 @@ namespace SharpConstraintLayout.Wpf
             return this;
         }
 
-
-
         /// <summary>
         /// Set view's width according to <br/>
         /// Constraint <see cref="ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT"></see> <br/>
@@ -105,8 +141,6 @@ namespace SharpConstraintLayout.Wpf
             viewWidget.MinHeight = minHeight;
             return this;
         }
-
-        //TODO:radtio public ConstraintSet Set
 
         /// <summary>
         /// 去掉某一个View的约束
@@ -319,7 +353,7 @@ namespace SharpConstraintLayout.Wpf
         /// <param name="bias">0~1,only when set <see cref="LayoutStyle.Chain_Packed"/>,it is effective</param>
         /// <returns></returns>
         /// <exception cref="ArgumentException">Parent of fromView is not ConstraintLayout</exception>
-        public static FrameworkElement SetHorizontalLayoutStyle(this FrameworkElement fromView, LayoutStyle layoutStyle, float bias = float.NaN)
+        public static FrameworkElement SetHorizontalLayoutStyle(this FrameworkElement fromView, ConstraintSet.LayoutStyle layoutStyle, float bias = float.NaN)
         {
             var parent = fromView.Parent is ConstraintLayout ? fromView.Parent as ConstraintLayout : throw new ArgumentException($"Parent of {fromView} is not ConstraintLayout");
             var fromWidget = parent.GetWidget(fromView);
@@ -339,7 +373,7 @@ namespace SharpConstraintLayout.Wpf
         /// <param name="bias">0~1,only when set <see cref="LayoutStyle.Chain_Packed"/>,it is effective</param>
         /// <returns></returns>
         /// <exception cref="ArgumentException">Parent of fromView is not ConstraintLayout</exception>
-        public static FrameworkElement SetVerticalLayoutStyle(this FrameworkElement fromView, LayoutStyle layoutStyle, float bias = float.NaN)
+        public static FrameworkElement SetVerticalLayoutStyle(this FrameworkElement fromView, ConstraintSet.LayoutStyle layoutStyle, float bias = float.NaN)
         {
             var parent = fromView.Parent is ConstraintLayout ? fromView.Parent as ConstraintLayout : throw new ArgumentException($"Parent of {fromView} is not ConstraintLayout");
             var fromWidget = parent.GetWidget(fromView);
@@ -349,6 +383,23 @@ namespace SharpConstraintLayout.Wpf
             return fromView;
         }
 
+        /// <summary>
+        /// Set a circular constraint
+        /// </summary>
+        /// <param name="fromView"></param>
+        /// <param name="toView"> the target view we will use as the center of the circle</param>
+        /// <param name="angle">  the angle (from 0 to 360) </param>
+        /// <param name="radius"> the radius used </param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException">Parent of fromView is not ConstraintLayout</exception>
+        public static FrameworkElement CenterToCircle(this FrameworkElement fromView, FrameworkElement toView, float angle, int radius)
+        {
+            var parent = fromView.Parent is ConstraintLayout ? fromView.Parent as ConstraintLayout : throw new ArgumentException($"Parent of {fromView} is not ConstraintLayout");
+            var fromWidget = parent.GetWidget(fromView);
+            var toWidget = parent.GetWidget(toView);
+            fromWidget.connectCircularConstraint(toWidget, angle, radius);
+            return fromView;
+        }
 
         #endregion Position
 
@@ -358,7 +409,7 @@ namespace SharpConstraintLayout.Wpf
         /// <summary>
         /// create constraint for child width.<br/>
         /// Notice:<br/>
-        /// 1.if you set <see cref="ConstraintSizeType.Match_Parent"/> or <see cref="ConstraintSizeType.Match_Constraint"/>,must not set <see cref="FrameworkElement.Width"/>,they are conflict.<br/>
+        /// 1.if you set <see cref="SizeType.Match_Parent"/> or <see cref="SizeType.Match_Constraint"/>,must not set <see cref="FrameworkElement.Width"/>,they are conflict.<br/>
         /// 2.if you set <see cref="LayoutStyle"/> is <see cref="LayoutStyle.Chain_Packed"/>,must not set weight,they are conflict.
         /// </summary>
         /// <param name="fromView"></param>
@@ -366,7 +417,7 @@ namespace SharpConstraintLayout.Wpf
         /// <param name="weight">fromView's weight at horizontal when multiple view's constraint is a chain</param>
         /// <returns></returns>
         /// <exception cref="ArgumentException">Parent of fromView is not ConstraintLayout</exception>
-        public static FrameworkElement SetWidth(this FrameworkElement fromView, ConstraintSizeType constraint, float weight = float.NaN)
+        public static FrameworkElement SetWidth(this FrameworkElement fromView, ConstraintSet.SizeType constraint, float weight = float.NaN)
         {
             var parent = fromView.Parent is ConstraintLayout ? fromView.Parent as ConstraintLayout : throw new ArgumentException($"Parent of {fromView} is not ConstraintLayout");
             var fromWidget = parent.GetWidget(fromView);
@@ -384,7 +435,7 @@ namespace SharpConstraintLayout.Wpf
         /// <param name="constraint"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
-        public static FrameworkElement SetWidth(this ConstraintLayout fromView, ConstraintSizeType constraint)
+        public static FrameworkElement SetWidth(this ConstraintLayout fromView, ConstraintSet.SizeType constraint)
         {
             var fromWidget = fromView.Root;
             fromWidget.HorizontalDimensionBehaviour = ConstraintSizeTypeDic[(int)constraint];
@@ -410,7 +461,7 @@ namespace SharpConstraintLayout.Wpf
 
         /// <summary>
         /// create constraint for child height.<br/>
-        /// 1.if you set <see cref="ConstraintSizeType.Match_Parent"/> or <see cref="ConstraintSizeType.Match_Constraint"/>,must not set <see cref="FrameworkElement.Height"/>,they are conflict.<br/>
+        /// 1.if you set <see cref="SizeType.Match_Parent"/> or <see cref="SizeType.Match_Constraint"/>,must not set <see cref="FrameworkElement.Height"/>,they are conflict.<br/>
         /// 2.if you set <see cref="LayoutStyle"/> is <see cref="LayoutStyle.Chain_Packed"/>,must not set weight,they are conflict.
         /// </summary>
         /// <param name="fromView"></param>
@@ -418,7 +469,7 @@ namespace SharpConstraintLayout.Wpf
         /// <param name="weight">fromview's weight at vertical when multiple view's constraint is a chain</param>
         /// <returns></returns>
         /// <exception cref="ArgumentException">Parent of fromView is not ConstraintLayout</exception>
-        public static FrameworkElement SetHeight(this FrameworkElement fromView, ConstraintSizeType constraint, float weight = float.NaN)
+        public static FrameworkElement SetHeight(this FrameworkElement fromView, ConstraintSet.SizeType constraint, float weight = float.NaN)
         {
             var parent = fromView.Parent is ConstraintLayout ? fromView.Parent as ConstraintLayout : throw new ArgumentException($"Parent of {fromView} is not ConstraintLayout");
             var fromWidget = parent.GetWidget(fromView);
@@ -436,7 +487,7 @@ namespace SharpConstraintLayout.Wpf
         /// <param name="root"></param>
         /// <param name="constraint"></param>
         /// <returns></returns>
-        public static FrameworkElement SetHeight(this ConstraintLayout root, ConstraintSizeType constraint)
+        public static FrameworkElement SetHeight(this ConstraintLayout root, ConstraintSet.SizeType constraint)
         {
             var fromWidget = root.Root;
             fromWidget.VerticalDimensionBehaviour = ConstraintSizeTypeDic[(int)constraint];
@@ -495,7 +546,24 @@ namespace SharpConstraintLayout.Wpf
 
         #endregion Size
 
+        #region Visiable
+        /// <summary>
+        /// Set the visibility for this view.It will recalculate constraint.
+        /// </summary>
+        /// <param name="fromView"></param>
+        /// <param name="visibility">either VISIBLE, INVISIBLE, or GONE</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException">Parent of fromView is not ConstraintLayout</exception>
+        public static FrameworkElement SetVisibility(this FrameworkElement fromView, ConstraintSet.Visibility visibility)
+        {
+            var parent = fromView.Parent is ConstraintLayout ? fromView.Parent as ConstraintLayout : throw new ArgumentException($"Parent of {fromView} is not ConstraintLayout");
+            var fromWidget = parent.GetWidget(fromView);
+            fromWidget.Visibility = (int)visibility;
+            return fromView;
+        }
 
+
+        #endregion
         static readonly ConstraintWidget.DimensionBehaviour[] ConstraintSizeTypeDic = new ConstraintWidget.DimensionBehaviour[]
         {
             ConstraintWidget.DimensionBehaviour.FIXED,
@@ -504,30 +572,6 @@ namespace SharpConstraintLayout.Wpf
             ConstraintWidget.DimensionBehaviour.MATCH_PARENT,
         };
     }
-
-    public enum ConstraintSizeType
-    {
-        /*FIXED,
-        WRAP_CONTENT,
-        MATCH_CONSTRAINT,
-        MATCH_PARENT*/
-        Fixed,
-        Wrap_Content,
-        Match_Constraint,
-        Match_Parent,
-    }
-
-    public enum LayoutStyle
-    {
-        /*public const int CHAIN_SPREAD = 0;
-        public const int CHAIN_SPREAD_INSIDE = 1;
-        public const int CHAIN_PACKED = 2;*/
-        /// <summary>
-        /// default style
-        /// </summary>
-        Chain_Spread,
-        Chain_Spread_Inside,
-        Chain_Packed
-    }
+    
     #endregion
 }

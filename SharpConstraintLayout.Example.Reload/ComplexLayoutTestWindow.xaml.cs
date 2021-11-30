@@ -70,6 +70,7 @@ namespace SharpConstraintLayout.Example.Reload
             var BarrierTestButton = new Button() { Content = "BarrierTest", Margin = new Thickness(10, 5, 0, 5) };
             var ChainTestButton = new Button() { Content = "ChainTest", Margin = new Thickness(10, 5, 0, 5) };
             var WidthHeightRatioTestButton = new Button() { Content = "WidthHeightRatioTest", Margin = new Thickness(10, 5, 0, 5) };
+            var CircleTestButton = new Button() { Content = "CircleTest", Margin = new Thickness(10, 5, 0, 5) };
 
             toolBar.Children.Add(RemoveConstraintTestButton);
             toolBar.Children.Add(RemoveViewTestButton);
@@ -191,24 +192,24 @@ namespace SharpConstraintLayout.Example.Reload
 
             //set weight,LeftToX and RightToX must all exist.
             firstButton.LeftToLeft(Page).RightToLeft(secondButton).TopToTop(Page)
-                .SetWidth(ConstraintSizeType.Match_Constraint, 1f);
+                .SetWidth(ConstraintSet.SizeType.Match_Constraint, 1f);
             secondButton.LeftToRight(firstButton).RightToRight(Page).TopToTop(Page)
-                .SetWidth(ConstraintSizeType.Match_Constraint,0.5f);
+                .SetWidth(ConstraintSet.SizeType.Match_Constraint,0.5f);
             //set chain spread,LeftToX and RightToX must all exist.
             thirdButton.LeftToLeft(Page).RightToLeft(forthButton).CenterY(Page)
-                .SetHorizontalLayoutStyle(LayoutStyle.Chain_Spread);//it is default,you can not set
+                .SetHorizontalLayoutStyle(ConstraintSet.LayoutStyle.Chain_Spread);//it is default,you can not set
             forthButton.LeftToRight(thirdButton).RightToLeft(fifthButton). CenterY(Page);
             fifthButton.LeftToRight(forthButton).RightToRight(Page).CenterY(Page);
 
             //set chain spread inside,LeftToX and RightToX must all exist.
             sixthButton.LeftToLeft(Page).RightToLeft(seventhButton).TopToBottom(fifthButton,20)
-                .SetHorizontalLayoutStyle(LayoutStyle.Chain_Spread_Inside);
+                .SetHorizontalLayoutStyle(ConstraintSet.LayoutStyle.Chain_Spread_Inside);
             seventhButton.LeftToRight(sixthButton).RightToLeft(eighthButton).TopToTop(sixthButton);
             eighthButton.LeftToRight(seventhButton).RightToRight(Page).TopToTop(sixthButton);
 
             //set chain packed + bias
             ninthButton.LeftToLeft(Page).RightToLeft(tenthButton).TopToBottom(eighthButton, 20)
-                .SetHorizontalLayoutStyle(LayoutStyle.Chain_Packed, 0.25f);
+                .SetHorizontalLayoutStyle(ConstraintSet.LayoutStyle.Chain_Packed, 0.25f);
             tenthButton.LeftToRight(ninthButton).RightToLeft(eleventhButton).TopToTop(ninthButton);
             eleventhButton.LeftToRight(tenthButton).RightToRight(Page).TopToTop(ninthButton);
 
