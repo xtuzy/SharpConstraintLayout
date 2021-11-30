@@ -25,8 +25,17 @@ namespace SharpConstraintLayout.Wpf
             /*public const int VISIBLE = 0;
             public const int INVISIBLE = 4;
             public const int GONE = 8;*/
+            /// <summary>
+            /// Display the element.
+            /// </summary>
             Visible = 0,
+            /// <summary>
+            /// Do not display the element, but reserve space for the element in layout.
+            /// </summary>
             Invisible = 4,
+            /// <summary>
+            ///  Do not display the element, and do not reserve space for it in layout.
+            /// </summary>
             Gone = 8,
         }
 
@@ -559,6 +568,18 @@ namespace SharpConstraintLayout.Wpf
             var parent = fromView.Parent is ConstraintLayout ? fromView.Parent as ConstraintLayout : throw new ArgumentException($"Parent of {fromView} is not ConstraintLayout");
             var fromWidget = parent.GetWidget(fromView);
             fromWidget.Visibility = (int)visibility;
+            switch (visibility)
+            {
+                case ConstraintSet.Visibility.Visible:
+                    fromView.Visibility = System.Windows.Visibility.Visible;
+                    break;
+                case ConstraintSet.Visibility.Gone:
+                    fromView.Visibility = System.Windows.Visibility.Collapsed;
+                    break;
+                case ConstraintSet.Visibility.Invisible:
+                    fromView.Visibility = System.Windows.Visibility.Hidden;
+                    break;
+            }
             return fromView;
         }
 

@@ -59,6 +59,7 @@ namespace SharpConstraintLayout.Example.Reload
             //工具栏详细设置
             var RemoveConstraintTestButton = new Button() { Content = "RemoveConstraintTest", Margin = new Thickness(10, 5, 0, 5) };
             var RemoveViewTestButton = new Button() { Content = "RemoveViewTest", Margin = new Thickness(10, 5, 0, 5) };
+            var VisibilityTestButton = new Button() { Content = "VisibilityTest", Margin = new Thickness(10, 5, 0, 5) };
             var NestedConstraintLayoutTestButton = new Button() { Content = "NestedConstraintLayoutTest", Margin = new Thickness(10, 5, 0, 5) };
             var NestedGridTestButton = new Button() { Content = "NestedGridTest", Margin = new Thickness(10, 5, 0, 5) };
             var GridNestedConstaintLayoutTestButton = new Button() { Content = "GridNestedConstaintLayoutTest", Margin = new Thickness(10, 5, 0, 5) };
@@ -71,33 +72,48 @@ namespace SharpConstraintLayout.Example.Reload
             var ChainTestButton = new Button() { Content = "ChainTest", Margin = new Thickness(10, 5, 0, 5) };
             var WidthHeightRatioTestButton = new Button() { Content = "WidthHeightRatioTest", Margin = new Thickness(10, 5, 0, 5) };
             var CircleTestButton = new Button() { Content = "CircleTest", Margin = new Thickness(10, 5, 0, 5) };
+            
+
 
             toolBar.Children.Add(RemoveConstraintTestButton);
             toolBar.Children.Add(RemoveViewTestButton);
+            toolBar.Children.Add(VisibilityTestButton);
             toolBar.Children.Add(NestedConstraintLayoutTestButton);
 
             toolBar.Children.Add(NestedGridTestButton);
             toolBar.Children.Add(GridNestedConstaintLayoutTestButton);
+
             toolBar.Children.Add(NestListViewTestButton);
             toolBar.Children.Add(ListViewNestConstraintTestButton);
+
             toolBar.Children.Add(GridCompareConstraintNestListViewTestButton);
+
             toolBar.Children.Add(WarpPanelNestContraintLayoutTestButton);
+
             toolBar.Children.Add(NewApiTestButton);
             toolBar.Children.Add(BarrierTestButton);
             toolBar.Children.Add(ChainTestButton);
             toolBar.Children.Add(WidthHeightRatioTestButton);
+            toolBar.Children.Add(CircleTestButton);
 
             RemoveConstraintTestButton.Click += (sender, e) =>
             {
                 RemoveConstraintTest(testPanel);
             };
-            NestedConstraintLayoutTestButton.Click += (sender, e) =>
-            {
-                NestedConstraintLayoutTest(testPanel);
-            };
+            
             RemoveViewTestButton.Click += (sender, e) =>
             {
                 RemoveViewTest(testPanel);
+            };
+
+            VisibilityTestButton.Click += (sender, e) =>
+            {
+                VisibilityTest(testPanel);
+            };
+
+            NestedConstraintLayoutTestButton.Click += (sender, e) =>
+            {
+                NestedConstraintLayoutTest(testPanel);
             };
 
             NestedGridTestButton.Click += (sender, e) =>
@@ -145,7 +161,89 @@ namespace SharpConstraintLayout.Example.Reload
                 WidthHeightRatioTest(testPanel);
             };
 
+            CircleTestButton.Click += (sender, e) =>
+            {
+                CircleTest(testPanel);
+            };
 
+        }
+
+        private void CircleTest(ConstraintLayout testPanel)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void VisibilityTest(ConstraintLayout Page)
+        {
+            Page.Children.Clear();
+            Button firstButton = new Button() { Content = "First", Tag = "first", Width = 100, Height = 100 };
+            Button secondButton = new Button() { Content = "Second ", Tag = "second", Width = 100, Height = 100 };
+            Button thirdButton = new Button() { Content = "Third ", Tag = "third", Width = 100, Height = 100 };
+            Button forthButton = new Button() { Content = "Forth ", Tag = "forth", Width = 100, Height = 100 };
+
+            Button fifthButton = new Button() { Content = "Fifth ", Width = 100, Height = 100 };
+            Button sixthButton = new Button() { Content = "Sixth ", Width = 100, Height = 100 };
+            Button seventhButton = new Button() { Content = "Seventh ", Width = 100, Height = 100 };
+            Button eighthButton = new Button() { Content = "Eighth", Width = 100, Height = 100 };
+
+            Page.Children.Add(firstButton);
+            Page.Children.Add(secondButton);
+            Page.Children.Add(thirdButton);
+            Page.Children.Add(forthButton);
+
+            Page.Children.Add(fifthButton);
+            Page.Children.Add(sixthButton);
+            Page.Children.Add(seventhButton);
+            Page.Children.Add(eighthButton);
+
+            ConstraintSet set = new ConstraintSet(Page);
+
+            set.AddConnect(firstButton, ConstraintAnchor.Type.CENTER, Page, ConstraintAnchor.Type.CENTER)
+                .AddConnect(secondButton, ConstraintAnchor.Type.LEFT, firstButton, ConstraintAnchor.Type.RIGHT)
+                .AddConnect(secondButton, ConstraintAnchor.Type.TOP, firstButton, ConstraintAnchor.Type.TOP)
+                .AddConnect(thirdButton, ConstraintAnchor.Type.LEFT, secondButton, ConstraintAnchor.Type.RIGHT)
+                .AddConnect(thirdButton, ConstraintAnchor.Type.TOP, secondButton, ConstraintAnchor.Type.TOP)
+                .AddConnect(forthButton, ConstraintAnchor.Type.LEFT, thirdButton, ConstraintAnchor.Type.RIGHT)
+                .AddConnect(forthButton, ConstraintAnchor.Type.TOP, firstButton, ConstraintAnchor.Type.TOP);
+
+            set.AddConnect(fifthButton, ConstraintAnchor.Type.LEFT, firstButton, ConstraintAnchor.Type.LEFT)
+                .AddConnect(fifthButton, ConstraintAnchor.Type.TOP, firstButton, ConstraintAnchor.Type.BOTTOM)
+                .AddConnect(sixthButton, ConstraintAnchor.Type.LEFT, fifthButton, ConstraintAnchor.Type.RIGHT)
+                .AddConnect(sixthButton, ConstraintAnchor.Type.TOP, fifthButton, ConstraintAnchor.Type.TOP)
+                .AddConnect(seventhButton, ConstraintAnchor.Type.LEFT, sixthButton, ConstraintAnchor.Type.RIGHT)
+                .AddConnect(seventhButton, ConstraintAnchor.Type.TOP, fifthButton, ConstraintAnchor.Type.TOP)
+                .AddConnect(eighthButton, ConstraintAnchor.Type.LEFT, seventhButton, ConstraintAnchor.Type.RIGHT)
+                .AddConnect(eighthButton, ConstraintAnchor.Type.TOP, fifthButton, ConstraintAnchor.Type.TOP);
+
+            Page.InvalidateVisual();
+
+            //gone
+            firstButton.Click += (sender, e) =>
+            {
+                thirdButton.SetVisibility(ConstraintSet.Visibility.Gone);
+                Page.InvalidateMeasure();
+
+            };
+            //visible
+            secondButton.Click += (sender, e) =>
+            {
+                thirdButton.SetVisibility(ConstraintSet.Visibility.Visible);
+                Page.InvalidateMeasure();
+            };
+            //invisible
+            fifthButton.Click += (sender, e) =>
+            {
+                seventhButton.SetVisibility(ConstraintSet.Visibility.Invisible);
+                Page.InvalidateMeasure();
+
+            };
+            //visible
+            sixthButton.Click += (sender, e) =>
+            {
+                seventhButton.SetVisibility(ConstraintSet.Visibility.Visible);
+                Page.InvalidateMeasure();
+
+            };
         }
 
         private void WidthHeightRatioTest(ConstraintLayout Page)
@@ -479,42 +577,37 @@ namespace SharpConstraintLayout.Example.Reload
             Button thirdButton = new Button() { Content = "Third ", Tag = "third", Width = 100, Height = 100 };
             Button forthButton = new Button() { Content = "Forth ", Tag = "forth", Width = 100, Height = 100 };
 
-            GuideLine firstHorizontalGuideline = new GuideLine() { Orientation = GuideLine.Orientations.HORIZONTAL, Percent = 0.5f, Tag = "firstGuideline" };
-            GuideLine firstVerticalGuideline = new GuideLine() { Orientation = GuideLine.Orientations.VERTICAL, Percent = 0.5f, Tag = "secondGuideline" };
             Page.Children.Add(firstButton);
             Page.Children.Add(secondButton);
             Page.Children.Add(thirdButton);
             Page.Children.Add(forthButton);
-            Page.Children.Add(firstHorizontalGuideline);
-            Page.Children.Add(firstVerticalGuideline);
 
             ConstraintSet set = new ConstraintSet(Page);
 
-            set.AddConnect(firstButton, ConstraintAnchor.Type.LEFT, firstVerticalGuideline, ConstraintAnchor.Type.RIGHT)
-                .AddConnect(firstButton, ConstraintAnchor.Type.TOP, Page, ConstraintAnchor.Type.TOP)
-                .AddConnect(firstButton, ConstraintAnchor.Type.BOTTOM, firstHorizontalGuideline, ConstraintAnchor.Type.TOP)
+            set.AddConnect(firstButton, ConstraintAnchor.Type.CENTER, Page, ConstraintAnchor.Type.CENTER)
                 .AddConnect(secondButton, ConstraintAnchor.Type.LEFT, firstButton, ConstraintAnchor.Type.RIGHT)
                 .AddConnect(secondButton, ConstraintAnchor.Type.TOP, firstButton, ConstraintAnchor.Type.TOP)
                 .AddConnect(thirdButton, ConstraintAnchor.Type.LEFT, secondButton, ConstraintAnchor.Type.RIGHT)
                 .AddConnect(thirdButton, ConstraintAnchor.Type.TOP, secondButton, ConstraintAnchor.Type.TOP)
                 .AddConnect(forthButton, ConstraintAnchor.Type.LEFT, thirdButton, ConstraintAnchor.Type.RIGHT)
-                .AddConnect(forthButton, ConstraintAnchor.Type.TOP, thirdButton, ConstraintAnchor.Type.TOP);
+                .AddConnect(forthButton, ConstraintAnchor.Type.TOP, firstButton, ConstraintAnchor.Type.TOP);
 
             Page.InvalidateVisual();
 
-            //remove view
+            //remove view,this will remove view at visualtree and remove all constraint related to the view.
             firstButton.Click += (sender, e) =>
             {
                 Page.Children.Remove(thirdButton);
                 Page.InvalidateMeasure();
 
             };
-            //add view, we need add it's constraint
+            //add view, we need add it's constraint,and other view's constraint rely on it.
             secondButton.Click += (sender, e) =>
             {
                 Page.Children.Add(thirdButton);
                 set.AddConnect(thirdButton, ConstraintAnchor.Type.LEFT, secondButton, ConstraintAnchor.Type.RIGHT, 50)
-                    .AddConnect(thirdButton, ConstraintAnchor.Type.TOP, secondButton, ConstraintAnchor.Type.TOP);
+                    .AddConnect(thirdButton, ConstraintAnchor.Type.TOP, secondButton, ConstraintAnchor.Type.TOP)
+                    .AddConnect(forthButton, ConstraintAnchor.Type.LEFT, thirdButton, ConstraintAnchor.Type.RIGHT);
                 Page.InvalidateMeasure();
             };
         }
@@ -531,20 +624,14 @@ namespace SharpConstraintLayout.Example.Reload
             Button thirdButton = new Button() { Content = "Third ", Tag = "third", Width = 100, Height = 100 };
             Button forthButton = new Button() { Content = "Forth ", Tag = "forth", Width = 100, Height = 100 };
 
-            GuideLine firstHorizontalGuideline = new GuideLine() { Orientation = GuideLine.Orientations.HORIZONTAL, Percent = 0.5f, Tag = "firstGuideline" };
-            GuideLine firstVerticalGuideline = new GuideLine() { Orientation = GuideLine.Orientations.VERTICAL, Percent = 0.5f, Tag = "secondGuideline" };
             Page.Children.Add(firstButton);
             Page.Children.Add(secondButton);
             Page.Children.Add(thirdButton);
             Page.Children.Add(forthButton);
-            Page.Children.Add(firstHorizontalGuideline);
-            Page.Children.Add(firstVerticalGuideline);
 
             ConstraintSet set = new ConstraintSet(Page);
 
-            set.AddConnect(firstButton, ConstraintAnchor.Type.LEFT, firstVerticalGuideline, ConstraintAnchor.Type.RIGHT)
-                .AddConnect(firstButton, ConstraintAnchor.Type.TOP, Page, ConstraintAnchor.Type.TOP)
-                .AddConnect(firstButton, ConstraintAnchor.Type.BOTTOM, firstHorizontalGuideline, ConstraintAnchor.Type.TOP)
+            set.AddConnect(firstButton, ConstraintAnchor.Type.CENTER, Page, ConstraintAnchor.Type.CENTER)
                 .AddConnect(secondButton, ConstraintAnchor.Type.LEFT, firstButton, ConstraintAnchor.Type.RIGHT)
                 .AddConnect(secondButton, ConstraintAnchor.Type.TOP, firstButton, ConstraintAnchor.Type.TOP)
                 .AddConnect(thirdButton, ConstraintAnchor.Type.LEFT, secondButton, ConstraintAnchor.Type.RIGHT)
