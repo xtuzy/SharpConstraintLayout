@@ -24,7 +24,7 @@ namespace SharpConstraintLayout.Wpf
             ConstraintAnchor.Type.CENTER_Y
         };
 
-        static readonly ConstraintWidget.DimensionBehaviour[] ConstraintSizeTypeDic = new ConstraintWidget.DimensionBehaviour[]
+        internal static readonly ConstraintWidget.DimensionBehaviour[] ConstraintSizeTypeDic = new ConstraintWidget.DimensionBehaviour[]
         {
             ConstraintWidget.DimensionBehaviour.FIXED,
             ConstraintWidget.DimensionBehaviour.WRAP_CONTENT,
@@ -132,10 +132,8 @@ namespace SharpConstraintLayout.Wpf
         }
 
         /// <summary>
-        /// Set view's width according to <br/>
-        /// Constraint <see cref="ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT"></see> <br/>
-        /// or Parent <see cref="ConstraintWidget.DimensionBehaviour.MATCH_PARENT"></see><br/>
-        /// or FrameworkElement.Width <see cref="ConstraintWidget.DimensionBehaviour.WRAP_CONTENT"></see><br/>
+        /// Set child view's width type。<br/>
+        /// Default is <see cref="ConstraintSet.SizeType.WrapContent"/>.<br/>
         /// </summary>
         /// <param name="view"></param>
         /// <param name="sizeType">Set view's width according to Constraint or Parent or FrameworkElement.Width</param>
@@ -161,10 +159,8 @@ namespace SharpConstraintLayout.Wpf
         }
 
         /// <summary>
-        /// Set view's width according to <br/>
-        /// Constraint <see cref="ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT"></see> <br/>
-        /// or Parent <see cref="ConstraintWidget.DimensionBehaviour.MATCH_PARENT"></see><br/>
-        /// or FrameworkElement.Width <see cref="ConstraintWidget.DimensionBehaviour.WRAP_CONTENT"></see><br/>
+        /// Set child view's width type.<br/>
+        /// Default is <see cref="ConstraintSet.SizeType.WrapContent"/>.<br/>
         /// </summary>
         /// <param name="view"></param>
         /// <param name="sizeType"></param>
@@ -460,7 +456,8 @@ namespace SharpConstraintLayout.Wpf
         #region Size
 
         /// <summary>
-        /// create constraint for child width.<br/>
+        /// Create constraint for child width.<br/>
+        /// Default is <see cref="ConstraintSet.SizeType.WrapContent"/>.<br/>
         /// Notice:<br/>
         /// 1.if you set <see cref="SizeType.Match_Parent"/> or <see cref="SizeType.Match_Constraint"/>,must not set <see cref="FrameworkElement.Width"/>,they are conflict.<br/>
         /// 2.if you set <see cref="LayoutStyle"/> is <see cref="LayoutStyle.Chain_Packed"/>,must not set weight,they are conflict.
@@ -474,26 +471,14 @@ namespace SharpConstraintLayout.Wpf
         {
             var parent = fromView.Parent is ConstraintLayout ? fromView.Parent as ConstraintLayout : throw new ArgumentException($"Parent of {fromView} is not ConstraintLayout");
             var fromWidget = parent.GetWidget(fromView);
-            fromWidget.HorizontalDimensionBehaviour = ConstraintSizeTypeDic[(int)constraint];
+            fromWidget.HorizontalDimensionBehaviour = ConstraintSet.ConstraintSizeTypeDic[(int)constraint];
             if (!float.IsNaN(weight))
             {
                 fromWidget.HorizontalWeight = weight;
             }
             return fromView;
         }
-        /// <summary>
-        /// Set width of ConstraintLayout self.
-        /// </summary>
-        /// <param name="fromView"></param>
-        /// <param name="constraint"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentException"></exception>
-        public static FrameworkElement SetWidth(this ConstraintLayout fromView, ConstraintSet.SizeType constraint)
-        {
-            var fromWidget = fromView.Root;
-            fromWidget.HorizontalDimensionBehaviour = ConstraintSizeTypeDic[(int)constraint];
-            return fromView;
-        }
+        
 
         /// <summary>
         /// Set child width is a fixed value.
@@ -513,7 +498,9 @@ namespace SharpConstraintLayout.Wpf
         }
 
         /// <summary>
-        /// create constraint for child height.<br/>
+        /// Create constraint for child height.<br/>
+        /// Default is <see cref="ConstraintSet.SizeType.WrapContent"/>.<br/>
+        /// Notice:<br/>
         /// 1.if you set <see cref="SizeType.Match_Parent"/> or <see cref="SizeType.Match_Constraint"/>,must not set <see cref="FrameworkElement.Height"/>,they are conflict.<br/>
         /// 2.if you set <see cref="LayoutStyle"/> is <see cref="LayoutStyle.Chain_Packed"/>,must not set weight,they are conflict.
         /// </summary>
@@ -526,7 +513,7 @@ namespace SharpConstraintLayout.Wpf
         {
             var parent = fromView.Parent is ConstraintLayout ? fromView.Parent as ConstraintLayout : throw new ArgumentException($"Parent of {fromView} is not ConstraintLayout");
             var fromWidget = parent.GetWidget(fromView);
-            fromWidget.VerticalDimensionBehaviour = ConstraintSizeTypeDic[(int)constraint];
+            fromWidget.VerticalDimensionBehaviour = ConstraintSet.ConstraintSizeTypeDic[(int)constraint];
             if (!float.IsNaN(weight))
             {
                 fromWidget.VerticalWeight = weight;
@@ -534,18 +521,6 @@ namespace SharpConstraintLayout.Wpf
             return fromView;
         }
 
-        /// <summary>
-        /// Set height of ConstraintLayout self.
-        /// </summary>
-        /// <param name="root"></param>
-        /// <param name="constraint"></param>
-        /// <returns></returns>
-        public static FrameworkElement SetHeight(this ConstraintLayout root, ConstraintSet.SizeType constraint)
-        {
-            var fromWidget = root.Root;
-            fromWidget.VerticalDimensionBehaviour = ConstraintSizeTypeDic[(int)constraint];
-            return root;
-        }
 
         /// <summary>
         /// Set child height is a fixed value.
@@ -629,13 +604,6 @@ namespace SharpConstraintLayout.Wpf
 
 
         #endregion
-        static readonly ConstraintWidget.DimensionBehaviour[] ConstraintSizeTypeDic = new ConstraintWidget.DimensionBehaviour[]
-        {
-            ConstraintWidget.DimensionBehaviour.FIXED,
-            ConstraintWidget.DimensionBehaviour.WRAP_CONTENT,
-            ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT,
-            ConstraintWidget.DimensionBehaviour.MATCH_PARENT,
-        };
     }
 
     #endregion

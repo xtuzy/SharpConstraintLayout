@@ -295,7 +295,8 @@ namespace SharpConstraintLayout.Wpf
 
 
         /// <summary>
-        /// default widget of ConstraintLayout
+        /// default widget of ConstraintLayout.
+        /// you can constrol more action by it.
         /// </summary>
         public virtual ConstraintWidgetContainer Root
         {
@@ -313,6 +314,41 @@ namespace SharpConstraintLayout.Wpf
         internal ConstraintWidget GetWidget(UIElement view)
         {
             return this.idsToConstraintWidgets[this.viewsToIds[view]];
+        }
+
+        /// <summary>
+        /// Set width of ConstraintLayout self.<br/>
+        /// Default is <see cref="ConstraintSet.SizeType.WrapContent"/>.<br/>
+        /// Notice:It is different <see cref="ConstraintSetExtensions.SetWidth(FrameworkElement, ConstraintSet.SizeType, float)(FrameworkElement, ConstraintSet.SizeType, float)"/>.
+        /// </summary>
+        /// <param name="fromView"></param>
+        /// <param name="constraint"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        public ConstraintSet.SizeType WidthType
+        {
+            set
+            {
+                var fromWidget = this.Root;
+                fromWidget.HorizontalDimensionBehaviour = ConstraintSet.ConstraintSizeTypeDic[(int)value];
+            }
+        }
+
+        /// <summary>
+        /// Set height of ConstraintLayout self.<br/>
+        /// Default is <see cref="ConstraintSet.SizeType.WrapContent"/>.<br/>
+        /// Notice:It is different <see cref="ConstraintSetExtensions.SetHeight(FrameworkElement, ConstraintSet.SizeType, float)"/>.
+        /// </summary>
+        /// <param name="root"></param>
+        /// <param name="constraint"></param>
+        /// <returns></returns>
+        public ConstraintSet.SizeType HeightType
+        {
+            set
+            {
+                var fromWidget = this.Root;
+                fromWidget.VerticalDimensionBehaviour = ConstraintSet.ConstraintSizeTypeDic[(int)value];
+            }
         }
 
         //copy from swing

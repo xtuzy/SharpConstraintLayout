@@ -1,5 +1,4 @@
-﻿using androidx.constraintlayout.core.widgets;
-using SharpConstraintLayout.Wpf;
+﻿using SharpConstraintLayout.Wpf;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -142,7 +141,7 @@ namespace SharpConstraintLayout.Example.Reload
 
             WarpPanelNestContraintLayoutTestButton.Click += (sender, e) =>
             {
-                WarpPanelNestContraintLayoutTest(testPanel);
+                WrapPanelNestContraintLayoutTest(testPanel);
             };
 
             NewApiTestButton.Click += (sender, e) =>
@@ -459,7 +458,7 @@ namespace SharpConstraintLayout.Example.Reload
             seventeenthButton.LeftToRight(sixteenthButton).BottomToBottom(firstButton, 20);
         }
 
-        private void WarpPanelNestContraintLayoutTest(ConstraintLayout Page)
+        private void WrapPanelNestContraintLayoutTest(ConstraintLayout Page)
         {
             Page.Children.Clear();
             var wrapPanel = new WrapPanel()
@@ -477,9 +476,9 @@ namespace SharpConstraintLayout.Example.Reload
                 Tag = "constraintlayout",
                 Background = new SolidColorBrush(Colors.RosyBrown),
                 //DEBUG = true,
+                WidthType = ConstraintSet.SizeType.WrapContent,
+                HeightType = ConstraintSet.SizeType.WrapContent,
             };
-            constraintlayout.Root.VerticalDimensionBehaviour = ConstraintWidget.DimensionBehaviour.WRAP_CONTENT;
-            constraintlayout.Root.HorizontalDimensionBehaviour = ConstraintWidget.DimensionBehaviour.WRAP_CONTENT;
 
             Button firstButton = new Button() { Content = "First", Tag = "first", Width = 100, Height = 100 };
             Button secondButton = new Button() { Content = "Second ", Tag = "second", Width = 100, Height = 100 };
@@ -533,11 +532,11 @@ namespace SharpConstraintLayout.Example.Reload
                 {
                     //DEBUG=true,
                     Tag = "listview_item",
-                    Background = new SolidColorBrush(Colors.Brown)
+                    Background = new SolidColorBrush(Colors.Brown),
+                    HeightType = ConstraintSet.SizeType.WrapContent,
+                    WidthType = ConstraintSet.SizeType.WrapContent,
                 };
                 listView.Items.Add(item);
-                item.Root.VerticalDimensionBehaviour = ConstraintWidget.DimensionBehaviour.WRAP_CONTENT;
-                item.Root.HorizontalDimensionBehaviour = ConstraintWidget.DimensionBehaviour.WRAP_CONTENT;
                 Button firstButton = new Button() { Tag = "firstButton", Content = $"{index} Button" };
                 TextBlock secondTextBlock = new TextBlock() { Tag = "secondTestBlock", Text = $"{index} Second TextBlock" };
                 TextBlock thirdTextBlock = new TextBlock() { Tag = "thirdTextBlock", Text = $"{index} Third TextBlock" };
