@@ -176,11 +176,12 @@ namespace SharpConstraintLayout.Example.Reload
         private void FlowBoxTest(ConstraintLayout Page)
         {
             Page.Children.Clear();
+            //Horizontal
             Button firstButton = new Button() { Content = "First", Tag = "first", Width = 100, Height = 100 };
             Button secondButton = new Button() { Content = "Second ", Tag = "second", Width = 100, Height = 100 };
             Button thirdButton = new Button() { Content = "Third ", Tag = "third", Width = 100, Height = 100 };
             Button forthButton = new Button() { Content = "Forth ", Tag = "forth", Width = 100, Height = 100 };
-            FlowBox flow = new FlowBox() { WrapMode = FlowBox.Mode.Chain};
+            FlowBox horizontalFlow = new FlowBox() { WrapMode = FlowBox.Mode.Chain};
             Canvas canvas = new Canvas() { Background = new SolidColorBrush(Colors.Coral)};
 
             Page.Children.Add(canvas);
@@ -188,20 +189,22 @@ namespace SharpConstraintLayout.Example.Reload
             Page.Children.Add(secondButton);
             Page.Children.Add(thirdButton);
             Page.Children.Add(forthButton);
-            Page.Children.Add(flow);
+            Page.Children.Add(horizontalFlow);
             
 
-            flow.AddView(firstButton);
-            flow.AddView(secondButton);
-            flow.AddView(thirdButton);
-            flow.AddView(forthButton);
+            horizontalFlow.AddView(firstButton);
+            horizontalFlow.AddView(secondButton);
+            horizontalFlow.AddView(thirdButton);
+            horizontalFlow.AddView(forthButton);
 
-            flow.LeftToLeft(Page).RightToRight(Page)
+            horizontalFlow.LeftToLeft(Page).RightToRight(Page)
                 .SetWidth(ConstraintSet.SizeType.MatchConstraint)
                 .SetHeight(ConstraintSet.SizeType.WrapContent);
-            canvas.LeftToLeft(flow).RightToRight(flow).TopToTop(flow).BottomToBottom(flow)
+            canvas.LeftToLeft(horizontalFlow).RightToRight(horizontalFlow).TopToTop(horizontalFlow).BottomToBottom(horizontalFlow)
                 .SetWidth(ConstraintSet.SizeType.MatchConstraint)
                 .SetHeight(ConstraintSet.SizeType.MatchConstraint);
+
+            //Vertical
         }
 
         private void CircleTest(ConstraintLayout Page)
@@ -367,21 +370,31 @@ namespace SharpConstraintLayout.Example.Reload
         private void BarrierTest(ConstraintLayout Page)
         {
             Page.Children.Clear();
-            TextBox firstTextBox = new TextBox() { Text = "Line1" + Environment.NewLine + "Line2", Tag = "first",TextWrapping=TextWrapping.Wrap,MaxWidth=100, AcceptsReturn = true };
+            //Horizontal
+            TextBox firstTextBox = new TextBox() { Text = "First" + Environment.NewLine + "Line2", Tag = "first",TextWrapping=TextWrapping.Wrap,MaxWidth=100, AcceptsReturn = true };
             TextBox secondTextBox = new TextBox() { Text = "Second ", Tag = "second", AcceptsReturn = true };
-            Button thirdButton = new Button() { Content = "Third ", Tag = "third" };
-
+            Button firstButton = new Button() { Content = "First", Tag = "first" };
+            BarrierLine horizontalBarrier = new BarrierLine() { BarrierSide = BarrierLine.Side.Bottom };
             Page.Children.Add(firstTextBox);
             Page.Children.Add(secondTextBox);
-            Page.Children.Add(thirdButton);
-
-            BarrierLine barrier = new BarrierLine() { BarrierSide = BarrierLine.Side.Bottom };
-            Page.Children.Add(barrier);
-            barrier.AddView(firstTextBox);
-            barrier.AddView(secondTextBox);
+            Page.Children.Add(firstButton);
+            Page.Children.Add(horizontalBarrier);
+            horizontalBarrier.AddView(firstTextBox);
+            horizontalBarrier.AddView(secondTextBox);
             firstTextBox.Center(Page);
             secondTextBox.LeftToRight(firstTextBox,20).TopToTop(firstTextBox);
-            thirdButton.LeftToLeft(firstTextBox,20).TopToBottom(barrier);
+            firstButton.LeftToLeft(firstTextBox,20).TopToBottom(horizontalBarrier);
+            //Vertical
+            TextBox thirdTextBox = new TextBox() { Text = "Third ", Tag = "third", AcceptsReturn = true };
+            Button secondButton = new Button() { Content = "Second ", Tag = "second" };
+            BarrierLine verticalBarrier = new BarrierLine() { BarrierSide = BarrierLine.Side.Right };
+            Page.Children.Add(thirdTextBox);
+            Page.Children.Add(secondButton);
+            Page.Children.Add(verticalBarrier);
+            verticalBarrier.AddView(secondTextBox);
+            verticalBarrier.AddView(thirdTextBox);
+            thirdTextBox.LeftToLeft(secondTextBox).BottomToTop(secondTextBox);
+            secondButton.LeftToRight(verticalBarrier).TopToTop(thirdTextBox);
         }
 
         private void NewApiTest(ConstraintLayout Page)
