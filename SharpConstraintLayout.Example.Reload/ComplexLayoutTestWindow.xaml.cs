@@ -1,6 +1,7 @@
 ﻿using SharpConstraintLayout.Wpf;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -42,7 +43,7 @@ namespace SharpConstraintLayout.Example.Reload
             {
                 Tag = "TestPanel",
                 //TEST = true,
-                //DEBUG = true,
+                DEBUG = true,
             };
 
             page.Children.Add(toolBar);
@@ -72,8 +73,8 @@ namespace SharpConstraintLayout.Example.Reload
             var WidthHeightRatioTestButton = new Button() { Content = "WidthHeightRatioTest", Margin = new Thickness(10, 5, 0, 5) };
             var CircleTestButton = new Button() { Content = "CircleTest", Margin = new Thickness(10, 5, 0, 5) };
             var FlowBoxTestButton = new Button() { Content = "FlowBoxTest", Margin = new Thickness(10, 5, 0, 5) };
+            var BaselineTestButton = new Button() { Content = "BaselineTest", Margin = new Thickness(10, 5, 0, 5) };
             
-
 
             toolBar.Children.Add(RemoveConstraintTestButton);
             toolBar.Children.Add(RemoveViewTestButton);
@@ -96,6 +97,9 @@ namespace SharpConstraintLayout.Example.Reload
             toolBar.Children.Add(WidthHeightRatioTestButton);
             toolBar.Children.Add(CircleTestButton);
             toolBar.Children.Add(FlowBoxTestButton);
+            toolBar.Children.Add(BaselineTestButton);
+
+
 
             RemoveConstraintTestButton.Click += (sender, e) =>
             {
@@ -170,8 +174,61 @@ namespace SharpConstraintLayout.Example.Reload
             {
                 FlowBoxTest(testPanel);
             };
-
+            BaselineTestButton.Click += (sender, e) =>
+            {
+                //BaselineTest(testPanel);
+            };
+                
         }
+
+        /*private void BaselineTest(ConstraintLayout Page)
+        {
+            Page.Children.Clear();
+            TextBlock textBlock = new TextBlock() { Text = "牛啊牛啊",FontSize=30, Background = new SolidColorBrush(Colors.Pink),Margin=new Thickness(0,0,0,5),Padding =new Thickness(0,0,0,0),TextAlignment=TextAlignment.Center};
+            TextBlock textBlock1 = new TextBlock() { Text = "牛啊牛啊1",FontSize=60, Background = new SolidColorBrush(Colors.Pink),Margin=new Thickness(0,0,0,5),Padding =new Thickness(0,0,0,0),TextAlignment=TextAlignment.Center};
+            TextBox textBox = new TextBox() { Text = "马啊马啊",FontSize=30};
+            RichTextBox richTextBox = new RichTextBox() { };
+            Button button = new Button() { Content = "狗啊狗啊" ,FontSize=30,BorderThickness= new Thickness(0,0,0,0),Padding = new Thickness(0,0,0,0)};
+            Page.Children.Add(textBlock);
+            Page.Children.Add(textBox);
+            Page.Children.Add(richTextBox);
+            Page.Children.Add(button);
+            Page.Children.Add(textBlock1);
+
+            textBlock.TopToTop(Page);
+            textBox.LeftToRight(textBlock);
+            richTextBox.BottomToBottom(Page);
+            button.LeftToRight(textBox);
+            textBlock1.LeftToRight(button);
+
+            Page.UpdateLayout();
+            //we can calculate baseline position to top.
+            //TextBlock:ActualHeight-Padding.Bottom
+            //TextBox:ActualHeight-BorderThickness.Bottom-Padding.Bottom
+            //Button:ActualHeight-BorderThickness.Bottom-Padding.Bottom
+            Debug.WriteLine($"{textBlock} Desierd {textBlock.DesiredSize.Height} ActualHeight {textBlock.ActualHeight},BaselineOffset {textBlock.BaselineOffset},LineHeight {textBlock.LineHeight},Padding {textBlock.Padding.Bottom},Margin {textBlock.Margin.Bottom}");
+            Debug.WriteLine($"{textBlock1} ActualHeight {textBlock1.ActualHeight},BaselineOffset {textBlock1.BaselineOffset},LineHeight {textBlock1.LineHeight},Padding {textBlock1.Padding.Bottom},Margin {textBlock1.Margin.Bottom}");
+            Debug.WriteLine($"{textBox} ActualHeight {textBox.ActualHeight},ExtentHeight {textBox.ExtentHeight},BorderThickness {textBox.BorderThickness.Bottom},Padding {textBox.Padding.Bottom},Margin {textBox.Margin.Bottom}");
+            Debug.WriteLine($"{button} ActualHeight {button.ActualHeight},BorderThickness {button.BorderThickness.Bottom},Padding {button.Padding.Bottom},Margin {button.Margin.Bottom}");
+            
+            //so,i according to it create api for baseline.
+            TextBlock firstTextBlock = new TextBlock() { Text = "牛啊牛啊",Tag= "first", FontSize = 30, Background = new SolidColorBrush(Colors.Pink)};
+            TextBox secondTextBox = new TextBox() { Text = "马啊马啊",Tag="second", FontSize = 30 };
+            Button thirdButton = new Button() { Content = "狗啊狗啊",Tag="third", FontSize = 30};
+            Page.Children.Add(firstTextBlock);
+            Page.Children.Add(secondTextBox);
+            Page.Children.Add(thirdButton);
+            firstTextBlock.Center(Page);
+            Page.GetWidget(firstTextBlock).BaselineDistance=40;
+            Page.GetWidget(secondTextBox).BaselineDistance=40;
+            Page.GetWidget(thirdButton).BaselineDistance=40;
+            secondTextBox.LeftToRight(firstTextBlock).BaselineToBaseline(firstTextBlock);
+            thirdButton.LeftToRight(secondTextBox).BaselineToBaseline(secondTextBox);
+            Page.UpdateLayout();
+            Debug.WriteLine($"{firstTextBlock} Baseline {Page.GetWidget(firstTextBlock).BaselineDistance}");
+            Debug.WriteLine($"{secondTextBox} Baseline {Page.GetWidget(secondTextBox).BaselineDistance}");
+            Debug.WriteLine($"{thirdButton} Baseline {Page.GetWidget(thirdButton).BaselineDistance}");
+        }*/
 
         private void FlowBoxTest(ConstraintLayout Page)
         {

@@ -164,6 +164,24 @@ namespace SharpConstraintLayout.Wpf
                     continue;
                 //if(!IsMeasureValid)
                 child.Measure(availableSize);
+                /*if (child is Button)
+                {
+                    var button = (Button)child;
+                    var baselineToTopHeight = button.DesiredSize.Height - button.BorderThickness.Bottom - button.Padding.Bottom;
+                    widget.BaselineDistance = (int)baselineToTopHeight;
+                }
+                else if (child is TextBlock)
+                {
+                    var textBlock = (TextBlock)child;
+                    var baselineToTopHeight = textBlock.DesiredSize.Height - textBlock.Padding.Bottom;
+                    widget.BaselineDistance = (int)baselineToTopHeight;
+                }
+                else if (child is TextBox)
+                {
+                    var textBox = (TextBox)child;
+                    var baselineToTopHeight = textBox.DesiredSize.Height - textBox.BorderThickness.Bottom - textBox.Padding.Bottom;
+                    widget.BaselineDistance = (int)baselineToTopHeight;
+                }*/
             }
 
             //we have know some view default size, so we can calculate other view size that they should be.
@@ -307,11 +325,11 @@ namespace SharpConstraintLayout.Wpf
         }
 
         /// <summary>
-        /// get widget of this view
+        /// get widget of this view.
         /// </summary>
         /// <param name="view"></param>
         /// <returns>widget is a virtual control for caculate constraint</returns>
-        internal ConstraintWidget GetWidget(UIElement view)
+        public ConstraintWidget GetWidget(UIElement view)
         {
             return this.idsToConstraintWidgets[this.viewsToIds[view]];
         }

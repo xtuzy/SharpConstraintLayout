@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace SharpConstraintLayout.Wpf
 {
@@ -92,21 +93,24 @@ namespace SharpConstraintLayout.Wpf
             Top,
             Right,
             Bottom,
-            /// <summary>
-            /// TODO:Wpf no baseline property,how to custom.
-            /// </summary>
-            Baseline,
             Center,
             CenterX,
             CenterY,
             /// <summary>
+            /// Not use.
             /// TODO for RTF
             /// </summary>
             Start,
             /// <summary>
+            /// Not use.
             /// TODO for RTF
             /// </summary>
             End,
+            /// <summary>
+            /// Not use.
+            /// TODO:Wpf no baseline property,how to custom.
+            /// </summary>
+            Baseline,
         }
 
         WeakReference<ConstraintLayout> Parent;//一个ConstraintSet基本只使用一次,需要时重新创建,所以直接弱引用避免内存泄漏
@@ -391,6 +395,35 @@ namespace SharpConstraintLayout.Wpf
             fromWidget.connect(ConstraintAnchor.Type.BOTTOM, toWidget, ConstraintAnchor.Type.BOTTOM, margin);
             return fromView;
         }
+
+        /// <summary>
+        /// Notice,only use in Button,TextBlock,TextBox
+        /// </summary>
+        /// <param name="fromTextView"></param>
+        /// <param name="toTextView"></param>
+        /// <returns></returns>
+        /*public static FrameworkElement BaselineToBaseline(this FrameworkElement fromTextView,FrameworkElement toTextView)
+        {
+            var parent = fromTextView.Parent is ConstraintLayout ? fromTextView.Parent as ConstraintLayout : throw new ArgumentException($"Parent of {fromTextView} is not ConstraintLayout");
+            var fromWidget = parent.GetWidget(fromTextView);
+            var toWidget = parent.GetWidget(toTextView);
+            if(fromTextView is TextBlock || fromTextView is TextBox || fromTextView is Button)
+            {
+                if (toTextView is TextBlock || toTextView is TextBox || toTextView is Button)
+                {
+                    fromWidget.connect(ConstraintAnchor.Type.BASELINE, toWidget, ConstraintAnchor.Type.BASELINE);
+                }
+                else
+                {
+                    throw new ArgumentException($"{toTextView} no baseline");
+                }
+            }
+            else
+            {
+                throw new ArgumentException($"{fromTextView} no baseline");
+            }
+            return fromTextView;
+        }*/
 
         /// <summary>
         /// When views' constraint in horizontal make a chain, this can arrange views regularly.<br/>
