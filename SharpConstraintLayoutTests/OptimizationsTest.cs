@@ -309,15 +309,20 @@ namespace androidx.constraintlayout.core
             root.DebugName = "root";
             A.DebugName = "A";
             B.DebugName = "B";
-            A.BaselineDistance = 8;
-            B.BaselineDistance = 8;
+            //A.BaselineDistance = 8;
+            //B.BaselineDistance = 8;
+           
             root.add(A);
             root.add(B);
             A.connect(ConstraintAnchor.Type.TOP, root, ConstraintAnchor.Type.TOP);
             A.connect(ConstraintAnchor.Type.BOTTOM, root, ConstraintAnchor.Type.BOTTOM);
             A.connect(ConstraintAnchor.Type.LEFT, root, ConstraintAnchor.Type.LEFT);
             B.connect(ConstraintAnchor.Type.LEFT, A, ConstraintAnchor.Type.RIGHT);
+            A.BaselineDistance = 1;
+            B.BaselineDistance = 1;
             B.connect(ConstraintAnchor.Type.BASELINE, A, ConstraintAnchor.Type.BASELINE);
+            A.BaselineDistance = 8;
+            B.BaselineDistance = 7;
             Metrics metrics = new Metrics();
             root.fillMetrics(metrics);
             root.OptimizationLevel = Optimizer.OPTIMIZATION_STANDARD;
@@ -325,7 +330,7 @@ namespace androidx.constraintlayout.core
             Console.WriteLine("1) root: " + root + " A: " + A + " B: " + B);
             Console.WriteLine(metrics);
             Assert.AreEqual(A.Top, 290);
-            Assert.AreEqual(B.Top, A.Top);
+            Assert.AreEqual(B.Top, A.Top+1);
         }
 
         //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:

@@ -92,10 +92,16 @@ namespace SharpConstraintLayout.Wpf
             Left,
             Top,
             Right,
+            
             Bottom,
+            /// <summary>
+            /// Not use. please use BaselineToBaseline
+            /// </summary>
+            Baseline,
             Center,
             CenterX,
             CenterY,
+            
             /// <summary>
             /// Not use.
             /// TODO for RTF
@@ -106,11 +112,7 @@ namespace SharpConstraintLayout.Wpf
             /// TODO for RTF
             /// </summary>
             End,
-            /// <summary>
-            /// Not use.
-            /// TODO:Wpf no baseline property,how to custom.
-            /// </summary>
-            Baseline,
+            
         }
 
         WeakReference<ConstraintLayout> Parent;//一个ConstraintSet基本只使用一次,需要时重新创建,所以直接弱引用避免内存泄漏
@@ -397,20 +399,25 @@ namespace SharpConstraintLayout.Wpf
         }
 
         /// <summary>
-        /// Notice,only use in Button,TextBlock,TextBox
+        /// Notice:<br/>
+        /// 1. Only use in Button,TextBlock,TextBox,Lable.<br/>
+        /// 2. Only use in single line text. multiple line will have conflict.<br/>
+        /// 3. it have bug, please use simpel set for text control,i don't deal with complex content.
         /// </summary>
         /// <param name="fromTextView"></param>
         /// <param name="toTextView"></param>
         /// <returns></returns>
-        /*public static FrameworkElement BaselineToBaseline(this FrameworkElement fromTextView,FrameworkElement toTextView)
+        public static FrameworkElement BaselineToBaseline(this FrameworkElement fromTextView,FrameworkElement toTextView)
         {
             var parent = fromTextView.Parent is ConstraintLayout ? fromTextView.Parent as ConstraintLayout : throw new ArgumentException($"Parent of {fromTextView} is not ConstraintLayout");
             var fromWidget = parent.GetWidget(fromTextView);
             var toWidget = parent.GetWidget(toTextView);
-            if(fromTextView is TextBlock || fromTextView is TextBox || fromTextView is Button)
+            if(fromTextView is TextBlock || fromTextView is TextBox || fromTextView is Button|| fromTextView is Label)
             {
-                if (toTextView is TextBlock || toTextView is TextBox || toTextView is Button)
+                if (toTextView is TextBlock || toTextView is TextBox || toTextView is Button || toTextView is Label)
                 {
+                    fromWidget.BaselineDistance = 1;
+                    toWidget.BaselineDistance = 1;
                     fromWidget.connect(ConstraintAnchor.Type.BASELINE, toWidget, ConstraintAnchor.Type.BASELINE);
                 }
                 else
@@ -423,7 +430,7 @@ namespace SharpConstraintLayout.Wpf
                 throw new ArgumentException($"{fromTextView} no baseline");
             }
             return fromTextView;
-        }*/
+        }
 
         /// <summary>
         /// When views' constraint in horizontal make a chain, this can arrange views regularly.<br/>

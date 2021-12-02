@@ -43,7 +43,7 @@ namespace SharpConstraintLayout.Example.Reload
             {
                 Tag = "TestPanel",
                 //TEST = true,
-                DEBUG = true,
+                //DEBUG = true,
             };
 
             page.Children.Add(toolBar);
@@ -176,15 +176,15 @@ namespace SharpConstraintLayout.Example.Reload
             };
             BaselineTestButton.Click += (sender, e) =>
             {
-                //BaselineTest(testPanel);
+                BaselineTest(testPanel);
             };
                 
         }
 
-        /*private void BaselineTest(ConstraintLayout Page)
+        private void BaselineTest(ConstraintLayout Page)
         {
             Page.Children.Clear();
-            TextBlock textBlock = new TextBlock() { Text = "牛啊牛啊",FontSize=30, Background = new SolidColorBrush(Colors.Pink),Margin=new Thickness(0,0,0,5),Padding =new Thickness(0,0,0,0),TextAlignment=TextAlignment.Center};
+           /* TextBlock textBlock = new TextBlock() { Text = "牛啊牛啊",FontSize=30, Background = new SolidColorBrush(Colors.Pink),Margin=new Thickness(0,0,0,5),Padding =new Thickness(0,0,0,0),TextAlignment=TextAlignment.Center};
             TextBlock textBlock1 = new TextBlock() { Text = "牛啊牛啊1",FontSize=60, Background = new SolidColorBrush(Colors.Pink),Margin=new Thickness(0,0,0,5),Padding =new Thickness(0,0,0,0),TextAlignment=TextAlignment.Center};
             TextBox textBox = new TextBox() { Text = "马啊马啊",FontSize=30};
             RichTextBox richTextBox = new RichTextBox() { };
@@ -201,7 +201,7 @@ namespace SharpConstraintLayout.Example.Reload
             button.LeftToRight(textBox);
             textBlock1.LeftToRight(button);
 
-            Page.UpdateLayout();
+            //Page.UpdateLayout();
             //we can calculate baseline position to top.
             //TextBlock:ActualHeight-Padding.Bottom
             //TextBox:ActualHeight-BorderThickness.Bottom-Padding.Bottom
@@ -210,25 +210,44 @@ namespace SharpConstraintLayout.Example.Reload
             Debug.WriteLine($"{textBlock1} ActualHeight {textBlock1.ActualHeight},BaselineOffset {textBlock1.BaselineOffset},LineHeight {textBlock1.LineHeight},Padding {textBlock1.Padding.Bottom},Margin {textBlock1.Margin.Bottom}");
             Debug.WriteLine($"{textBox} ActualHeight {textBox.ActualHeight},ExtentHeight {textBox.ExtentHeight},BorderThickness {textBox.BorderThickness.Bottom},Padding {textBox.Padding.Bottom},Margin {textBox.Margin.Bottom}");
             Debug.WriteLine($"{button} ActualHeight {button.ActualHeight},BorderThickness {button.BorderThickness.Bottom},Padding {button.Padding.Bottom},Margin {button.Margin.Bottom}");
-            
+            */
             //so,i according to it create api for baseline.
-            TextBlock firstTextBlock = new TextBlock() { Text = "牛啊牛啊",Tag= "first", FontSize = 30, Background = new SolidColorBrush(Colors.Pink)};
-            TextBox secondTextBox = new TextBox() { Text = "马啊马啊",Tag="second", FontSize = 30 };
-            Button thirdButton = new Button() { Content = "狗啊狗啊",Tag="third", FontSize = 30};
+            TextBlock firstTextBlock = new TextBlock() {
+                Height=300,Width=150,
+                TextAlignment=TextAlignment.Center,
+                VerticalAlignment=VerticalAlignment.Center, 
+                Text = "first", 
+                Tag= "first", FontSize = 60, Background = new SolidColorBrush(Colors.Pink)};
+            TextBox secondTextBox = new TextBox() { 
+                Height = 300, Width = 150,
+                AcceptsReturn = true,
+                VerticalContentAlignment =VerticalAlignment.Center,
+                TextAlignment = TextAlignment.Center, 
+                Text = "second马",
+                Tag="second", FontSize = 18 
+            };
+            Button thirdButton = new Button() {
+                Height=100, Width = 300, 
+                VerticalContentAlignment =VerticalAlignment.Bottom, 
+                Content = "third狗",
+                Tag="third", FontSize = 30};
+            Label forthLable = new Label() {
+                VerticalContentAlignment = VerticalAlignment.Center,
+                Content = "forthLable",
+            };
             Page.Children.Add(firstTextBlock);
             Page.Children.Add(secondTextBox);
             Page.Children.Add(thirdButton);
-            firstTextBlock.Center(Page);
-            Page.GetWidget(firstTextBlock).BaselineDistance=40;
-            Page.GetWidget(secondTextBox).BaselineDistance=40;
-            Page.GetWidget(thirdButton).BaselineDistance=40;
+            Page.Children.Add(forthLable);
+            firstTextBlock.LeftToLeft(Page).CenterY(Page);
             secondTextBox.LeftToRight(firstTextBlock).BaselineToBaseline(firstTextBlock);
             thirdButton.LeftToRight(secondTextBox).BaselineToBaseline(secondTextBox);
+            forthLable.LeftToRight(thirdButton).BaselineToBaseline(thirdButton);
             Page.UpdateLayout();
             Debug.WriteLine($"{firstTextBlock} Baseline {Page.GetWidget(firstTextBlock).BaselineDistance}");
             Debug.WriteLine($"{secondTextBox} Baseline {Page.GetWidget(secondTextBox).BaselineDistance}");
             Debug.WriteLine($"{thirdButton} Baseline {Page.GetWidget(thirdButton).BaselineDistance}");
-        }*/
+        }
 
         private void FlowBoxTest(ConstraintLayout Page)
         {

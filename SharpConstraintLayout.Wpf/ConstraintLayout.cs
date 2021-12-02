@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 /*
  * Copyright (C) 2021 The Android Open Source Project
@@ -164,24 +165,6 @@ namespace SharpConstraintLayout.Wpf
                     continue;
                 //if(!IsMeasureValid)
                 child.Measure(availableSize);
-                /*if (child is Button)
-                {
-                    var button = (Button)child;
-                    var baselineToTopHeight = button.DesiredSize.Height - button.BorderThickness.Bottom - button.Padding.Bottom;
-                    widget.BaselineDistance = (int)baselineToTopHeight;
-                }
-                else if (child is TextBlock)
-                {
-                    var textBlock = (TextBlock)child;
-                    var baselineToTopHeight = textBlock.DesiredSize.Height - textBlock.Padding.Bottom;
-                    widget.BaselineDistance = (int)baselineToTopHeight;
-                }
-                else if (child is TextBox)
-                {
-                    var textBox = (TextBox)child;
-                    var baselineToTopHeight = textBox.DesiredSize.Height - textBox.BorderThickness.Bottom - textBox.Padding.Bottom;
-                    widget.BaselineDistance = (int)baselineToTopHeight;
-                }*/
             }
 
             //we have know some view default size, so we can calculate other view size that they should be.
@@ -193,7 +176,6 @@ namespace SharpConstraintLayout.Wpf
             else
             {
                 mLayout.Width = (int)availableSize.Width;
-
             }
 
             if (double.IsPositiveInfinity(availableSize.Height))
@@ -205,17 +187,17 @@ namespace SharpConstraintLayout.Wpf
             {
                 mLayout.Height = (int)availableSize.Height;
             }
-
+            mLayout.OptimizationLevel = Optimizer.OPTIMIZATION_STANDARD;
             mLayout.layout();
-            //mLayout.OptimizationLevel = Optimizer.OPTIMIZATION_STANDARD;
-            //mLayout.measure(Optimizer.OPTIMIZATION_STANDARD, BasicMeasure.EXACTLY, mLayout.Width, BasicMeasure.EXACTLY, mLayout.Height, 0, 0, 0, 0);
-
+            mLayout.measure(Optimizer.OPTIMIZATION_STANDARD, BasicMeasure.EXACTLY, mLayout.Width, BasicMeasure.EXACTLY, mLayout.Height, 0, 0, 0, 0);
             double w;
             double h;
             //now we know all view corrected size in constaint, so give it to child,let them to caculate their child.
             foreach (UIElement child in InternalChildren)
             {
+
                 var widget = GetWidget(child);
+
                 if (widget.HorizontalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT
                     || widget.VerticalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT)
                 {
@@ -231,6 +213,8 @@ namespace SharpConstraintLayout.Wpf
                         h = widget.Height;
                     child.Measure(new Size(w, h));
                 }
+                if (DEBUG)
+                    Debug.WriteLine($"{(child as FrameworkElement).Tag as string},Size {widget.Width},{widget.Height} ,Baseline {widget.BaselineDistance} ");
             }
 
             if (DEBUG)
@@ -425,6 +409,105 @@ namespace SharpConstraintLayout.Wpf
             }
             measure.measuredWidth = measuredWidth;
             measure.measuredHeight = measuredHeight;
+
+            //baseline
+            double baselineToTopHeight = 0;
+            if (component is Button)
+            {
+               /**
+                * Button text can set VerticalContentAlignment center bottom top 
+                */
+                var button = (Button)component;
+                if (!(button.Content is string))
+                    return;
+                
+                //measure text see https://stackoverflow.com/a/52972071/13254773
+                var typeface = new Typeface(button.FontFamily, button.FontStyle, button.FontWeight, button.FontStretch);
+                var dpi = VisualTreeHelper.GetDpi(this).PixelsPerDip;//get dpi see https://stackoverflow.com/a/41556941/13254773
+                var formattedText = new FormattedText(button.Content as string, Thread.CurrentThread.CurrentCulture, button.FlowDirection, typeface, button.FontSize, button.Foreground, dpi);
+                var textBaselineHeight = formattedText.Baseline;//first line, textTop-textBaseline
+                if(button.VerticalContentAlignment == VerticalAlignment.Center)
+                {
+                    baselineToTopHeight = button.DesiredSize.Height/2 - formattedText.Height/2+textBaselineHeight;
+                }
+                else if(button.VerticalContentAlignment == VerticalAlignment.Bottom)
+                {
+                    baselineToTopHeight= button.DesiredSize.Height - (button.BorderThickness.Bottom + button.Padding.Bottom + formattedText.Height) + textBaselineHeight;
+                }
+                else//TOP
+                {
+                    baselineToTopHeight = button.Padding.Top + textBaselineHeight;
+                }
+                measure.measuredBaseline = (int)baselineToTopHeight;
+
+            }
+            else if (component is TextBlock)
+            {
+                /**
+                 * Textblock text seem no center
+                 * Textblock can multiple line
+                **/
+
+                var textBlock = (TextBlock)component;
+                //measure text see https://stackoverflow.com/a/52972071/13254773
+                var typeface = new Typeface(textBlock.FontFamily, textBlock.FontStyle, textBlock.FontWeight, textBlock.FontStretch);
+                var dpi = VisualTreeHelper.GetDpi(this).PixelsPerDip;//get dpi see https://stackoverflow.com/a/41556941/13254773
+                var formattedText = new FormattedText(textBlock.Text, Thread.CurrentThread.CurrentCulture, textBlock.FlowDirection, typeface, textBlock.FontSize, textBlock.Foreground, dpi);
+                var textBaselineHeight = formattedText.Baseline;//first line, textTop-textBaseline
+                baselineToTopHeight = textBlock.Padding.Top + textBaselineHeight;
+                measure.measuredBaseline = (int)baselineToTopHeight;
+
+            }
+            else if (component is TextBox)
+            {
+                /**
+                 * TextBox can set VerticalContentAlignment center bottom top 
+                 * TextBox can multiple line
+                **/
+                var textBox = (TextBox)component;
+                //measure text see https://stackoverflow.com/a/52972071/13254773
+                var typeface = new Typeface(textBox.FontFamily, textBox.FontStyle, textBox.FontWeight, textBox.FontStretch);
+                var dpi = VisualTreeHelper.GetDpi(this).PixelsPerDip;//get dpi see https://stackoverflow.com/a/41556941/13254773
+                var formattedText = new FormattedText(textBox.Text, Thread.CurrentThread.CurrentCulture, textBox.FlowDirection, typeface, textBox.FontSize, textBox.Foreground, dpi);
+                var textBaselineHeight = formattedText.Baseline;//first line, textTop-textBaseline
+                if (textBox.VerticalContentAlignment == VerticalAlignment.Center)
+                {
+                    baselineToTopHeight = textBox.DesiredSize.Height / 2 - formattedText.Height / 2 + textBaselineHeight;
+                }
+                else if (textBox.VerticalContentAlignment == VerticalAlignment.Bottom)
+                {
+                    baselineToTopHeight = textBox.DesiredSize.Height - (textBox.BorderThickness.Bottom + textBox.Padding.Bottom + formattedText.Height) + textBaselineHeight;
+                }
+                else//TOP
+                {
+                    baselineToTopHeight = textBox.Padding.Top + textBaselineHeight;
+                }
+                measure.measuredBaseline = (int)baselineToTopHeight;
+            }
+            else if (component is Label)
+            {
+                var label = (Label)component;
+                if (!(label.Content is string))
+                    return;
+                //measure text see https://stackoverflow.com/a/52972071/13254773
+                var typeface = new Typeface(label.FontFamily, label.FontStyle, label.FontWeight, label.FontStretch);
+                var dpi = VisualTreeHelper.GetDpi(this).PixelsPerDip;//get dpi see https://stackoverflow.com/a/41556941/13254773
+                var formattedText = new FormattedText(label.Content as string, Thread.CurrentThread.CurrentCulture, label.FlowDirection, typeface, label.FontSize, label.Foreground, dpi);
+                var textBaselineHeight = formattedText.Baseline;//first line, textTop-textBaseline
+                if (label.VerticalContentAlignment == VerticalAlignment.Center)
+                {
+                    baselineToTopHeight = label.DesiredSize.Height / 2 - formattedText.Height / 2 + textBaselineHeight;
+                }
+                else if (label.VerticalContentAlignment == VerticalAlignment.Bottom)
+                {
+                    baselineToTopHeight = label.DesiredSize.Height - (label.BorderThickness.Bottom + label.Padding.Bottom + formattedText.Height) + textBaselineHeight;
+                }
+                else//TOP
+                {
+                    baselineToTopHeight = label.Padding.Top + textBaselineHeight;
+                }
+                measure.measuredBaseline = (int)baselineToTopHeight;
+            }
         }
 
         /// <summary>
