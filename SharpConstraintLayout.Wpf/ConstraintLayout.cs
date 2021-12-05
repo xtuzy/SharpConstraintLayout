@@ -253,14 +253,16 @@ namespace SharpConstraintLayout.Wpf
             //recalculate?,because when constraintlayout size be define by parent,it size need parent to arrange
             //such as it as child of listview,listview will send double.infinity to measure,if you set listview's content to strenth,
             //you need get that size at Arrage. 
-            if (isInfinity)//only when parent give me measure size is size isInfinity,we recalculate layout.
+            if (isInfinity&& finalSize.Width != 0 && finalSize.Height!=0)//only when parent give me measure size is size isInfinity and finalSize can use(not 0),we recalculate layout.
             {
+                if (DEBUG)
+                    Debug.WriteLine($"{this.Tag as string} Re layout");
                 mLayout.Width = (int)finalSize.Width;
                 mLayout.Height = (int)finalSize.Height;
                 mLayout.layout();
                 mLayout.OptimizationLevel = Optimizer.OPTIMIZATION_STANDARD;
                 mLayout.measure(Optimizer.OPTIMIZATION_STANDARD, BasicMeasure.EXACTLY, (int)finalSize.Width, BasicMeasure.EXACTLY, (int)finalSize.Height, 0, 0, 0, 0);
-                isInfinity = false;
+                //isInfinity = false;//Wpf's ArrangeOverride can be load mutiple times, not by measure.
             }
 
             //layout child

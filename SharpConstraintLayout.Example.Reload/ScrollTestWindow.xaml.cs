@@ -20,45 +20,33 @@ namespace SharpConstraintLayout.Example
     /// </summary>
     public partial class ScrollTestWindow : Window
     {
+        List<MessageModel> Data = new List<MessageModel> ();
         public ScrollTestWindow()
         {
             InitializeComponent();
-        }
-
-        private void GridNestListViewButton_Click(object sender, RoutedEventArgs e)
-        {
-            testPanel.Children.Clear();
-            var listView = new ListView()
-            {
-                Background = new SolidColorBrush(Colors.Pink),
-            };
-            testPanel.Children.Add(listView);
+            //listView.DataContext = Data;
+            this.DataContext = Data;
             for (var index = 0; index < 5000; index++)
             {
-                var item1 = new ListViewItem { Content = $"This is {index} item added programmatically." };
-                listView.Items.Add(item1);
+                Data.Add(new MessageModel {Message=index+"message",Time = DateTime.Now.ToString() });
             }
+        } 
+
+        private void DefaultListViewButton_Click(object sender, RoutedEventArgs e)
+        {
+            
+            listViewLeft.ItemsSource = Data;
         }
 
-        private void ConstraintNestListViewButton_Click(object sender, RoutedEventArgs e)
+        private void ConstraintListViewItemButton_Click(object sender, RoutedEventArgs e)
         {
-            testPanel.Children.Clear();
-            var Page = new ConstraintLayout() { Tag= "testPanel" };
-            testPanel.Children.Add(Page);
-            var listView = new ListView()
-            {
-                Background = new SolidColorBrush(Colors.Pink),
-            };
-            Page.Children.Add(listView);
-            new ConstraintSet(Page)
-                .AddConnect(listView, ConstraintSet.Side.Center, Page, ConstraintSet.Side.Center)
-                .SetWidth(listView, ConstraintSet.SizeType.MatchParent)
-                .SetHeight(listView, ConstraintSet.SizeType.MatchParent);
-            for (var index = 0; index < 5000; index++)
-            {
-                var item1 = new ListViewItem { Content = $"This is {index} item added programmatically." };
-                listView.Items.Add(item1);
-            }
+            listViewRight.ItemsSource = Data;
         }
+    }
+
+    public class MessageModel
+    {
+        public string Message { get; set; }
+        public string Time { get; set; }
     }
 }

@@ -3,7 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:SharpConstraintLayout.Example"
+        xmlns:local="clr-namespace:SharpConstraintLayout.Example" 
+        xmlns:reload="clr-namespace:SharpConstraintLayout.Example.Reload"
         mc:Ignorable="d"
         Title="ScrollTestWindow" Height="450" Width="800">
     <Grid >
@@ -12,12 +13,34 @@
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
         <WrapPanel Grid.Row="0" >
-            <Button x:Name="GridNestListViewButton" Click="GridNestListViewButton_Click">GridNestListView</Button>
-            <Button x:Name="ConstraintNestListViewButton" Click="ConstraintNestListViewButton_Click">ConstraintNestListView</Button>
+            <Button x:Name="DefaultListViewButton" Click="DefaultListViewButton_Click">DefaultListView</Button>
+            <Button x:Name="ConstraintListViewItemButton" Click="ConstraintListViewItemButton_Click">ConstraintListViewItem</Button>
             <Button></Button>
         </WrapPanel>
         <Grid Grid.Row="1" Name="testPanel">
-            
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <ListView x:Name="listViewLeft" Grid.Column="0" VirtualizingPanel.VirtualizationMode="Recycling">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <WrapPanel >
+                            <TextBlock Text="{Binding Message}"></TextBlock>
+                            <TextBlock Text="{Binding Time}"></TextBlock>
+                        </WrapPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <ListView x:Name="listViewRight" Grid.Column="1" HorizontalContentAlignment="Stretch" VirtualizingPanel.VirtualizationMode="Recycling">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <reload:ListViewConstraintItem MessageText="{Binding Message}" TimeText="{Binding Time}">
+                            
+                        </reload:ListViewConstraintItem>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
         </Grid>
     </Grid>
 </Window>

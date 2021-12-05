@@ -65,7 +65,7 @@ namespace SharpConstraintLayout.Example.Reload
             var GridNestedConstaintLayoutTestButton = new Button() { Content = "GridNestedConstaintLayoutTest", Margin = new Thickness(10, 5, 0, 5) };
             var NestListViewTestButton = new Button() { Content = "NestListViewTest", Margin = new Thickness(10, 5, 0, 5) };
             var ListViewNestConstraintTestButton = new Button() { Content = "ListViewNestConstraintTest", Margin = new Thickness(10, 5, 0, 5) };
-            var GridCompareConstraintNestListViewTestButton = new Button() { Content = "GridCompareConstraintNestListViewTest", Margin = new Thickness(10, 5, 0, 5) };
+            var ListViewItemUseConstraintTestButton = new Button() { Content = "ListViewItemUseConstraintTest", Margin = new Thickness(10, 5, 0, 5) };
             var WrapPanelNestContraintLayoutTestButton = new Button() { Content = "WrapPanelNestContraintLayoutTest", Margin = new Thickness(10, 5, 0, 5) };
             var NewApiTestButton = new Button() { Content = "NewApiTest", Margin = new Thickness(10, 5, 0, 5) };
             var BarrierTestButton = new Button() { Content = "BarrierTest", Margin = new Thickness(10, 5, 0, 5) };
@@ -87,7 +87,7 @@ namespace SharpConstraintLayout.Example.Reload
             toolBar.Children.Add(NestListViewTestButton);
             toolBar.Children.Add(ListViewNestConstraintTestButton);
 
-            toolBar.Children.Add(GridCompareConstraintNestListViewTestButton);
+            toolBar.Children.Add(ListViewItemUseConstraintTestButton);
 
             toolBar.Children.Add(WrapPanelNestContraintLayoutTestButton);
 
@@ -138,7 +138,7 @@ namespace SharpConstraintLayout.Example.Reload
             {
                 ListViewNestConstraintTest(testPanel);
             };
-            GridCompareConstraintNestListViewTestButton.Click += (sender, e) =>
+            ListViewItemUseConstraintTestButton.Click += (sender, e) =>
             {
                 new ScrollTestWindow().Show();
             };
