@@ -642,6 +642,17 @@ namespace SharpConstraintLayout.Wpf
             return fromView;
         }
 
+        /// <summary>
+        /// 去掉某一个View的所有约束,但不在移除控件树种移除
+        /// </summary>
+        /// <exception cref="ArgumentException">Parent of fromView is not ConstraintLayout</exception>
+        public static FrameworkElement Clear(this FrameworkElement fromView)
+        {
+            var parent = fromView.Parent is ConstraintLayout ? fromView.Parent as ConstraintLayout : throw new ArgumentException($"Parent of {fromView} is not ConstraintLayout");
+            var fromWidget = parent.GetWidget(fromView);
+            fromWidget.resetAllConstraints();
+            return fromView;
+        }
 
         #endregion
     }
