@@ -239,7 +239,7 @@ namespace SharpConstraintLayout.Example.Reload
             Page.Children.Add(secondTextBox);
             Page.Children.Add(thirdButton);
             Page.Children.Add(forthLable);
-            firstTextBlock.LeftToLeft(Page).CenterY(Page);
+            firstTextBlock.LeftToLeft(Page).CenterYTo(Page);
             secondTextBox.LeftToRight(firstTextBlock).BaselineToBaseline(firstTextBlock);
             thirdButton.LeftToRight(secondTextBox).BaselineToBaseline(secondTextBox);
             forthLable.LeftToRight(thirdButton).BaselineToBaseline(thirdButton);
@@ -296,7 +296,7 @@ namespace SharpConstraintLayout.Example.Reload
             Page.Children.Add(thirdButton);
             Page.Children.Add(forthButton);
 
-            firstButton.Center(Page);
+            firstButton.CenterTo(Page);
             //0 at Top
             secondButton.CircleToCenter(firstButton, 0, 200);
             thirdButton.CircleToCenter(firstButton, 120, 200);
@@ -384,10 +384,10 @@ namespace SharpConstraintLayout.Example.Reload
             Button secondButton = new Button() { Content = "Second ", Tag = "second", Width = 100 };
             Page.Children.Add(firstButton);
             Page.Children.Add(secondButton);
-            firstButton.LeftToLeft(Page).RightToLeft(secondButton).CenterY(Page)
-                .SetWidthBaseOnHeight(2);
-            secondButton.LeftToRight(firstButton).RightToRight(Page).CenterY(Page)
-                .SetHeightBaseOnWidth(2);
+            firstButton.LeftToLeft(Page).RightToLeft(secondButton).CenterYTo(Page)
+                .WidthEqualToHeightX(2);
+            secondButton.LeftToRight(firstButton).RightToRight(Page).CenterYTo(Page)
+                .HeightEqualToWidthX(2);
         }
 
         private void ChainTest(ConstraintLayout Page)
@@ -424,10 +424,10 @@ namespace SharpConstraintLayout.Example.Reload
             secondButton.LeftToRight(firstButton).RightToRight(Page).TopToTop(Page)
                 .SetWidth(ConstraintSet.SizeType.MatchConstraint,0.5f);
             //set chain spread,LeftToX and RightToX must all exist.
-            thirdButton.LeftToLeft(Page).RightToLeft(forthButton).CenterY(Page)
+            thirdButton.LeftToLeft(Page).RightToLeft(forthButton).CenterYTo(Page)
                 .SetHorizontalLayoutStyle(ConstraintSet.LayoutStyle.ChainSpread);//it is default,you can not set
-            forthButton.LeftToRight(thirdButton).RightToLeft(fifthButton). CenterY(Page);
-            fifthButton.LeftToRight(forthButton).RightToRight(Page).CenterY(Page);
+            forthButton.LeftToRight(thirdButton).RightToLeft(fifthButton). CenterYTo(Page);
+            fifthButton.LeftToRight(forthButton).RightToRight(Page).CenterYTo(Page);
 
             //set chain spread inside,LeftToX and RightToX must all exist.
             sixthButton.LeftToLeft(Page).RightToLeft(seventhButton).TopToBottom(fifthButton,20)
@@ -457,7 +457,7 @@ namespace SharpConstraintLayout.Example.Reload
             Page.Children.Add(horizontalBarrier);
             horizontalBarrier.AddView(firstTextBox);
             horizontalBarrier.AddView(secondTextBox);
-            firstTextBox.Center(Page);
+            firstTextBox.CenterTo(Page);
             secondTextBox.LeftToRight(firstTextBox,20).TopToTop(firstTextBox);
             firstButton.LeftToLeft(firstTextBox,20).TopToBottom(horizontalBarrier);
             //Vertical
@@ -513,7 +513,7 @@ namespace SharpConstraintLayout.Example.Reload
             Page.Children.Add(seventeenthButton);
             
 
-            firstButton.Center(Page);
+            firstButton.CenterTo(Page);
 
             //LeftToX, At toView Left is negative
             secondButton.LeftToLeft(firstButton,-20).BottomToTop(firstButton,60);

@@ -59,7 +59,7 @@ namespace SharpConstraintLayout.Wpf
         /// </summary>
         /// <param name="views"></param>
         /// <exception cref="ArgumentException"></exception>
-        public void AddViews(FrameworkElement[] views)
+        public void AddViews(params FrameworkElement[] views)
         {
             var parent = Parent is ConstraintLayout ? Parent as ConstraintLayout : throw new ArgumentException($"{this} is not constraintlayout child");
             foreach (FrameworkElement view in views)

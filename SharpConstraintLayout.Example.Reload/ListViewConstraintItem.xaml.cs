@@ -46,9 +46,9 @@ namespace SharpConstraintLayout.Example.Reload
             item.Children.Add(MessageTextBlock);
             item.Children.Add(TimeTextBlock);
             item.Children.Add(DeleteButton);
-            MessageTextBlock.LeftToLeft(item, 20).CenterY(item);
-            TimeTextBlock.Center(item);
-            DeleteButton.RightToRight(item, 20).CenterY(item);
+            MessageTextBlock.LeftToLeft(item, 20).CenterYTo(item);
+            TimeTextBlock.CenterTo(item);
+            DeleteButton.RightToRight(item, 20).CenterYTo(item);
             //Debug.WriteLine(index++);
         }
 
