@@ -67,13 +67,16 @@ namespace SharpConstraintLayout.Wpf
             WRAP_CONTENT,
             MATCH_CONSTRAINT,
             MATCH_PARENT*/
+            /// <summary>
+            /// 固定数值
+            /// </summary>
             Fixed,
             WrapContent,
             MatchConstraint,
             MatchParent,
         }
 
-        public enum LayoutStyle
+        public enum ChainStyle
         {
             /*public const int CHAIN_SPREAD = 0;
             public const int CHAIN_SPREAD_INSIDE = 1;
@@ -449,7 +452,7 @@ namespace SharpConstraintLayout.Wpf
         /// <param name="bias">0~1,only when set <see cref="LayoutStyle.Chain_Packed"/>,it is effective</param>
         /// <returns></returns>
         /// <exception cref="ArgumentException">Parent of fromView is not ConstraintLayout</exception>
-        public static FrameworkElement SetHorizontalLayoutStyle(this FrameworkElement fromView, ConstraintSet.LayoutStyle layoutStyle, float bias = float.NaN)
+        public static FrameworkElement SetHorizontalChainStyle(this FrameworkElement fromView, ConstraintSet.ChainStyle layoutStyle, float bias = float.NaN)
         {
             var parent = fromView.Parent is ConstraintLayout ? fromView.Parent as ConstraintLayout : throw new ArgumentException($"Parent of {fromView} is not ConstraintLayout");
             var fromWidget = parent.GetWidget(fromView);
@@ -469,7 +472,7 @@ namespace SharpConstraintLayout.Wpf
         /// <param name="bias">0~1,only when set <see cref="LayoutStyle.Chain_Packed"/>,it is effective</param>
         /// <returns></returns>
         /// <exception cref="ArgumentException">Parent of fromView is not ConstraintLayout</exception>
-        public static FrameworkElement SetVerticalLayoutStyle(this FrameworkElement fromView, ConstraintSet.LayoutStyle layoutStyle, float bias = float.NaN)
+        public static FrameworkElement SetVerticalChainStyle(this FrameworkElement fromView, ConstraintSet.ChainStyle layoutStyle, float bias = float.NaN)
         {
             var parent = fromView.Parent is ConstraintLayout ? fromView.Parent as ConstraintLayout : throw new ArgumentException($"Parent of {fromView} is not ConstraintLayout");
             var fromWidget = parent.GetWidget(fromView);
@@ -511,17 +514,17 @@ namespace SharpConstraintLayout.Wpf
         /// </summary>
         /// <param name="fromView"></param>
         /// <param name="constraint"></param>
-        /// <param name="weight">fromView's weight at horizontal when multiple view's constraint is a chain</param>
+        /// <param name="weightInParent">fromView's weight at horizontal when multiple view's constraint is a chain</param>
         /// <returns></returns>
         /// <exception cref="ArgumentException">Parent of fromView is not ConstraintLayout</exception>
-        public static FrameworkElement SetWidth(this FrameworkElement fromView, ConstraintSet.SizeType constraint, float weight = float.NaN)
+        public static FrameworkElement WidthEqualTo(this FrameworkElement fromView, ConstraintSet.SizeType constraint, float weightInParent = float.NaN)
         {
             var parent = fromView.Parent is ConstraintLayout ? fromView.Parent as ConstraintLayout : throw new ArgumentException($"Parent of {fromView} is not ConstraintLayout");
             var fromWidget = parent.GetWidget(fromView);
             fromWidget.HorizontalDimensionBehaviour = ConstraintSet.ConstraintSizeTypeDic[(int)constraint];
-            if (!float.IsNaN(weight))
+            if (!float.IsNaN(weightInParent))
             {
-                fromWidget.HorizontalWeight = weight;
+                fromWidget.HorizontalWeight = weightInParent;
             }
             return fromView;
         }
@@ -544,6 +547,22 @@ namespace SharpConstraintLayout.Wpf
             return fromView;
         }
 
+        public static FrameworkElement MinWidth(this FrameworkElement fromView, int constant)
+        {
+            var parent = fromView.Parent is ConstraintLayout ? fromView.Parent as ConstraintLayout : throw new ArgumentException($"Parent of {fromView} is not ConstraintLayout");
+            var fromWidget = parent.GetWidget(fromView);
+            fromWidget.MinWidth = constant;
+            return fromView;
+        }
+
+        public static FrameworkElement MaxWidth(this FrameworkElement fromView, int constant)
+        {
+            var parent = fromView.Parent is ConstraintLayout ? fromView.Parent as ConstraintLayout : throw new ArgumentException($"Parent of {fromView} is not ConstraintLayout");
+            var fromWidget = parent.GetWidget(fromView);
+            fromWidget.MaxWidth = constant;
+            return fromView;
+        }
+
         /// <summary>
         /// Create constraint for child height.<br/>
         /// Default is <see cref="ConstraintSet.SizeType.WrapContent"/>.<br/>
@@ -553,17 +572,17 @@ namespace SharpConstraintLayout.Wpf
         /// </summary>
         /// <param name="fromView"></param>
         /// <param name="constraint"></param>
-        /// <param name="weight">fromview's weight at vertical when multiple view's constraint is a chain</param>
+        /// <param name="weightInParent">fromview's weight at vertical when multiple view's constraint is a chain</param>
         /// <returns></returns>
         /// <exception cref="ArgumentException">Parent of fromView is not ConstraintLayout</exception>
-        public static FrameworkElement SetHeight(this FrameworkElement fromView, ConstraintSet.SizeType constraint, float weight = float.NaN)
+        public static FrameworkElement HeightEqualTo(this FrameworkElement fromView, ConstraintSet.SizeType constraint, float weightInParent = float.NaN)
         {
             var parent = fromView.Parent is ConstraintLayout ? fromView.Parent as ConstraintLayout : throw new ArgumentException($"Parent of {fromView} is not ConstraintLayout");
             var fromWidget = parent.GetWidget(fromView);
             fromWidget.VerticalDimensionBehaviour = ConstraintSet.ConstraintSizeTypeDic[(int)constraint];
-            if (!float.IsNaN(weight))
+            if (!float.IsNaN(weightInParent))
             {
-                fromWidget.VerticalWeight = weight;
+                fromWidget.VerticalWeight = weightInParent;
             }
             return fromView;
         }
@@ -585,6 +604,23 @@ namespace SharpConstraintLayout.Wpf
             fromView.Height = constant;
             return fromView;
         }
+
+        public static FrameworkElement MinHeight(this FrameworkElement fromView, int constant)
+        {
+            var parent = fromView.Parent is ConstraintLayout ? fromView.Parent as ConstraintLayout : throw new ArgumentException($"Parent of {fromView} is not ConstraintLayout");
+            var fromWidget = parent.GetWidget(fromView);
+            fromWidget.MinHeight = constant;
+            return fromView;
+        }
+
+        public static FrameworkElement MaxHeight(this FrameworkElement fromView, int constant)
+        {
+            var parent = fromView.Parent is ConstraintLayout ? fromView.Parent as ConstraintLayout : throw new ArgumentException($"Parent of {fromView} is not ConstraintLayout");
+            var fromWidget = parent.GetWidget(fromView);
+            fromWidget.MaxWidth = constant;
+            return fromView;
+        }
+
         /// <summary>
         /// Create constraint for Width base on height, Width = Height*ratio.
         /// </summary>
@@ -629,7 +665,7 @@ namespace SharpConstraintLayout.Wpf
         /// <param name="visibility">either VISIBLE, INVISIBLE, or GONE</param>
         /// <returns></returns>
         /// <exception cref="ArgumentException">Parent of fromView is not ConstraintLayout</exception>
-        public static FrameworkElement SetVisibility(this FrameworkElement fromView, ConstraintSet.Visibility visibility)
+        public static FrameworkElement VisibilityEqualTo(this FrameworkElement fromView, ConstraintSet.Visibility visibility)
         {
             var parent = fromView.Parent is ConstraintLayout ? fromView.Parent as ConstraintLayout : throw new ArgumentException($"Parent of {fromView} is not ConstraintLayout");
             var fromWidget = parent.GetWidget(fromView);

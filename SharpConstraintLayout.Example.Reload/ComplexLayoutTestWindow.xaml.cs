@@ -273,12 +273,18 @@ namespace SharpConstraintLayout.Example.Reload
             horizontalFlow.AddView(thirdButton);
             horizontalFlow.AddView(forthButton);
 
-            horizontalFlow.LeftToLeft(Page).RightToRight(Page)
-                .SetWidth(ConstraintSet.SizeType.MatchConstraint)
-                .SetHeight(ConstraintSet.SizeType.WrapContent);
-            canvas.LeftToLeft(horizontalFlow).RightToRight(horizontalFlow).TopToTop(horizontalFlow).BottomToBottom(horizontalFlow)
-                .SetWidth(ConstraintSet.SizeType.MatchConstraint)
-                .SetHeight(ConstraintSet.SizeType.MatchConstraint);
+            horizontalFlow
+                .LeftToLeft(Page)
+                .RightToRight(Page)
+                .WidthEqualTo(ConstraintSet.SizeType.MatchConstraint)
+                .HeightEqualTo(ConstraintSet.SizeType.WrapContent);
+            canvas
+                .LeftToLeft(horizontalFlow)
+                .RightToRight(horizontalFlow)
+                .TopToTop(horizontalFlow)
+                .BottomToBottom(horizontalFlow)
+                .WidthEqualTo(ConstraintSet.SizeType.MatchConstraint)
+                .HeightEqualTo(ConstraintSet.SizeType.MatchConstraint);
 
             //Vertical
         }
@@ -350,27 +356,27 @@ namespace SharpConstraintLayout.Example.Reload
             //gone
             firstButton.Click += (sender, e) =>
             {
-                thirdButton.SetVisibility(ConstraintSet.Visibility.Gone);
+                thirdButton.VisibilityEqualTo(ConstraintSet.Visibility.Gone);
                 Page.InvalidateMeasure();
 
             };
             //visible
             secondButton.Click += (sender, e) =>
             {
-                thirdButton.SetVisibility(ConstraintSet.Visibility.Visible);
+                thirdButton.VisibilityEqualTo(ConstraintSet.Visibility.Visible);
                 Page.InvalidateMeasure();
             };
             //invisible
             fifthButton.Click += (sender, e) =>
             {
-                seventhButton.SetVisibility(ConstraintSet.Visibility.Invisible);
+                seventhButton.VisibilityEqualTo(ConstraintSet.Visibility.Invisible);
                 Page.InvalidateMeasure();
 
             };
             //visible
             sixthButton.Click += (sender, e) =>
             {
-                seventhButton.SetVisibility(ConstraintSet.Visibility.Visible);
+                seventhButton.VisibilityEqualTo(ConstraintSet.Visibility.Visible);
                 Page.InvalidateMeasure();
 
             };
@@ -420,24 +426,24 @@ namespace SharpConstraintLayout.Example.Reload
 
             //set weight,LeftToX and RightToX must all exist.
             firstButton.LeftToLeft(Page).RightToLeft(secondButton).TopToTop(Page)
-                .SetWidth(ConstraintSet.SizeType.MatchConstraint, 1f);
+                .WidthEqualTo(ConstraintSet.SizeType.MatchConstraint, 1f);
             secondButton.LeftToRight(firstButton).RightToRight(Page).TopToTop(Page)
-                .SetWidth(ConstraintSet.SizeType.MatchConstraint,0.5f);
+                .WidthEqualTo(ConstraintSet.SizeType.MatchConstraint,0.5f);
             //set chain spread,LeftToX and RightToX must all exist.
             thirdButton.LeftToLeft(Page).RightToLeft(forthButton).CenterYTo(Page)
-                .SetHorizontalLayoutStyle(ConstraintSet.LayoutStyle.ChainSpread);//it is default,you can not set
+                .SetHorizontalChainStyle(ConstraintSet.ChainStyle.ChainSpread);//it is default,you can not set
             forthButton.LeftToRight(thirdButton).RightToLeft(fifthButton). CenterYTo(Page);
             fifthButton.LeftToRight(forthButton).RightToRight(Page).CenterYTo(Page);
 
             //set chain spread inside,LeftToX and RightToX must all exist.
             sixthButton.LeftToLeft(Page).RightToLeft(seventhButton).TopToBottom(fifthButton,20)
-                .SetHorizontalLayoutStyle(ConstraintSet.LayoutStyle.ChainSpreadInside);
+                .SetHorizontalChainStyle(ConstraintSet.ChainStyle.ChainSpreadInside);
             seventhButton.LeftToRight(sixthButton).RightToLeft(eighthButton).TopToTop(sixthButton);
             eighthButton.LeftToRight(seventhButton).RightToRight(Page).TopToTop(sixthButton);
 
             //set chain packed + bias
             ninthButton.LeftToLeft(Page).RightToLeft(tenthButton).TopToBottom(eighthButton, 20)
-                .SetHorizontalLayoutStyle(ConstraintSet.LayoutStyle.ChainPacked, 0.25f);
+                .SetHorizontalChainStyle(ConstraintSet.ChainStyle.ChainPacked, 0.25f);
             tenthButton.LeftToRight(ninthButton).RightToLeft(eleventhButton).TopToTop(ninthButton);
             eleventhButton.LeftToRight(tenthButton).RightToRight(Page).TopToTop(ninthButton);
 

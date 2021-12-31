@@ -62,7 +62,7 @@ namespace SharpConstraintLayout.Wpf
         /// <summary>
         /// Similar to HorizontalStyle, but only applies to the first chain.
         /// </summary>
-        public virtual ConstraintSet.LayoutStyle FirstHorizontalStyle
+        public virtual ConstraintSet.ChainStyle FirstHorizontalStyle
         {
             set
             {
@@ -73,7 +73,7 @@ namespace SharpConstraintLayout.Wpf
         /// <summary>
         /// Similar to VerticalStyle, but only applies to the first chain.
         /// </summary>
-        public virtual ConstraintSet.LayoutStyle FirstVerticalStyle
+        public virtual ConstraintSet.ChainStyle FirstVerticalStyle
         {
             set
             {
@@ -81,7 +81,7 @@ namespace SharpConstraintLayout.Wpf
             }
         }
 
-        public virtual ConstraintSet.LayoutStyle LastHorizontalStyle
+        public virtual ConstraintSet.ChainStyle LastHorizontalStyle
         {
             set
             {
@@ -89,7 +89,7 @@ namespace SharpConstraintLayout.Wpf
             }
         }
 
-        public virtual ConstraintSet.LayoutStyle LastVerticalStyle
+        public virtual ConstraintSet.ChainStyle LastVerticalStyle
         {
             set
             {
@@ -99,7 +99,7 @@ namespace SharpConstraintLayout.Wpf
         /// <summary>
         /// Set horizontal chain style.
         /// </summary>
-        public virtual ConstraintSet.LayoutStyle HorizontalStyle
+        public virtual ConstraintSet.ChainStyle HorizontalStyle
         {
             set
             {
@@ -107,7 +107,7 @@ namespace SharpConstraintLayout.Wpf
             }
         }
 
-        public virtual ConstraintSet.LayoutStyle VerticalStyle
+        public virtual ConstraintSet.ChainStyle VerticalStyle
         {
             set
             {
