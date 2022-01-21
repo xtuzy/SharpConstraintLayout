@@ -27,21 +27,10 @@ layout.Children.Add(firstButton)
 layout.Children.Add(secondButton)
 ```
 
-You have two way to create constraint
-
-- Use ConstraintSet
+You can use chained api, see [NewApiTest](https://github.com/xtuzy/SharpConstraintLayout/blob/6d2ca9be3273724e2355c6d5581b164228a5f719/SharpConstraintLayout.Example.Reload/ComplexLayoutTestWindow.xaml.cs#L129)
 
   ```
-  new ConstraintSet(constraintlayout)
-  .AddConnect(firstButton, ConstraintSet.Side.Center, layout, ConstraintSet.Side.Center)
-  .AddConnect(secondButton,ConstraintSet.Side.Left,firstdButton,ConstraintSet.Side.Right)
-  .AddConnect(secondButton, ConstraintSet.Side.Top,firstButton,ConstraintSet.Side.Bottom);
-  ```
-
-- Use new api, see [NewApiTest](https://github.com/xtuzy/SharpConstraintLayout/blob/6d2ca9be3273724e2355c6d5581b164228a5f719/SharpConstraintLayout.Example.Reload/ComplexLayoutTestWindow.xaml.cs#L129)
-
-  ```
-  firstButton.Center(Page);
+  firstButton.CenterTo(Page);
   
   //LeftToX, At toView Left is negative
   secondButton.LeftToLeft(firstButton,-20).BottomToTop(firstButton,60);
@@ -88,8 +77,8 @@ Button firstButton = new Button() { Content = "First", Tag = "first", Height = 1
 Button secondButton = new Button() { Content = "Second ", Tag = "second", Width = 100 };
 Page.Children.Add(firstButton);
 Page.Children.Add(secondButton);
-firstButton.LeftToLeft(Page).RightToLeft(secondButton).CenterY(Page).SetWidthBaseOnHeight(2);
-secondButton.LeftToRight(firstButton).RightToRight(Page).CenterY(Page).SetHeightBaseOnWidth(2);
+firstButton.LeftToLeft(Page).RightToLeft(secondButton).CenterYTo(Page).WidthEqualToHeightX(2);
+secondButton.LeftToRight(firstButton).RightToRight(Page).CenterYTo(Page).HeightEqualToWidthX(2);
 ```
 
 ⛓️ **LayoutStyle(Chains)** provide group-like behavior in a single axis (horizontally or vertically). The other axis can be constrained independently.
