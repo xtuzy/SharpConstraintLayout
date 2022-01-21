@@ -1,4 +1,5 @@
-﻿using SharpConstraintLayout.Wpf;
+﻿using ReloadPreview;
+using SharpConstraintLayout.Wpf;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -14,13 +15,16 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace SharpConstraintLayout.Example.Reload
+namespace SharpConstraintLayout.Example
 {
     /// <summary>
     /// ComplexLayoutTestWindow.xaml 的交互逻辑
     /// </summary>
-    public partial class ComplexLayoutTestWindow : Window
+    public partial class ComplexLayoutTestWindow : Window, IReload
     {
+        private WrapPanel toolBar;
+        private ConstraintLayout testPanel;
+
         public ComplexLayoutTestWindow()
         {
             InitializeComponent();
@@ -33,13 +37,13 @@ namespace SharpConstraintLayout.Example.Reload
             };
             this.RootWindow.Children.Add(page);
 
-            var toolBar = new WrapPanel()
+            toolBar = new WrapPanel()
             {
                 Background = new SolidColorBrush(Colors.Wheat),
                 Tag = "ToolBar",
             };
 
-            var testPanel = new ConstraintLayout()
+            testPanel = new ConstraintLayout()
             {
                 Tag = "TestPanel",
                 //TEST = true,
@@ -56,7 +60,14 @@ namespace SharpConstraintLayout.Example.Reload
                 .AddConnect(testPanel, ConstraintSet.Side.Bottom, page, ConstraintSet.Side.Bottom)
                 .SetWidth(testPanel, ConstraintSet.SizeType.MatchParent)
                 .SetHeight(testPanel, ConstraintSet.SizeType.MatchConstraint);
+
+            SetContent(toolBar, testPanel);
+        }
+
+        void SetContent(WrapPanel toolBar, ConstraintLayout testPanel)
+        {
             //工具栏详细设置
+            var SizeTypeTestButton = new Button() { Content = "SizeTypeTest", Margin = new Thickness(10, 5, 0, 5) };
             var RemoveConstraintTestButton = new Button() { Content = "RemoveConstraintTest", Margin = new Thickness(10, 5, 0, 5) };
             var RemoveViewTestButton = new Button() { Content = "RemoveViewTest", Margin = new Thickness(10, 5, 0, 5) };
             var VisibilityTestButton = new Button() { Content = "VisibilityTest", Margin = new Thickness(10, 5, 0, 5) };
@@ -74,8 +85,9 @@ namespace SharpConstraintLayout.Example.Reload
             var CircleTestButton = new Button() { Content = "CircleTest", Margin = new Thickness(10, 5, 0, 5) };
             var FlowBoxTestButton = new Button() { Content = "FlowBoxTest", Margin = new Thickness(10, 5, 0, 5) };
             var BaselineTestButton = new Button() { Content = "BaselineTest", Margin = new Thickness(10, 5, 0, 5) };
-            
 
+
+            toolBar.Children.Add(SizeTypeTestButton);
             toolBar.Children.Add(RemoveConstraintTestButton);
             toolBar.Children.Add(RemoveViewTestButton);
             toolBar.Children.Add(VisibilityTestButton);
@@ -99,13 +111,16 @@ namespace SharpConstraintLayout.Example.Reload
             toolBar.Children.Add(FlowBoxTestButton);
             toolBar.Children.Add(BaselineTestButton);
 
-
+            SizeTypeTestButton.Click += (sender, e) =>
+            {
+                SizeTypeTest(testPanel);
+            };
 
             RemoveConstraintTestButton.Click += (sender, e) =>
             {
                 RemoveConstraintTest(testPanel);
             };
-            
+
             RemoveViewTestButton.Click += (sender, e) =>
             {
                 RemoveViewTest(testPanel);
@@ -178,60 +193,116 @@ namespace SharpConstraintLayout.Example.Reload
             {
                 BaselineTest(testPanel);
             };
-                
+        }
+
+        private void SizeTypeTest(ConstraintLayout Page)
+        {
+            Page.Children.Clear();
+            Page.DEBUG = true;
+            
+            //父布局大小
+            var sizeTestContainer = new WrapPanel()
+            {
+                Tag = "sizeTestContainer",
+                Background = new SolidColorBrush(Colors.Yellow),
+            };
+            Page.Children.Add(sizeTestContainer);
+            sizeTestContainer
+                .CenterTo(Page)
+                .WidthEqualTo(300)
+                .HeightEqualTo(ConstraintSet.SizeType.MatchParent)
+                ;
+            var sizeTestBox = new ConstraintLayout()
+            {
+                DEBUG = true,
+                Tag = "sizeTestBox",
+                WidthType = ConstraintSet.SizeType.WrapContent,
+                HeightType = ConstraintSet.SizeType.MatchParent,
+                Background = new SolidColorBrush(Colors.HotPink),
+            };
+            sizeTestContainer.Children.Add(sizeTestBox);
+            var content = new Button() { Content="content"};
+            sizeTestBox.Children.Add(content);
+            content.HeightEqualTo(ConstraintSet.SizeType.WrapContent)
+                .WidthEqualTo(ConstraintSet.SizeType.MatchParent);
+        }
+
+        private void NodeMapTest(ConstraintLayout Page)
+        {
+            Page.Children.Clear();
+            for (int row = 0; row < 10; row++)
+            {
+                for (int col = 0; col < 10; col++)
+                {
+
+                }
+            }
         }
 
         private void BaselineTest(ConstraintLayout Page)
         {
             Page.Children.Clear();
-           /* TextBlock textBlock = new TextBlock() { Text = "牛啊牛啊",FontSize=30, Background = new SolidColorBrush(Colors.Pink),Margin=new Thickness(0,0,0,5),Padding =new Thickness(0,0,0,0),TextAlignment=TextAlignment.Center};
-            TextBlock textBlock1 = new TextBlock() { Text = "牛啊牛啊1",FontSize=60, Background = new SolidColorBrush(Colors.Pink),Margin=new Thickness(0,0,0,5),Padding =new Thickness(0,0,0,0),TextAlignment=TextAlignment.Center};
-            TextBox textBox = new TextBox() { Text = "马啊马啊",FontSize=30};
-            RichTextBox richTextBox = new RichTextBox() { };
-            Button button = new Button() { Content = "狗啊狗啊" ,FontSize=30,BorderThickness= new Thickness(0,0,0,0),Padding = new Thickness(0,0,0,0)};
-            Page.Children.Add(textBlock);
-            Page.Children.Add(textBox);
-            Page.Children.Add(richTextBox);
-            Page.Children.Add(button);
-            Page.Children.Add(textBlock1);
+            /* TextBlock textBlock = new TextBlock() { Text = "牛啊牛啊",FontSize=30, Background = new SolidColorBrush(Colors.Pink),Margin=new Thickness(0,0,0,5),Padding =new Thickness(0,0,0,0),TextAlignment=TextAlignment.Center};
+             TextBlock textBlock1 = new TextBlock() { Text = "牛啊牛啊1",FontSize=60, Background = new SolidColorBrush(Colors.Pink),Margin=new Thickness(0,0,0,5),Padding =new Thickness(0,0,0,0),TextAlignment=TextAlignment.Center};
+             TextBox textBox = new TextBox() { Text = "马啊马啊",FontSize=30};
+             RichTextBox richTextBox = new RichTextBox() { };
+             Button button = new Button() { Content = "狗啊狗啊" ,FontSize=30,BorderThickness= new Thickness(0,0,0,0),Padding = new Thickness(0,0,0,0)};
+             Page.Children.Add(textBlock);
+             Page.Children.Add(textBox);
+             Page.Children.Add(richTextBox);
+             Page.Children.Add(button);
+             Page.Children.Add(textBlock1);
 
-            textBlock.TopToTop(Page);
-            textBox.LeftToRight(textBlock);
-            richTextBox.BottomToBottom(Page);
-            button.LeftToRight(textBox);
-            textBlock1.LeftToRight(button);
+             textBlock.TopToTop(Page);
+             textBox.LeftToRight(textBlock);
+             richTextBox.BottomToBottom(Page);
+             button.LeftToRight(textBox);
+             textBlock1.LeftToRight(button);
 
-            //Page.UpdateLayout();
-            //we can calculate baseline position to top.
-            //TextBlock:ActualHeight-Padding.Bottom
-            //TextBox:ActualHeight-BorderThickness.Bottom-Padding.Bottom
-            //Button:ActualHeight-BorderThickness.Bottom-Padding.Bottom
-            Debug.WriteLine($"{textBlock} Desierd {textBlock.DesiredSize.Height} ActualHeight {textBlock.ActualHeight},BaselineOffset {textBlock.BaselineOffset},LineHeight {textBlock.LineHeight},Padding {textBlock.Padding.Bottom},Margin {textBlock.Margin.Bottom}");
-            Debug.WriteLine($"{textBlock1} ActualHeight {textBlock1.ActualHeight},BaselineOffset {textBlock1.BaselineOffset},LineHeight {textBlock1.LineHeight},Padding {textBlock1.Padding.Bottom},Margin {textBlock1.Margin.Bottom}");
-            Debug.WriteLine($"{textBox} ActualHeight {textBox.ActualHeight},ExtentHeight {textBox.ExtentHeight},BorderThickness {textBox.BorderThickness.Bottom},Padding {textBox.Padding.Bottom},Margin {textBox.Margin.Bottom}");
-            Debug.WriteLine($"{button} ActualHeight {button.ActualHeight},BorderThickness {button.BorderThickness.Bottom},Padding {button.Padding.Bottom},Margin {button.Margin.Bottom}");
-            */
+             //Page.UpdateLayout();
+             //we can calculate baseline position to top.
+             //TextBlock:ActualHeight-Padding.Bottom
+             //TextBox:ActualHeight-BorderThickness.Bottom-Padding.Bottom
+             //Button:ActualHeight-BorderThickness.Bottom-Padding.Bottom
+             Debug.WriteLine($"{textBlock} Desierd {textBlock.DesiredSize.Height} ActualHeight {textBlock.ActualHeight},BaselineOffset {textBlock.BaselineOffset},LineHeight {textBlock.LineHeight},Padding {textBlock.Padding.Bottom},Margin {textBlock.Margin.Bottom}");
+             Debug.WriteLine($"{textBlock1} ActualHeight {textBlock1.ActualHeight},BaselineOffset {textBlock1.BaselineOffset},LineHeight {textBlock1.LineHeight},Padding {textBlock1.Padding.Bottom},Margin {textBlock1.Margin.Bottom}");
+             Debug.WriteLine($"{textBox} ActualHeight {textBox.ActualHeight},ExtentHeight {textBox.ExtentHeight},BorderThickness {textBox.BorderThickness.Bottom},Padding {textBox.Padding.Bottom},Margin {textBox.Margin.Bottom}");
+             Debug.WriteLine($"{button} ActualHeight {button.ActualHeight},BorderThickness {button.BorderThickness.Bottom},Padding {button.Padding.Bottom},Margin {button.Margin.Bottom}");
+             */
             //so,i according to it create api for baseline.
-            TextBlock firstTextBlock = new TextBlock() {
-                Height=300,Width=150,
-                TextAlignment=TextAlignment.Center,
-                VerticalAlignment=VerticalAlignment.Center, 
-                Text = "first", 
-                Tag= "first", FontSize = 60, Background = new SolidColorBrush(Colors.Pink)};
-            TextBox secondTextBox = new TextBox() { 
-                Height = 300, Width = 150,
-                AcceptsReturn = true,
-                VerticalContentAlignment =VerticalAlignment.Center,
-                TextAlignment = TextAlignment.Center, 
-                Text = "second马",
-                Tag="second", FontSize = 18 
+            TextBlock firstTextBlock = new TextBlock()
+            {
+                Height = 300,
+                Width = 150,
+                TextAlignment = TextAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+                Text = "first",
+                Tag = "first",
+                FontSize = 60,
+                Background = new SolidColorBrush(Colors.Pink)
             };
-            Button thirdButton = new Button() {
-                Height=100, Width = 300, 
-                VerticalContentAlignment =VerticalAlignment.Bottom, 
+            TextBox secondTextBox = new TextBox()
+            {
+                Height = 300,
+                Width = 150,
+                AcceptsReturn = true,
+                VerticalContentAlignment = VerticalAlignment.Center,
+                TextAlignment = TextAlignment.Center,
+                Text = "second马",
+                Tag = "second",
+                FontSize = 18
+            };
+            Button thirdButton = new Button()
+            {
+                Height = 100,
+                Width = 300,
+                VerticalContentAlignment = VerticalAlignment.Bottom,
                 Content = "third狗",
-                Tag="third", FontSize = 30};
-            Label forthLable = new Label() {
+                Tag = "third",
+                FontSize = 30
+            };
+            Label forthLable = new Label()
+            {
                 VerticalContentAlignment = VerticalAlignment.Center,
                 Content = "forthLable",
             };
@@ -257,8 +328,8 @@ namespace SharpConstraintLayout.Example.Reload
             Button secondButton = new Button() { Content = "Second ", Tag = "second", Width = 100, Height = 100 };
             Button thirdButton = new Button() { Content = "Third ", Tag = "third", Width = 100, Height = 100 };
             Button forthButton = new Button() { Content = "Forth ", Tag = "forth", Width = 100, Height = 100 };
-            FlowBox horizontalFlow = new FlowBox() { WrapMode = FlowBox.Mode.Chain};
-            Canvas canvas = new Canvas() { Background = new SolidColorBrush(Colors.Coral)};
+            FlowBox horizontalFlow = new FlowBox() { WrapMode = FlowBox.Mode.Chain };
+            Canvas canvas = new Canvas() { Background = new SolidColorBrush(Colors.Coral) };
 
             Page.Children.Add(canvas);
             Page.Children.Add(firstButton);
@@ -266,7 +337,7 @@ namespace SharpConstraintLayout.Example.Reload
             Page.Children.Add(thirdButton);
             Page.Children.Add(forthButton);
             Page.Children.Add(horizontalFlow);
-            
+
 
             horizontalFlow.AddView(firstButton);
             horizontalFlow.AddView(secondButton);
@@ -306,7 +377,7 @@ namespace SharpConstraintLayout.Example.Reload
             //0 at Top
             secondButton.CircleToCenter(firstButton, 0, 200);
             thirdButton.CircleToCenter(firstButton, 120, 200);
-            forthButton.CircleToCenter(firstButton,240, 200);
+            forthButton.CircleToCenter(firstButton, 240, 200);
         }
 
         private void VisibilityTest(ConstraintLayout Page)
@@ -401,16 +472,16 @@ namespace SharpConstraintLayout.Example.Reload
             Page.Children.Clear();
 
             Button firstButton = new Button() { Content = "First", Tag = "first", Height = 50 };
-            Button secondButton = new Button() { Content = "Second ", Tag = "second",  Height = 50 };
+            Button secondButton = new Button() { Content = "Second ", Tag = "second", Height = 50 };
             Button thirdButton = new Button() { Content = "Third ", Tag = "third", Height = 50 };
-            Button forthButton = new Button() { Content = "Forth ", Tag = "forth",  Height = 50 };
-            Button fifthButton = new Button() { Content = "Fifth ", Tag = "fifth",  Height = 50 };
-            Button sixthButton = new Button() { Content = "Sixth ",  Height = 50 };
-            Button seventhButton = new Button() { Content = "Seventh ",  Height = 50 };
+            Button forthButton = new Button() { Content = "Forth ", Tag = "forth", Height = 50 };
+            Button fifthButton = new Button() { Content = "Fifth ", Tag = "fifth", Height = 50 };
+            Button sixthButton = new Button() { Content = "Sixth ", Height = 50 };
+            Button seventhButton = new Button() { Content = "Seventh ", Height = 50 };
             Button eighthButton = new Button() { Content = "Eighth", Height = 50 };
-            Button ninthButton = new Button() { Content = "Ninth",  Height = 50 };
-            Button tenthButton = new Button() { Content = "tenth",Height = 50 };
-            Button eleventhButton = new Button() { Content = "eleventh",  Height = 50 };
+            Button ninthButton = new Button() { Content = "Ninth", Height = 50 };
+            Button tenthButton = new Button() { Content = "tenth", Height = 50 };
+            Button eleventhButton = new Button() { Content = "eleventh", Height = 50 };
 
             Page.Children.Add(firstButton);
             Page.Children.Add(secondButton);
@@ -428,15 +499,15 @@ namespace SharpConstraintLayout.Example.Reload
             firstButton.LeftToLeft(Page).RightToLeft(secondButton).TopToTop(Page)
                 .WidthEqualTo(ConstraintSet.SizeType.MatchConstraint, 1f);
             secondButton.LeftToRight(firstButton).RightToRight(Page).TopToTop(Page)
-                .WidthEqualTo(ConstraintSet.SizeType.MatchConstraint,0.5f);
+                .WidthEqualTo(ConstraintSet.SizeType.MatchConstraint, 0.5f);
             //set chain spread,LeftToX and RightToX must all exist.
             thirdButton.LeftToLeft(Page).RightToLeft(forthButton).CenterYTo(Page)
                 .SetHorizontalChainStyle(ConstraintSet.ChainStyle.ChainSpread);//it is default,you can not set
-            forthButton.LeftToRight(thirdButton).RightToLeft(fifthButton). CenterYTo(Page);
+            forthButton.LeftToRight(thirdButton).RightToLeft(fifthButton).CenterYTo(Page);
             fifthButton.LeftToRight(forthButton).RightToRight(Page).CenterYTo(Page);
 
             //set chain spread inside,LeftToX and RightToX must all exist.
-            sixthButton.LeftToLeft(Page).RightToLeft(seventhButton).TopToBottom(fifthButton,20)
+            sixthButton.LeftToLeft(Page).RightToLeft(seventhButton).TopToBottom(fifthButton, 20)
                 .SetHorizontalChainStyle(ConstraintSet.ChainStyle.ChainSpreadInside);
             seventhButton.LeftToRight(sixthButton).RightToLeft(eighthButton).TopToTop(sixthButton);
             eighthButton.LeftToRight(seventhButton).RightToRight(Page).TopToTop(sixthButton);
@@ -453,7 +524,7 @@ namespace SharpConstraintLayout.Example.Reload
         {
             Page.Children.Clear();
             //Horizontal
-            TextBox firstTextBox = new TextBox() { Text = "First" + Environment.NewLine + "Line2", Tag = "first",TextWrapping=TextWrapping.Wrap,MaxWidth=100, AcceptsReturn = true };
+            TextBox firstTextBox = new TextBox() { Text = "First" + Environment.NewLine + "Line2", Tag = "first", TextWrapping = TextWrapping.Wrap, MaxWidth = 100, AcceptsReturn = true };
             TextBox secondTextBox = new TextBox() { Text = "Second ", Tag = "second", AcceptsReturn = true };
             Button firstButton = new Button() { Content = "First", Tag = "first" };
             BarrierLine horizontalBarrier = new BarrierLine() { BarrierSide = BarrierLine.Side.Bottom };
@@ -464,8 +535,8 @@ namespace SharpConstraintLayout.Example.Reload
             horizontalBarrier.AddView(firstTextBox);
             horizontalBarrier.AddView(secondTextBox);
             firstTextBox.CenterTo(Page);
-            secondTextBox.LeftToRight(firstTextBox,20).TopToTop(firstTextBox);
-            firstButton.LeftToLeft(firstTextBox,20).TopToBottom(horizontalBarrier);
+            secondTextBox.LeftToRight(firstTextBox, 20).TopToTop(firstTextBox);
+            firstButton.LeftToLeft(firstTextBox, 20).TopToBottom(horizontalBarrier);
             //Vertical
             TextBox thirdTextBox = new TextBox() { Text = "Third ", Tag = "third", AcceptsReturn = true };
             Button secondButton = new Button() { Content = "Second ", Tag = "second" };
@@ -482,12 +553,12 @@ namespace SharpConstraintLayout.Example.Reload
         private void NewApiTest(ConstraintLayout Page)
         {
             Page.Children.Clear();
-            Button firstButton = new Button() { Content = "First", Tag = "first", Width = 600, Height = 300};
+            Button firstButton = new Button() { Content = "First", Tag = "first", Width = 600, Height = 300 };
             Button secondButton = new Button() { Content = "Second ", Tag = "second", Width = 60, Height = 50 };
             Button thirdButton = new Button() { Content = "Third ", Tag = "third", Width = 60, Height = 50 };
             Button forthButton = new Button() { Content = "Forth ", Tag = "forth", Width = 60, Height = 50 };
-            Button fifthButton = new Button() { Content = "Fifth ",  Width = 60, Height = 50 };
-            Button sixthButton = new Button() { Content = "Sixth ",  Width = 60, Height = 50 };
+            Button fifthButton = new Button() { Content = "Fifth ", Width = 60, Height = 50 };
+            Button sixthButton = new Button() { Content = "Sixth ", Width = 60, Height = 50 };
             Button seventhButton = new Button() { Content = "Seventh ", Width = 60, Height = 50 };
             Button eighthButton = new Button() { Content = "Eighth", Width = 60, Height = 50 };
             Button ninthButton = new Button() { Content = "Ninth", Width = 60, Height = 50 };
@@ -517,34 +588,34 @@ namespace SharpConstraintLayout.Example.Reload
             Page.Children.Add(fifteenthButton);
             Page.Children.Add(sixteenthButton);
             Page.Children.Add(seventeenthButton);
-            
+
 
             firstButton.CenterTo(Page);
 
             //LeftToX, At toView Left is negative
-            secondButton.LeftToLeft(firstButton,-20).BottomToTop(firstButton,60);
-            thirdButton.LeftToLeft(firstButton,20).BottomToTop(firstButton,5);
+            secondButton.LeftToLeft(firstButton, -20).BottomToTop(firstButton, 60);
+            thirdButton.LeftToLeft(firstButton, 20).BottomToTop(firstButton, 5);
 
-            forthButton.LeftToRight(firstButton,-20).BottomToTop(firstButton,60);
-            fifthButton.LeftToRight(firstButton,20).BottomToTop(firstButton,5);
+            forthButton.LeftToRight(firstButton, -20).BottomToTop(firstButton, 60);
+            fifthButton.LeftToRight(firstButton, 20).BottomToTop(firstButton, 5);
 
             //RightToX, At toView Right is negative
-            var HorizontalCenterGuidline = new GuideLine() { Percent = 0.5f,Orientation=GuideLine.OrientationType.Horizontal };
+            var HorizontalCenterGuidline = new GuideLine() { Percent = 0.5f, Orientation = GuideLine.OrientationType.Horizontal };
             Page.Children.Add(HorizontalCenterGuidline);
             sixthButton.RightToLeft(firstButton, -20).BottomToTop(HorizontalCenterGuidline);
-            seventhButton.RightToLeft(firstButton,20).TopToBottom(HorizontalCenterGuidline);
-        
-            eighthButton.RightToRight(firstButton,-20).BottomToTop(HorizontalCenterGuidline);
-            ninthButton.RightToRight(firstButton,20).TopToBottom(HorizontalCenterGuidline);
+            seventhButton.RightToLeft(firstButton, 20).TopToBottom(HorizontalCenterGuidline);
 
-            var VerticalCenterGuideline = new GuideLine() { Percent = 0.5f,Orientation=GuideLine.OrientationType.Vertical };
+            eighthButton.RightToRight(firstButton, -20).BottomToTop(HorizontalCenterGuidline);
+            ninthButton.RightToRight(firstButton, 20).TopToBottom(HorizontalCenterGuidline);
+
+            var VerticalCenterGuideline = new GuideLine() { Percent = 0.5f, Orientation = GuideLine.OrientationType.Vertical };
             Page.Children.Add(VerticalCenterGuideline);
             //TopToX, At toView Top is negative
             tenthButton.RightToLeft(eleventhButton).TopToTop(firstButton, -20);
-            eleventhButton.RightToLeft(VerticalCenterGuideline,20).TopToTop(firstButton, 20);
+            eleventhButton.RightToLeft(VerticalCenterGuideline, 20).TopToTop(firstButton, 20);
 
             twelfthButton.RightToLeft(thirteenthButton).TopToBottom(firstButton, -20);
-            thirteenthButton.RightToLeft(VerticalCenterGuideline,20).TopToBottom(firstButton, 20);
+            thirteenthButton.RightToLeft(VerticalCenterGuideline, 20).TopToBottom(firstButton, 20);
             //BottomToX, At toView Bottom is negative
             fourteenthButton.LeftToRight(VerticalCenterGuideline, 20).BottomToTop(firstButton, -20);
             fifteenthButton.LeftToRight(fourteenthButton).BottomToTop(firstButton, 20);
@@ -590,8 +661,8 @@ namespace SharpConstraintLayout.Example.Reload
             new ConstraintSet(constraintlayout)
                 .AddConnect(thirdButton, ConstraintSet.Side.Center, constraintlayout, ConstraintSet.Side.Center)
                 //.AddConnect(thirdButton, ConstraintSet.Side.Bottom, forthButton, ConstraintSet.Side.Top)
-                .AddConnect(forthButton,ConstraintSet.Side.Left,thirdButton,ConstraintSet.Side.Right)
-                .AddConnect(forthButton, ConstraintSet.Side.Top,thirdButton,ConstraintSet.Side.Bottom)
+                .AddConnect(forthButton, ConstraintSet.Side.Left, thirdButton, ConstraintSet.Side.Right)
+                .AddConnect(forthButton, ConstraintSet.Side.Top, thirdButton, ConstraintSet.Side.Bottom)
                 ;
 
         }
@@ -703,7 +774,7 @@ namespace SharpConstraintLayout.Example.Reload
 
             grid.Children.Add(constraintlayout);
             Grid.SetRow(constraintlayout, 1);
-            
+
             constraintlayout.Children.Add(thirdButton);
             constraintlayout.Children.Add(forthButton);
 
@@ -1056,7 +1127,24 @@ namespace SharpConstraintLayout.Example.Reload
 
                 MessageBox.Show($"firstButton:Actual Size ({point.X},{point.Y},{firstButton.ActualWidth},{firstButton.ActualHeight}),DesiredSize ({firstButton.DesiredSize.Width},{firstButton.DesiredSize.Height})", caption, button, icon);
             };
-
         }
+
+        #region Reload
+        public void ReloadClient_Reload()
+        {
+            Debug.WriteLine("Reloading");
+            ReloadClient.GlobalInstance.ReloadType<ComplexLayoutTestWindow>(toolBar, testPanel);
+        }
+
+        public void Reload(object controller, object view)
+        {
+            var toolBar = controller as WrapPanel;
+            toolBar.Children.Clear();
+            var testPanel = view as ConstraintLayout;
+            testPanel.Children.Clear();
+            SetContent(toolBar, testPanel);
+        }
+
+        #endregion
     }
 }

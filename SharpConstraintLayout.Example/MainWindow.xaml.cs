@@ -1,5 +1,5 @@
 ﻿using androidx.constraintlayout.core.widgets;
-using SharpConstraintLayout.Example.Reload;
+using ReloadPreview;
 using SharpConstraintLayout.Wpf;
 using System;
 using System.Collections.Generic;
@@ -31,27 +31,54 @@ namespace SharpConstraintLayout.Example
             page = new ConstraintLayout();
             page.Background = new SolidColorBrush(Colors.Cyan);
             this.RootWindow.Children.Add(page);
-
-            new Reload_MainPage().Reload(this, page);
-
-            App.ReloadClient.Reload += ReloadClient_Reload;
+            SetContent(page);
         }
 
-        protected override void OnActivated(EventArgs e)
-        {
-            base.OnActivated(e);
-            //App.ReloadClient.Reload += ReloadClient_Reload;
-        }
 
-        private void ReloadClient_Reload(object? sender, EventArgs e)
-        {
-            App.ReloadClient.ReloadType<Reload_MainPage>(this, page);
-        }
 
-        protected override void OnDeactivated(EventArgs e)
+        private void SetContent(ConstraintLayout MainPage)
         {
-            base.OnDeactivated(e);
-            //App.ReloadClient.Reload -= ReloadClient_Reload;
+            Button pressureTestButton = new Button()
+            {
+                Content = "PressureTest",
+                Height = 100,
+                BorderBrush = new SolidColorBrush(Colors.White),
+                Background = new SolidColorBrush(Colors.White),
+
+            };
+
+            pressureTestButton.Click += (sender, e) =>
+            {
+                new PressureTestWindow().Show();
+            };
+
+            Button complexLayoutRemoveAndAddTestButton = new Button()
+            {
+                Content = "ComplexLayoutTest - Remove and Add",
+                Height = 100,
+                BorderBrush = new SolidColorBrush(Colors.White),
+                Background = new SolidColorBrush(Colors.White),
+            };
+
+            complexLayoutRemoveAndAddTestButton.Click += (sendere, e) =>
+            {
+                var window = new ComplexLayoutTestWindow();
+                ReloadClient.GlobalInstance.Reload += window.ReloadClient_Reload;
+                window.Show();
+            };
+
+            MainPage.Children.Add(pressureTestButton);
+            MainPage.Children.Add(complexLayoutRemoveAndAddTestButton);
+
+
+            ConstraintSet set = new ConstraintSet(MainPage);
+            set.AddConnect(pressureTestButton, ConstraintSet.Side.CenterY, MainPage, ConstraintSet.Side.CenterY)
+                .AddConnect(pressureTestButton, ConstraintSet.Side.Left, MainPage, ConstraintSet.Side.Left)
+                .AddConnect(pressureTestButton, ConstraintSet.Side.Right, complexLayoutRemoveAndAddTestButton, ConstraintSet.Side.Left);
+
+            set.AddConnect(complexLayoutRemoveAndAddTestButton, ConstraintSet.Side.CenterY, MainPage, ConstraintSet.Side.CenterY)
+                .AddConnect(complexLayoutRemoveAndAddTestButton, ConstraintSet.Side.Left, pressureTestButton, ConstraintSet.Side.Right, 20)
+                .AddConnect(complexLayoutRemoveAndAddTestButton, ConstraintSet.Side.Right, MainPage, ConstraintSet.Side.Right);
         }
     }
 }

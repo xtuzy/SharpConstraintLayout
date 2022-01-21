@@ -219,7 +219,7 @@ namespace SharpConstraintLayout.Wpf
 
             if (DEBUG)
             {
-                Debug.WriteLine($"{(this.Parent as FrameworkElement).Tag as string},Size {(this.Parent as FrameworkElement).Width},{(this.Parent as FrameworkElement).Height},DesiredSize {(this.Parent as FrameworkElement).DesiredSize}");
+                Debug.WriteLine($"Parent-{(this.Parent as FrameworkElement).Tag as string},Size {(this.Parent as FrameworkElement).Width},{(this.Parent as FrameworkElement).Height},DesiredSize {(this.Parent as FrameworkElement).DesiredSize}");
                 Debug.WriteLine($"{this.Tag as string},availableSize {availableSize},DesiredSize {this.DesiredSize},ContainerWidgetSize {mLayout.Width},{mLayout.Height}");
                 foreach (UIElement child in InternalChildren)
                 {

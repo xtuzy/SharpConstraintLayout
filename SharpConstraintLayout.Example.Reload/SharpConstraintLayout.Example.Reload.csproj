@@ -4,10 +4,11 @@
     <TargetFramework>net5.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
+    <RootNamespace>SharpConstraintLayout.Example</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ReloadPreview" Version="2.1.0" />
+    <PackageReference Include="ReloadPreview" Version="2.1.8" />
   </ItemGroup>
 
   <ItemGroup>
@@ -15,6 +16,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="ComplexLayoutTestWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="ListViewConstraintItem.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="PressureTestWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -24,6 +31,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Page Update="ComplexLayoutTestWindow.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="ListViewConstraintItem.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="PressureTestWindow.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
