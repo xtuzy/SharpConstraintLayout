@@ -536,7 +536,7 @@ namespace SharpConstraintLayout.Wpf
             var fromWidget = parent.GetWidget(fromView);
             fromWidget.HorizontalDimensionBehaviour = ConstraintWidget.DimensionBehaviour.FIXED;
             fromWidget.Width = constant;
-            fromView.Width = constant;
+            fromView.WidthRequest = constant;
             return fromView;
         }
 
@@ -594,7 +594,7 @@ namespace SharpConstraintLayout.Wpf
             var fromWidget = parent.GetWidget(fromView);
             fromWidget.VerticalDimensionBehaviour = ConstraintWidget.DimensionBehaviour.FIXED;
             fromWidget.Height = constant;
-            fromView.Height = constant;
+            fromView.HeightRequest = constant;
             return fromView;
         }
 
@@ -625,7 +625,7 @@ namespace SharpConstraintLayout.Wpf
         {
             var parent = fromView.Parent is ConstraintLayout ? fromView.Parent as ConstraintLayout : throw new ArgumentException($"Parent of {fromView} is not ConstraintLayout");
             var fromWidget = parent.GetWidget(fromView);
-            fromView.Width = double.NaN;//if FrameworkElement.Width is set value,constraint not work.
+            fromView.WidthRequest = double.NaN;//if FrameworkElement.Width is set value,constraint not work.
             fromWidget.HorizontalDimensionBehaviour = ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT;
             fromWidget.setDimensionRatio(ratio, ConstraintWidget.HORIZONTAL);
             return fromView;
@@ -642,7 +642,7 @@ namespace SharpConstraintLayout.Wpf
         {
             var parent = fromView.Parent is ConstraintLayout ? fromView.Parent as ConstraintLayout : throw new ArgumentException($"Parent of {fromView} is not ConstraintLayout");
             var fromWidget = parent.GetWidget(fromView);
-            fromView.Height = double.NaN;//if FrameworkElement.Height is set value,constraint not work.
+            fromView.HeightRequest = double.NaN;//if FrameworkElement.Height is set value,constraint not work.
             fromWidget.VerticalDimensionBehaviour = ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT;
             fromWidget.setDimensionRatio(ratio, ConstraintWidget.VERTICAL);
             return fromView;
