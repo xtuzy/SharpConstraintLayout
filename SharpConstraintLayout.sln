@@ -7,13 +7,19 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpConstraintLayout.Core"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpConstraintLayoutTests", "SharpConstraintLayoutTests\SharpConstraintLayoutTests.csproj", "{198A30AE-DB7E-410F-BEC7-58666F09C36E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpConstraintLayout.Example", "SharpConstraintLayout.Example\SharpConstraintLayout.Example.csproj", "{1FD6E48D-F0FA-4F0A-9D29-C2054BFCC5A4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpConstraintLayout.Wpf.App", "SharpConstraintLayout.Example\SharpConstraintLayout.Wpf.App.csproj", "{1FD6E48D-F0FA-4F0A-9D29-C2054BFCC5A4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpConstraintLayout.Wpf", "SharpConstraintLayout.Wpf\SharpConstraintLayout.Wpf.csproj", "{37F7D2F9-25E4-406D-A89D-2F20ACB773BB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpConstraintLayout.Example.Reload", "SharpConstraintLayout.Example.Reload\SharpConstraintLayout.Example.Reload.csproj", "{2ED2BD8D-0541-4915-94DD-11EC2FD99BC5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpConstraintLayout.Wpf.App.Reload", "SharpConstraintLayout.Example.Reload\SharpConstraintLayout.Wpf.App.Reload.csproj", "{2ED2BD8D-0541-4915-94DD-11EC2FD99BC5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpConstraintLayout.Maui", "SharpConstraintLayout.Maui\SharpConstraintLayout.Maui.csproj", "{C1492416-6AD5-4CCC-B2E8-AE6FBD7CD118}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpConstraintLayout.Maui", "SharpConstraintLayout.Maui\SharpConstraintLayout.Maui.csproj", "{C1492416-6AD5-4CCC-B2E8-AE6FBD7CD118}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FontBaseline.Wpf", "FontBaseline.Wpf\FontBaseline.Wpf.csproj", "{510C3398-92AA-43DB-99B0-5F5A43E10A1D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FontBaseline.Maui", "FontBaseline.Maui\FontBaseline.Maui.csproj", "{7E372222-58F0-479C-ACFC-68BBD7A41205}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpConstraintLayout.Maui.App", "SharpConstraintLayout.Maui.App\SharpConstraintLayout.Maui.App.csproj", "{B0AA3320-6982-4922-90DF-DB43E559B0B9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +51,20 @@ Global
 		{C1492416-6AD5-4CCC-B2E8-AE6FBD7CD118}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C1492416-6AD5-4CCC-B2E8-AE6FBD7CD118}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C1492416-6AD5-4CCC-B2E8-AE6FBD7CD118}.Release|Any CPU.Build.0 = Release|Any CPU
+		{510C3398-92AA-43DB-99B0-5F5A43E10A1D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{510C3398-92AA-43DB-99B0-5F5A43E10A1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{510C3398-92AA-43DB-99B0-5F5A43E10A1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{510C3398-92AA-43DB-99B0-5F5A43E10A1D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E372222-58F0-479C-ACFC-68BBD7A41205}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E372222-58F0-479C-ACFC-68BBD7A41205}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E372222-58F0-479C-ACFC-68BBD7A41205}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E372222-58F0-479C-ACFC-68BBD7A41205}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0AA3320-6982-4922-90DF-DB43E559B0B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0AA3320-6982-4922-90DF-DB43E559B0B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0AA3320-6982-4922-90DF-DB43E559B0B9}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{B0AA3320-6982-4922-90DF-DB43E559B0B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0AA3320-6982-4922-90DF-DB43E559B0B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0AA3320-6982-4922-90DF-DB43E559B0B9}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

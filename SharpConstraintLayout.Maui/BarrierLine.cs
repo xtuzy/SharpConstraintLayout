@@ -1,7 +1,6 @@
-﻿using androidx.constraintlayout.core.widgets;
-using Barrier = androidx.constraintlayout.core.widgets.Barrier;
+﻿using Barrier = androidx.constraintlayout.core.widgets.Barrier;
 
-namespace SharpConstraintLayout.Wpf
+namespace SharpConstraintLayout.Maui
 {
     /// <summary>
     /// A BarrierLine takes multiple views

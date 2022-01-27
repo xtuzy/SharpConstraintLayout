@@ -1,9 +1,12 @@
 ﻿using static Android.Graphics.Paint;
 using Paint = Android.Graphics.Paint;
-namespace SharpConstraintLayout.Maui
+using Microsoft.Maui.Controls.Internals;
+using Android.Graphics;
+
+namespace FontBaseline.Maui
 {
     // All the code in this file is only included on Android.
-    public class PlatformClass1
+    public partial class PlatformClass1
     {
         static Paint paint = new Paint();
         /// <summary>
@@ -12,14 +15,14 @@ namespace SharpConstraintLayout.Maui
         /// Android:https://www.jianshu.com/p/057ce6b81c52
         /// WPF:
         /// </summary>
-        /// <param name="textBlock"></param>
-        (double fontHeight, float baselineToTextCenterHeight) GetBaseline(TextBlock textBlock)
+        /// <param name="entry"></param>
+        public (double fontHeight, float baselineToTextCenterHeight) GetBaseline(IFontElement entry)
         {
-            var fontSize = textBlock.FontSize;
-            paint.SetTypeface(Android.Graphics.Typeface.Create(textBlock.FontFamily, Android.Graphics.TypefaceStyle.Normal));
+            var fontSize = entry.FontSize;
+            paint.SetTypeface(Typeface.Create(entry.FontFamily, TypefaceStyle.Normal));
             paint.TextSize = (float)fontSize;
             FontMetrics fontMetrics = paint.GetFontMetrics();
-            return(fontSize, (fontMetrics.Descent - fontMetrics.Ascent) / 2 - fontMetrics.Descent);
+            return (fontSize, (fontMetrics.Descent - fontMetrics.Ascent) / 2 - fontMetrics.Descent);
         }
     }
 }

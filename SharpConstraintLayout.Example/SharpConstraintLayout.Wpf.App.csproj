@@ -2,11 +2,11 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net5.0-windows</TargetFramework>
+    <TargetFramework>net5.0-windows10.0.19041.0</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <LangVersion>preview</LangVersion>
-    <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
+    <SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SharpConstraintLayout.Example.Reload\SharpConstraintLayout.Example.Reload.csproj" />
+    <ProjectReference Include="..\SharpConstraintLayout.Example.Reload\SharpConstraintLayout.Wpf.App.Reload.csproj" />
     <ProjectReference Include="..\SharpConstraintLayout.Wpf\SharpConstraintLayout.Wpf.csproj" />
   </ItemGroup>
 

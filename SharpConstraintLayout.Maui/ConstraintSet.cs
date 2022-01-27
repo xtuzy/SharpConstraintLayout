@@ -1,6 +1,6 @@
 ﻿using androidx.constraintlayout.core.widgets;
 
-namespace SharpConstraintLayout.Wpf
+namespace SharpConstraintLayout.Maui
 {
 
     public class ConstraintSet

@@ -1,6 +1,6 @@
 ﻿using androidx.constraintlayout.core.widgets;
 
-namespace SharpConstraintLayout.Wpf
+namespace SharpConstraintLayout.Maui
 {
     /// <summary>
     /// <see href="https://developer.android.com/reference/androidx/constraintlayout/widget/Guideline">Android Guideline</see><br/>

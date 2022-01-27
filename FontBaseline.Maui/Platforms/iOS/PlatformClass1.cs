@@ -1,9 +1,9 @@
 ﻿using UIKit;
-
-namespace SharpConstraintLayout.Maui
+using Microsoft.Maui.Controls.Internals;
+namespace FontBaseline.Maui
 {
     // All the code in this file is only included on iOS.
-    public class PlatformClass1
+    public partial class PlatformClass1
     {
         /// <summary>
         /// 参考资料
@@ -12,13 +12,13 @@ namespace SharpConstraintLayout.Maui
         /// WPF:
         /// </summary>
         /// <param name="textBlock"></param>
-        (double fontHeight,float baselineToTextCenterHeight) GetBaseline(TextBlock textBlock)
+        public (double fontHeight, float baselineToTextCenterHeight) GetBaseline(IFontElement textBlock)
         {
             var fontSize = textBlock.FontSize;
             var font = UIFont.FromName(textBlock.FontFamily, (float)fontSize);
             var descent = font.Descender > 0 ? font.Descender : -font.Descender;
             var ascent = font.Ascender > 0 ? font.Ascender : -font.Ascender;
-          
+
             return (fontSize, (float)((descent - ascent) / 2 - descent));
         }
     }

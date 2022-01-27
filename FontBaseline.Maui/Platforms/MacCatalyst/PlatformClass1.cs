@@ -1,18 +1,18 @@
 ﻿using UIKit;
-
-namespace SharpConstraintLayout.Maui
+using Microsoft.Maui.Controls.Internals;
+namespace FontBaseline.Maui
 {
     // All the code in this file is only included on Mac Catalyst.
-    public class PlatformClass1
+    public partial class PlatformClass1
     {
         /// <summary>
         /// 参考资料
         /// iOS:https://stackoverflow.com/questions/9910766/how-to-align-baselines-of-text-in-uilabels-with-different-font-sizes-on-ios
         /// Android:https://www.jianshu.com/p/057ce6b81c52
-        /// WPF:
+        /// WPF:https://stackoverflow.com/a/52972071/13254773
         /// </summary>
         /// <param name="textBlock"></param>
-        (double fontHeight, float baselineToTextCenterHeight) GetBaseline(TextBlock textBlock)
+        public (double fontHeight, float baselineToTextCenterHeight) GetBaseline(IFontElement textBlock)
         {
             var fontSize = textBlock.FontSize;
             var font = UIFont.FromName(textBlock.FontFamily, (float)fontSize);
