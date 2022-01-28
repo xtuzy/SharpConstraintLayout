@@ -18,8 +18,4 @@
 	  <PackageReference Include="SkiaSharp" Version="2.88.0-preview.187" />
 	</ItemGroup>
 
-	<ItemGroup>
-    <ProjectReference Condition="$(TargetFramework.Contains('-windows'))" Include="..\FontBaseline.Wpf\FontBaseline.Wpf.csproj" />
-	</ItemGroup>
-
 </Project>

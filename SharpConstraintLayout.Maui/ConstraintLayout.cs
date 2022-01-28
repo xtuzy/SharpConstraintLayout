@@ -1,12 +1,7 @@
 ﻿using androidx.constraintlayout.core.widgets;
-using androidx.constraintlayout.core.widgets.analyzer;
-using FontBaseline.Maui;
+using FontBaseline.Maui.Skia;
 using Microsoft.Maui.Layouts;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Threading;
-using System.Windows;
 
 /*
  * Copyright (C) 2021 The Android Open Source Project
@@ -26,10 +21,8 @@ using System.Windows;
 
 namespace SharpConstraintLayout.Maui
 {
-    using Utils = androidx.constraintlayout.core.motion.utils.Utils;
     using ConstraintWidget = androidx.constraintlayout.core.widgets.ConstraintWidget;
     using ConstraintWidgetContainer = androidx.constraintlayout.core.widgets.ConstraintWidgetContainer;
-    using Guideline = androidx.constraintlayout.core.widgets.Guideline;
     using Optimizer = androidx.constraintlayout.core.widgets.Optimizer;
     using BasicMeasure = androidx.constraintlayout.core.widgets.analyzer.BasicMeasure;
     using Size = Microsoft.Maui.Graphics.Size;
@@ -453,7 +446,7 @@ namespace SharpConstraintLayout.Maui
                      return;
                  */
 
-                (double fontSize, float baselineToTextCenterHeight) = new PlatformClass1().GetBaseline(button);
+                (double fontSize, float baselineToTextCenterHeight) = new FontBaselineHelper().GetBaseline(button);
                 /* if (button.VerticalContentAlignment == VerticalAlignment.Center)
                  {
                      baselineToTopHeight = button.DesiredSize.Height / 2 - formattedText.Height / 2 + textBaselineHeight;
@@ -477,7 +470,7 @@ namespace SharpConstraintLayout.Maui
                 **/
 
                 var entry = (Entry)component;
-                (double fontSize, float baselineToTextCenterHeight) = new PlatformClass1().GetBaseline(entry);
+                (double fontSize, float baselineToTextCenterHeight) = new FontBaselineHelper().GetBaseline(entry);
                 /* //measure text see https://stackoverflow.com/a/52972071/13254773
                  var typeface = new Typeface(entry.FontFamily, entry.FontStyle, entry.FontWeight, entry.FontStretch);
                  var dpi = VisualTreeHelper.GetDpi(this).PixelsPerDip;//get dpi see https://stackoverflow.com/a/41556941/13254773
@@ -495,7 +488,7 @@ namespace SharpConstraintLayout.Maui
                  * TextBox can multiple line
                 **/
                 var editor = (Editor)component;
-                (double fontSize, float baselineToTextCenterHeight) = new PlatformClass1().GetBaseline(editor);
+                (double fontSize, float baselineToTextCenterHeight) = new FontBaselineHelper().GetBaseline(editor);
                 /* //measure text see https://stackoverflow.com/a/52972071/13254773
                  var typeface = new Typeface(editor.FontFamily, editor.FontStyle, editor.FontWeight, editor.FontStretch);
                  var dpi = VisualTreeHelper.GetDpi(this).PixelsPerDip;//get dpi see https://stackoverflow.com/a/41556941/13254773
@@ -519,7 +512,7 @@ namespace SharpConstraintLayout.Maui
             else if (component is Label)
             {
                 var label = (Label)component;
-                (double fontSize, float baselineToTextCenterHeight) = new PlatformClass1().GetBaseline(label);
+                (double fontSize, float baselineToTextCenterHeight) = new FontBaselineHelper().GetBaseline(label);
                 /* if (!(label.Content is string))
                      return;
                  //measure text see https://stackoverflow.com/a/52972071/13254773
