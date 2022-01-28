@@ -447,92 +447,29 @@ namespace SharpConstraintLayout.Maui
                  */
 
                 (double fontSize, float baselineToTextCenterHeight) = new FontBaselineHelper().GetBaseline(button);
-                /* if (button.VerticalContentAlignment == VerticalAlignment.Center)
-                 {
-                     baselineToTopHeight = button.DesiredSize.Height / 2 - formattedText.Height / 2 + textBaselineHeight;
-                 }
-                 else if (button.VerticalContentAlignment == VerticalAlignment.Bottom)
-                 {
-                     baselineToTopHeight = button.DesiredSize.Height - (button.BorderThickness.Bottom + button.Padding.Bottom + formattedText.Height) + textBaselineHeight;
-                 }
-                 else//TOP
-                 {
-                     baselineToTopHeight = button.Padding.Top + textBaselineHeight;
-                 }*/
+
                 baselineToTopHeight = button.DesiredSize.Height / 2 + baselineToTextCenterHeight;
                 measure.measuredBaseline = (int)baselineToTopHeight;
             }
-            else if (component is Entry)
+            else if (component is ITextAlignment)
             {
-                /**
-                 * Textblock text seem no center
-                 * Textblock can multiple line
-                **/
+                var textView = (Microsoft.Maui.Controls.Internals.IFontElement)component;
+                if (textView == null) return;
+                (double fontSize, float baselineToTextCenterHeight) = new FontBaselineHelper().GetBaseline(textView);
+                var textAlignment = component as ITextAlignment;
+                if (textAlignment.VerticalTextAlignment == TextAlignment.Start)
+                {
+                    baselineToTopHeight = textView.FontSize / 2 + baselineToTextCenterHeight;
+                }
+                else if (textAlignment.VerticalTextAlignment == TextAlignment.Center)
+                {
+                    baselineToTopHeight = ((VisualElement)component).DesiredSize.Height / 2 + baselineToTextCenterHeight;
+                }
+                else if (textAlignment.VerticalTextAlignment == TextAlignment.End)
+                {
+                    baselineToTopHeight = ((VisualElement)component).DesiredSize.Height - (textView.FontSize / 2 - baselineToTextCenterHeight);
 
-                var entry = (Entry)component;
-                (double fontSize, float baselineToTextCenterHeight) = new FontBaselineHelper().GetBaseline(entry);
-                /* //measure text see https://stackoverflow.com/a/52972071/13254773
-                 var typeface = new Typeface(entry.FontFamily, entry.FontStyle, entry.FontWeight, entry.FontStretch);
-                 var dpi = VisualTreeHelper.GetDpi(this).PixelsPerDip;//get dpi see https://stackoverflow.com/a/41556941/13254773
-                 var formattedText = new FormattedText(entry.Text, Thread.CurrentThread.CurrentCulture, entry.FlowDirection, typeface, entry.FontSize, entry.Foreground, dpi);
-                 var textBaselineHeight = formattedText.Baseline;//first line, textTop-textBaseline
-                 baselineToTopHeight = entry.Padding.Top + textBaselineHeight;*/
-                baselineToTopHeight = entry.DesiredSize.Height / 2 + baselineToTextCenterHeight;
-                measure.measuredBaseline = (int)baselineToTopHeight;
-
-            }
-            else if (component is Editor)
-            {
-                /**
-                 * TextBox can set VerticalContentAlignment center bottom top 
-                 * TextBox can multiple line
-                **/
-                var editor = (Editor)component;
-                (double fontSize, float baselineToTextCenterHeight) = new FontBaselineHelper().GetBaseline(editor);
-                /* //measure text see https://stackoverflow.com/a/52972071/13254773
-                 var typeface = new Typeface(editor.FontFamily, editor.FontStyle, editor.FontWeight, editor.FontStretch);
-                 var dpi = VisualTreeHelper.GetDpi(this).PixelsPerDip;//get dpi see https://stackoverflow.com/a/41556941/13254773
-                 var formattedText = new FormattedText(editor.Text, Thread.CurrentThread.CurrentCulture, editor.FlowDirection, typeface, editor.FontSize, editor.Foreground, dpi);
-                 var textBaselineHeight = formattedText.Baseline;//first line, textTop-textBaseline
-                 if (editor.VerticalContentAlignment == VerticalAlignment.Center)
-                 {
-                     baselineToTopHeight = editor.DesiredSize.Height / 2 - formattedText.Height / 2 + textBaselineHeight;
-                 }
-                 else if (editor.VerticalContentAlignment == VerticalAlignment.Bottom)
-                 {
-                     baselineToTopHeight = editor.DesiredSize.Height - (editor.BorderThickness.Bottom + editor.Padding.Bottom + formattedText.Height) + textBaselineHeight;
-                 }
-                 else//TOP
-                 {
-                     baselineToTopHeight = editor.Padding.Top + textBaselineHeight;
-                 }*/
-                baselineToTopHeight = editor.DesiredSize.Height / 2 + baselineToTextCenterHeight;
-                measure.measuredBaseline = (int)baselineToTopHeight;
-            }
-            else if (component is Label)
-            {
-                var label = (Label)component;
-                (double fontSize, float baselineToTextCenterHeight) = new FontBaselineHelper().GetBaseline(label);
-                /* if (!(label.Content is string))
-                     return;
-                 //measure text see https://stackoverflow.com/a/52972071/13254773
-                 var typeface = new Typeface(label.FontFamily, label.FontStyle, label.FontWeight, label.FontStretch);
-                 var dpi = VisualTreeHelper.GetDpi(this).PixelsPerDip;//get dpi see https://stackoverflow.com/a/41556941/13254773
-                 var formattedText = new FormattedText(label.Content as string, Thread.CurrentThread.CurrentCulture, label.FlowDirection, typeface, label.FontSize, label.Foreground, dpi);
-                 var textBaselineHeight = formattedText.Baseline;//first line, textTop-textBaseline
-                 if (label.VerticalContentAlignment == VerticalAlignment.Center)
-                 {
-                     baselineToTopHeight = label.DesiredSize.Height / 2 - formattedText.Height / 2 + textBaselineHeight;
-                 }
-                 else if (label.VerticalContentAlignment == VerticalAlignment.Bottom)
-                 {
-                     baselineToTopHeight = label.DesiredSize.Height - (label.BorderThickness.Bottom + label.Padding.Bottom + formattedText.Height) + textBaselineHeight;
-                 }
-                 else//TOP
-                 {
-                     baselineToTopHeight = label.Padding.Top + textBaselineHeight;
-                 }*/
-                baselineToTopHeight = label.DesiredSize.Height / 2 + baselineToTextCenterHeight;
+                }
                 measure.measuredBaseline = (int)baselineToTopHeight;
             }
         }
