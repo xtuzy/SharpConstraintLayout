@@ -16,7 +16,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FontBaseline.Maui.Skia\FontBaseline.Maui.Skia.csproj" />
-    <ProjectReference Include="..\FontBaseline.Maui\FontBaseline.Maui.csproj" />
    
     <ProjectReference Include="..\SharpConstraintLayout.Core\SharpConstraintLayout.Core.csproj" />
   </ItemGroup>

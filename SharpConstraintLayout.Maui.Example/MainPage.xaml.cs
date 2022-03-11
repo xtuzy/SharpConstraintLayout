@@ -11,25 +11,29 @@ namespace SharpConstraintLayout.Maui.Example
         public MainPage()
         {
             InitializeComponent();
-         
-            LayoutPage();
+            
+            Content = new Grid() { BackgroundColor = Colors.Pink };
+
+            var Page = new ConstraintLayout() { BackgroundColor = Colors.Yellow };
+            (Content as Grid).Add(Page);
+            LayoutPage(Page);
         }
 
-        private void LayoutPage()
+        private void LayoutPage(ConstraintLayout Page)
         {
-            Content = new ConstraintLayout() { };
-            var Page = Content as ConstraintLayout;
+            // Content = new ConstraintLayout() { };
+            // var Page = Content as ConstraintLayout;
             Page.HeightType = ConstraintSet.SizeType.MatchParent;
             Page.WidthType = ConstraintSet.SizeType.MatchParent;
-            Page.Background = new SolidColorBrush(Colors.Cyan);
+
             button1 = new Button() { Text = "Center" };
-            Button button2 = new Button() { Text = "CenterY&Right",HeightRequest=300 };
+            Button button2 = new Button() { Text = "CenterY&Right" };
             Button button3 = new Button() { Text = "CenterX&Top" };
             Button button4 = new Button() { Text = "Bottom&Left" };
             Button button5 = new Button() { Text = "button4'Left&Top" };
-            label1 = new Label() { Text = "label1", FontSize = 30, HeightRequest = 300, BackgroundColor = Colors.Cyan, VerticalTextAlignment = TextAlignment.Center, HorizontalTextAlignment = TextAlignment.Center };
-            var editor1 = new Editor() { Text = "editor1", FontSize = 30, HeightRequest = 300, BackgroundColor = Colors.Cyan, VerticalTextAlignment = TextAlignment.Center, HorizontalTextAlignment = TextAlignment.Center };
-            var entry1 = new Entry() { Text = "entry1", FontSize = 30, HeightRequest = 300, BackgroundColor = Colors.Cyan, VerticalTextAlignment = TextAlignment.Center, HorizontalTextAlignment = TextAlignment.Center };
+            label1 = new Label() { Text = "label1", FontSize = 30, HeightRequest = 100, BackgroundColor = Colors.Cyan, VerticalTextAlignment = TextAlignment.Center, HorizontalTextAlignment = TextAlignment.Center };
+            var editor1 = new Editor() { Text = "editor1", FontSize = 30, HeightRequest = 100, BackgroundColor = Colors.Cyan, VerticalTextAlignment = TextAlignment.Center, HorizontalTextAlignment = TextAlignment.Center };
+            var entry1 = new Entry() { Text = "entry1", FontSize = 30, HeightRequest = 100, BackgroundColor = Colors.Cyan, VerticalTextAlignment = TextAlignment.Center, HorizontalTextAlignment = TextAlignment.Center };
 
             Page.Children.Add(button1);
             Page.Children.Add(button2);
@@ -46,9 +50,9 @@ namespace SharpConstraintLayout.Maui.Example
             button3.CenterXTo(Page).TopToTop(Page, 20);
             button4.BottomToBottom(Page, 20).RightToRight(Page, 20);
             button5.RightToLeft(button4, 20).BottomToTop(button4, 20);
-            label1.BaselineToBaseline(button1).RightToLeft(button1,20);
-            editor1.BaselineToBaseline(button1).LeftToRight(button1,20);
-            entry1.BaselineToBaseline(button1).RightToLeft(button1,20);
+            label1.BaselineToBaseline(button1).RightToLeft(button1, 20);
+            editor1.BaselineToBaseline(button1).LeftToRight(button1, 20);
+            entry1.BaselineToBaseline(button1).RightToLeft(button1, 20);
             button1.Clicked += OnCounterClicked;
         }
 

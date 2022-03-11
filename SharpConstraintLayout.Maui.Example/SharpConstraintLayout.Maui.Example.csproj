@@ -28,14 +28,15 @@
 		<SupportedOSPlatformVersion Condition="$(TargetFramework.Contains('-windows'))">10.0.17763.0</SupportedOSPlatformVersion>
 		<TargetPlatformMinVersion Condition="$(TargetFramework.Contains('-windows'))">10.0.17763.0</TargetPlatformMinVersion>
 		<UseWPF>False</UseWPF>
+    <AotAssemblies  Condition="'$(Configuration)' == 'Release'">True</AotAssemblies>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<!-- App Icon -->
-		<AndroidResource Include="Resources\appicon.svg" ForegroundFile="Resources\appiconfg.svg" Color="#512BD4" />
+		<MauiIcon Include="Resources\appicon.svg" ForegroundFile="Resources\appiconfg.svg" Color="#512BD4" />
 
 		<!-- Splash Screen -->
-		<AndroidResource Include="Resources\appiconfg.svg" Color="#512BD4" />
+    <MauiSplashScreen Include="Resources\appiconfg.svg" Color="#512BD4" />
 
 		<!-- Images -->
 		<MauiImage Include="Resources\Images\*" />
@@ -50,6 +51,7 @@
 		<PackageReference Include="Microsoft.Graphics.Win2D" Version="1.0.0.30" />
 	</ItemGroup>
 
+  <!--
 	<ItemGroup>
 	  <MauiFont Remove="Resources\Fonts\OpenSans_Regular.ttf" />
 	</ItemGroup>
@@ -62,7 +64,7 @@
 	  <AndroidResource Include="Resources\Fonts\OpenSans_Regular.ttf" />
 	  <AndroidResource Include="Resources\Images\dotnet_bot.svg" />
 	</ItemGroup>
-
+ -->
 	<ItemGroup>
 	  <ProjectReference Include="..\SharpConstraintLayout.Maui\SharpConstraintLayout.Maui.csproj" />
 	</ItemGroup>

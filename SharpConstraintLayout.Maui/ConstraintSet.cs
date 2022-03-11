@@ -3,7 +3,7 @@
 namespace SharpConstraintLayout.Maui
 {
 
-    public class ConstraintSet
+    public partial class ConstraintSet
     {
         static readonly ConstraintAnchor.Type[] ConstraintAnchorTypeDic = new ConstraintAnchor.Type[]
         {

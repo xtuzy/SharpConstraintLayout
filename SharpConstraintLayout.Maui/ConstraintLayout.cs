@@ -30,14 +30,73 @@ namespace SharpConstraintLayout.Maui
     /// <summary>
     /// WPF implementation of ConstraintLayout copy from Swing's ConstraintLayout
     /// </summary>
-    public class ConstraintLayout : Panel
+    public class ConstraintLayout : AbsoluteLayout,IConstraintLayout
     {
-        public bool DEBUG = false;//if is true,will print some layout info.
-        public bool TEST = false;//if is true,will print time of measure+layout spend.
+        bool debug=true;
+        public bool DEBUG { set => debug = value; get => debug; }//if is true,will print some layout info.
+        bool test = false;
+        public bool TEST { set => test = value; get => test; }//if is true,will print time of measure+layout spend.
+
         private readonly ConstraintWidgetContainer mLayout = new ConstraintWidgetContainer();//default widget
         private readonly Dictionary<UIElement, string> viewsToIds = new Dictionary<UIElement, string>();
         private readonly Dictionary<string, ConstraintWidget> idsToConstraintWidgets = new Dictionary<string, ConstraintWidget>();
 
+        /// <summary>
+        /// default widget of ConstraintLayout.
+        /// you can constrol more action by it.
+        /// </summary>
+        public virtual ConstraintWidgetContainer Root
+        {
+            get
+            {
+                return mLayout;
+            }
+        }
+
+        /// <summary>
+        /// get widget of this view.
+        /// </summary>
+        /// <param name="view"></param>
+        /// <returns>widget is a virtual control for caculate constraint</returns>
+        public ConstraintWidget GetWidget(UIElement view)
+        {
+            return this.idsToConstraintWidgets[this.viewsToIds[view]];
+        }
+
+        /// <summary>
+        /// Set width of ConstraintLayout self.<br/>
+        /// Default is <see cref="ConstraintSet.SizeType.WrapContent"/>.<br/>
+        /// Notice:It is different <see cref="ConstraintSetExtensions.SetWidth(FrameworkElement, ConstraintSet.SizeType, float)(FrameworkElement, ConstraintSet.SizeType, float)"/>.
+        /// </summary>
+        /// <param name="fromView"></param>
+        /// <param name="constraint"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        public ConstraintSet.SizeType WidthType
+        {
+            set
+            {
+                var fromWidget = this.Root;
+                fromWidget.HorizontalDimensionBehaviour = ConstraintSet.ConstraintSizeTypeDic[(int)value];
+            }
+        }
+
+        /// <summary>
+        /// Set height of ConstraintLayout self.<br/>
+        /// Default is <see cref="ConstraintSet.SizeType.WrapContent"/>.<br/>
+        /// Notice:It is different <see cref="ConstraintSetExtensions.SetHeight(FrameworkElement, ConstraintSet.SizeType, float)"/>.
+        /// </summary>
+        /// <param name="root"></param>
+        /// <param name="constraint"></param>
+        /// <returns></returns>
+        public ConstraintSet.SizeType HeightType
+        {
+            set
+            {
+                var fromWidget = this.Root;
+                fromWidget.VerticalDimensionBehaviour = ConstraintSet.ConstraintSizeTypeDic[(int)value];
+            }
+        }
 
         public ConstraintLayout()
         {
@@ -54,6 +113,7 @@ namespace SharpConstraintLayout.Maui
 
             //ClipToBounds = true;//view in ConstraintLayout always easy out of bounds
         }
+
         protected override void OnChildAdded(Element child)
         {
             OnVisualChildrenChanged(child, null);
@@ -65,6 +125,7 @@ namespace SharpConstraintLayout.Maui
             OnVisualChildrenChanged(null, child);
             base.OnChildRemoved(child, oldLogicalIndex);
         }
+
         protected void OnVisualChildrenChanged(Element visualAdded, Element visualRemoved)
         {
             // Track when objects are added and removed
@@ -135,246 +196,9 @@ namespace SharpConstraintLayout.Maui
             //base.OnVisualChildrenChanged(visualAdded, visualRemoved);
         }
 
-        Stopwatch swTest = null;
-        /// <summary>
-        /// current times, sum of spend time,limited times
-        /// </summary>
-        (int, List<long>, int) countTestData = (0, new List<long>(), 10);
-        bool isInfinity = false;
-        protected override Size MeasureOverride(double widthConstraint, double heightConstraint)
+        protected override ILayoutManager CreateLayoutManager()
         {
-            //  return base.MeasureOverride(widthConstraint, heightConstraint);
-            return MeasureOverride(new Size(widthConstraint, heightConstraint));
-        }
-
-        protected Size MeasureOverride(Size availableSize)
-        {
-            if (TEST)
-            {
-                if (swTest != null && countTestData.Item1 <= countTestData.Item3)
-                {
-                    countTestData.Item1++;
-                    countTestData.Item2.Add(swTest.ElapsedTicks);
-                    //swTest.Restart();
-                }
-
-                //if (swTest == null)
-                {
-                    swTest = Stopwatch.StartNew();
-                }
-            }
-
-            //first measure all child size,we need know some default size.
-            foreach (UIElement child in Children)
-            {
-                var widget = GetWidget(child);
-                //匹配约束的先不测量,因为没有固定的值
-                if (widget.HorizontalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT
-                    && widget.VerticalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT)
-                    continue;
-                //if(!IsMeasureValid)
-                child.Measure(availableSize.Width, availableSize.Height);
-            }
-
-            //we have know some view default size, so we can calculate other view size that they should be.
-            if (double.IsPositiveInfinity(availableSize.Width))
-            {
-                mLayout.Width = int.MaxValue;
-                isInfinity = true;
-            }
-            else
-            {
-                mLayout.Width = (int)availableSize.Width;
-            }
-
-            if (double.IsPositiveInfinity(availableSize.Height))
-            {
-                mLayout.Height = int.MaxValue;
-                isInfinity = true;
-            }
-            else
-            {
-                mLayout.Height = (int)availableSize.Height;
-            }
-            mLayout.OptimizationLevel = Optimizer.OPTIMIZATION_STANDARD;
-            mLayout.layout();
-            mLayout.measure(Optimizer.OPTIMIZATION_STANDARD, BasicMeasure.EXACTLY, mLayout.Width, BasicMeasure.EXACTLY, mLayout.Height, 0, 0, 0, 0);
-            double w;
-            double h;
-            //now we know all view corrected size in constaint, so give it to child,let them to caculate their child.
-            foreach (UIElement child in Children)
-            {
-
-                var widget = GetWidget(child);
-
-                if (widget.HorizontalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT
-                    || widget.VerticalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT)
-                {
-                    if (widget.HorizontalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.WRAP_CONTENT)
-                        //newMeasureSize.Width = (int)child.DesiredSize.Width;
-                        w = availableSize.Width;
-                    else
-                        w = widget.Width;
-                    if (widget.VerticalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.WRAP_CONTENT)
-                        //newMeasureSize.Height = (int)child.DesiredSize.Height;
-                        h = availableSize.Height;
-                    else
-                        h = widget.Height;
-                    child.Measure(w, h);
-                }
-                if (DEBUG)
-                {
-                    // Debug.WriteLine($"{(child as FrameworkElement).Tag as string},Size {widget.Width},{widget.Height} ,Baseline {widget.BaselineDistance} ");
-                }
-            }
-
-            if (DEBUG)
-            {
-                // Debug.WriteLine($"Parent-{(this.Parent as FrameworkElement).Tag as string},Size {(this.Parent as FrameworkElement).Width},{(this.Parent as FrameworkElement).Height},DesiredSize {(this.Parent as FrameworkElement).DesiredSize}");
-                //Debug.WriteLine($"{this.Tag as string},availableSize {availableSize},DesiredSize {this.DesiredSize},ContainerWidgetSize {mLayout.Width},{mLayout.Height}");
-                foreach (UIElement child in Children)
-                {
-                    var view = child as FrameworkElement;
-                    // Debug.WriteLine($"{view?.Tag as string},Size {view?.Width},{view?.Height}, DesiredSize {view?.DesiredSize}");
-                }
-            }
-
-            //return availableSize;
-            //自身的位置绘制由父控件决定,所以这里要传的正确.
-            //如果自身是要Match_Parent,而父控件传进来MaxValue,那么应该传回MaxValue?
-            //如果自身是Match_Parent,而父控件能传来特定值,那么直接传回特定值
-            //如果自身是Warp_Content和Match_Constraint,那么应该能从子控件约束中计算出特定值传回
-            /*if(mLayout.HorizontalDimensionBehaviour==ConstraintWidget.DimensionBehaviour.MATCH_PARENT&&double.IsInfinity(availableSize.Width))
-                w= 0;
-            else*/
-            w = mLayout.Width;
-            /*if(mLayout.VerticalDimensionBehaviour==ConstraintWidget.DimensionBehaviour.MATCH_PARENT&&double.IsInfinity(availableSize.Height))
-                h= 0;
-            else*/
-            h = mLayout.Height;
-            return new Size(w, h);
-        }
-
-        protected override Size ArrangeOverride(Microsoft.Maui.Graphics.Rectangle bounds)
-        {
-            //return base.ArrangeOverride(bounds);
-            return ArrangeOverride(bounds.Size);
-        }
-
-        protected Size ArrangeOverride(Size finalSize)
-        {
-
-            if (DEBUG)
-            {
-                //Debug.WriteLine($"{this.Tag as string},finalSize {finalSize}, DesiredSize {this.DesiredSize}");
-            }
-            //recalculate?,because when constraintlayout size be define by parent,it size need parent to arrange
-            //such as it as child of listview,listview will send double.infinity to measure,if you set listview's content to strenth,
-            //you need get that size at Arrage. 
-            if (isInfinity && finalSize.Width != 0 && finalSize.Height != 0)//only when parent give me measure size is size isInfinity and finalSize can use(not 0),we recalculate layout.
-            {
-                if (DEBUG)
-                {
-                    //Debug.WriteLine($"{this.Tag as string} Re layout");
-                }
-                mLayout.Width = (int)finalSize.Width;
-                mLayout.Height = (int)finalSize.Height;
-                mLayout.layout();
-                mLayout.OptimizationLevel = Optimizer.OPTIMIZATION_STANDARD;
-                mLayout.measure(Optimizer.OPTIMIZATION_STANDARD, BasicMeasure.EXACTLY, (int)finalSize.Width, BasicMeasure.EXACTLY, (int)finalSize.Height, 0, 0, 0, 0);
-                //isInfinity = false;//Wpf's ArrangeOverride can be load mutiple times, not by measure.
-            }
-
-            //layout child
-            foreach (ConstraintWidget child in mLayout.Children)
-            {
-                UIElement component = (UIElement)child.CompanionWidget;
-                if (component != null)
-                {
-                    if (DEBUG)
-                    {
-                        // Debug.WriteLine($"{(component as FrameworkElement)?.Tag as string} arrange " + child.X + " " + child.Y + " " + child.Width + " " + child.Height);
-                    }
-                    component.Arrange(new Microsoft.Maui.Graphics.Rectangle(child.X, child.Y, child.Width, child.Height));
-                }
-            }
-
-            if (TEST)
-            {
-                swTest.Stop();
-                if (countTestData.Item1 == countTestData.Item3)
-                {
-                    long nanosecPerTick = (1000L * 1000L * 1000L) / Stopwatch.Frequency;
-                    long count = 0;
-                    foreach (var item in countTestData.Item2)
-                    {
-                        count += item;
-
-                    }
-                    // Debug.WriteLine($"{this.Tag as string}, Count {countTestData.Item1}Times, Single Measure+Layout Average Spend Time: {(count * nanosecPerTick * 1.0) / 1000000 / countTestData.Item3}ms");
-                    countTestData.Item1 = 0;
-                    countTestData.Item2.Clear();
-                }
-            }
-            return finalSize;
-        }
-
-
-        /// <summary>
-        /// default widget of ConstraintLayout.
-        /// you can constrol more action by it.
-        /// </summary>
-        public virtual ConstraintWidgetContainer Root
-        {
-            get
-            {
-                return mLayout;
-            }
-        }
-
-        /// <summary>
-        /// get widget of this view.
-        /// </summary>
-        /// <param name="view"></param>
-        /// <returns>widget is a virtual control for caculate constraint</returns>
-        public ConstraintWidget GetWidget(UIElement view)
-        {
-            return this.idsToConstraintWidgets[this.viewsToIds[view]];
-        }
-
-        /// <summary>
-        /// Set width of ConstraintLayout self.<br/>
-        /// Default is <see cref="ConstraintSet.SizeType.WrapContent"/>.<br/>
-        /// Notice:It is different <see cref="ConstraintSetExtensions.SetWidth(FrameworkElement, ConstraintSet.SizeType, float)(FrameworkElement, ConstraintSet.SizeType, float)"/>.
-        /// </summary>
-        /// <param name="fromView"></param>
-        /// <param name="constraint"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentException"></exception>
-        public ConstraintSet.SizeType WidthType
-        {
-            set
-            {
-                var fromWidget = this.Root;
-                fromWidget.HorizontalDimensionBehaviour = ConstraintSet.ConstraintSizeTypeDic[(int)value];
-            }
-        }
-
-        /// <summary>
-        /// Set height of ConstraintLayout self.<br/>
-        /// Default is <see cref="ConstraintSet.SizeType.WrapContent"/>.<br/>
-        /// Notice:It is different <see cref="ConstraintSetExtensions.SetHeight(FrameworkElement, ConstraintSet.SizeType, float)"/>.
-        /// </summary>
-        /// <param name="root"></param>
-        /// <param name="constraint"></param>
-        /// <returns></returns>
-        public ConstraintSet.SizeType HeightType
-        {
-            set
-            {
-                var fromWidget = this.Root;
-                fromWidget.VerticalDimensionBehaviour = ConstraintSet.ConstraintSizeTypeDic[(int)value];
-            }
+            return new ConstraintLayoutManager(this);
         }
 
         //copy from swing
@@ -530,9 +354,5 @@ namespace SharpConstraintLayout.Maui
             }
         }
 
-        protected override ILayoutManager CreateLayoutManager()
-        {
-            throw new NotImplementedException();
-        }
     }
 }
