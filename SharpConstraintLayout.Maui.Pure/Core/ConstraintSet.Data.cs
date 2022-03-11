@@ -130,45 +130,45 @@ namespace SharpConstraintLayout.Maui.Pure.Core
         /// <summary>
         /// The left side of a view.
         /// </summary>
-        public const int LEFT = ConstraintLayout.LayoutParams.LEFT;
+        public const int LEFT = 1;
 
         /// <summary>
         /// The right side of a view.
         /// </summary>
-        public const int RIGHT = ConstraintLayout.LayoutParams.RIGHT;
+        public const int RIGHT = 2;
 
         /// <summary>
         /// The top of a view.
         /// </summary>
-        public const int TOP = ConstraintLayout.LayoutParams.TOP;
+        public const int TOP = 3;
 
         /// <summary>
         /// The bottom side of a view.
         /// </summary>
-        public const int BOTTOM = ConstraintLayout.LayoutParams.BOTTOM;
+        public const int BOTTOM = 4;
 
         /// <summary>
         /// The baseline of the text in a view.
         /// </summary>
-        public const int BASELINE = ConstraintLayout.LayoutParams.BASELINE;
+        public const int BASELINE = 5;
 
         /// <summary>
         /// The left side of a view in left to right languages.
         /// In right to left languages it corresponds to the right side of the view
         /// </summary>
-        public const int START = ConstraintLayout.LayoutParams.START;
+        public const int START = 6;
 
         /// <summary>
         /// The right side of a view in right to left languages.
         /// In right to left languages it corresponds to the left side of the view
         /// </summary>
-        public const int END = ConstraintLayout.LayoutParams.END;
+        public const int END = 7;
 
         /// <summary>
         /// Circle reference from a view.
         /// </summary>
         /// public static final int CIRCLE = 8;
-        public const int CIRCLE_REFERENCE = ConstraintLayout.LayoutParams.CIRCLE;
+        public const int CIRCLE_REFERENCE = 8;
 
         /// <summary>
         /// Chain spread style
