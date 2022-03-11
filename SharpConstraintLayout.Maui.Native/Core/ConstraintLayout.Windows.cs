@@ -20,6 +20,7 @@ using Windows.Foundation;
  */
 using View = Microsoft.UI.Xaml.FrameworkElement;
 using GuidelineView = SharpConstraintLayout.Maui.Core.Guideline;
+using System.Diagnostics;
 
 namespace SharpConstraintLayout.Maui.Core
 {
@@ -546,21 +547,18 @@ namespace SharpConstraintLayout.Maui.Core
 
             public void didMeasures()
             {
-                //JAVA TO C# CONVERTER CRACKED BY X-CRACKER WARNING: The original Java variable was marked 'final':
                 //ORIGINAL LINE: final int widgetsCount = layout.getChildCount();
                 int widgetsCount = layout.ChildCount;
                 for (int i = 0; i < widgetsCount; i++)
                 {
-                    //JAVA TO C# CONVERTER CRACKED BY X-CRACKER WARNING: The original Java variable was marked 'final':
                     //ORIGINAL LINE: final android.view.View child = layout.getChildAt(i);
-                    View child = layout.getChildAt(i);
+                    View child = (View)layout.Children[i];
                     if (child is Placeholder)
                     {
                         ((Placeholder)child).updatePostMeasure(layout);
                     }
                 }
                 // TODO refactor into an updatePostMeasure interface
-                //JAVA TO C# CONVERTER CRACKED BY X-CRACKER WARNING: The original Java variable was marked 'final':
                 //ORIGINAL LINE: final int helperCount = layout.mConstraintHelpers.size();
                 int helperCount = layout.mConstraintHelpers.Count;
                 if (helperCount > 0)
@@ -709,7 +707,7 @@ namespace SharpConstraintLayout.Maui.Core
             if (view is ConstraintHelper)
             {
                 ConstraintHelper helper = (ConstraintHelper)view;
-                //helper.validateParams();
+                helper.validateParams();
                 //LayoutParams layoutParams = (LayoutParams)view.LayoutParams;
                 //layoutParams.isHelper = true;
                 if (!mConstraintHelpers.Contains(helper))
@@ -996,10 +994,10 @@ namespace SharpConstraintLayout.Maui.Core
         {
 
             layoutParams.layout.validate();
-            //layoutParams.helped = false;
+            layoutParams.layout.helped = false;
 
             widget.Visibility = (int)child.Visibility;
-            if (layoutParams.propertySet.isInPlaceholder)
+            if (layoutParams.layout.isInPlaceholder)
             {
                 widget.InPlaceholder = true;
                 widget.Visibility = (int)Microsoft.UI.Xaml.Visibility.Collapsed;
@@ -1198,7 +1196,7 @@ namespace SharpConstraintLayout.Maui.Core
                 }
 
                 // FIXME: need to agree on the correct magic value for this rather than simply using zero.
-                if (!layoutParams.horizontalDimensionFixed)
+                if (!layoutParams.layout.horizontalDimensionFixed)
                 {
                     if (layoutParams.layout.mWidth == ViewGroup.LayoutParams.MATCH_PARENT)
                     {
@@ -1223,16 +1221,16 @@ namespace SharpConstraintLayout.Maui.Core
                 {
                     widget.HorizontalDimensionBehaviour = ConstraintWidget.DimensionBehaviour.FIXED;
                     widget.Width = layoutParams.layout.mWidth;
-                    if (layoutParams.width == WRAP_CONTENT)
+                    if (layoutParams.layout.mWidth == WRAP_CONTENT)
                     {
                         widget.HorizontalDimensionBehaviour = ConstraintWidget.DimensionBehaviour.WRAP_CONTENT;
                     }
                 }
-                if (!layoutParams.verticalDimensionFixed)
+                if (!layoutParams.layout.verticalDimensionFixed)
                 {
-                    if (layoutParams.height == MATCH_PARENT)
+                    if (layoutParams.layout.mHeight ==LayoutParams.MATCH_PARENT)
                     {
-                        if (layoutParams.constrainedHeight)
+                        if (layoutParams.layout.constrainedHeight)
                         {
                             widget.VerticalDimensionBehaviour = ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT;
                         }
@@ -1240,8 +1238,8 @@ namespace SharpConstraintLayout.Maui.Core
                         {
                             widget.VerticalDimensionBehaviour = ConstraintWidget.DimensionBehaviour.MATCH_PARENT;
                         }
-                        widget.getAnchor(ConstraintAnchor.Type.TOP).mMargin = layoutParams.topMargin;
-                        widget.getAnchor(ConstraintAnchor.Type.BOTTOM).mMargin = layoutParams.bottomMargin;
+                        widget.getAnchor(ConstraintAnchor.Type.TOP).mMargin = layoutParams.layout.topMargin;
+                        widget.getAnchor(ConstraintAnchor.Type.BOTTOM).mMargin = layoutParams.layout.bottomMargin;
                     }
                     else
                     {
@@ -1252,40 +1250,46 @@ namespace SharpConstraintLayout.Maui.Core
                 else
                 {
                     widget.VerticalDimensionBehaviour = ConstraintWidget.DimensionBehaviour.FIXED;
-                    widget.Height = layoutParams.height;
-                    if (layoutParams.height == WRAP_CONTENT)
+                    widget.Height = layoutParams.layout.mHeight;
+                    if (layoutParams.layout.mHeight == WRAP_CONTENT)
                     {
                         widget.VerticalDimensionBehaviour = ConstraintWidget.DimensionBehaviour.WRAP_CONTENT;
                     }
                 }
 
-                widget.setDimensionRatio(layoutParams.dimensionRatio);
-                widget.HorizontalWeight = layoutParams.horizontalWeight;
-                widget.VerticalWeight = layoutParams.verticalWeight;
-                widget.HorizontalChainStyle = layoutParams.horizontalChainStyle;
-                widget.VerticalChainStyle = layoutParams.verticalChainStyle;
-                widget.WrapBehaviorInParent = layoutParams.wrapBehaviorInParent;
-                widget.setHorizontalMatchStyle(layoutParams.matchConstraintDefaultWidth, layoutParams.matchConstraintMinWidth, layoutParams.matchConstraintMaxWidth, layoutParams.matchConstraintPercentWidth);
-                widget.setVerticalMatchStyle(layoutParams.matchConstraintDefaultHeight, layoutParams.matchConstraintMinHeight, layoutParams.matchConstraintMaxHeight, layoutParams.matchConstraintPercentHeight);
+                widget.setDimensionRatio(layoutParams.layout.dimensionRatio);
+                widget.HorizontalWeight = layoutParams.layout.horizontalWeight;
+                widget.VerticalWeight = layoutParams.layout.verticalWeight;
+                widget.HorizontalChainStyle = layoutParams.layout.horizontalChainStyle;
+                widget.VerticalChainStyle = layoutParams.layout.verticalChainStyle;
+                widget.WrapBehaviorInParent = layoutParams.layout.mWrapBehavior;
+                widget.setHorizontalMatchStyle(layoutParams.layout.widthDefault, layoutParams.layout.widthMin, layoutParams.layout.widthMax, layoutParams.layout.widthPercent);
+                widget.setVerticalMatchStyle(layoutParams.layout.heightDefault, layoutParams.layout.heightMin, layoutParams.layout.heightMax, layoutParams.layout.heightPercent);
             }
         }
 
-        private void setWidgetBaseline(ConstraintWidget widget, LayoutParams layoutParams, SparseArray<ConstraintWidget> idToWidget, int baselineTarget, ConstraintAnchor.Type type)
+        //private void setWidgetBaseline(ConstraintWidget widget, LayoutParams layoutParams, SparseArray<ConstraintWidget> idToWidget, int baselineTarget, ConstraintAnchor.Type type)
+        private void setWidgetBaseline(ConstraintWidget widget, ConstraintSet.Constraint layoutParams, Dictionary<int,ConstraintWidget> idToWidget, int baselineTarget, ConstraintAnchor.Type type)
         {
-            View view = mChildrenByIds.get(baselineTarget);
-            ConstraintWidget target = idToWidget.get(baselineTarget);
-            if (target != null && view != null && view.LayoutParams is LayoutParams)
+            View view = mChildrenByIds[baselineTarget];
+            ConstraintWidget target = idToWidget[baselineTarget];
+            //if (target != null && view != null && view.LayoutParams is LayoutParams)
+            if (target != null && view != null)
             {
-                layoutParams.needsBaseline = true;
+                layoutParams.layout.needsBaseline = true;
                 if (type == ConstraintAnchor.Type.BASELINE)
-                { // baseline to baseline
-                    LayoutParams targetParams = (LayoutParams)view.LayoutParams;
+                {
+                    // baseline to baseline
+                    /*LayoutParams targetParams = (LayoutParams)view.LayoutParams;
                     targetParams.needsBaseline = true;
-                    targetParams.widget.HasBaseline = true;
+                    targetParams.widget.HasBaseline = true;*/
+                    var targetParams = ConstraintSet.Constraints[baselineTarget];
+                    targetParams.layout.needsBaseline = true;
+                    target.HasBaseline = true;
                 }
                 ConstraintAnchor baseline = widget.getAnchor(ConstraintAnchor.Type.BASELINE);
                 ConstraintAnchor targetAnchor = target.getAnchor(type);
-                baseline.connect(targetAnchor, layoutParams.baselineMargin, layoutParams.goneBaselineMargin, true);
+                baseline.connect(targetAnchor, layoutParams.layout.baselineMargin, layoutParams.layout.goneBaselineMargin, true);
                 widget.HasBaseline = true;
                 widget.getAnchor(ConstraintAnchor.Type.TOP).reset();
                 widget.getAnchor(ConstraintAnchor.Type.BOTTOM).reset();
@@ -1294,13 +1298,14 @@ namespace SharpConstraintLayout.Maui.Core
 
         private ConstraintWidget getTargetWidget(int id)
         {
-            if (id == LayoutParams.PARENT_ID)
+            //if (id == LayoutParams.PARENT_ID)
+            if (id == LayoutParams.PARENT_ID || id == this.GetHashCode())
             {
                 return mLayoutWidget;
             }
             else
             {
-                View view = mChildrenByIds.get(id);
+                /*View view = mChildrenByIds[id];
                 if (view == null)
                 {
                     view = findViewById(id);
@@ -1313,7 +1318,8 @@ namespace SharpConstraintLayout.Maui.Core
                 {
                     return mLayoutWidget;
                 }
-                return view == null ? null : ((LayoutParams)view.LayoutParams).widget;
+                return view == null ? null : ((LayoutParams)view.LayoutParams).widget;*/
+                return mapToWidget[id];
             }
         }
 
@@ -1366,11 +1372,17 @@ namespace SharpConstraintLayout.Maui.Core
             int widthSize = MeasureSpec.getSize(widthMeasureSpec);
             int heightMode = MeasureSpec.getMode(heightMeasureSpec);
             int heightSize = MeasureSpec.getSize(heightMeasureSpec);
-
+#if __ANDROID__
             int paddingY = Math.Max(0, PaddingTop);
             int paddingBottom = Math.Max(0, PaddingBottom);
             int paddingHeight = paddingY + paddingBottom;
             int paddingWidth = PaddingWidth;
+#elif WINDOWS
+            double paddingY = Math.Max(0, Margin.Top);
+            double paddingBottom = Math.Max(0,Margin.Bottom);
+            double paddingHeight = paddingY + paddingBottom;
+            double paddingWidth = PaddingWidth;
+#endif
             int paddingX;
             mMeasurer.captureLayoutInfo(widthMeasureSpec, heightMeasureSpec, paddingY, paddingBottom, paddingWidth, paddingHeight);
 
@@ -1442,11 +1454,17 @@ namespace SharpConstraintLayout.Maui.Core
             mLastMeasureWidth = resolvedWidthSize;
             mLastMeasureHeight = resolvedHeightSize;
         }
-
+#if WINDOWS
+        protected override Size MeasureOverride(Size availableSize)
+        {
+            onMeasure(availableSize.Width, availableSize.Height);
+            return base.MeasureOverride(availableSize);
+        }
+#endif
         /// <summary>
         /// {@inheritDoc}
         /// </summary>
-        protected internal override void onMeasure(int widthMeasureSpec, int heightMeasureSpec)
+        protected internal void onMeasure(double widthMeasureSpec, double heightMeasureSpec)
         {
             long time = 0;
             if (DEBUG)
@@ -1462,19 +1480,17 @@ namespace SharpConstraintLayout.Maui.Core
                 // in that case we'd miss updating the hierarchy correctly (window insets change may do that -- we receive
                 // a second onMeasure before onLayout).
                 // We have to iterate on our children to verify that none set a request layout flag...
-                //JAVA TO C# CONVERTER CRACKED BY X-CRACKER WARNING: The original Java variable was marked 'final':
                 //ORIGINAL LINE: final int count = getChildCount();
                 int count = ChildCount;
                 for (int i = 0; i < count; i++)
                 {
-                    //JAVA TO C# CONVERTER CRACKED BY X-CRACKER WARNING: The original Java variable was marked 'final':
                     //ORIGINAL LINE: final android.view.View child = getChildAt(i);
-                    View child = getChildAt(i);
+                    View child = (View)Children[i];
                     if (child.LayoutRequested)
                     {
                         if (DEBUG)
                         {
-                            Console.WriteLine("### CHILD " + child + " REQUESTED LAYOUT, FORCE DIRTY HIERARCHY");
+                            Debug.WriteLine("### CHILD " + child + " REQUESTED LAYOUT, FORCE DIRTY HIERARCHY");
                         }
                         mDirtyHierarchy = true;
                         break;
@@ -1554,6 +1570,7 @@ namespace SharpConstraintLayout.Maui.Core
         {
             get
             {
+#if __ANDROID__
                 int widthPadding = Math.Max(0, PaddingLeft) + Math.Max(0, PaddingRight);
                 int rtlPadding = 0;
 
@@ -1565,6 +1582,15 @@ namespace SharpConstraintLayout.Maui.Core
                 {
                     widthPadding = rtlPadding;
                 }
+#elif WINDOWS //Windows中,RTL时坐标系会水平翻转,但用户定义布局还是和之前一样弄,没有Start和End之分
+                int widthPadding = (int)(Math.Max(0, Margin.Left) + Math.Max(0,Margin.Right));
+                int rtlPadding = 0;
+                rtlPadding = (int)(Math.Max(0, Margin.Left) + Math.Max(0, Margin.Right));
+                if (rtlPadding > 0)
+                {
+                    widthPadding = rtlPadding;
+                }
+#endif
                 return widthPadding;
             }
         }

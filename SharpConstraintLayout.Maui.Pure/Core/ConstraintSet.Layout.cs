@@ -19,7 +19,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-namespace SharpConstraintLayout.Maui.Core
+namespace SharpConstraintLayout.Maui.Pure.Core
 {
     public partial class ConstraintSet
     {
@@ -80,41 +80,41 @@ namespace SharpConstraintLayout.Maui.Core
             /// <summary>
             /// <see cref="ConstraintLayout.LayoutParams.matchConstraintDefaultWidth"/>
             /// </summary>
-            public int widthDefault = ConstraintWidget.MATCH_CONSTRAINT_SPREAD;
+            public int matchConstraintDefaultWidth = ConstraintWidget.MATCH_CONSTRAINT_SPREAD;
             /// <summary>
             /// <see cref="ConstraintLayout.LayoutParams.matchConstraintDefaultHeight"/>
             /// </summary>
-            public int heightDefault = ConstraintWidget.MATCH_CONSTRAINT_SPREAD;
+            public int matchConstraintDefaultHeight = ConstraintWidget.MATCH_CONSTRAINT_SPREAD;
             /// <summary>
             /// <see cref="ConstraintLayout.LayoutParams.matchConstraintMaxWidth"/>
             /// </summary>
-            public int widthMax = UNSET;
+            public int matchConstraintMaxWidth = UNSET;
             /// <summary>
             /// <see cref="ConstraintLayout.LayoutParams.matchConstraintMaxHeight"/>
             /// </summary>
-            public int heightMax = UNSET;
+            public int matchConstraintMaxHeight = UNSET;
             /// <summary>
             /// <see cref="ConstraintLayout.LayoutParams.matchConstraintMinWidth/>
             /// </summary>
-            public int widthMin = UNSET;
+            public int matchConstraintMinWidth = UNSET;
             /// <summary>
             /// <see cref="ConstraintLayout.LayoutParams.matchConstraintMinHeight"/>
             /// </summary>
-            public int heightMin = UNSET;
+            public int matchConstraintMinHeight = UNSET;
             /// <summary>
             /// <see cref="ConstraintLayout.LayoutParams.matchConstraintPercentWidth"/>
             /// </summary>
-            public float widthPercent = 1;
+            public float matchConstraintPercentWidth = 1;
             /// <summary>
             /// <see cref="ConstraintLayout.LayoutParams.matchConstraintPercentHeight"/>
             /// </summary>
-            public float heightPercent = 1;
+            public float matchConstraintPercentHeight = 1;
             public int mBarrierDirection = UNSET;
             public int mBarrierMargin = 0;
             public int mHelperType = UNSET;
             public int[] mReferenceIds;
             public string mReferenceIdString;
-            public string mConstraintTag;
+            public string constraintTag;
             public bool constrainedWidth = false;
             public bool constrainedHeight = false;
             // TODO public boolean mChainUseRtl = false;
@@ -122,7 +122,7 @@ namespace SharpConstraintLayout.Maui.Core
             /// <summary>
             /// <see cref="ConstraintLayout.LayoutParams.wrapBehaviorInParent">
             /// </summary>
-            public int mWrapBehavior = ConstraintWidget.WRAP_BEHAVIOR_INCLUDED;
+            public int wrapBehaviorInParent = ConstraintWidget.WRAP_BEHAVIOR_INCLUDED;
 
             public virtual void copyFrom(Layout src)
             {
@@ -175,18 +175,18 @@ namespace SharpConstraintLayout.Maui.Core
                 horizontalWeight = src.horizontalWeight;
                 horizontalChainStyle = src.horizontalChainStyle;
                 verticalChainStyle = src.verticalChainStyle;
-                widthDefault = src.widthDefault;
-                heightDefault = src.heightDefault;
-                widthMax = src.widthMax;
-                heightMax = src.heightMax;
-                widthMin = src.widthMin;
-                heightMin = src.heightMin;
-                widthPercent = src.widthPercent;
-                heightPercent = src.heightPercent;
+                matchConstraintDefaultWidth = src.matchConstraintDefaultWidth;
+                matchConstraintDefaultHeight = src.matchConstraintDefaultHeight;
+                matchConstraintMaxWidth = src.matchConstraintMaxWidth;
+                matchConstraintMaxHeight = src.matchConstraintMaxHeight;
+                matchConstraintMinWidth = src.matchConstraintMinWidth;
+                matchConstraintMinHeight = src.matchConstraintMinHeight;
+                matchConstraintPercentWidth = src.matchConstraintPercentWidth;
+                matchConstraintPercentHeight = src.matchConstraintPercentHeight;
                 mBarrierDirection = src.mBarrierDirection;
                 mBarrierMargin = src.mBarrierMargin;
                 mHelperType = src.mHelperType;
-                mConstraintTag = src.mConstraintTag;
+                constraintTag = src.constraintTag;
 
                 if (src.mReferenceIds != null && string.ReferenceEquals(src.mReferenceIdString, null))
                 {
@@ -202,7 +202,7 @@ namespace SharpConstraintLayout.Maui.Core
                 constrainedHeight = src.constrainedHeight;
                 // TODO mChainUseRtl = t.mChainUseRtl;
                 mBarrierAllowsGoneWidgets = src.mBarrierAllowsGoneWidgets;
-                mWrapBehavior = src.mWrapBehavior;
+                wrapBehaviorInParent = src.wrapBehaviorInParent;
             }
 
             internal static Dictionary<int,int> mapToConstant = new Dictionary<int, int>();
@@ -593,20 +593,20 @@ namespace SharpConstraintLayout.Maui.Core
                 {
                     horizontalDimensionFixed = false;
                     //if (matchConstraintDefaultWidth == MATCH_CONSTRAINT_SPREAD)
-                    if (widthDefault == MATCH_CONSTRAINT_SPREAD)
+                    if (matchConstraintDefaultWidth == MATCH_CONSTRAINT_SPREAD)
                     {
                         //matchConstraintDefaultWidth = MATCH_CONSTRAINT_WRAP;
-                        widthDefault = MATCH_CONSTRAINT_WRAP;
+                        matchConstraintDefaultWidth = MATCH_CONSTRAINT_WRAP;
                     }
                 }
                 if (mHeight == WRAP_CONTENT && constrainedHeight)
                 {
                     verticalDimensionFixed = false;
                     //if (matchConstraintDefaultHeight == MATCH_CONSTRAINT_SPREAD)
-                    if (heightDefault == MATCH_CONSTRAINT_SPREAD)
+                    if (matchConstraintDefaultHeight == MATCH_CONSTRAINT_SPREAD)
                     {
                         //matchConstraintDefaultHeight = MATCH_CONSTRAINT_WRAP;
-                        heightDefault = MATCH_CONSTRAINT_WRAP;
+                        matchConstraintDefaultHeight = MATCH_CONSTRAINT_WRAP;
                     }
                 }
                 if (mWidth == MATCH_CONSTRAINT || mWidth == ViewGroup.LayoutParams.MATCH_PARENT)
@@ -615,7 +615,7 @@ namespace SharpConstraintLayout.Maui.Core
                     // We have to reset LayoutParams width/height to WRAP_CONTENT here, as some widgets like TextView
                     // will use the layout params directly as a hint to know if they need to request a layout
                     // when their content change (e.g. during setTextView)
-                    if (mWidth == MATCH_CONSTRAINT && widthDefault == MATCH_CONSTRAINT_WRAP)
+                    if (mWidth == MATCH_CONSTRAINT && matchConstraintDefaultWidth == MATCH_CONSTRAINT_WRAP)
                     {
                         mWidth = WRAP_CONTENT;
                         constrainedWidth = true;
@@ -627,7 +627,7 @@ namespace SharpConstraintLayout.Maui.Core
                     // We have to reset LayoutParams width/height to WRAP_CONTENT here, as some widgets like TextView
                     // will use the layout params directly as a hint to know if they need to request a layout
                     // when their content change (e.g. during setTextView)
-                    if (mHeight == MATCH_CONSTRAINT && heightDefault == MATCH_CONSTRAINT_WRAP)
+                    if (mHeight == MATCH_CONSTRAINT && matchConstraintDefaultHeight == MATCH_CONSTRAINT_WRAP)
                     {
                         mHeight = WRAP_CONTENT;
                         constrainedHeight = true;

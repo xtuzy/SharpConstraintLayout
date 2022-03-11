@@ -19,7 +19,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SharpConstraintLayout.Maui.Core
+namespace SharpConstraintLayout.Maui.Pure.Core
 {
     public partial class ConstraintSet
     {
