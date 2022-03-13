@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SharpConstraintLayout.Maui.Pure
+namespace SharpConstraintLayout.Maui.Pure.Example
 {
     public class MainPage : RelativeLayout
     {

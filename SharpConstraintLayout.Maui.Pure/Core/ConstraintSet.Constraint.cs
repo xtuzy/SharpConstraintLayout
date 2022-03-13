@@ -406,7 +406,7 @@ namespace SharpConstraintLayout.Maui.Pure.Core
 					param.endMargin = layout.endMargin;
 				//}
 
-				param.validate();
+				//param.validate();
 			}
 		}
 	}

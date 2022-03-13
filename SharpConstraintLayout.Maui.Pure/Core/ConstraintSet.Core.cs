@@ -13,13 +13,18 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
+using androidx.constraintlayout.core.widgets;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+#if WINDOWS
+using View = Microsoft.UI.Xaml.UIElement;
+#elif __IOS__
+using View = UIKit.UIView;
+#endif
 namespace SharpConstraintLayout.Maui.Pure.Core
 {
     public partial class ConstraintSet
@@ -76,7 +81,12 @@ namespace SharpConstraintLayout.Maui.Pure.Core
             applyToInternal(constraintLayout, true);
             //constraintLayout.ConstraintSet = null;
             //constraintLayout.requestLayout();
+#if WINDOWS
+            constraintLayout.InvalidateMeasure();
             constraintLayout.UpdateLayout();
+#elif __IOS__
+            constraintLayout.LayoutIfNeeded();
+#endif
         }
 
         /// <summary>
@@ -87,6 +97,176 @@ namespace SharpConstraintLayout.Maui.Pure.Core
             constraintLayout.ConstraintSet.Dispose();
             constraintLayout.ConstraintSet = null;
             constraintLayout.ConstraintSet = this;
+        }
+
+        /// <summary>
+        /// Used to set constraints when used by constraint layout
+        /// </summary>
+        internal virtual void applyToInternal_Android(ConstraintLayout constraintLayout, bool applyPostLayout)
+        {
+            int count = constraintLayout.ChildCount;
+            List<int> used = mConstraints.Keys.ToList();//已经设置了约束的id
+            for (int i = 0; i < count; i++)//查看layout的child
+            {
+#if WINDOWS
+                View view = constraintLayout.Children[i];
+#elif __IOS__
+                View view = constraintLayout.Children[i];
+#endif
+                int id = view.Id;
+                if (!mConstraints.ContainsKey(id))
+                {
+                    Debug.WriteLine(TAG, $"id unknown {view}");
+                    continue;
+                }
+
+                if (mForceId && id == -1)
+                {
+                    throw new Exception("All children of ConstraintLayout must have ids to use ConstraintSet");
+                }
+                if (id == -1)
+                {
+                    continue;
+                }
+
+                if (mConstraints.ContainsKey(id))
+                {
+                    used.remove(id);
+                    Constraint constraint = mConstraints[id];
+                    if (constraint == null)
+                    {
+                        continue;
+                    }
+                    if (view is Barrier)
+                    {
+                        constraint.layout.mHelperType = BARRIER_TYPE;
+                        Barrier barrier = (Barrier)view;
+                        barrier.Id = id;
+                        barrier.Type = constraint.layout.mBarrierDirection;
+                        barrier.Margin = constraint.layout.mBarrierMargin;
+
+                        barrier.AllowsGoneWidget = constraint.layout.mBarrierAllowsGoneWidgets;
+                        if (constraint.layout.mReferenceIds != null)
+                        {
+                            barrier.ReferencedIds = constraint.layout.mReferenceIds;
+                        }
+                        else if (!string.ReferenceEquals(constraint.layout.mReferenceIdString, null))
+                        {
+                            constraint.layout.mReferenceIds = convertReferenceString(barrier, constraint.layout.mReferenceIdString);
+                            barrier.ReferencedIds = constraint.layout.mReferenceIds;
+                        }
+                    }
+                    ConstraintLayout.LayoutParams param = (ConstraintLayout.LayoutParams)view.LayoutParams;
+                    param.validate();
+                    constraint.applyTo(param);
+
+                    if (applyPostLayout)
+                    {
+                        ConstraintAttribute.setAttributes(view, constraint.mCustomConstraints);
+                    }
+                    view.LayoutParams = param;
+                    if (constraint.propertySet.mVisibilityMode == VISIBILITY_MODE_NORMAL)
+                    {
+                        view.Visibility = constraint.propertySet.visibility;
+                    }
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1)
+                    {
+                        view.Alpha = constraint.propertySet.alpha;
+                        view.Rotation = constraint.transform.rotation;
+                        view.RotationX = constraint.transform.rotationX;
+                        view.RotationY = constraint.transform.rotationY;
+                        view.ScaleX = constraint.transform.scaleX;
+                        view.ScaleY = constraint.transform.scaleY;
+                        if (constraint.transform.transformPivotTarget != UNSET)
+                        {
+                            View layout = (View)view.Parent;
+                            View center = layout.findViewById(constraint.transform.transformPivotTarget);
+                            if (center != null)
+                            {
+                                float cy = (center.Top + center.Bottom) / 2.0f;
+                                float cx = (center.Left + center.Right) / 2.0f;
+                                if (view.Right - view.Left > 0 && view.Bottom - view.Top > 0)
+                                {
+                                    float px = (cx - view.Left);
+                                    float py = (cy - view.Top);
+                                    view.PivotX = px;
+                                    view.PivotY = py;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (!float.IsNaN(constraint.transform.transformPivotX))
+                            {
+                                view.PivotX = constraint.transform.transformPivotX;
+                            }
+                            if (!float.IsNaN(constraint.transform.transformPivotY))
+                            {
+                                view.PivotY = constraint.transform.transformPivotY;
+                            }
+                        }
+                        view.TranslationX = constraint.transform.translationX;
+                        view.TranslationY = constraint.transform.translationY;
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+                        {
+                            view.TranslationZ = constraint.transform.translationZ;
+                            if (constraint.transform.applyElevation)
+                            {
+                                view.Elevation = constraint.transform.elevation;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    Log.v(TAG, "WARNING NO CONSTRAINTS for view " + id);
+                }
+            }
+            foreach (int? id in used)
+            {
+                Constraint constraint = mConstraints[id];
+                if (constraint == null)
+                {
+                    continue;
+                }
+                if (constraint.layout.mHelperType == BARRIER_TYPE)
+                {
+                    Barrier barrier = new Barrier(constraintLayout.Context);
+                    barrier.Id = id;
+                    if (constraint.layout.mReferenceIds != null)
+                    {
+                        barrier.ReferencedIds = constraint.layout.mReferenceIds;
+                    }
+                    else if (!string.ReferenceEquals(constraint.layout.mReferenceIdString, null))
+                    {
+                        constraint.layout.mReferenceIds = convertReferenceString(barrier, constraint.layout.mReferenceIdString);
+                        barrier.ReferencedIds = constraint.layout.mReferenceIds;
+                    }
+                    barrier.Type = constraint.layout.mBarrierDirection;
+                    barrier.Margin = constraint.layout.mBarrierMargin;
+                    LayoutParams param = constraintLayout.generateDefaultLayoutParams();
+                    barrier.validateParams();
+                    constraint.applyTo(param);
+                    constraintLayout.addView(barrier, param);
+                }
+                if (constraint.layout.mIsGuideline)
+                {
+                    Guideline g = new Guideline(constraintLayout.Context);
+                    g.Id = id;
+                    ConstraintLayout.LayoutParams param = constraintLayout.generateDefaultLayoutParams();
+                    constraint.applyTo(param);
+                    constraintLayout.addView(g, param);
+                }
+            }
+            for (int i = 0; i < count; i++)
+            {
+                View view = constraintLayout.getChildAt(i);
+                if (view is ConstraintHelper)
+                {
+                    ConstraintHelper constraintHelper = (ConstraintHelper)view;
+                    constraintHelper.applyLayoutFeaturesInConstraintSet(constraintLayout);
+                }
+            }
         }
 
         /// <summary>
@@ -1169,10 +1349,10 @@ namespace SharpConstraintLayout.Maui.Pure.Core
         /// </summary>
         public virtual void setLayoutWrapBehavior(int viewId, int behavior)
         {
-            //if (behavior >= 0 && behavior <= ConstraintWidget.WRAP_BEHAVIOR_SKIPPED)
-            //{
+            if (behavior >= 0 && behavior <= ConstraintWidget.WRAP_BEHAVIOR_SKIPPED)
+            {
                 get(viewId).layout.wrapBehaviorInParent = behavior;
-            //}
+            }
         }
 
         /// <summary>

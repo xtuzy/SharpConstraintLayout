@@ -1,7 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0;net6.0-android;net6.0-ios;net6.0-maccatalyst</TargetFrameworks>
+    <TargetFrameworks>net6.0-ios</TargetFrameworks>
     <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows')) and '$(MSBuildRuntimeType)' == 'Full'">$(TargetFrameworks);net6.0-windows10.0.19041</TargetFrameworks>
     <UseMaui>true</UseMaui>
     <SingleProject>true</SingleProject>
@@ -69,8 +69,10 @@
     <Folder Include="Platforms\MacCatalyst\" />
     <Folder Include="Platforms\Windows\" />
   </ItemGroup>
+  <ItemGroup Condition="$(TargetFramework.Contains('-windows'))">
+    <PackageReference Include="SkiaSharp" Version="2.88.0-preview.209" />
+  </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FontBaseline.Maui.Skia\FontBaseline.Maui.Skia.csproj" />
     <ProjectReference Include="..\SharpConstraintLayout.Core\SharpConstraintLayout.Core.csproj" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net6.0-windows10.0.19041'">

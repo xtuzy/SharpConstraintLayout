@@ -32,9 +32,23 @@ namespace SharpConstraintLayout.Maui.Pure.Core
             public int mHeight;
             public const int UNSET = ConstraintSet.UNSET;
             public static readonly int UNSET_GONE_MARGIN = int.MinValue;
+            
+            
+            /// <summary>
+            /// The distance of child (guideline) to the top or left edge of its parent.
+            /// </summary>
             public int guideBegin = UNSET;
+            /// <summary>
+            /// The distance of child (guideline) to the bottom or right edge of its parent.
+            /// </summary>
             public int guideEnd = UNSET;
+            /// <summary>
+            /// The ratio of the distance to the parent's sides
+            /// </summary>
             public float guidePercent = UNSET;
+            /// <summary>
+            /// Constrains the left side of a child to the left side of a target child (contains the target child id).
+            /// </summary>
             public int leftToLeft = UNSET;
             public int leftToRight = UNSET;
             public int rightToLeft = UNSET;
@@ -47,11 +61,25 @@ namespace SharpConstraintLayout.Maui.Pure.Core
             public int baselineToTop = UNSET;
             public int baselineToBottom = UNSET;
             public int startToEnd = UNSET;
+            /// <summary>
+            /// Constrains the start side of a child to the start side of a target child (contains the target child id).
+            /// </summary>
             public int startToStart = UNSET;
             public int endToStart = UNSET;
             public int endToEnd = UNSET;
+            /// <summary>
+            /// The ratio between two connections when the left and right (or start and end) sides are constrained.
+            /// </summary>
             public float horizontalBias = 0.5f;
+
+            /// <summary>
+            /// The ratio between two connections when the top and bottom sides are constrained.
+            /// </summary>
             public float verticalBias = 0.5f;
+
+            /// <summary>
+            /// The ratio information.
+            /// </summary>
             public string dimensionRatio = null;
             public int circleConstraint = UNSET;
             public int circleRadius = 0;
@@ -66,6 +94,9 @@ namespace SharpConstraintLayout.Maui.Pure.Core
             public int endMargin = 0;
             public int startMargin = 0;
             public int baselineMargin = 0;
+            /// <summary>
+            /// The left margin to use when the target is gone.
+            /// </summary>
             public int goneLeftMargin = UNSET_GONE_MARGIN;
             public int goneTopMargin = UNSET_GONE_MARGIN;
             public int goneRightMargin = UNSET_GONE_MARGIN;
@@ -73,40 +104,103 @@ namespace SharpConstraintLayout.Maui.Pure.Core
             public int goneEndMargin = UNSET_GONE_MARGIN;
             public int goneStartMargin = UNSET_GONE_MARGIN;
             public int goneBaselineMargin = UNSET_GONE_MARGIN;
-            public float verticalWeight = UNSET;
-            public float horizontalWeight = UNSET;
-            public int horizontalChainStyle = CHAIN_SPREAD;
-            public int verticalChainStyle = CHAIN_SPREAD;
             /// <summary>
-            /// <see cref="ConstraintLayout.LayoutParams.matchConstraintDefaultWidth"/>
+            /// The child's weight that we can use to distribute the available horizontal space
+            /// in a chain, if the dimension behaviour is set to MATCH_CONSTRAINT
+            /// </summary>
+            public float horizontalWeight = UNSET;
+
+            /// <summary>
+            /// The child's weight that we can use to distribute the available vertical space
+            /// in a chain, if the dimension behaviour is set to MATCH_CONSTRAINT
+            /// </summary>
+            public float verticalWeight = UNSET;
+
+            /// <summary>
+            /// If the child is the start of a horizontal chain, this attribute will drive how
+            /// the elements of the chain will be positioned. The possible values are:
+            /// <ul>
+            /// <li><seealso cref="CHAIN_SPREAD"/> -- the elements will be spread out</li>
+            /// <li><seealso cref="CHAIN_SPREAD_INSIDE"/> -- similar, but the endpoints of the chain will not
+            /// be spread out</li>
+            /// <li><seealso cref="CHAIN_PACKED"/> -- the elements of the chain will be packed together. The
+            /// horizontal bias attribute of the child will then affect the positioning of the packed
+            /// elements</li>
+            /// </ul>
+            /// </summary>
+            public int horizontalChainStyle = CHAIN_SPREAD;
+            /// <summary>
+            /// If the child is the start of a vertical chain, this attribute will drive how
+            /// the elements of the chain will be positioned. The possible values are:
+            /// <ul>
+            /// <li><seealso cref="CHAIN_SPREAD"/> -- the elements will be spread out</li>
+            /// <li><seealso cref="CHAIN_SPREAD_INSIDE"/> -- similar, but the endpoints of the chain will not
+            /// be spread out</li>
+            /// <li><seealso cref="CHAIN_PACKED"/> -- the elements of the chain will be packed together. The
+            /// vertical bias attribute of the child will then affect the positioning of the packed
+            /// elements</li>
+            /// </ul>
+            /// </summary>
+            public int verticalChainStyle = CHAIN_SPREAD;
+
+
+            /// <summary>
+            /// Define how the widget horizontal dimension is handled when set to MATCH_CONSTRAINT
+            /// <ul>
+            /// <li><seealso cref="#MATCH_CONSTRAINT_SPREAD"/> -- the default. The dimension will expand up to
+            /// the constraints, minus margins</li>
+            /// <li><seealso cref="#MATCH_CONSTRAINT_WRAP"/> -- DEPRECATED -- use instead WRAP_CONTENT and
+            /// constrainedWidth=true<br>
+            /// The dimension will be the same as WRAP_CONTENT, unless the size ends
+            /// up too large for the constraints; in that case the dimension will expand up to the constraints, minus margins
+            /// This attribute may not be applied if the widget is part of a chain in that dimension.</li>
+            /// <li><seealso cref="#MATCH_CONSTRAINT_PERCENT"/> -- The dimension will be a percent of another
+            /// widget (by default, the parent)</li>
+            /// </ul>
             /// </summary>
             public int matchConstraintDefaultWidth = ConstraintWidget.MATCH_CONSTRAINT_SPREAD;
             /// <summary>
-            /// <see cref="ConstraintLayout.LayoutParams.matchConstraintDefaultHeight"/>
+            /// Define how the widget vertical dimension is handled when set to MATCH_CONSTRAINT
+            /// <ul>
+            /// <li><seealso cref="#MATCH_CONSTRAINT_SPREAD"/> -- the default. The dimension will expand up to
+            /// the constraints, minus margins</li>
+            /// <li><seealso cref="#MATCH_CONSTRAINT_WRAP"/> -- DEPRECATED -- use instead WRAP_CONTENT and
+            /// constrainedWidth=true<br>
+            /// The dimension will be the same as WRAP_CONTENT, unless the size ends
+            /// up too large for the constraints; in that case the dimension will expand up to the constraints, minus margins
+            /// This attribute may not be applied if the widget is part of a chain in that dimension.</li>
+            /// <li><seealso cref="#MATCH_CONSTRAINT_PERCENT"/> -- The dimension will be a percent of another
+            /// widget (by default, the parent)</li>
+            /// </ul>
             /// </summary>
             public int matchConstraintDefaultHeight = ConstraintWidget.MATCH_CONSTRAINT_SPREAD;
             /// <summary>
-            /// <see cref="ConstraintLayout.LayoutParams.matchConstraintMaxWidth"/>
+            /// Specify a maximum width size for the widget. It will only apply if the size of the widget
+            /// is set to MATCH_CONSTRAINT. Don't apply if the widget is part of a horizontal chain.
             /// </summary>
-            public int matchConstraintMaxWidth = UNSET;
+            public int matchConstraintMaxWidth = 0;
             /// <summary>
-            /// <see cref="ConstraintLayout.LayoutParams.matchConstraintMaxHeight"/>
+            /// Specify a maximum height size for the widget. It will only apply if the size of the widget
+            /// is set to MATCH_CONSTRAINT. Don't apply if the widget is part of a vertical chain.
             /// </summary>
-            public int matchConstraintMaxHeight = UNSET;
+            public int matchConstraintMaxHeight = 0;
             /// <summary>
-            /// <see cref="ConstraintLayout.LayoutParams.matchConstraintMinWidth/>
+            /// Specify a minimum width size for the widget. It will only apply if the size of the widget
+            /// is set to MATCH_CONSTRAINT. Don't apply if the widget is part of a horizontal chain.
             /// </summary>
-            public int matchConstraintMinWidth = UNSET;
+            public int matchConstraintMinWidth = 0;
             /// <summary>
-            /// <see cref="ConstraintLayout.LayoutParams.matchConstraintMinHeight"/>
+            /// Specify a minimum height size for the widget. It will only apply if the size of the widget
+            /// is set to MATCH_CONSTRAINT. Don't apply if the widget is part of a vertical chain.
             /// </summary>
-            public int matchConstraintMinHeight = UNSET;
+            public int matchConstraintMinHeight = 0;
             /// <summary>
-            /// <see cref="ConstraintLayout.LayoutParams.matchConstraintPercentWidth"/>
+            /// Specify the percentage when using the match constraint percent mode. From 0 to 1.
             /// </summary>
             public float matchConstraintPercentWidth = 1;
+
             /// <summary>
-            /// <see cref="ConstraintLayout.LayoutParams.matchConstraintPercentHeight"/>
+            /// Specify the percentage when using the match constraint percent mode. From 0 to 1.
             /// </summary>
             public float matchConstraintPercentHeight = 1;
             public int mBarrierDirection = UNSET;
@@ -120,7 +214,13 @@ namespace SharpConstraintLayout.Maui.Pure.Core
             // TODO public boolean mChainUseRtl = false;
             public bool mBarrierAllowsGoneWidgets = true;
             /// <summary>
-            /// <see cref="ConstraintLayout.LayoutParams.wrapBehaviorInParent">
+            /// Specify how this view is taken in account during the parent's wrap computation
+            /// 
+            /// Can be either of:
+            /// WRAP_BEHAVIOR_INCLUDED the widget is taken in account for the wrap (default)
+            /// WRAP_BEHAVIOR_HORIZONTAL_ONLY the widget will be included in the wrap only horizontally
+            /// WRAP_BEHAVIOR_VERTICAL_ONLY the widget will be included in the wrap only vertically
+            /// WRAP_BEHAVIOR_SKIPPED the widget is not part of the wrap computation
             /// </summary>
             public int wrapBehaviorInParent = ConstraintWidget.WRAP_BEHAVIOR_INCLUDED;
 
@@ -205,7 +305,7 @@ namespace SharpConstraintLayout.Maui.Pure.Core
                 wrapBehaviorInParent = src.wrapBehaviorInParent;
             }
 
-            internal static Dictionary<int,int> mapToConstant = new Dictionary<int, int>();
+            internal static Dictionary<int, int> mapToConstant = new Dictionary<int, int>();
             internal const int BASELINE_TO_BASELINE = 1;
             internal const int BOTTOM_MARGIN = 2;
             internal const int BOTTOM_TO_BOTTOM = 3;
@@ -260,238 +360,6 @@ namespace SharpConstraintLayout.Maui.Pure.Core
             internal const int CONSTRAINT_REFERENCED_IDS = 74;
             internal const int BARRIER_ALLOWS_GONE_WIDGETS = 75;
             internal const int UNUSED = 76;
-
-
-            /*internal virtual void fillFromAttributeList(Context context, AttributeSet attrs)
-            {
-                TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.Layout);
-                mApply = true;
-                //JAVA TO C# CONVERTER CRACKED BY X-CRACKER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int N = a.getIndexCount();
-                int N = a.IndexCount;
-                for (int i = 0; i < N; i++)
-                {
-                    int attr = a.getIndex(i);
-
-                    switch (mapToConstant.get(attr))
-                    {
-                        case LEFT_TO_LEFT:
-                            leftToLeft = lookupID(a, attr, leftToLeft);
-                            break;
-                        case LEFT_TO_RIGHT:
-                            leftToRight = lookupID(a, attr, leftToRight);
-                            break;
-                        case RIGHT_TO_LEFT:
-                            rightToLeft = lookupID(a, attr, rightToLeft);
-                            break;
-                        case RIGHT_TO_RIGHT:
-                            rightToRight = lookupID(a, attr, rightToRight);
-                            break;
-                        case TOP_TO_TOP:
-                            topToTop = lookupID(a, attr, topToTop);
-                            break;
-                        case TOP_TO_BOTTOM:
-                            topToBottom = lookupID(a, attr, topToBottom);
-                            break;
-                        case BOTTOM_TO_TOP:
-                            bottomToTop = lookupID(a, attr, bottomToTop);
-                            break;
-                        case BOTTOM_TO_BOTTOM:
-                            bottomToBottom = lookupID(a, attr, bottomToBottom);
-                            break;
-                        case BASELINE_TO_BASELINE:
-                            baselineToBaseline = lookupID(a, attr, baselineToBaseline);
-                            break;
-                        case BASELINE_TO_TOP:
-                            baselineToTop = lookupID(a, attr, baselineToTop);
-                            break;
-                        case BASELINE_TO_BOTTOM:
-                            baselineToBottom = lookupID(a, attr, baselineToBottom);
-                            break;
-                        case EDITOR_ABSOLUTE_X:
-                            editorAbsoluteX = a.getDimensionPixelOffset(attr, editorAbsoluteX);
-                            break;
-                        case EDITOR_ABSOLUTE_Y:
-                            editorAbsoluteY = a.getDimensionPixelOffset(attr, editorAbsoluteY);
-                            break;
-                        case GUIDE_BEGIN:
-                            guideBegin = a.getDimensionPixelOffset(attr, guideBegin);
-                            break;
-                        case GUIDE_END:
-                            guideEnd = a.getDimensionPixelOffset(attr, guideEnd);
-                            break;
-                        case GUIDE_PERCENT:
-                            guidePercent = a.getFloat(attr, guidePercent);
-                            break;
-                        case ORIENTATION:
-                            orientation = a.getInt(attr, orientation);
-                            break;
-                        case START_TO_END:
-                            startToEnd = lookupID(a, attr, startToEnd);
-                            break;
-                        case START_TO_START:
-                            startToStart = lookupID(a, attr, startToStart);
-                            break;
-                        case END_TO_START:
-                            endToStart = lookupID(a, attr, endToStart);
-                            break;
-                        case END_TO_END:
-                            endToEnd = lookupID(a, attr, endToEnd);
-                            break;
-                        case CIRCLE:
-                            circleConstraint = lookupID(a, attr, circleConstraint);
-                            break;
-                        case CIRCLE_RADIUS:
-                            circleRadius = a.getDimensionPixelSize(attr, circleRadius);
-                            break;
-                        case CIRCLE_ANGLE:
-                            circleAngle = a.getFloat(attr, circleAngle);
-                            break;
-                        case GONE_LEFT_MARGIN:
-                            goneLeftMargin = a.getDimensionPixelSize(attr, goneLeftMargin);
-                            break;
-                        case GONE_TOP_MARGIN:
-                            goneTopMargin = a.getDimensionPixelSize(attr, goneTopMargin);
-                            break;
-                        case GONE_RIGHT_MARGIN:
-                            goneRightMargin = a.getDimensionPixelSize(attr, goneRightMargin);
-                            break;
-                        case GONE_BOTTOM_MARGIN:
-                            goneBottomMargin = a.getDimensionPixelSize(attr, goneBottomMargin);
-                            break;
-                        case GONE_START_MARGIN:
-                            goneStartMargin = a.getDimensionPixelSize(attr, goneStartMargin);
-                            break;
-                        case GONE_END_MARGIN:
-                            goneEndMargin = a.getDimensionPixelSize(attr, goneEndMargin);
-                            break;
-                        case GONE_BASELINE_MARGIN:
-                            goneBaselineMargin = a.getDimensionPixelSize(attr, goneBaselineMargin);
-                            break;
-                        case HORIZONTAL_BIAS:
-                            horizontalBias = a.getFloat(attr, horizontalBias);
-                            break;
-                        case VERTICAL_BIAS:
-                            verticalBias = a.getFloat(attr, verticalBias);
-                            break;
-                        case LEFT_MARGIN:
-                            leftMargin = a.getDimensionPixelSize(attr, leftMargin);
-                            break;
-                        case RIGHT_MARGIN:
-                            rightMargin = a.getDimensionPixelSize(attr, rightMargin);
-                            break;
-                        case START_MARGIN:
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1)
-                            {
-                                startMargin = a.getDimensionPixelSize(attr, startMargin);
-                            }
-                            break;
-                        case END_MARGIN:
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1)
-                            {
-                                endMargin = a.getDimensionPixelSize(attr, endMargin);
-                            }
-                            break;
-                        case TOP_MARGIN:
-                            topMargin = a.getDimensionPixelSize(attr, topMargin);
-                            break;
-                        case BOTTOM_MARGIN:
-                            bottomMargin = a.getDimensionPixelSize(attr, bottomMargin);
-                            break;
-                        case BASELINE_MARGIN:
-                            baselineMargin = a.getDimensionPixelSize(attr, baselineMargin);
-                            break;
-                        case LAYOUT_WIDTH:
-                            mWidth = a.getLayoutDimension(attr, mWidth);
-                            break;
-                        case LAYOUT_HEIGHT:
-                            mHeight = a.getLayoutDimension(attr, mHeight);
-                            break;
-                        case LAYOUT_CONSTRAINT_WIDTH:
-                            ConstraintSet.parseDimensionConstraints(this, a, attr, HORIZONTAL);
-                            break;
-                        case LAYOUT_CONSTRAINT_HEIGHT:
-                            ConstraintSet.parseDimensionConstraints(this, a, attr, VERTICAL);
-                            break;
-                        case WIDTH_DEFAULT:
-                            widthDefault = a.getInt(attr, widthDefault);
-                            break;
-                        case HEIGHT_DEFAULT:
-                            heightDefault = a.getInt(attr, heightDefault);
-                            break;
-                        case VERTICAL_WEIGHT:
-                            verticalWeight = a.getFloat(attr, verticalWeight);
-                            break;
-                        case HORIZONTAL_WEIGHT:
-                            horizontalWeight = a.getFloat(attr, horizontalWeight);
-                            break;
-                        case VERTICAL_STYLE:
-                            verticalChainStyle = a.getInt(attr, verticalChainStyle);
-                            break;
-                        case HORIZONTAL_STYLE:
-                            horizontalChainStyle = a.getInt(attr, horizontalChainStyle);
-                            break;
-                        case DIMENSION_RATIO:
-                            dimensionRatio = a.getString(attr);
-                            break;
-                        case HEIGHT_MAX:
-                            heightMax = a.getDimensionPixelSize(attr, heightMax);
-                            break;
-                        case WIDTH_MAX:
-                            widthMax = a.getDimensionPixelSize(attr, widthMax);
-                            break;
-                        case HEIGHT_MIN:
-                            heightMin = a.getDimensionPixelSize(attr, heightMin);
-                            break;
-                        case WIDTH_MIN:
-                            widthMin = a.getDimensionPixelSize(attr, widthMin);
-                            break;
-                        case WIDTH_PERCENT:
-                            widthPercent = a.getFloat(attr, 1);
-                            break;
-                        case HEIGHT_PERCENT:
-                            heightPercent = a.getFloat(attr, 1);
-                            break;
-                        case CONSTRAINED_WIDTH:
-                            constrainedWidth = a.getBoolean(attr, constrainedWidth);
-                            break;
-                        case CONSTRAINED_HEIGHT:
-                            constrainedHeight = a.getBoolean(attr, constrainedHeight);
-                            break;
-                        case CHAIN_USE_RTL:
-                            Log.e(TAG, "CURRENTLY UNSUPPORTED"); // TODO add support or remove
-                                                                 //  TODO add support or remove  c.mChainUseRtl = a.getBoolean(attr,c.mChainUseRtl);
-                            break;
-                        case BARRIER_DIRECTION:
-                            mBarrierDirection = a.getInt(attr, mBarrierDirection);
-                            break;
-                        case LAYOUT_WRAP_BEHAVIOR:
-                            mWrapBehavior = a.getInt(attr, mWrapBehavior);
-                            break;
-                        case BARRIER_MARGIN:
-                            mBarrierMargin = a.getDimensionPixelSize(attr, mBarrierMargin);
-                            break;
-                        case CONSTRAINT_REFERENCED_IDS:
-                            mReferenceIdString = a.getString(attr);
-                            break;
-                        case BARRIER_ALLOWS_GONE_WIDGETS:
-                            mBarrierAllowsGoneWidgets = a.getBoolean(attr, mBarrierAllowsGoneWidgets);
-                            break;
-                        case CONSTRAINT_TAG:
-                            mConstraintTag = a.getString(attr);
-                            break;
-                        case UNUSED:
-                            Log.w(TAG, "unused attribute 0x" + attr.ToString("x") + "   " + mapToConstant.get(attr));
-                            break;
-                        default:
-                            Log.w(TAG, "Unknown attribute 0x" + attr.ToString("x") + "   " + mapToConstant.get(attr));
-
-                            break;
-                    }
-                }
-                a.recycle();
-            }
-*/
 
             /*public virtual void dump(MotionScene scene, StringBuilder stringBuilder)
             {
@@ -573,6 +441,12 @@ namespace SharpConstraintLayout.Maui.Pure.Core
             //public int resolveGoneRightMargin = GONE_UNSET;
             public int resolveGoneRightMargin = int.MaxValue;
             public float resolvedHorizontalBias = 0.5f;
+
+            public bool helped = false;
+
+            internal bool widthSet = true; // need to be set to false when we reactivate this in 3.0
+            internal bool heightSet = true; // need to be set to false when we reactivate this in 3.0
+
             public void validate()
             {
                 mIsGuideline = false;
@@ -581,12 +455,13 @@ namespace SharpConstraintLayout.Maui.Pure.Core
                 ///////////////////////////////////////////////////////////////////////////////////////////
                 // Layout margins handling TODO: re-activate in 3.0
                 ///////////////////////////////////////////////////////////////////////////////////////////
-                /*
-                if (dimensionRatio != null && !widthSet && !heightSet) {
-                    width = MATCH_CONSTRAINT;
-                    height = MATCH_CONSTRAINT;
+
+                if (dimensionRatio != null && !widthSet && !heightSet)
+                {
+                    mWidth = MATCH_CONSTRAINT;
+                    mHeight = MATCH_CONSTRAINT;
                 }
-                */
+
                 ///////////////////////////////////////////////////////////////////////////////////////////
 
                 if (mWidth == WRAP_CONTENT && constrainedWidth)
@@ -609,7 +484,7 @@ namespace SharpConstraintLayout.Maui.Pure.Core
                         matchConstraintDefaultHeight = MATCH_CONSTRAINT_WRAP;
                     }
                 }
-                if (mWidth == MATCH_CONSTRAINT || mWidth == ViewGroup.LayoutParams.MATCH_PARENT)
+                if (mWidth == MATCH_CONSTRAINT || mWidth == MATCH_PARENT)
                 {
                     horizontalDimensionFixed = false;
                     // We have to reset LayoutParams width/height to WRAP_CONTENT here, as some widgets like TextView
@@ -621,7 +496,7 @@ namespace SharpConstraintLayout.Maui.Pure.Core
                         constrainedWidth = true;
                     }
                 }
-                if (mHeight == MATCH_CONSTRAINT || mHeight == ViewGroup.LayoutParams.MATCH_PARENT)
+                if (mHeight == MATCH_CONSTRAINT || mHeight == MATCH_PARENT)
                 {
                     verticalDimensionFixed = false;
                     // We have to reset LayoutParams width/height to WRAP_CONTENT here, as some widgets like TextView
@@ -633,20 +508,22 @@ namespace SharpConstraintLayout.Maui.Pure.Core
                         constrainedHeight = true;
                     }
                 }
+#if __ANDROID__
                 if (guidePercent != UNSET || guideBegin != UNSET || guideEnd != UNSET)
                 {
                     isGuideline = true;
                     horizontalDimensionFixed = true;
                     verticalDimensionFixed = true;
-                    if (!(widget is Guideline)) {
+                    if (!(widget is Guideline))
+                    {
                         widget = new Guideline();
                     }
-                    ((Guideline)widget).setOrientation(orientation);
+                    ((Guideline)widget).Orientation = orientation;
                 }
+#endif
             }
 
-            public bool helped = false;
-            #endregion
+#endregion
         }
     }
 }

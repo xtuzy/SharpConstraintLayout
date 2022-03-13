@@ -26,7 +26,7 @@ namespace SharpConstraintLayout.Maui.Pure.Core
         public class PropertySet
         {
             public bool mApply = false;
-            public int visibility = AndroidView.VISIBLE;
+            public int visibility = VISIBLE;
             public int mVisibilityMode = VISIBILITY_MODE_NORMAL;
             public float alpha = 1;
             public float mProgress = float.NaN;
