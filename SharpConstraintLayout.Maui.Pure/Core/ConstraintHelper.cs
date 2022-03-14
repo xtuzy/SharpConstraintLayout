@@ -257,7 +257,7 @@ namespace SharpConstraintLayout.Maui.Pure.Core
         private void addRscID(int id)
         {
             //if (id == Id)
-            if (id == this.GetHashCode())
+            if (id == this.GetId())
             {
                 return;
             }

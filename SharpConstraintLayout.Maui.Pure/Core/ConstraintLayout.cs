@@ -67,7 +67,13 @@ namespace SharpConstraintLayout.Maui.Pure.Core
             mLayout.CompanionWidget = this;
             ConstraintSet = new ConstraintSet();//默认创建一个保存最开始的Constraints,之后新建的clone其中的信息
             //constraintLayout have default Widget,need add it to dictionary,we can use it like other child later.
-            ConstraintSet.Constraints.Add(this.GetHashCode(), new ConstraintSet.Constraint());
+            //ConstraintSet.Constraints.Add(ConstraintSet.PARENT_ID, new ConstraintSet.Constraint());//对于Layout,都用ParentID代替GetHashCode,这是因为Layout可以在ApplyTo时替换
+            //这里换种思路,不管是ParentId还是HashCode对应的应该都是同一个约束,修改也是同一个
+            var rootConstraint = new ConstraintSet.Constraint();
+            ConstraintSet.Constraints.Add(ConstraintSet.PARENT_ID, rootConstraint);
+            ConstraintSet.Constraints.Add(this.GetHashCode(), rootConstraint);
+
+
             mLayout.Measurer = new MeasurerAnonymousInnerClass(this);
 
             //ClipToBounds = true;//view in ConstraintLayout always easy out of bounds
@@ -600,7 +606,7 @@ namespace SharpConstraintLayout.Maui.Pure.Core
                 int verticalSpec = 0;
 
                 int heightPadding = paddingTop + paddingBottom;
-                int widthPadding = paddingWidth; 
+                int widthPadding = paddingWidth;
                 UIElement child = (UIElement)widget.CompanionWidget;
                 switch (horizontalBehavior)
                 {
@@ -852,8 +858,44 @@ namespace SharpConstraintLayout.Maui.Pure.Core
                         outerInstance.mMetrics.measuresWidgetsDuration += (endMeasure - startMeasure);
                     }
                 }*/
-            }
 
+                //原来的逻辑没有正确处理:没有根据WRAP_CONTENT和MATCH_PARENT,MATCH_CONTRAINT去处理宽高, 
+                //这里我添加判断
+                switch (horizontalBehavior)
+                {
+                    case ConstraintWidget.DimensionBehaviour.FIXED:
+                        width = horizontalDimension;
+                        break;
+                    case ConstraintWidget.DimensionBehaviour.WRAP_CONTENT:
+                        break;
+                    case ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT:
+                        width = widget.Width;
+                        break;
+                    case ConstraintWidget.DimensionBehaviour.MATCH_PARENT:
+                        width = layoutWidthSpec;
+                        break;
+                }
+                switch (verticalBehavior)
+                {
+                    case ConstraintWidget.DimensionBehaviour.FIXED:
+                        height = verticalDimension;
+                        break;
+                    case ConstraintWidget.DimensionBehaviour.WRAP_CONTENT:
+                        break;
+                    case ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT:
+                        height = widget.Height;
+                        break;
+                    case ConstraintWidget.DimensionBehaviour.MATCH_PARENT:
+                        height = layoutHeightSpec;
+                        break;
+                }
+#if WINDOWS
+                //child.Measure(new Size(width, height));
+                
+#endif
+                measure.measuredWidth = width;
+                measure.measuredHeight = height;
+            }
         }
 
         /// <summary>
@@ -1282,7 +1324,7 @@ namespace SharpConstraintLayout.Maui.Pure.Core
                 }
 
                 // FIXME: need to agree on the correct magic value for this rather than simply using zero.
-                if (!layoutParams.layout.horizontalDimensionFixed)
+                if (!layoutParams.layout.horizontalDimensionFixed)//Match_Parent和Match_Constraint是不固定
                 {
                     if (layoutParams.layout.mWidth == ConstraintSet.MATCH_PARENT)
                     {
@@ -1303,7 +1345,7 @@ namespace SharpConstraintLayout.Maui.Pure.Core
                         widget.Width = 0;
                     }
                 }
-                else
+                else//具体数值或Warp_Content是固定
                 {
                     widget.HorizontalDimensionBehaviour = ConstraintWidget.DimensionBehaviour.FIXED;
                     widget.Width = layoutParams.layout.mWidth;
@@ -1352,8 +1394,6 @@ namespace SharpConstraintLayout.Maui.Pure.Core
                 widget.setHorizontalMatchStyle(layoutParams.layout.matchConstraintDefaultWidth, layoutParams.layout.matchConstraintMinWidth, layoutParams.layout.matchConstraintMaxWidth, layoutParams.layout.matchConstraintPercentWidth);
                 widget.setVerticalMatchStyle(layoutParams.layout.matchConstraintDefaultHeight, layoutParams.layout.matchConstraintMinHeight, layoutParams.layout.matchConstraintMaxHeight, layoutParams.layout.matchConstraintPercentHeight);
             }
-
-
         }
 
         private void setWidgetBaseline(ConstraintWidget widget, ConstraintSet.Constraint layoutParams, Dictionary<int, ConstraintWidget> idToWidget, int baselineTarget, ConstraintAnchor.Type type)
@@ -1362,7 +1402,6 @@ namespace SharpConstraintLayout.Maui.Pure.Core
             ConstraintWidget target = idToWidget[baselineTarget];
             //if (target != null && view != null && view.LayoutParams is LayoutParams)
             if (target != null && view != null)
-
             {
                 layoutParams.layout.needsBaseline = true;
                 if (type == ConstraintAnchor.Type.BASELINE)

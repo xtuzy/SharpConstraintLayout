@@ -231,7 +231,7 @@ namespace SharpConstraintLayout.Maui.Pure.Core
 				return clone;
 			}
 
-			/*internal virtual void fillFromConstraints(ConstraintHelper helper, int viewId, Constraints.LayoutParams param)
+			internal virtual void fillFromConstraints(ConstraintHelper helper, int viewId, ConstraintSet.Constraint param)
 			{
 				fillFromConstraints(viewId, param);
 				if (helper is Barrier)
@@ -242,25 +242,25 @@ namespace SharpConstraintLayout.Maui.Pure.Core
 					layout.mReferenceIds = barrier.ReferencedIds;
 					layout.mBarrierMargin = barrier.Margin;
 				}
-			}*/
+			}
 
-			/*internal virtual void fillFromConstraints(int viewId, Constraints.LayoutParams param)
+			internal virtual void fillFromConstraints(int viewId, ConstraintSet.Constraint param)
 			{
-				fillFrom(viewId, param);
-				propertySet.alpha = param.alpha;
-				transform.rotation = param.rotation;
-				transform.rotationX = param.rotationX;
-				transform.rotationY = param.rotationY;
-				transform.scaleX = param.scaleX;
-				transform.scaleY = param.scaleY;
-				transform.transformPivotX = param.transformPivotX;
-				transform.transformPivotY = param.transformPivotY;
-				transform.translationX = param.translationX;
-				transform.translationY = param.translationY;
-				transform.translationZ = param.translationZ;
-				transform.elevation = param.elevation;
-				transform.applyElevation = param.applyElevation;
-			}*/
+				fillFrom(viewId, param.layout);
+				propertySet.alpha = param.propertySet.alpha;
+				transform.rotation = param.transform.rotation;
+				transform.rotationX = param.transform.rotationX;
+				transform.rotationY = param.transform.rotationY;
+				transform.scaleX = param.transform.scaleX;
+				transform.scaleY = param.transform.scaleY;
+				transform.transformPivotX = param.transform.transformPivotX;
+				transform.transformPivotY = param.transform.transformPivotY;
+				transform.translationX = param.transform.translationX;
+				transform.translationY = param.transform.translationY;
+				transform.translationZ = param.transform.translationZ;
+				transform.elevation = param.transform.elevation;
+				transform.applyElevation = param.transform.applyElevation;
+			}
 
 			internal virtual void fillFrom(int viewId, ConstraintSet.Layout param)
 			{
@@ -406,7 +406,7 @@ namespace SharpConstraintLayout.Maui.Pure.Core
 					param.endMargin = layout.endMargin;
 				//}
 
-				//param.validate();
+				param.validate();//validate可以根据MatchParent这个设置其他的
 			}
 		}
 	}

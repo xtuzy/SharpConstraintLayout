@@ -447,6 +447,10 @@ namespace SharpConstraintLayout.Maui.Pure.Core
             internal bool widthSet = true; // need to be set to false when we reactivate this in 3.0
             internal bool heightSet = true; // need to be set to false when we reactivate this in 3.0
 
+            /// <summary>
+            /// Add From layoutParams.
+            /// 验证?看起来时可以处理WrapContent
+            /// </summary>
             public void validate()
             {
                 mIsGuideline = false;
@@ -456,31 +460,27 @@ namespace SharpConstraintLayout.Maui.Pure.Core
                 // Layout margins handling TODO: re-activate in 3.0
                 ///////////////////////////////////////////////////////////////////////////////////////////
 
-                if (dimensionRatio != null && !widthSet && !heightSet)
+                /*if (dimensionRatio != null && !widthSet && !heightSet)
                 {
                     mWidth = MATCH_CONSTRAINT;
                     mHeight = MATCH_CONSTRAINT;
-                }
+                }*/
 
                 ///////////////////////////////////////////////////////////////////////////////////////////
 
                 if (mWidth == WRAP_CONTENT && constrainedWidth)
                 {
                     horizontalDimensionFixed = false;
-                    //if (matchConstraintDefaultWidth == MATCH_CONSTRAINT_SPREAD)
                     if (matchConstraintDefaultWidth == MATCH_CONSTRAINT_SPREAD)
                     {
-                        //matchConstraintDefaultWidth = MATCH_CONSTRAINT_WRAP;
                         matchConstraintDefaultWidth = MATCH_CONSTRAINT_WRAP;
                     }
                 }
                 if (mHeight == WRAP_CONTENT && constrainedHeight)
                 {
                     verticalDimensionFixed = false;
-                    //if (matchConstraintDefaultHeight == MATCH_CONSTRAINT_SPREAD)
                     if (matchConstraintDefaultHeight == MATCH_CONSTRAINT_SPREAD)
                     {
-                        //matchConstraintDefaultHeight = MATCH_CONSTRAINT_WRAP;
                         matchConstraintDefaultHeight = MATCH_CONSTRAINT_WRAP;
                     }
                 }

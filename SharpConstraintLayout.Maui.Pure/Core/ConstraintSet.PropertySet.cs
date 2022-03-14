@@ -26,8 +26,20 @@ namespace SharpConstraintLayout.Maui.Pure.Core
         public class PropertySet
         {
             public bool mApply = false;
+            /// <summary>
+            /// Copy Form Android.Views.View.Visibility
+            /// Returns the visibility status for this view.
+            /// @return One of {@link #VISIBLE}, {@link #INVISIBLE}, or {@link #GONE}.
+            /// </summary>
             public int visibility = VISIBLE;
             public int mVisibilityMode = VISIBILITY_MODE_NORMAL;
+            /// <summary>
+            /// Copy Form Android.Views.View.Alpha
+            /// The opacity of the view.This is a value from 0 to 1, where 0 means the view is
+            /// completely transparent and 1 means the view is completely opaque.
+            /// By default this is 1.0f.
+            /// @return The opacity of the view.
+            /// </summary>
             public float alpha = 1;
             public float mProgress = float.NaN;
 

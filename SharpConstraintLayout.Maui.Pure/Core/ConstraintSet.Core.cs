@@ -34,6 +34,12 @@ namespace SharpConstraintLayout.Maui.Pure.Core
             return get(mId);
         }
 
+        /// <summary>
+        /// 这个实现是用Constraints模仿LayoutParams,但是会用新的Constraints去替代旧的
+        /// </summary>
+        /// <param name="constraintLayout"></param>
+        /// <exception cref="NotImplementedException"></exception>
+       [Obsolete]
         public void Clone(ConstraintLayout constraintLayout)
         {
             //TODO:此处修改了谷歌实现的逻辑,注意需要测试
@@ -54,14 +60,14 @@ namespace SharpConstraintLayout.Maui.Pure.Core
                     throw new NotImplementedException($"新字典不应该包含{id},难道是HashCode重复了?");
                 }
             }
-
         }
 
-       /* public void Clone(Constraints constraints)
-        {
-            throw new NotImplementedException();
-        }
-*/
+        /* public void Clone(Constraints constraints)
+         {
+             throw new NotImplementedException();
+         }
+ */
+        [Obsolete]
         public virtual void Clone(ConstraintSet set)
         {
             mConstraints.Clear();
@@ -76,6 +82,88 @@ namespace SharpConstraintLayout.Maui.Pure.Core
             }
         }
 
+        /// <summary>
+        /// 该方案是和Android的思路一样,在ConstraintLayout中存储一份不变的Constraints去替代LayoutParams,
+        /// LayoutParams是不变的,因此模仿Android思路Constraints也是不变的字典,不在字典中创建新的Constraint替换,只是改原有的属性
+        /// </summary>
+        /// <param name="constraintLayout"></param>
+        /// <exception cref="Exception"></exception>
+        public virtual void Clone_Android(ConstraintLayout constraintLayout)
+        {
+            int count = constraintLayout.ChildCount;
+            mConstraints.Clear();
+            for (int i = 0; i < count; i++)
+            {
+#if WINDOWS
+                View view = constraintLayout.Children[i];
+#elif __IOS__
+                View view = constraintLayout.Subviews[i];
+#endif
+                //ConstraintLayout.LayoutParams param = (ConstraintLayout.LayoutParams)view.LayoutParams;
+                int id = view.GetHashCode();
+                var param = constraintLayout.ConstraintSet.Constraints[id];//获取旧的constraint
+
+                if (mForceId && id == -1)
+                {
+                    throw new Exception("All children of ConstraintLayout must have ids to use ConstraintSet");
+                }
+                if (!mConstraints.ContainsKey(id))
+                {
+                    //mConstraints[id] = new Constraint();
+                    mConstraints.Add(id, param.clone());
+                }
+
+                Constraint constraint = mConstraints[id];
+                //我认为这些多余,直接clone constraint就够了
+                /*
+                if (constraint == null)
+                {
+                    continue;
+                }
+                //constraint.mCustomConstraints = ConstraintAttribute.extractAttributes(mSavedAttributes, view);
+                constraint.fillFrom(id, param.layout);
+                //constraint.propertySet.visibility = view.Visibility;//从View获取visibility不对
+                constraint.propertySet.visibility = param.propertySet.visibility;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1)
+                {
+                    constraint.propertySet.alpha = view.Alpha;
+                    constraint.transform.rotation = view.Rotation;
+                    constraint.transform.rotationX = view.RotationX;
+                    constraint.transform.rotationY = view.RotationY;
+                    constraint.transform.scaleX = view.ScaleX;
+                    constraint.transform.scaleY = view.ScaleY;
+
+                    float pivotX = view.PivotX; // we assume it is not set if set to 0.0
+                    float pivotY = view.PivotY; // we assume it is not set if set to 0.0
+
+                    if (pivotX != 0.0 || pivotY != 0.0)
+                    {
+                        constraint.transform.transformPivotX = pivotX;
+                        constraint.transform.transformPivotY = pivotY;
+                    }
+
+                    constraint.transform.translationX = view.TranslationX;
+                    constraint.transform.translationY = view.TranslationY;
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+                    {
+                        constraint.transform.translationZ = view.TranslationZ;
+                        if (constraint.transform.applyElevation)
+                        {
+                            constraint.transform.elevation = view.Elevation;
+                        }
+                    }
+                }*/
+                if (view is Barrier)
+                {
+                    Barrier barrier = ((Barrier)view);
+                    constraint.layout.mBarrierAllowsGoneWidgets = barrier.AllowsGoneWidget;
+                    constraint.layout.mReferenceIds = barrier.ReferencedIds;
+                    constraint.layout.mBarrierDirection = barrier.Type;
+                    constraint.layout.mBarrierMargin = barrier.Margin;
+                }
+            }
+        }
+        [Obsolete]
         public void ApplyTo(ConstraintLayout constraintLayout)
         {
             applyToInternal(constraintLayout, true);
@@ -100,10 +188,14 @@ namespace SharpConstraintLayout.Maui.Pure.Core
         }
 
         /// <summary>
-        /// Used to set constraints when used by constraint layout
+        /// Used to set constraints when used by constraint layout.
+        /// 再Clone后新的ConstraintSet有新的约束字典,把这些约束更新到旧字典上去.
+        /// 注意:这里还用到了统一替换PARENT_ID
         /// </summary>
-        internal virtual void applyToInternal_Android(ConstraintLayout constraintLayout, bool applyPostLayout)
+        public virtual void ApplyTo_Android(ConstraintLayout constraintLayout)
         {
+            int parentID = constraintLayout.GetHashCode();
+
             int count = constraintLayout.ChildCount;
             List<int> used = mConstraints.Keys.ToList();//已经设置了约束的id
             for (int i = 0; i < count; i++)//查看layout的child
@@ -111,9 +203,9 @@ namespace SharpConstraintLayout.Maui.Pure.Core
 #if WINDOWS
                 View view = constraintLayout.Children[i];
 #elif __IOS__
-                View view = constraintLayout.Children[i];
+                View view = constraintLayout.Subviews[i];
 #endif
-                int id = view.Id;
+                int id = view.GetHashCode();
                 if (!mConstraints.ContainsKey(id))
                 {
                     Debug.WriteLine(TAG, $"id unknown {view}");
@@ -131,7 +223,7 @@ namespace SharpConstraintLayout.Maui.Pure.Core
 
                 if (mConstraints.ContainsKey(id))
                 {
-                    used.remove(id);
+                    used.Remove(id);
                     Constraint constraint = mConstraints[id];
                     if (constraint == null)
                     {
@@ -141,7 +233,7 @@ namespace SharpConstraintLayout.Maui.Pure.Core
                     {
                         constraint.layout.mHelperType = BARRIER_TYPE;
                         Barrier barrier = (Barrier)view;
-                        barrier.Id = id;
+                        //barrier.Id = id;
                         barrier.Type = constraint.layout.mBarrierDirection;
                         barrier.Margin = constraint.layout.mBarrierMargin;
 
@@ -150,17 +242,15 @@ namespace SharpConstraintLayout.Maui.Pure.Core
                         {
                             barrier.ReferencedIds = constraint.layout.mReferenceIds;
                         }
-                        else if (!string.ReferenceEquals(constraint.layout.mReferenceIdString, null))
-                        {
-                            constraint.layout.mReferenceIds = convertReferenceString(barrier, constraint.layout.mReferenceIdString);
-                            barrier.ReferencedIds = constraint.layout.mReferenceIds;
-                        }
                     }
-                    ConstraintLayout.LayoutParams param = (ConstraintLayout.LayoutParams)view.LayoutParams;
-                    param.validate();
-                    constraint.applyTo(param);
 
-                    if (applyPostLayout)
+                    //ConstraintLayout.LayoutParams param = (ConstraintLayout.LayoutParams)view.LayoutParams;
+                    var param = constraintLayout.ConstraintSet.Constraints[id];
+                    param.layout.validate();
+                    constraint.applyTo(param.layout);
+
+                    /*//if (applyPostLayout)
+                    if (true)
                     {
                         ConstraintAttribute.setAttributes(view, constraint.mCustomConstraints);
                     }
@@ -215,23 +305,28 @@ namespace SharpConstraintLayout.Maui.Pure.Core
                                 view.Elevation = constraint.transform.elevation;
                             }
                         }
-                    }
+                    }*/
                 }
                 else
                 {
-                    Log.v(TAG, "WARNING NO CONSTRAINTS for view " + id);
+                    Debug.WriteLine(TAG, "WARNING NO CONSTRAINTS for view " + id);
                 }
             }
-            foreach (int? id in used)
+
+            foreach (int id in used)//剩下的不在children中
             {
-                Constraint constraint = mConstraints[id];
+                if (id == ConstraintSet.PARENT_ID || id == constraintLayout.GetHashCode())//还要处理下layout
+                    mConstraints[id].applyTo(constraintLayout.ConstraintSet.Constraints[id].layout);
+                else
+                    throw new NotImplementedException("如果还有约束身下而且是重要的,那么需要新建View插入原来的布局中,那么但是id怎么办,新建的有新的哈希,而约束是相对旧的哈希.");
+                /*Constraint constraint = mConstraints[id];
                 if (constraint == null)
                 {
                     continue;
                 }
                 if (constraint.layout.mHelperType == BARRIER_TYPE)
                 {
-                    Barrier barrier = new Barrier(constraintLayout.Context);
+                    Barrier barrier = new Barrier();
                     barrier.Id = id;
                     if (constraint.layout.mReferenceIds != null)
                     {
@@ -256,17 +351,28 @@ namespace SharpConstraintLayout.Maui.Pure.Core
                     ConstraintLayout.LayoutParams param = constraintLayout.generateDefaultLayoutParams();
                     constraint.applyTo(param);
                     constraintLayout.addView(g, param);
-                }
+                }*/
             }
             for (int i = 0; i < count; i++)
             {
-                View view = constraintLayout.getChildAt(i);
+#if WINDOWS
+                View view = constraintLayout.Children[i];
+#elif __IOS__
+                View view = constraintLayout.Subviews[i];
+#endif
                 if (view is ConstraintHelper)
                 {
                     ConstraintHelper constraintHelper = (ConstraintHelper)view;
                     constraintHelper.applyLayoutFeaturesInConstraintSet(constraintLayout);
                 }
             }
+
+#if WINDOWS
+            constraintLayout.InvalidateMeasure();
+            constraintLayout.UpdateLayout();
+#elif __IOS__
+            constraintLayout.LayoutIfNeeded();
+#endif
         }
 
         /// <summary>
@@ -1175,7 +1281,7 @@ namespace SharpConstraintLayout.Maui.Pure.Core
         {
             //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             //{
-                get(viewId).transform.applyElevation = apply;
+            get(viewId).transform.applyElevation = apply;
             //}
         }
 
@@ -1188,8 +1294,8 @@ namespace SharpConstraintLayout.Maui.Pure.Core
         {
             //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             //{
-                get(viewId).transform.elevation = elevation;
-                get(viewId).transform.applyElevation = true;
+            get(viewId).transform.elevation = elevation;
+            get(viewId).transform.applyElevation = true;
             //}
         }
 
@@ -1324,7 +1430,7 @@ namespace SharpConstraintLayout.Maui.Pure.Core
         {
             //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             //{
-                get(viewId).transform.translationZ = translationZ;
+            get(viewId).transform.translationZ = translationZ;
             //}
         }
 

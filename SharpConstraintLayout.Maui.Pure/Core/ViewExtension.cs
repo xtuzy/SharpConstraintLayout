@@ -23,21 +23,18 @@ namespace SharpConstraintLayout.Maui.Pure.Core
         public static float GetBaseline(this UIElement view)
         {
 #if WINDOWS
-            double baselineToTopHeight = 0;
-            double? fontSize = 0;
-            if(view is TextBlock || view is TextBox || view is Button)
+            double? baselineOffset = 0;
+            if (view is TextBlock || view is RichTextBlock)
             {
-                fontSize = (view as TextBlock)?.FontSize;
-                if(fontSize == null)
-                    fontSize = (view as TextBox)?.FontSize;
-                if (fontSize == null)
-                    fontSize = (view as Button)?.FontSize;
+                baselineOffset = (view as TextBlock)?.BaselineOffset;
+                if (baselineOffset == null)
+                    baselineOffset = (view as RichTextBlock)?.BaselineOffset;
+                return (float)baselineOffset;
             }
             else
             {
                 return ConstraintSet.UNSET;
             }
-            return (float)FontBaselineHelper.GetBaseline((int)fontSize);
 #elif __IOS__
             //https://stackoverflow.com/questions/35922215/how-to-calculate-uitextview-first-baseline-position-relatively-to-the-origin
             if (view is UITextField || view is UITextView || view is UILabel || view is UIButton)
@@ -55,7 +52,12 @@ namespace SharpConstraintLayout.Maui.Pure.Core
 #endif
         }
 
-        public static int Id(this UIElement view)
+        /// <summary>
+        /// 每个Element的ID从该方法获取
+        /// </summary>
+        /// <param name="view"></param>
+        /// <returns></returns>
+        public static int GetId(this UIElement view)
         {
             return view.GetHashCode();
         }
