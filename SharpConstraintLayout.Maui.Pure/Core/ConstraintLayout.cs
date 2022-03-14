@@ -73,7 +73,6 @@ namespace SharpConstraintLayout.Maui.Pure.Core
             ConstraintSet.Constraints.Add(ConstraintSet.PARENT_ID, rootConstraint);
             ConstraintSet.Constraints.Add(this.GetHashCode(), rootConstraint);
 
-
             mLayout.Measurer = new MeasurerAnonymousInnerClass(this);
 
             //ClipToBounds = true;//view in ConstraintLayout always easy out of bounds
@@ -103,16 +102,26 @@ namespace SharpConstraintLayout.Maui.Pure.Core
         public override void AddSubview(UIElement view)
         {
             base.AddSubview(view);
-            AddView(view);
+            OnAddedView(view);
         }
         public void AddView(UIElement element)
         {
+            base.AddSubview(element);
             OnAddedView(element);
         }
         public void RemoveView(UIElement element)
         {
             element.RemoveFromSuperview();
             OnRemovedView(element);
+        }
+
+        public void RemoveAll()
+        {
+            foreach(var element in this.Subviews)
+            {
+                element.RemoveFromSuperview();
+                OnRemovedView(element);
+            }
         }
 
         public int ChildCount { get { return Subviews.Length; } }
@@ -126,7 +135,6 @@ namespace SharpConstraintLayout.Maui.Pure.Core
         {
             return idToViews[id];
         }
-
 
         protected void OnAddedView(UIElement element)
         {
@@ -337,7 +345,7 @@ namespace SharpConstraintLayout.Maui.Pure.Core
                     break;
             }
             //传入布局的测量数据,用于测量child时
-            (mLayout.Measurer as MeasurerAnonymousInnerClass).captureLayoutInfo(mLayout.Width, mLayout.Width, 0, 0, 0, 0);
+            (mLayout.Measurer as MeasurerAnonymousInnerClass).captureLayoutInfo(mLayout.Width, mLayout.Height, 0, 0, 0, 0);
             //交给Container去测量
             mLayout.OptimizationLevel = mOptimizationLevel;
             mLayout.layout();
@@ -387,6 +395,8 @@ namespace SharpConstraintLayout.Maui.Pure.Core
                     RootWidget.Height = (int)Superview.Frame.Height;//TODO:TEST
                     break;
             }
+            //传入布局的测量数据,用于测量child时
+            (mLayout.Measurer as MeasurerAnonymousInnerClass).captureLayoutInfo(mLayout.Width, mLayout.Height, 0, 0, 0, 0);
             //交给Container去测量
             mLayout.OptimizationLevel = mOptimizationLevel;
             mLayout.layout();

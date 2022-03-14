@@ -44,7 +44,7 @@ namespace SharpConstraintLayout.Maui.Pure.Example
             {
                 Tag = nameof(FirstButton),
                 ClickMode = ClickMode.Press,
-                Content = "Click it.",
+                Content = "FirstButton At Center",
                 Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.Red)
             };
             FirstButton.Click += MainButton_Click;
@@ -53,7 +53,7 @@ namespace SharpConstraintLayout.Maui.Pure.Example
             {
                 //Width = 100,Height = 100,
                 Tag = nameof(SecondButton),
-                Content = "Second.",
+                Content = "Second At Bottom",
                 Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.Black)
             };
 
@@ -72,23 +72,29 @@ namespace SharpConstraintLayout.Maui.Pure.Example
                 //Height = 100,
                 Text = "TextBlock"
             };
-            var bseline = FouthTextBlock.BaselineOffset;
 
             FifthTextBox = new TextBox()
             {
                 Tag = nameof(FifthTextBox),
                 Text = "TextBox",
+                AcceptsReturn = true
             };
+
             //https://stackoverflow.com/questions/35710355/uwpc-adding-text-to-richtextblock
             SixthRichTextBlock = new RichTextBlock()
             {
                 Tag = nameof(SixthRichTextBlock),
+                IsTextSelectionEnabled = true,
+                TextWrapping = TextWrapping.Wrap
             };
-            Paragraph paragraph = new Paragraph();
-            Run run = new Run();
-            SixthRichTextBlock.IsTextSelectionEnabled = true;
-            SixthRichTextBlock.TextWrapping = TextWrapping.Wrap;
-            run.Text = "This is some sample text to show the wrapping behavior.";
+            Paragraph paragraph = new Paragraph()
+            {
+                FontSize = 40
+            };
+            Run run = new Run()
+            {
+                Text = "RichTextBlock"
+            };
             paragraph.Inlines.Add(run);
             SixthRichTextBlock.Blocks.Add(paragraph);
 
@@ -109,10 +115,10 @@ namespace SharpConstraintLayout.Maui.Pure.Example
             set.constrainWidth(FirstButton.GetId(), ConstraintSet.WRAP_CONTENT);
             set.constrainHeight(FirstButton.GetId(), ConstraintSet.WRAP_CONTENT);
 
-            set.Connect(SecondButton.GetId(), ConstraintSet.LEFT, layout.GetId(), ConstraintSet.LEFT, 50);
+            set.Connect(SecondButton.GetId(), ConstraintSet.RIGHT, FirstButton.GetId(), ConstraintSet.RIGHT);
             set.Connect(SecondButton.GetId(), ConstraintSet.TOP, FirstButton.GetId(), ConstraintSet.BOTTOM, 50);
             set.setVisibility(SecondButton.GetId(), ConstraintSet.VISIBLE);
-            set.constrainWidth(SecondButton.GetId(), ConstraintSet.MATCH_PARENT);
+            set.constrainWidth(SecondButton.GetId(), ConstraintSet.WRAP_CONTENT);
             set.constrainHeight(SecondButton.GetId(), 200);
 
             set.Connect(ThirdCanvas.GetId(), ConstraintSet.LEFT, FirstButton.GetId(), ConstraintSet.RIGHT, 50);
@@ -122,12 +128,26 @@ namespace SharpConstraintLayout.Maui.Pure.Example
             set.constrainWidth(ThirdCanvas.GetId(), 200);
             set.constrainHeight(ThirdCanvas.GetId(), ConstraintSet.MATCH_PARENT);
 
-            set.Connect(ThirdCanvas.GetId(), ConstraintSet.LEFT, FirstButton.GetId(), ConstraintSet.RIGHT, 50);
-            set.Connect(ThirdCanvas.GetId(), ConstraintSet.TOP, FirstButton.GetId(), ConstraintSet.BOTTOM, 50);
-            set.Connect(ThirdCanvas.GetId(), ConstraintSet.BOTTOM, layout.GetId(), ConstraintSet.BOTTOM, 50);
-            set.setVisibility(ThirdCanvas.GetId(), ConstraintSet.VISIBLE);
-            set.constrainWidth(ThirdCanvas.GetId(), 200);
-            set.constrainHeight(ThirdCanvas.GetId(), ConstraintSet.MATCH_PARENT);
+            set.Connect(FouthTextBlock.GetId(), ConstraintSet.RIGHT, FirstButton.GetId(), ConstraintSet.LEFT, 50);
+            set.Connect(FouthTextBlock.GetId(), ConstraintSet.TOP, FirstButton.GetId(), ConstraintSet.BOTTOM, 50);
+            set.setVisibility(FouthTextBlock.GetId(), ConstraintSet.VISIBLE);
+            set.constrainWidth(FouthTextBlock.GetId(), 200);
+
+            set.constrainHeight(FouthTextBlock.GetId(), ConstraintSet.WRAP_CONTENT);
+
+            set.Connect(FifthTextBox.GetId(), ConstraintSet.BOTTOM, FirstButton.GetId(), ConstraintSet.TOP, 50);
+            set.Connect(FifthTextBox.GetId(), ConstraintSet.LEFT, FirstButton.GetId(), ConstraintSet.LEFT);
+            set.Connect(FifthTextBox.GetId(), ConstraintSet.RIGHT, FirstButton.GetId(), ConstraintSet.RIGHT);
+            set.setVisibility(FifthTextBox.GetId(), ConstraintSet.VISIBLE);
+            set.constrainWidth(FifthTextBox.GetId(), 200);
+            set.constrainHeight(FifthTextBox.GetId(), ConstraintSet.WRAP_CONTENT);
+
+            set.Connect(SixthRichTextBlock.GetId(), ConstraintSet.RIGHT, FouthTextBlock.GetId(), ConstraintSet.LEFT, 50);
+            set.Connect(SixthRichTextBlock.GetId(), ConstraintSet.BASELINE, FouthTextBlock.GetId(), ConstraintSet.BASELINE, 50);
+            set.setVisibility(SixthRichTextBlock.GetId(), ConstraintSet.VISIBLE);
+            set.constrainWidth(SixthRichTextBlock.GetId(), ConstraintSet.WRAP_CONTENT);
+            set.constrainHeight(SixthRichTextBlock.GetId(), ConstraintSet.WRAP_CONTENT);
+
 
             set.ApplyTo_Android(layout);
         }
