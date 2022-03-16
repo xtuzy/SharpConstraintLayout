@@ -110,7 +110,7 @@ namespace SharpConstraintLayout.Maui.Pure.Example
             set.Clone(layout);
 
             set.constrainWidth(layout.GetId(), ConstraintSet.WRAP_CONTENT);
-            set.constrainHeight(layout.GetId(), ConstraintSet.WRAP_CONTENT);
+            set.constrainHeight(layout.GetId(), ConstraintSet.MATCH_PARENT);
 
             set.Connect(FirstButton.GetId(), ConstraintSet.LEFT, layout.GetId(), ConstraintSet.LEFT);
             set.Connect(FirstButton.GetId(), ConstraintSet.RIGHT, layout.GetId(), ConstraintSet.RIGHT);

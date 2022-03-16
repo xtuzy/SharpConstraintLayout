@@ -422,7 +422,7 @@ namespace SharpConstraintLayout.Maui.Pure.Core
 
             //传入布局的测量数据,用于测量child时
             (RootWidget.Measurer as MeasurerAnonymousInnerClass).captureLayoutInfo(RootWidget.Width, RootWidget.Height, 0, 0, 0, 0);
-            
+
             //交给Container去测量
             RootWidget.OptimizationLevel = mOptimizationLevel;
             RootWidget.layout();
@@ -430,7 +430,7 @@ namespace SharpConstraintLayout.Maui.Pure.Core
 
             //当Parent是StackPanel时,availableValue是无限值,若layout是MatchParent,那么measure后RootWidget会得到0,而如果return 0,那么Windows在ArrageOverride得到的finalSize依然是0,Parent大小也是0
             //如果返回int.MaxValue,finalSize是int.MaxValue,但Parent的DesiredSize是正确的大小.
-            return new Size(isInfinityAvailabelSize&&RootWidget.Width==0?availableWidth:RootWidget.Width, isInfinityAvailabelSize && RootWidget.Height == 0 ? availableHeight : RootWidget.Height);//告诉Parent,Layout的大小
+            return new Size(isInfinityAvailabelSize && RootWidget.Width == 0 ? availableWidth : RootWidget.Width, isInfinityAvailabelSize && RootWidget.Height == 0 ? availableHeight : RootWidget.Height);//告诉Parent,Layout的大小
         }
 #endif
 
@@ -471,18 +471,17 @@ namespace SharpConstraintLayout.Maui.Pure.Core
         protected override Size ArrangeOverride(Size finalSize)
         {
             if (DEBUG) Debug.WriteLine($"{nameof(ArrangeOverride)} {this} {finalSize}");
-            if (isInfinityAvailabelSize)
+
+            //何时需要重新测量?需要Parent大小但MeasureOverride中拿不到时,那么就只有MeasureOverride中拿到的值是无限值且layout需要MatchParent时.
+            if (isInfinityAvailabelSize && (RootWidget.HorizontalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.MATCH_PARENT || RootWidget.VerticalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.MATCH_PARENT))
             {
-#if WINDOWS
-                //如果是measure时是无限的值切要matchparent,那此处可拿到Parent的大小
-                if (RootWidget.HorizontalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.MATCH_PARENT || RootWidget.VerticalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.MATCH_PARENT)
-                {
-                    finalSize = (Parent as UIElement).DesiredSize;
-                }
-#endif
+                var parentSize = (Parent as UIElement).DesiredSize;
+                RootWidget.Width = (int)parentSize.Width;
+                RootWidget.Height = (int)parentSize.Height;
                 RootWidget.layout();
-                RootWidget.measure(mOptimizationLevel, BasicMeasure.EXACTLY, (int)finalSize.Width, BasicMeasure.EXACTLY, (int)finalSize.Height, 0, 0, 0, 0);
+                RootWidget.measure(mOptimizationLevel, BasicMeasure.EXACTLY, RootWidget.Width, BasicMeasure.EXACTLY, RootWidget.Height, 0, 0, 0, 0);
             }
+
             //layout child
             foreach (ConstraintWidget child in mLayout.Children)
             {
@@ -493,7 +492,7 @@ namespace SharpConstraintLayout.Maui.Pure.Core
                     component.Arrange(new Rect(child.X, child.Y, child.Width, child.Height));
                 }
             }
-            return new Size(RootWidget.Width, RootWidget.Height);
+            return new Size(RootWidget.Width, RootWidget.Height);//这里必须返回Widget的大小,因为返回值决定了layout的绘制范围
         }
 
 #elif __IOS__
