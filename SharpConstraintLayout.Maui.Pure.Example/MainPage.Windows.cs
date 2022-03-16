@@ -16,7 +16,7 @@ using Windows.UI;
 //using SharpConstraintLayout.Maui.Pure.Core;
 namespace SharpConstraintLayout.Maui.Pure.Example
 {
-    public class MainPage : Grid
+    public class MainPage : StackPanel
     {
         private Button FirstButton;
 
@@ -30,8 +30,8 @@ namespace SharpConstraintLayout.Maui.Pure.Example
         {
             this.Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.HotPink);
             //Orientation = Orientation.Vertical;
-            HorizontalAlignment = Microsoft.UI.Xaml.HorizontalAlignment.Center;
-            VerticalAlignment = Microsoft.UI.Xaml.VerticalAlignment.Center;
+            //HorizontalAlignment = Microsoft.UI.Xaml.HorizontalAlignment.Center;
+            //VerticalAlignment = Microsoft.UI.Xaml.VerticalAlignment.Center;
 
 
             var layout = new ConstraintLayout()
@@ -89,7 +89,7 @@ namespace SharpConstraintLayout.Maui.Pure.Example
             };
             Paragraph paragraph = new Paragraph()
             {
-                FontSize = 40
+                FontSize = 18
             };
             Run run = new Run()
             {
@@ -106,50 +106,49 @@ namespace SharpConstraintLayout.Maui.Pure.Example
             layout.AddView(SixthRichTextBlock);
 
             var set = new ConstraintSet();
-            set.Clone_Android(layout);
+            set.Clone(layout);
 
-            set.Connect(FirstButton.GetId(), ConstraintSet.LEFT, layout.GetId(), ConstraintSet.LEFT, 50);
-            set.Connect(FirstButton.GetId(), ConstraintSet.RIGHT, layout.GetId(), ConstraintSet.RIGHT, 50);
+            set.constrainWidth(layout.GetId(), ConstraintSet.WRAP_CONTENT);
+            set.constrainHeight(layout.GetId(), ConstraintSet.WRAP_CONTENT);
+
+            set.Connect(FirstButton.GetId(), ConstraintSet.LEFT, layout.GetId(), ConstraintSet.LEFT);
+            set.Connect(FirstButton.GetId(), ConstraintSet.RIGHT, layout.GetId(), ConstraintSet.RIGHT);
             set.CenterVertically(FirstButton.GetId(), ConstraintSet.PARENT_ID, ConstraintSet.TOP, 0, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, 0, 0.5f);
-            set.setVisibility(FirstButton.GetId(), ConstraintSet.VISIBLE);
             set.constrainWidth(FirstButton.GetId(), ConstraintSet.WRAP_CONTENT);
             set.constrainHeight(FirstButton.GetId(), ConstraintSet.WRAP_CONTENT);
 
             set.Connect(SecondButton.GetId(), ConstraintSet.RIGHT, FirstButton.GetId(), ConstraintSet.RIGHT);
-            set.Connect(SecondButton.GetId(), ConstraintSet.TOP, FirstButton.GetId(), ConstraintSet.BOTTOM, 50);
-            set.setVisibility(SecondButton.GetId(), ConstraintSet.VISIBLE);
+            set.Connect(SecondButton.GetId(), ConstraintSet.TOP, FirstButton.GetId(), ConstraintSet.BOTTOM, 10);
             set.constrainWidth(SecondButton.GetId(), ConstraintSet.WRAP_CONTENT);
-            set.constrainHeight(SecondButton.GetId(), 200);
+            set.constrainHeight(SecondButton.GetId(), ConstraintSet.WRAP_CONTENT);
 
+            
             set.Connect(ThirdCanvas.GetId(), ConstraintSet.LEFT, FirstButton.GetId(), ConstraintSet.RIGHT, 50);
-            set.Connect(ThirdCanvas.GetId(), ConstraintSet.TOP, FirstButton.GetId(), ConstraintSet.BOTTOM, 50);
+            set.Connect(ThirdCanvas.GetId(), ConstraintSet.RIGHT, layout.GetId(), ConstraintSet.RIGHT, 50);
+            set.Connect(ThirdCanvas.GetId(), ConstraintSet.TOP, layout.GetId(), ConstraintSet.TOP, 50);
             set.Connect(ThirdCanvas.GetId(), ConstraintSet.BOTTOM, layout.GetId(), ConstraintSet.BOTTOM, 50);
-            set.setVisibility(ThirdCanvas.GetId(), ConstraintSet.VISIBLE);
-            set.constrainWidth(ThirdCanvas.GetId(), 200);
-            set.constrainHeight(ThirdCanvas.GetId(), ConstraintSet.MATCH_PARENT);
-
-            set.Connect(FouthTextBlock.GetId(), ConstraintSet.RIGHT, FirstButton.GetId(), ConstraintSet.LEFT, 50);
-            set.Connect(FouthTextBlock.GetId(), ConstraintSet.TOP, FirstButton.GetId(), ConstraintSet.BOTTOM, 50);
-            set.setVisibility(FouthTextBlock.GetId(), ConstraintSet.VISIBLE);
-            set.constrainWidth(FouthTextBlock.GetId(), 200);
-
+            set.setVisibility(ThirdCanvas.GetHashCode(),ConstraintSet.INVISIBLE);
+            set.constrainWidth(ThirdCanvas.GetId(), ConstraintSet.MATCH_CONSTRAINT);
+            set.constrainHeight(ThirdCanvas.GetId(), ConstraintSet.MATCH_CONSTRAINT);
+            
+            set.Connect(FouthTextBlock.GetId(), ConstraintSet.RIGHT, SecondButton.GetId(), ConstraintSet.RIGHT);
+            set.Connect(FouthTextBlock.GetId(), ConstraintSet.TOP, SecondButton.GetId(), ConstraintSet.BOTTOM, 10);
+            set.constrainWidth(FouthTextBlock.GetId(), ConstraintSet.WRAP_CONTENT);
             set.constrainHeight(FouthTextBlock.GetId(), ConstraintSet.WRAP_CONTENT);
-
+            
             set.Connect(FifthTextBox.GetId(), ConstraintSet.BOTTOM, FirstButton.GetId(), ConstraintSet.TOP, 50);
             set.Connect(FifthTextBox.GetId(), ConstraintSet.LEFT, FirstButton.GetId(), ConstraintSet.LEFT);
             set.Connect(FifthTextBox.GetId(), ConstraintSet.RIGHT, FirstButton.GetId(), ConstraintSet.RIGHT);
-            set.setVisibility(FifthTextBox.GetId(), ConstraintSet.VISIBLE);
-            set.constrainWidth(FifthTextBox.GetId(), 200);
+            set.constrainWidth(FifthTextBox.GetId(), ConstraintSet.MATCH_CONSTRAINT);
             set.constrainHeight(FifthTextBox.GetId(), ConstraintSet.WRAP_CONTENT);
-
+            
             set.Connect(SixthRichTextBlock.GetId(), ConstraintSet.RIGHT, FouthTextBlock.GetId(), ConstraintSet.LEFT, 50);
             set.Connect(SixthRichTextBlock.GetId(), ConstraintSet.BASELINE, FouthTextBlock.GetId(), ConstraintSet.BASELINE, 50);
-            set.setVisibility(SixthRichTextBlock.GetId(), ConstraintSet.VISIBLE);
             set.constrainWidth(SixthRichTextBlock.GetId(), ConstraintSet.WRAP_CONTENT);
             set.constrainHeight(SixthRichTextBlock.GetId(), ConstraintSet.WRAP_CONTENT);
 
 
-            set.ApplyTo_Android(layout);
+            set.ApplyTo(layout);
         }
 
         private void MainButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)

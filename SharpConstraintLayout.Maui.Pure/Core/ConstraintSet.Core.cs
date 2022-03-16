@@ -35,60 +35,12 @@ namespace SharpConstraintLayout.Maui.Pure.Core
         }
 
         /// <summary>
-        /// 这个实现是用Constraints模仿LayoutParams,但是会用新的Constraints去替代旧的
-        /// </summary>
-        /// <param name="constraintLayout"></param>
-        /// <exception cref="NotImplementedException"></exception>
-       [Obsolete]
-        public void Clone(ConstraintLayout constraintLayout)
-        {
-            //TODO:此处修改了谷歌实现的逻辑,注意需要测试
-
-            mConstraints.Clear();
-            //拿到原ConstraintSet
-            var oldSet = constraintLayout.ConstraintSet;
-            foreach (var c in oldSet.mConstraints)
-            {
-                int id = c.Key;
-
-                if (!mConstraints.ContainsKey(id))
-                {
-                    mConstraints[id] = c.Value.clone();
-                }
-                else
-                {
-                    throw new NotImplementedException($"新字典不应该包含{id},难道是HashCode重复了?");
-                }
-            }
-        }
-
-        /* public void Clone(Constraints constraints)
-         {
-             throw new NotImplementedException();
-         }
- */
-        [Obsolete]
-        public virtual void Clone(ConstraintSet set)
-        {
-            mConstraints.Clear();
-            foreach (int key in set.mConstraints.Keys)
-            {
-                Constraint constraint = set.mConstraints[key];
-                if (constraint == null)
-                {
-                    continue;
-                }
-                mConstraints[key] = constraint.clone();
-            }
-        }
-
-        /// <summary>
         /// 该方案是和Android的思路一样,在ConstraintLayout中存储一份不变的Constraints去替代LayoutParams,
         /// LayoutParams是不变的,因此模仿Android思路Constraints也是不变的字典,不在字典中创建新的Constraint替换,只是改原有的属性
         /// </summary>
         /// <param name="constraintLayout"></param>
         /// <exception cref="Exception"></exception>
-        public virtual void Clone_Android(ConstraintLayout constraintLayout)
+        public virtual void Clone(ConstraintLayout constraintLayout)
         {
             int count = constraintLayout.ChildCount;
             mConstraints.Clear();
@@ -163,36 +115,14 @@ namespace SharpConstraintLayout.Maui.Pure.Core
                 }
             }
         }
-        [Obsolete]
-        public void ApplyTo(ConstraintLayout constraintLayout)
-        {
-            applyToInternal(constraintLayout, true);
-            //constraintLayout.ConstraintSet = null;
-            //constraintLayout.requestLayout();
-#if WINDOWS
-            constraintLayout.InvalidateMeasure();
-            constraintLayout.UpdateLayout();
-#elif __IOS__
-            constraintLayout.LayoutIfNeeded();
-#endif
-        }
 
-        /// <summary>
-        /// Used to set constraints when used by constraint layout
-        /// </summary>
-        internal virtual void applyToInternal(ConstraintLayout constraintLayout, bool applyPostLayout)
-        {
-            constraintLayout.ConstraintSet.Dispose();
-            constraintLayout.ConstraintSet = null;
-            constraintLayout.ConstraintSet = this;
-        }
 
         /// <summary>
         /// Used to set constraints when used by constraint layout.
         /// 再Clone后新的ConstraintSet有新的约束字典,把这些约束更新到旧字典上去.
         /// 注意:这里还用到了统一替换PARENT_ID
         /// </summary>
-        public virtual void ApplyTo_Android(ConstraintLayout constraintLayout)
+        public virtual void ApplyTo(ConstraintLayout constraintLayout)
         {
             int parentID = constraintLayout.GetHashCode();
 
@@ -367,6 +297,7 @@ namespace SharpConstraintLayout.Maui.Pure.Core
                 }
             }
 
+            constraintLayout.ConstraintSet.IsChanged = true;
 #if WINDOWS
             constraintLayout.InvalidateMeasure();
             constraintLayout.UpdateLayout();
@@ -1192,7 +1123,7 @@ namespace SharpConstraintLayout.Maui.Pure.Core
         }
 
         /// <summary>
-        /// Adjust the visibility of a view.
+        /// Adjust the visibility of a view.<see cref="GONE"/> or <see cref="INVISIBLE"/> or <see cref="VISIBLE"/>
         /// </summary>
         /// <param name="viewId">     ID of view to adjust the vertical </param>
         /// <param name="visibility"> the visibility </param>
@@ -1202,8 +1133,7 @@ namespace SharpConstraintLayout.Maui.Pure.Core
         }
 
         /// <summary>
-        /// ConstraintSet will not setVisibility. <seealso cref="#VISIBILITY_MODE_IGNORE"/> or {@link
-        /// #VISIBILITY_MODE_NORMAL}.
+        /// ConstraintSet will not setVisibility. <seealso cref="VISIBILITY_MODE_IGNORE"/> or <see cref="VISIBILITY_MODE_NORMAL"/>
         /// </summary>
         /// <param name="viewId">         ID of view </param>
         /// <param name="visibilityMode"> </param>
@@ -1213,8 +1143,7 @@ namespace SharpConstraintLayout.Maui.Pure.Core
         }
 
         /// <summary>
-        /// ConstraintSet will not setVisibility. <seealso cref="#VISIBILITY_MODE_IGNORE"/> or {@link
-        /// #VISIBILITY_MODE_NORMAL}.
+        /// ConstraintSet will not setVisibility. <seealso cref="VISIBILITY_MODE_IGNORE"/> or <see cref="VISIBILITY_MODE_NORMAL"/>
         /// </summary>
         /// <param name="viewId"> ID of view </param>
         public virtual int getVisibilityMode(int viewId)
@@ -1223,7 +1152,7 @@ namespace SharpConstraintLayout.Maui.Pure.Core
         }
 
         /// <summary>
-        /// Get the visibility flag set in this view
+        /// Get the visibility flag set in this view.<see cref="GONE"/> or <see cref="INVISIBLE"/> or <see cref="VISIBLE"/>
         /// </summary>
         /// <param name="viewId"> the id of the view </param>
         /// <returns> the visibility constraint for the view </returns>
@@ -1233,7 +1162,8 @@ namespace SharpConstraintLayout.Maui.Pure.Core
         }
 
         /// <summary>
-        /// Get the height set in the view
+        /// Get the height set in the view.
+        /// It can be number, or <see cref="MATCH_CONSTRAINT"/>,or <see cref="MATCH_PARENT"/>,or <see cref="WRAP_CONTENT"/>
         /// </summary>
         /// <param name="viewId"> the id of the view </param>
         /// <returns> return the height constraint of the view </returns>
@@ -1243,7 +1173,8 @@ namespace SharpConstraintLayout.Maui.Pure.Core
         }
 
         /// <summary>
-        /// Get the width set in the view
+        /// Get the width set in the view.
+        /// It can be number, or <see cref="MATCH_CONSTRAINT"/>,or <see cref="MATCH_PARENT"/>,or <see cref="WRAP_CONTENT"/>
         /// </summary>
         /// <param name="viewId"> the id of the view </param>
         /// <returns> return the width constraint of the view </returns>
@@ -1462,8 +1393,7 @@ namespace SharpConstraintLayout.Maui.Pure.Core
         }
 
         /// <summary>
-        /// Sets the height of the view. It can be a dimension, <seealso cref="#WRAP_CONTENT"/> or {@link
-        /// #MATCH_CONSTRAINT}.
+        /// Sets the height of the view. It can be a dimension, <seealso cref="WRAP_CONTENT"/> or <see cref="MATCH_CONSTRAINT"/>
         /// </summary>
         /// <param name="viewId"> ID of view to adjust its height </param>
         /// <param name="height"> the height of the view
@@ -1474,8 +1404,7 @@ namespace SharpConstraintLayout.Maui.Pure.Core
         }
 
         /// <summary>
-        /// Sets the width of the view. It can be a dimension, <seealso cref="#WRAP_CONTENT"/> or {@link
-        /// #MATCH_CONSTRAINT}.
+        /// Sets the width of the view. It can be a dimension, <seealso cref="#WRAP_CONTENT"/> or <seealso cref="WRAP_CONTENT"/> or <see cref="MATCH_CONSTRAINT"/>
         /// </summary>
         /// <param name="viewId"> ID of view to adjust its width </param>
         /// <param name="width">  the width of the view
@@ -1503,7 +1432,7 @@ namespace SharpConstraintLayout.Maui.Pure.Core
 
         /// <summary>
         /// Sets the maximum height of the view. It is a dimension, It is only applicable if height is
-        /// #MATCH_CONSTRAINT}.
+        /// <see cref="MATCH_CONSTRAINT"/>.
         /// </summary>
         /// <param name="viewId"> ID of view to adjust it height </param>
         /// <param name="height"> the maximum height of the constraint
@@ -1515,7 +1444,7 @@ namespace SharpConstraintLayout.Maui.Pure.Core
 
         /// <summary>
         /// Sets the maximum width of the view. It is a dimension, It is only applicable if width is
-        /// #MATCH_CONSTRAINT}.
+        /// <see cref="MATCH_CONSTRAINT"/>.
         /// </summary>
         /// <param name="viewId"> ID of view to adjust its max height </param>
         /// <param name="width">  the maximum width of the view
@@ -1527,7 +1456,7 @@ namespace SharpConstraintLayout.Maui.Pure.Core
 
         /// <summary>
         /// Sets the height of the view. It is a dimension, It is only applicable if height is
-        /// #MATCH_CONSTRAINT}.
+        /// <see cref="MATCH_CONSTRAINT"/>.
         /// </summary>
         /// <param name="viewId"> ID of view to adjust its min height </param>
         /// <param name="height"> the minimum height of the view
@@ -1539,7 +1468,7 @@ namespace SharpConstraintLayout.Maui.Pure.Core
 
         /// <summary>
         /// Sets the width of the view.  It is a dimension, It is only applicable if width is
-        /// #MATCH_CONSTRAINT}.
+        /// <see cref="MATCH_CONSTRAINT"/>.
         /// </summary>
         /// <param name="viewId"> ID of view to adjust its min height </param>
         /// <param name="width">  the minimum width of the view
@@ -1572,7 +1501,7 @@ namespace SharpConstraintLayout.Maui.Pure.Core
         }
 
         /// <summary>
-        /// Sets how the height is calculated ether MATCH_CONSTRAINT_WRAP or MATCH_CONSTRAINT_SPREAD.
+        /// Sets how the height is calculated ether <see cref="MATCH_CONSTRAINT_WRAP"/> or <see cref="MATCH_CONSTRAINT_SPREAD"/>.
         /// Default is spread.
         /// </summary>
         /// <param name="viewId"> ID of view to adjust its matchConstraintDefaultHeight </param>
@@ -1584,7 +1513,7 @@ namespace SharpConstraintLayout.Maui.Pure.Core
         }
 
         /// <summary>
-        /// Sets how the width is calculated ether MATCH_CONSTRAINT_WRAP or MATCH_CONSTRAINT_SPREAD.
+        /// Sets how the width is calculated ether <see cref="MATCH_CONSTRAINT_WRAP"/> or <see cref="MATCH_CONSTRAINT_SPREAD"/>.
         /// Default is spread.
         /// </summary>
         /// <param name="viewId">      ID of view to adjust its matchConstraintDefaultWidth </param>
@@ -1596,7 +1525,7 @@ namespace SharpConstraintLayout.Maui.Pure.Core
         }
 
         /// <summary>
-        /// Sets how the height is calculated ether MATCH_CONSTRAINT_WRAP or MATCH_CONSTRAINT_SPREAD.
+        /// Sets how the height is calculated ether <see cref="MATCH_CONSTRAINT_WRAP"/> or <see cref="MATCH_CONSTRAINT_SPREAD"/>.
         /// Default is spread.
         /// </summary>
         /// <param name="viewId">      ID of view to adjust its matchConstraintDefaultHeight </param>
@@ -1608,7 +1537,7 @@ namespace SharpConstraintLayout.Maui.Pure.Core
         }
 
         /// <summary>
-        /// Sets how the width is calculated ether MATCH_CONSTRAINT_WRAP or MATCH_CONSTRAINT_SPREAD.
+        /// Sets how the width is calculated ether <see cref="MATCH_CONSTRAINT_WRAP"/> or <see cref="MATCH_CONSTRAINT_SPREAD"/>.
         /// Default is spread.
         /// </summary>
         /// <param name="viewId"> ID of view to adjust its matchConstraintDefaultWidth </param>
@@ -1621,7 +1550,7 @@ namespace SharpConstraintLayout.Maui.Pure.Core
 
         /// <summary>
         /// The child's weight that we can use to distribute the available horizontal space
-        /// in a chain, if the dimension behaviour is set to MATCH_CONSTRAINT
+        /// in a chain, if the dimension behaviour is set to <see cref="MATCH_CONSTRAINT"/>
         /// </summary>
         /// <param name="viewId"> ID of view to adjust its HorizontalWeight </param>
         /// <param name="weight"> the weight that we can use to distribute the horizontal space </param>
@@ -1632,7 +1561,7 @@ namespace SharpConstraintLayout.Maui.Pure.Core
 
         /// <summary>
         /// The child's weight that we can use to distribute the available vertical space
-        /// in a chain, if the dimension behaviour is set to MATCH_CONSTRAINT
+        /// in a chain, if the dimension behaviour is set to <see cref="MATCH_CONSTRAINT"/>T
         /// </summary>
         /// <param name="viewId"> ID of view to adjust its VerticalWeight </param>
         /// <param name="weight"> the weight that we can use to distribute the vertical space </param>
@@ -1643,16 +1572,14 @@ namespace SharpConstraintLayout.Maui.Pure.Core
 
         /// <summary>
         /// How the elements of the horizontal chain will be positioned. if the dimension
-        /// behaviour is set to MATCH_CONSTRAINT. The possible values are:
-        /// 
-        /// <ul>
-        /// <li><seealso cref="#CHAIN_SPREAD"/> -- the elements will be spread out</li>
-        /// <li><seealso cref="#CHAIN_SPREAD_INSIDE"/> -- similar, but the endpoints of the chain will not
-        /// be spread out</li>
-        /// <li><seealso cref="#CHAIN_PACKED"/> -- the elements of the chain will be packed together. The
+        /// behaviour is set to <see cref="MATCH_CONSTRAINT"/>. The possible values are:
+        /// <br/>
+        /// <seealso cref="CHAIN_SPREAD"/> -- the elements will be spread out<br/>
+        /// <seealso cref="CHAIN_SPREAD_INSIDE"/> -- similar, but the endpoints of the chain will not
+        /// be spread out <br/>
+        /// <seealso cref="CHAIN_PACKED"/> -- the elements of the chain will be packed together. The
         /// horizontal bias attribute of the child will then affect the positioning of the packed
-        /// elements</li>
-        /// </ul>
+        /// elements<br/>
         /// </summary>
         /// <param name="viewId">     ID of view to adjust its HorizontalChainStyle </param>
         /// <param name="chainStyle"> the weight that we can use to distribute the horizontal space </param>
@@ -1664,15 +1591,13 @@ namespace SharpConstraintLayout.Maui.Pure.Core
         /// <summary>
         /// How the elements of the vertical chain will be positioned. in a chain, if the dimension
         /// behaviour is set to MATCH_CONSTRAINT
-        /// 
-        /// <ul>
-        /// <li><seealso cref="#CHAIN_SPREAD"/> -- the elements will be spread out</li>
-        /// <li><seealso cref="#CHAIN_SPREAD_INSIDE"/> -- similar, but the endpoints of the chain will not
-        /// be spread out</li>
-        /// <li><seealso cref="#CHAIN_PACKED"/> -- the elements of the chain will be packed together. The
+        /// <br/>
+        /// <seealso cref="CHAIN_SPREAD"/> -- the elements will be spread out<br/>
+        /// <seealso cref="CHAIN_SPREAD_INSIDE"/> -- similar, but the endpoints of the chain will not
+        /// be spread out<br/>
+        /// <seealso cref="CHAIN_PACKED"/> -- the elements of the chain will be packed together. The
         /// vertical bias attribute of the child will then affect the positioning of the packed
-        /// elements</li>
-        /// </ul>
+        /// elements<br/>
         /// </summary>
         /// <param name="viewId">     ID of view to adjust its VerticalChainStyle </param>
         /// <param name="chainStyle"> the weight that we can use to distribute the horizontal space </param>

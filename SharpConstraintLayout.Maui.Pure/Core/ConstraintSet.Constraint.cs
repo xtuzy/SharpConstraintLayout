@@ -129,7 +129,6 @@ namespace SharpConstraintLayout.Maui.Pure.Core
 					}
 				}
 
-				//JAVA TO C# CONVERTER CRACKED BY X-CRACKER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 				//ORIGINAL LINE: @SuppressLint("LogConditional") void printDelta(String tag)
 				internal virtual void printDelta(string tag)
 				{

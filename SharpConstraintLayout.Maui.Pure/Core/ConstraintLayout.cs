@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Threading;
-using System.Windows;
 
 
 
@@ -25,8 +23,6 @@ using static SharpConstraintLayout.Maui.Pure.Core.ConstraintSet;
 namespace SharpConstraintLayout.Maui.Pure.Core
 {
     using androidx.constraintlayout.core.widgets;
-    using androidx.constraintlayout.core.widgets.analyzer;
-    using Utils = androidx.constraintlayout.core.motion.utils.Utils;
     using ConstraintWidget = androidx.constraintlayout.core.widgets.ConstraintWidget;
     using ConstraintWidgetContainer = androidx.constraintlayout.core.widgets.ConstraintWidgetContainer;
     using GuidelineWidget = androidx.constraintlayout.core.widgets.Guideline;
@@ -41,6 +37,7 @@ namespace SharpConstraintLayout.Maui.Pure.Core
     using Panel = UIKit.UIView;
     using UIElement = UIKit.UIView;
     using CoreGraphics;
+    using Size = CoreGraphics.CGSize;
 #elif __ANDROID__
 #endif
 
@@ -289,118 +286,148 @@ namespace SharpConstraintLayout.Maui.Pure.Core
             h = mLayout.Height;
             return new Size(w, h);
         }
-#elif WINDOWS
-       bool isInfinityMeasure = false;
+#elif WINDOWS || __IOS__
+        bool isInfinityMeasure = false;
+#if WINDOWS
         protected override Size MeasureOverride(Size availableSize)
+#elif __IOS__
+        protected Size MeasureOverride(Size availableSize)
+#endif
         {
             if (DEBUG) Debug.WriteLine($"{nameof(MeasureOverride)} {this} {availableSize}");
 
-            //更新约束到widget
-            if (updateHierarchy())
+            if (ConstraintSet.IsChanged)
             {
-                RootWidget.updateHierarchy();
-            }
+                //约束到child的widget
+                if (updateHierarchy())
+                {
+                    RootWidget.updateHierarchy();
+                }
 
+                //更新约束到Container的Widget
+                var constraint = ConstraintSet.Constraints[this.GetHashCode()];
+                applyConstraintsFromLayoutParams(false, this, RootWidget, constraint, idsToConstraintWidgets);
+
+                ConstraintSet.IsChanged = false;
+            }
+#if WINDOWS
+            int measureWidth = 0;
+            int measureHeight = 0;
             //sometimes no fixsize
             if (double.IsPositiveInfinity(availableSize.Width))
-            { RootWidget.Width = int.MaxValue; isInfinityMeasure = true; }
+            { measureWidth = int.MaxValue; isInfinityMeasure = true; }
             else
-                RootWidget.Width = (int)availableSize.Width;
+                measureWidth = (int)availableSize.Width;
 
             if (double.IsPositiveInfinity(availableSize.Height))
-            { RootWidget.Height = int.MaxValue; isInfinityMeasure = true; }
+            { measureHeight = int.MaxValue; isInfinityMeasure = true; }
             else
-                RootWidget.Height = (int)availableSize.Height;
+                measureHeight = (int)availableSize.Height;
 
-            //计算Layout的大小
+            //Container的大小需要根据程序指定
             switch (RootWidget.HorizontalDimensionBehaviour)
             {
                 case ConstraintWidget.DimensionBehaviour.FIXED:
-                    //Constraints中的已经赋值过了
+                    {
+                        //已知是Fixed时说明默认没有赋值或者赋值了,赋值了的话RootWidget.Width绝对有值,没有赋值的直接按available大小处理,因为
+                        //父布局会指定值,而我们不指定则代表遵从父布局的指定
+                        if (RootWidget.Width <= 0)
+                        {
+                            RootWidget.Width = measureWidth;
+                        }
+                    }
                     break;
+
                 case ConstraintWidget.DimensionBehaviour.WRAP_CONTENT:
-                    RootWidget.Width = RootWidget.Width;//TODO:TEST
-                    break;
                 case ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT:
-                    RootWidget.Width = RootWidget.Width;//TODO:TEST
-                    break;
                 case ConstraintWidget.DimensionBehaviour.MATCH_PARENT:
-                    RootWidget.Width = RootWidget.Width;//TODO:TEST
+                    //需要足够的空间,这个空间由Layout的父布局决定
+                    RootWidget.Width = measureWidth;
                     break;
             }
 
             switch (RootWidget.VerticalDimensionBehaviour)
             {
                 case ConstraintWidget.DimensionBehaviour.FIXED:
-                    //Constraints中的已经赋值过了
+                    {
+                        if (RootWidget.Height <= 0)
+                        {
+                            RootWidget.Height = measureHeight;
+                        }
+                    }
                     break;
+
                 case ConstraintWidget.DimensionBehaviour.WRAP_CONTENT:
-                    RootWidget.Height = RootWidget.Height;//TODO:TEST
-                    break;
                 case ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT:
-                    RootWidget.Height = RootWidget.Height;//TODO:TEST
-                    break;
                 case ConstraintWidget.DimensionBehaviour.MATCH_PARENT:
-                    RootWidget.Height = RootWidget.Height;//TODO:TEST
+                    //需要足够的空间,这个空间由Layout的父布局决定
+                    RootWidget.Height = measureHeight;
                     break;
             }
-            //传入布局的测量数据,用于测量child时
-            (mLayout.Measurer as MeasurerAnonymousInnerClass).captureLayoutInfo(mLayout.Width, mLayout.Height, 0, 0, 0, 0);
-            //交给Container去测量
-            mLayout.OptimizationLevel = mOptimizationLevel;
-            mLayout.layout();
-            mLayout.measure(mOptimizationLevel, BasicMeasure.EXACTLY, mLayout.Width, BasicMeasure.EXACTLY, mLayout.Height, 0, 0, 0, 0);
-            return new Size(RootWidget.Width, RootWidget.Height);
-        }
 #elif __IOS__
-        /// <summary>
-        /// iOS没有Measure,Layout的Measure我们直接看ConstraintWidget.DimensionBehaviour
-        /// </summary>
-        protected void MeasureOverride()
-        {
-            //更新约束到widget
-            if (updateHierarchy())
-            {
-                RootWidget.updateHierarchy();
-            }
-            //计算Layout的大小
+            //iOS中,如果指定了Frame,那么能获得自身的值,如果没有,那么可以取Superview的Frame,因为布局child必须要layout的大小去参照
+            int measureWidth = (int)availableSize.Width;
+            int measureHeight = (int)availableSize.Height;
+            //Container的大小需要根据程序指定
             switch (RootWidget.HorizontalDimensionBehaviour)
             {
                 case ConstraintWidget.DimensionBehaviour.FIXED:
-                    //Constraints中的已经赋值过了
+                    {
+                        //已知是Fixed时说明默认没有赋值或者赋值了,赋值了的话RootWidget.Width绝对有值,没有赋值的直接按available大小处理,因为
+                        //父布局会指定值,而我们不指定则代表遵从父布局的指定
+                        if (RootWidget.Width <= 0)
+                        {
+                            RootWidget.Width = measureWidth;
+                            
+                        }
+                    }
                     break;
                 case ConstraintWidget.DimensionBehaviour.WRAP_CONTENT:
-                    RootWidget.Width = 0;//TODO:TEST
-                    break;
                 case ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT:
-                    RootWidget.Width = 0;//TODO:TEST
-                    break;
                 case ConstraintWidget.DimensionBehaviour.MATCH_PARENT:
-                    RootWidget.Width = (int)Superview.Frame.Width;//TODO:TEST
+                    //需要足够的空间,这个空间由Layout的父布局决定
+                    RootWidget.Width = measureWidth;
                     break;
             }
 
             switch (RootWidget.VerticalDimensionBehaviour)
             {
                 case ConstraintWidget.DimensionBehaviour.FIXED:
-                    //Constraints中的已经赋值过了
+                    {
+                        if (RootWidget.Height <= 0)
+                        {
+                            RootWidget.Height = measureHeight;
+                        }
+                    }
                     break;
+
                 case ConstraintWidget.DimensionBehaviour.WRAP_CONTENT:
-                    RootWidget.Height = 0;//TODO:TEST
-                    break;
                 case ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT:
-                    RootWidget.Height = 0;//TODO:TEST
-                    break;
                 case ConstraintWidget.DimensionBehaviour.MATCH_PARENT:
-                    RootWidget.Height = (int)Superview.Frame.Height;//TODO:TEST
+                    //需要足够的空间,这个空间由Layout的父布局决定
+                    RootWidget.Height = measureHeight;
                     break;
             }
+#endif
+            //分析Windows测量
+            //对Layout的约束中,
+            //Fixed直接将值给Widget值,无需使用available;
+            //MatchParent需要available,直接赋值,如果存在无限大情况,也直接赋值,在Arrange时再次取finalSize赋值测量,当然,注意WrapLayout这类可以容纳无限大的布局可能出现问题.
+            //MatchContraint和WrapContent是大小不明的,需要依赖child的测量,而child需要根据父布局的可容纳大小来测量,因此也将available值传入
+
+            //分析iOS测量
+            //iOS的Layout没有Measure方法,其IntrinsicContentSize需要知道测量方式才能计算出来,这里不适用
+            //Fixed和赋值Frame一样,
+            //如果需要MatchParent
+
             //传入布局的测量数据,用于测量child时
-            (mLayout.Measurer as MeasurerAnonymousInnerClass).captureLayoutInfo(mLayout.Width, mLayout.Height, 0, 0, 0, 0);
+            (RootWidget.Measurer as MeasurerAnonymousInnerClass).captureLayoutInfo(RootWidget.Width, RootWidget.Height, 0, 0, 0, 0);
+
             //交给Container去测量
-            mLayout.OptimizationLevel = mOptimizationLevel;
-            mLayout.layout();
-            mLayout.measure(mOptimizationLevel, BasicMeasure.EXACTLY, mLayout.Width, BasicMeasure.EXACTLY, mLayout.Height, 0, 0, 0, 0);
+            RootWidget.OptimizationLevel = mOptimizationLevel;
+            RootWidget.layout();
+            RootWidget.measure(mOptimizationLevel, BasicMeasure.EXACTLY, RootWidget.Width, BasicMeasure.EXACTLY, RootWidget.Height, 0, 0, 0, 0);
+            return new Size(RootWidget.Width, RootWidget.Height);//告诉Parent,Layout的大小
         }
 #endif
 
@@ -456,25 +483,35 @@ namespace SharpConstraintLayout.Maui.Pure.Core
                     component.Arrange(new Rect(child.X, child.Y, child.Width, child.Height));
                 }
             }
-            return finalSize;
+            return new Size(RootWidget.Width, RootWidget.Height);
         }
-#elif __IOS__ 
+
+#elif __IOS__
+        public override Size IntrinsicContentSize => this.Frame.Size;
+
         /// <summary>
         /// 貌似在开始会被调用两次,应该在第二次时是能获得superview和child默认大小的
         /// </summary>
         public override void LayoutSubviews()
         {
-            base.LayoutSubviews();
-            if (DEBUG) Debug.WriteLine($"{nameof(LayoutSubviews)} {this} {this.Frame}");
+            //base.LayoutSubviews();
+            if (DEBUG) Debug.WriteLine($"{nameof(LayoutSubviews)} {this} Frame {this.Frame}");
 
-            //得到默认大小后测量
-            MeasureOverride();
+            //得到自身或Superview的大小作为availableSize
+            if(this.Frame.Size.Width > 0)
+                MeasureOverride(this.Frame.Size);
+            else
+                MeasureOverride(this.Superview.Frame.Size);
+            if (DEBUG) Debug.WriteLine($"{nameof(LayoutSubviews)} {this} IntrinsicSize {this.IntrinsicContentSize}");
+            if (DEBUG) Debug.WriteLine($"{nameof(LayoutSubviews)} {this} RootWidget {this.RootWidget.ToString()}");
 
+            //更新layout的大小
+            Frame = new CGRect(Frame.X,Frame.Y,RootWidget.Width, RootWidget.Height);
             //layout child
             foreach (ConstraintWidget child in mLayout.Children)
             {
                 UIElement component = (UIElement)child.CompanionWidget;
-                if (component != null)
+                if (component != null) 
                 {
                     if (DEBUG) Debug.WriteLine($"{nameof(LayoutSubviews)} {component} {new CGRect(child.X, child.Y, child.Width, child.Height)}");
                     component.Frame = (new CoreGraphics.CGRect(child.X, child.Y, child.Width, child.Height));
@@ -542,7 +579,7 @@ namespace SharpConstraintLayout.Maui.Pure.Core
                 else
                     outerInstance.innerMeasure(widget, measure);
 #elif WINDOWS || __IOS__
-                AndroidMeasure(widget,measure);
+                AndroidMeasure(widget, measure);
 #endif
             }
 
@@ -650,7 +687,7 @@ namespace SharpConstraintLayout.Maui.Pure.Core
 #if WINDOWS
                                 bool otherDimensionStable = child.DesiredSize.Height == widget.Height;
 #elif __IOS__
-                                bool otherDimensionStable = child.Frame.Size.Height == widget.Height;
+                                bool otherDimensionStable = child.Bounds.Size.Height == widget.Height;
 #endif
                                 bool useCurrent = measure.measureStrategy == BasicMeasure.Measure.USE_GIVEN_DIMENSIONS || !shouldDoWrap || (shouldDoWrap && otherDimensionStable) || (child is Placeholder) || (widget.ResolvedHorizontally);
                                 if (useCurrent)
@@ -693,7 +730,7 @@ namespace SharpConstraintLayout.Maui.Pure.Core
 #if WINDOWS
                                 bool otherDimensionStable = child.DesiredSize.Width == widget.Width;
 #elif __IOS__
-                                bool otherDimensionStable = child.Frame.Size.Width == widget.Width;
+                                bool otherDimensionStable = child.Bounds.Size.Width == widget.Width;
 #endif
                                 bool useCurrent = measure.measureStrategy == BasicMeasure.Measure.USE_GIVEN_DIMENSIONS || !shouldDoWrap || (shouldDoWrap && otherDimensionStable) || (child is Placeholder) || (widget.ResolvedVertically);
                                 if (useCurrent)
@@ -766,8 +803,8 @@ namespace SharpConstraintLayout.Maui.Pure.Core
                     int w = (int)child.DesiredSize.Width;
                     int h = (int)child.DesiredSize.Height;
 #elif __IOS__
-                    int w = (int)child.Frame.Width;
-                    int h = (int)child.Frame.Height;
+                    int w = (int)child.IntrinsicContentSize.Width;
+                    int h = (int)child.IntrinsicContentSize.Height;
 #endif
                     baseline = (int)child.GetBaseline();
 
@@ -833,8 +870,8 @@ namespace SharpConstraintLayout.Maui.Pure.Core
                         height = (int)child.DesiredSize.Height;
                         baseline = (int)child.GetBaseline();
 #elif __IOS__
-                        width = (int)child.Frame.Width;
-                        height = (int)child.Frame.Height;
+                        width = (int)child.IntrinsicContentSize.Width;
+                        height = (int)child.IntrinsicContentSize.Height;
                         baseline = (int)child.GetBaseline();
 #endif
                         /*if (DEBUG)
@@ -901,7 +938,7 @@ namespace SharpConstraintLayout.Maui.Pure.Core
                 }
 #if WINDOWS
                 //child.Measure(new Size(width, height));
-                
+
 #endif
                 measure.measuredWidth = width;
                 measure.measuredHeight = height;
@@ -1051,8 +1088,59 @@ namespace SharpConstraintLayout.Maui.Pure.Core
                 {
                     continue;
                 }
-                widget.reset();//全部重置?
+                widget.reset();//全部widget的数据重置
             }
+
+            /*if (isInEditMode)
+            {
+                // In design mode, let's make sure we keep track of the ids; in Studio, a build step
+                // might not have been done yet, so asking the system for ids can break. So to be safe,
+                // we save the current ids, which helpers can ask for.
+                for (int i = 0; i < count; i++)
+                {
+                    //ORIGINAL LINE: final android.view.View view = getChildAt(i);
+                    View view = getChildAt(i);
+                    try
+                    {
+                        string IdAsString = Resources.getResourceName(view.Id);
+                        setDesignInformation(DESIGN_INFO_ID, IdAsString, view.Id);
+                        int slashIndex = IdAsString.IndexOf('/');
+                        if (slashIndex != -1)
+                        {
+                            IdAsString = IdAsString.Substring(slashIndex + 1);
+                        }
+                        getTargetWidget(view.Id).DebugName = IdAsString;
+                    }
+                    catch (Resources.NotFoundException)
+                    {
+                        // nothing
+                    }
+                }
+            }
+            else if (DEBUG)
+            {
+                mLayoutWidget.DebugName = "root";
+                for (int i = 0; i < count; i++)
+                {
+                    //ORIGINAL LINE: final android.view.View view = getChildAt(i);
+                    View view = getChildAt(i);
+                    try
+                    {
+                        string IdAsString = Resources.getResourceName(view.Id);
+                        setDesignInformation(DESIGN_INFO_ID, IdAsString, view.Id);
+                        int slashIndex = IdAsString.IndexOf('/');
+                        if (slashIndex != -1)
+                        {
+                            IdAsString = IdAsString.Substring(slashIndex + 1);
+                        }
+                        getTargetWidget(view.Id).DebugName = IdAsString;
+                    }
+                    catch (Resources.NotFoundException)
+                    {
+                        // nothing
+                    }
+                }
+            }*/
 
             /*if (USE_CONSTRAINTS_HELPER && mConstraintSetId != -1)
             {
@@ -1067,11 +1155,11 @@ namespace SharpConstraintLayout.Maui.Pure.Core
                 }
             }*/
 
-            if (ConstraintSet != null)
+            /*if (ConstraintSet != null)
             {
                 //这一步我不执行,因为这一步会清除ConstraintSet,我需要保留这个信息去替换LayoutParams的功能
                 //ConstraintSet.applyToInternal(this, true);
-            }
+            }*/
 
             RootWidget.removeAllChildren();
 
@@ -1106,7 +1194,7 @@ namespace SharpConstraintLayout.Maui.Pure.Core
                 mTempMapIdToWidget.Add(child.GetHashCode(), widget);
             }
 
-            for (int i = 0; i < count; i++)//apply每个constraint到widget
+            for (int i = 0; i < count; i++)//apply constraint到每个widget
             {
                 UIElement child = Children[i];
                 ConstraintWidget widget = GetWidget(child);
@@ -1132,9 +1220,9 @@ namespace SharpConstraintLayout.Maui.Pure.Core
             /*#if WINDOWS
                         widget.Visibility = (child.Visibility == Visibility.Visible?ConstraintSet.VISIBLE:(child.Opacity==0? ConstraintSet.INVISIBLE:ConstraintSet.GONE));
 #elif __IOS__
-                widget.Visibility = (child.Hidden == true ? ConstraintSet.INVISIBLE: child.Opacity == 0?ConstraintSet.GONE: ConstraintSet.VISIBLE);
+            widget.Visibility = (child.Hidden == true ? ConstraintSet.INVISIBLE: child.Opacity == 0?ConstraintSet.GONE: ConstraintSet.VISIBLE);
 #endif*/
-                widget.Visibility = layoutParams.propertySet.visibility;//这里我设置为从constraints中取,涉及布局的都交给constraints
+            widget.Visibility = layoutParams.propertySet.visibility;//这里我设置为从constraints中取,涉及布局的都交给constraints
             if (layoutParams.layout.isInPlaceholder)
             {
                 widget.InPlaceholder = true;

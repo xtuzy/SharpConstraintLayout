@@ -23,6 +23,8 @@ namespace SharpConstraintLayout.Maui.Pure.Core
 {
     public partial class ConstraintSet : IDisposable
     {
+        public bool IsChanged = false;
+
         private const string TAG = "ConstraintSet";
         private const string ERROR_MESSAGE = "XML parser error must be within a Constraint ";
 
@@ -118,21 +120,21 @@ namespace SharpConstraintLayout.Maui.Pure.Core
         /// Use with <see cref="setVisibility"/> and <a href="#attr_android:visibility">{@code
         /// android:visibility}.
         /// </summary>
-        public const int VISIBLE = 0x00000000;
+        public const int VISIBLE = ConstraintWidget.VISIBLE;
 
         /// <summary>
         /// This view is invisible, but it still takes up space for layout purposes.
         /// Use with <seealso cref="setVisibility"/> and <a href="#attr_android:visibility">{@code
         /// android:visibility}.
         /// </summary>
-        public const int INVISIBLE = 0x00000004;
+        public const int INVISIBLE = ConstraintWidget.INVISIBLE;
 
         /// <summary>
         /// This view is gone, and will not take any space for layout
         /// purposes. Use with <seealso cref="#setVisibility"/> and <a href="#attr_android:visibility">{@code
         /// android:visibility}.
         /// </summary>
-        public const int GONE = 0x00000008;
+        public const int GONE = ConstraintWidget.GONE;
 
         /// <summary>
         /// The left side of a view.
@@ -200,8 +202,8 @@ namespace SharpConstraintLayout.Maui.Pure.Core
 
         private Dictionary<int, Constraint> mConstraints = new Dictionary<int, Constraint>();
 
-        private static Dictionary<int, int> mapToConstant = new Dictionary<int, int>();
-        private static Dictionary<int, int> overrideMapToConstant = new Dictionary<int, int>();
+        //private static Dictionary<int, int> mapToConstant = new Dictionary<int, int>();
+        //private static Dictionary<int, int> overrideMapToConstant = new Dictionary<int, int>();
         private const int BASELINE_TO_BASELINE = 1;
         private const int BOTTOM_MARGIN = 2;
         private const int BOTTOM_TO_BOTTOM = 3;
@@ -308,7 +310,6 @@ namespace SharpConstraintLayout.Maui.Pure.Core
         public void Dispose()
         {
             mConstraints.Clear();
-            mapToConstant.Clear();
         }
 
         /// <summary>

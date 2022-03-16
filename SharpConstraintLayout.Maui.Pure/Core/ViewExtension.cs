@@ -46,7 +46,7 @@ namespace SharpConstraintLayout.Maui.Pure.Core
                     fontMetrics= (view as UIButton)?.TitleLabel?.Font;
                 if(fontMetrics == null)
                     fontMetrics=(view as UILabel)?.Font;
-                return (float)((fontMetrics.Descender - fontMetrics.Ascender) / 2 - fontMetrics.Descender);
+                return (float)(view.IntrinsicContentSize.Height/2 + (float)((fontMetrics.Descender - fontMetrics.Ascender) / 2 - fontMetrics.Descender));
             }else
                 return ConstraintSet.UNSET;
 #endif

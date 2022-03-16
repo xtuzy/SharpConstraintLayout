@@ -40,8 +40,20 @@ using static androidx.constraintlayout.core.widgets.ConstraintWidget;
 
 		private const bool DEBUG = false;
 		private const int MODE_SHIFT = 30;
+		/// <summary>
+		/// The parent has not imposed any constraint on the child. It can be whatever size it wants.
+		/// <see cref="https://developer.android.com/reference/android/view/View.MeasureSpec"/>
+		/// </summary>
 		public const int UNSPECIFIED = 0;
+		/// <summary>
+		/// The parent has determined an exact size for the child. The child is going to be given those bounds regardless of how big it wants to be.
+		/// <see cref="https://developer.android.com/reference/android/view/View.MeasureSpec"/>
+		/// </summary>
 		public static readonly int EXACTLY = 1 << MODE_SHIFT;
+		/// <summary>
+		/// The child can be as large as it wants up to the specified size.
+		/// <see cref="https://developer.android.com/reference/android/view/View.MeasureSpec"/>
+		/// </summary>
 		public static readonly int AT_MOST = 2 << MODE_SHIFT;
 
 		public const int MATCH_PARENT = -1;

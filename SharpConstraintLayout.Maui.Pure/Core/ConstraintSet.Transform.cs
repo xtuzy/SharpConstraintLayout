@@ -76,7 +76,6 @@ namespace SharpConstraintLayout.Maui.Pure.Core
             {
                 TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.Transform);
                 mApply = true;
-                //JAVA TO C# CONVERTER CRACKED BY X-CRACKER WARNING: The original Java variable was marked 'final':
                 //ORIGINAL LINE: final int N = a.getIndexCount();
                 int N = a.IndexCount;
                 for (int i = 0; i < N; i++)

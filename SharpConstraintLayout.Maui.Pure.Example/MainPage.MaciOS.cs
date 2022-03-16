@@ -36,16 +36,17 @@ namespace SharpConstraintLayout.Maui.Pure.Example
                 Frame = frame,
                 BackgroundColor = UIColor.White
             };
-            Page.AddSubview(layout);
+            
+            Page.AddSubview(layout); 
 
-            FirstButton = new UIButton()
+            FirstButton = new UIButton() 
             {
                 //Tag = nameof(FirstButton),
                 //ClickMode = ClickMode.Press,
                 BackgroundColor = UIColor.Red
             };
-            FirstButton.SetTitle("FirstButton At Center",UIControlState.Normal);
-            //FirstButton.Click += MainButton_Click;
+            FirstButton.SetTitle("FirstButton",UIControlState.Normal);
+            FirstButton.TouchUpInside += FirstButton_Click;
 
             SecondButton = new UIButton()
             {
@@ -53,7 +54,7 @@ namespace SharpConstraintLayout.Maui.Pure.Example
                 //Tag = nameof(SecondButton),
                 BackgroundColor = UIColor.Black
             };
-            SecondButton.SetTitle("Second At Bottom", UIControlState.Normal);
+            SecondButton.SetTitle("SecondButton", UIControlState.Normal);
 
             ThirdCanvas = new UIView()
             {
@@ -65,23 +66,25 @@ namespace SharpConstraintLayout.Maui.Pure.Example
 
             FouthTextBlock = new UITextView()
             {
+                ScrollEnabled = false,
                 //Tag = nameof(FouthTextBlock),
                 //Width = 100,
                 //Height = 100,
-                Text = "TextBlock"
+                Text = "FouthTextBlock"
             };
 
             FifthTextBox = new UITextField()
             {
                 //Tag = nameof(FifthTextBox),
-                Text = "TextBox",
+                Text = "FifthTextBox",
             };
 
             //https://stackoverflow.com/questions/35710355/uwpc-adding-text-to-richtextblock
             SixthRichTextBlock = new UITextView()
             {
+                ScrollEnabled = false,
                 //Tag = nameof(SixthRichTextBlock),
-                AttributedText = new NSAttributedString("RichTextBlock", UIFont.SystemFontOfSize(40))
+                AttributedText = new NSAttributedString("RichTextBlock", UIFont.SystemFontOfSize(14))
             };
 
             layout.AddView(FirstButton);
@@ -92,50 +95,49 @@ namespace SharpConstraintLayout.Maui.Pure.Example
             layout.AddView(SixthRichTextBlock);
 
             var set = new ConstraintSet();
-            set.Clone_Android(layout);
+            set.Clone(layout);
 
-            set.Connect(FirstButton.GetId(), ConstraintSet.LEFT, layout.GetId(), ConstraintSet.LEFT, 50);
-            set.Connect(FirstButton.GetId(), ConstraintSet.RIGHT, layout.GetId(), ConstraintSet.RIGHT, 50);
+            set.Connect(FirstButton.GetId(), ConstraintSet.LEFT, layout.GetId(), ConstraintSet.LEFT);
+            set.Connect(FirstButton.GetId(), ConstraintSet.RIGHT, layout.GetId(), ConstraintSet.RIGHT);
             set.CenterVertically(FirstButton.GetId(), ConstraintSet.PARENT_ID, ConstraintSet.TOP, 0, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, 0, 0.5f);
-            set.setVisibility(FirstButton.GetId(), ConstraintSet.VISIBLE);
             set.constrainWidth(FirstButton.GetId(), ConstraintSet.WRAP_CONTENT);
             set.constrainHeight(FirstButton.GetId(), ConstraintSet.WRAP_CONTENT);
 
             set.Connect(SecondButton.GetId(), ConstraintSet.RIGHT, FirstButton.GetId(), ConstraintSet.RIGHT);
             set.Connect(SecondButton.GetId(), ConstraintSet.TOP, FirstButton.GetId(), ConstraintSet.BOTTOM, 50);
-            set.setVisibility(SecondButton.GetId(), ConstraintSet.VISIBLE);
-            set.constrainWidth(SecondButton.GetId(), ConstraintSet.WRAP_CONTENT);
-            set.constrainHeight(SecondButton.GetId(), 200);
+            set.constrainWidth(SecondButton.GetId(), 150);
+            set.constrainHeight(SecondButton.GetId(), ConstraintSet.WRAP_CONTENT);
 
             set.Connect(ThirdCanvas.GetId(), ConstraintSet.LEFT, FirstButton.GetId(), ConstraintSet.RIGHT, 50);
+            set.Connect(ThirdCanvas.GetId(), ConstraintSet.RIGHT, layout.GetId(), ConstraintSet.RIGHT, 10);
             set.Connect(ThirdCanvas.GetId(), ConstraintSet.TOP, FirstButton.GetId(), ConstraintSet.BOTTOM, 50);
             set.Connect(ThirdCanvas.GetId(), ConstraintSet.BOTTOM, layout.GetId(), ConstraintSet.BOTTOM, 50);
-            set.setVisibility(ThirdCanvas.GetId(), ConstraintSet.VISIBLE);
-            set.constrainWidth(ThirdCanvas.GetId(), 200);
+            set.setVisibility(ThirdCanvas.GetId(), ConstraintSet.GONE);//BUG:设置Visibility无效
+            set.constrainWidth(ThirdCanvas.GetId(), ConstraintSet.MATCH_CONSTRAINT);
             set.constrainHeight(ThirdCanvas.GetId(), ConstraintSet.MATCH_PARENT);
 
-            set.Connect(FouthTextBlock.GetId(), ConstraintSet.RIGHT, FirstButton.GetId(), ConstraintSet.LEFT, 50);
-            set.Connect(FouthTextBlock.GetId(), ConstraintSet.TOP, FirstButton.GetId(), ConstraintSet.BOTTOM, 50);
-            set.setVisibility(FouthTextBlock.GetId(), ConstraintSet.VISIBLE);
-            set.constrainWidth(FouthTextBlock.GetId(), 200);
-
+            set.Connect(FouthTextBlock.GetId(), ConstraintSet.RIGHT, SecondButton.GetId(), ConstraintSet.RIGHT);
+            set.Connect(FouthTextBlock.GetId(), ConstraintSet.TOP, SecondButton.GetId(), ConstraintSet.BOTTOM, 50);
+            set.constrainWidth(FouthTextBlock.GetId(), ConstraintSet.WRAP_CONTENT);
             set.constrainHeight(FouthTextBlock.GetId(), ConstraintSet.WRAP_CONTENT);
 
             set.Connect(FifthTextBox.GetId(), ConstraintSet.BOTTOM, FirstButton.GetId(), ConstraintSet.TOP, 50);
-            set.Connect(FifthTextBox.GetId(), ConstraintSet.LEFT, FirstButton.GetId(), ConstraintSet.LEFT);
-            set.Connect(FifthTextBox.GetId(), ConstraintSet.RIGHT, FirstButton.GetId(), ConstraintSet.RIGHT);
-            set.setVisibility(FifthTextBox.GetId(), ConstraintSet.VISIBLE);
-            set.constrainWidth(FifthTextBox.GetId(), 200);
+            set.Connect(FifthTextBox.GetId(), ConstraintSet.LEFT, SecondButton.GetId(), ConstraintSet.LEFT);
+            set.Connect(FifthTextBox.GetId(), ConstraintSet.RIGHT, SecondButton.GetId(), ConstraintSet.RIGHT);
+            set.constrainWidth(FifthTextBox.GetId(), ConstraintSet.WRAP_CONTENT);//BUG:设置宽高具体数值,位置错误
             set.constrainHeight(FifthTextBox.GetId(), ConstraintSet.WRAP_CONTENT);
 
-            set.Connect(SixthRichTextBlock.GetId(), ConstraintSet.RIGHT, FouthTextBlock.GetId(), ConstraintSet.LEFT, 50);
-            set.Connect(SixthRichTextBlock.GetId(), ConstraintSet.BASELINE, FouthTextBlock.GetId(), ConstraintSet.BASELINE, 50);
-            set.setVisibility(SixthRichTextBlock.GetId(), ConstraintSet.VISIBLE);
+            set.Connect(SixthRichTextBlock.GetId(), ConstraintSet.RIGHT, FouthTextBlock.GetId(), ConstraintSet.LEFT, 10);
+            set.Connect(SixthRichTextBlock.GetId(), ConstraintSet.BASELINE, FouthTextBlock.GetId(), ConstraintSet.BASELINE);//BUG:Baseline无效
             set.constrainWidth(SixthRichTextBlock.GetId(), ConstraintSet.WRAP_CONTENT);
             set.constrainHeight(SixthRichTextBlock.GetId(), ConstraintSet.WRAP_CONTENT);
 
+            set.ApplyTo(layout);
+        }
 
-            set.ApplyTo_Android(layout);
+        private void FirstButton_Click(object sender, EventArgs e)
+        {
+            LoadMauiAsset();
         }
 
         async Task LoadMauiAsset()
