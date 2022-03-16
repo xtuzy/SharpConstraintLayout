@@ -25,6 +25,7 @@ namespace SharpConstraintLayout.Maui.Pure.Example
         private TextBlock FouthTextBlock;
         private TextBox FifthTextBox;
         private RichTextBlock SixthRichTextBlock;
+        public ConstraintLayout layout;
 
         public MainPage()
         {
@@ -34,7 +35,7 @@ namespace SharpConstraintLayout.Maui.Pure.Example
             //VerticalAlignment = Microsoft.UI.Xaml.VerticalAlignment.Center;
 
 
-            var layout = new ConstraintLayout()
+            layout = new ConstraintLayout()
             {
                 Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.Black)
             };
@@ -127,8 +128,8 @@ namespace SharpConstraintLayout.Maui.Pure.Example
             set.Connect(ThirdCanvas.GetId(), ConstraintSet.RIGHT, layout.GetId(), ConstraintSet.RIGHT, 50);
             set.Connect(ThirdCanvas.GetId(), ConstraintSet.TOP, layout.GetId(), ConstraintSet.TOP, 50);
             set.Connect(ThirdCanvas.GetId(), ConstraintSet.BOTTOM, layout.GetId(), ConstraintSet.BOTTOM, 50);
-            set.setVisibility(ThirdCanvas.GetHashCode(),ConstraintSet.INVISIBLE);
-            set.constrainWidth(ThirdCanvas.GetId(), ConstraintSet.MATCH_CONSTRAINT);
+            set.setVisibility(ThirdCanvas.GetHashCode(),ConstraintSet.GONE);
+            set.constrainWidth(ThirdCanvas.GetId(), 100);
             set.constrainHeight(ThirdCanvas.GetId(), ConstraintSet.MATCH_CONSTRAINT);
             
             set.Connect(FouthTextBlock.GetId(), ConstraintSet.RIGHT, SecondButton.GetId(), ConstraintSet.RIGHT);
