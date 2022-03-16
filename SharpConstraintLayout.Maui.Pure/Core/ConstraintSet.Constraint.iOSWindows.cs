@@ -13,6 +13,7 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
+using androidx.constraintlayout.core.widgets;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -333,7 +334,7 @@ namespace SharpConstraintLayout.Maui.Pure.Core
 				//}
 			}
 
-			public virtual void applyTo(ConstraintSet.Layout param)
+			public virtual void applyTo(ConstraintSet.Layout param,ConstraintWidget widget)
 			{
 				param.leftToLeft = layout.leftToLeft;
 				param.leftToRight = layout.leftToRight;
@@ -405,7 +406,7 @@ namespace SharpConstraintLayout.Maui.Pure.Core
 					param.endMargin = layout.endMargin;
 				//}
 
-				param.validate();//validate可以根据MatchParent这个设置其他的
+				param.validate(widget);//validate可以根据MatchParent这个设置其他的
 			}
 		}
 	}

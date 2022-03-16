@@ -26,10 +26,10 @@ namespace SharpConstraintLayout.Maui.Pure.Example
         public MainPage(CGRect frame)
         {
             
-            Page = new UIStackView(frame)
+            Page = new UIView(frame)
             {
                 BackgroundColor = UIColor.SystemYellowColor,
-                Axis = UILayoutConstraintAxis.Vertical
+                //Axis = UILayoutConstraintAxis.Vertical
             };
             layout = new ConstraintLayout()
             {
@@ -100,37 +100,37 @@ namespace SharpConstraintLayout.Maui.Pure.Example
             set.Connect(FirstButton.GetId(), ConstraintSet.LEFT, layout.GetId(), ConstraintSet.LEFT);
             set.Connect(FirstButton.GetId(), ConstraintSet.RIGHT, layout.GetId(), ConstraintSet.RIGHT);
             set.CenterVertically(FirstButton.GetId(), ConstraintSet.PARENT_ID, ConstraintSet.TOP, 0, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, 0, 0.5f);
-            set.constrainWidth(FirstButton.GetId(), ConstraintSet.WRAP_CONTENT);
-            set.constrainHeight(FirstButton.GetId(), ConstraintSet.WRAP_CONTENT);
+            set.ConstrainWidth(FirstButton.GetId(), ConstraintSet.WRAP_CONTENT);
+            set.ConstrainHeight(FirstButton.GetId(), ConstraintSet.WRAP_CONTENT);
 
             set.Connect(SecondButton.GetId(), ConstraintSet.RIGHT, FirstButton.GetId(), ConstraintSet.RIGHT);
             set.Connect(SecondButton.GetId(), ConstraintSet.TOP, FirstButton.GetId(), ConstraintSet.BOTTOM, 50);
-            set.constrainWidth(SecondButton.GetId(), 150);
-            set.constrainHeight(SecondButton.GetId(), ConstraintSet.WRAP_CONTENT);
+            set.ConstrainWidth(SecondButton.GetId(), 150);
+            set.ConstrainHeight(SecondButton.GetId(), ConstraintSet.WRAP_CONTENT);
 
             set.Connect(ThirdCanvas.GetId(), ConstraintSet.LEFT, FirstButton.GetId(), ConstraintSet.RIGHT, 50);
             set.Connect(ThirdCanvas.GetId(), ConstraintSet.RIGHT, layout.GetId(), ConstraintSet.RIGHT, 10);
             set.Connect(ThirdCanvas.GetId(), ConstraintSet.TOP, FirstButton.GetId(), ConstraintSet.BOTTOM, 50);
             set.Connect(ThirdCanvas.GetId(), ConstraintSet.BOTTOM, layout.GetId(), ConstraintSet.BOTTOM, 50);
             set.setVisibility(ThirdCanvas.GetId(), ConstraintSet.GONE);//BUG:设置Visibility无效
-            set.constrainWidth(ThirdCanvas.GetId(), ConstraintSet.MATCH_CONSTRAINT);
-            set.constrainHeight(ThirdCanvas.GetId(), ConstraintSet.MATCH_PARENT);
+            set.ConstrainWidth(ThirdCanvas.GetId(), ConstraintSet.MATCH_CONSTRAINT);
+            set.ConstrainHeight(ThirdCanvas.GetId(), ConstraintSet.MATCH_PARENT);
 
             set.Connect(FouthTextBlock.GetId(), ConstraintSet.RIGHT, SecondButton.GetId(), ConstraintSet.RIGHT);
             set.Connect(FouthTextBlock.GetId(), ConstraintSet.TOP, SecondButton.GetId(), ConstraintSet.BOTTOM, 50);
-            set.constrainWidth(FouthTextBlock.GetId(), ConstraintSet.WRAP_CONTENT);
-            set.constrainHeight(FouthTextBlock.GetId(), ConstraintSet.WRAP_CONTENT);
+            set.ConstrainWidth(FouthTextBlock.GetId(), ConstraintSet.WRAP_CONTENT);
+            set.ConstrainHeight(FouthTextBlock.GetId(), ConstraintSet.WRAP_CONTENT);
 
             set.Connect(FifthTextBox.GetId(), ConstraintSet.BOTTOM, FirstButton.GetId(), ConstraintSet.TOP, 50);
             set.Connect(FifthTextBox.GetId(), ConstraintSet.LEFT, SecondButton.GetId(), ConstraintSet.LEFT);
             set.Connect(FifthTextBox.GetId(), ConstraintSet.RIGHT, SecondButton.GetId(), ConstraintSet.RIGHT);
-            set.constrainWidth(FifthTextBox.GetId(), ConstraintSet.WRAP_CONTENT);//BUG:设置宽高具体数值,位置错误
-            set.constrainHeight(FifthTextBox.GetId(), ConstraintSet.WRAP_CONTENT);
+            set.ConstrainWidth(FifthTextBox.GetId(), ConstraintSet.WRAP_CONTENT);//BUG:设置宽高具体数值,位置错误
+            set.ConstrainHeight(FifthTextBox.GetId(), ConstraintSet.WRAP_CONTENT);
 
             set.Connect(SixthRichTextBlock.GetId(), ConstraintSet.RIGHT, FouthTextBlock.GetId(), ConstraintSet.LEFT, 10);
             set.Connect(SixthRichTextBlock.GetId(), ConstraintSet.BASELINE, FouthTextBlock.GetId(), ConstraintSet.BASELINE);//BUG:Baseline无效
-            set.constrainWidth(SixthRichTextBlock.GetId(), ConstraintSet.WRAP_CONTENT);
-            set.constrainHeight(SixthRichTextBlock.GetId(), ConstraintSet.WRAP_CONTENT);
+            set.ConstrainWidth(SixthRichTextBlock.GetId(), ConstraintSet.WRAP_CONTENT);
+            set.ConstrainHeight(SixthRichTextBlock.GetId(), ConstraintSet.WRAP_CONTENT);
 
             set.ApplyTo(layout);
         }

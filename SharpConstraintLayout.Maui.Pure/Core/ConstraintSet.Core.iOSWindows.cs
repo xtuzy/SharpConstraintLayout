@@ -174,10 +174,10 @@ namespace SharpConstraintLayout.Maui.Pure.Core
                         }
                     }
 
-                    //ConstraintLayout.LayoutParams param = (ConstraintLayout.LayoutParams)view.LayoutParams;
+                    //将新的约束更新到ConstraintLayout的ConstraintSet中
                     var param = constraintLayout.ConstraintSet.Constraints[id];
-                    param.layout.validate();
-                    constraint.applyTo(param.layout);
+                    param.layout.validate(null);
+                    constraint.applyTo(param.layout, constraintLayout.idsToConstraintWidgets[id]);
 
                     /*//if (applyPostLayout)
                     if (true)
@@ -243,10 +243,10 @@ namespace SharpConstraintLayout.Maui.Pure.Core
                 }
             }
 
-            foreach (int id in used)//剩下的不在children中
+            foreach (int id in used)//剩下的约束不在ConstraintLayout的Children中,找出特殊的,如Barrier,Guideline,但是这里我们不弄,因为添加新的View有新的Id,那么就需要更新全部的约束,费时
             {
                 if (id == ConstraintSet.PARENT_ID || id == constraintLayout.GetHashCode())//还要处理下layout
-                    mConstraints[id].applyTo(constraintLayout.ConstraintSet.Constraints[id].layout);
+                    mConstraints[id].applyTo(constraintLayout.ConstraintSet.Constraints[id].layout,null);
                 else
                     throw new NotImplementedException("如果还有约束身下而且是重要的,那么需要新建View插入原来的布局中,那么但是id怎么办,新建的有新的哈希,而约束是相对旧的哈希.");
                 /*Constraint constraint = mConstraints[id];
@@ -1398,7 +1398,7 @@ namespace SharpConstraintLayout.Maui.Pure.Core
         /// <param name="viewId"> ID of view to adjust its height </param>
         /// <param name="height"> the height of the view
         /// @since 1.1 </param>
-        public virtual void constrainHeight(int viewId, int height)
+        public virtual void ConstrainHeight(int viewId, int height)
         {
             get(viewId).layout.mHeight = height;
         }
@@ -1409,7 +1409,7 @@ namespace SharpConstraintLayout.Maui.Pure.Core
         /// <param name="viewId"> ID of view to adjust its width </param>
         /// <param name="width">  the width of the view
         /// @since 1.1 </param>
-        public virtual void constrainWidth(int viewId, int width)
+        public virtual void ConstrainWidth(int viewId, int width)
         {
             get(viewId).layout.mWidth = width;
         }
@@ -1783,7 +1783,8 @@ namespace SharpConstraintLayout.Maui.Pure.Core
         /// </summary>
         /// <param name="guidelineID"> ID of guideline to create </param>
         /// <param name="orientation"> the Orientation of the guideline </param>
-        public virtual void create(int guidelineID, int orientation)
+        /// public virtual void create(int guidelineID, int orientation)
+        public virtual void SetGuidelineOrientation(int guidelineID, int orientation)
         {
             Constraint constraint = get(guidelineID);
             constraint.layout.mIsGuideline = true;
@@ -1817,7 +1818,6 @@ namespace SharpConstraintLayout.Maui.Pure.Core
             get(guidelineID).layout.guideBegin = margin;
             get(guidelineID).layout.guideEnd = Layout.UNSET;
             get(guidelineID).layout.guidePercent = Layout.UNSET;
-
         }
 
         /// <summary>
@@ -1837,7 +1837,7 @@ namespace SharpConstraintLayout.Maui.Pure.Core
         /// </summary>
         /// <param name="guidelineID"> ID of the guideline </param>
         /// <param name="ratio">       the ratio between the gap on the left and right 0.0 is top/left 0.5 is middle </param>
-        public virtual void setGuidelinePercent(int guidelineID, float ratio)
+        public virtual void SetGuidelinePercent(int guidelineID, float ratio)
         {
             get(guidelineID).layout.guidePercent = ratio;
             get(guidelineID).layout.guideEnd = Layout.UNSET;

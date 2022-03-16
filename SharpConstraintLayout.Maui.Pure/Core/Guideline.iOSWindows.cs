@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+using System;
 #if WINDOWS
 using View = Microsoft.UI.Xaml.FrameworkElement;
 #elif __IOS__
@@ -56,15 +58,15 @@ namespace SharpConstraintLayout.Maui.Pure.Core
     /// </para>
     /// <para>
     /// See the list of attributes in <seealso cref="androidx.constraintlayout.widget.ConstraintLayout.LayoutParams"/> to set a Guideline
-    /// in XML, as well as the corresponding <seealso cref="ConstraintSet#setGuidelineBegin"/>, <seealso cref="ConstraintSet#setGuidelineEnd"/>
-    /// and <seealso cref="ConstraintSet#setGuidelinePercent"/> functions in <seealso cref="ConstraintSet"/>.
+    /// in XML, as well as the corresponding <seealso cref="ConstraintSet.setGuidelineBegin"/>, <seealso cref="ConstraintSet.setGuidelineEnd"/>
+    /// and <seealso cref="ConstraintSet.SetGuidelinePercent"/> functions in <seealso cref="ConstraintSet"/>.
     /// </para>
     /// <para>
     /// Example of a {@code Button} constrained to a vertical {@code Guideline}:<br>
     /// {@sample resources/examples/Guideline.xml Guideline}
     /// </para>
     /// </summary>
-    public class Guideline : View
+    public class Guideline : View,IDisposable
     {
 #if __ANDROID__
         public Guideline(Context context) : base(context)
@@ -72,7 +74,6 @@ namespace SharpConstraintLayout.Maui.Pure.Core
         public Guideline() : base()
 #endif
         {
-            
 #if WINDOWS
             base.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
 #elif __IOS__
@@ -82,22 +83,8 @@ namespace SharpConstraintLayout.Maui.Pure.Core
 #endif
         }
 
-        /// <summary>
-        /// We are overriding draw and not calling super.draw() here because Helper objects are not displayed on device.
-        /// </summary>
-#if WINDOWS
+        internal androidx.constraintlayout.core.widgets.Guideline mGuideline = new androidx.constraintlayout.core.widgets.Guideline();
 
-#elif __IOS__
-        public override void Draw(CGRect rect)
-        {
-            //base.Draw(rect);
-        }
-#elif __ANDROID__
-        public override void Draw(Canvas canvas)
-        {
-            //base.Draw(canvas);
-        }
-#endif
         /*/// <summary>
         /// @suppress
         /// </summary>
@@ -112,14 +99,8 @@ namespace SharpConstraintLayout.Maui.Pure.Core
         /// <param name="margin"> the distance to the top or left edge </param>
         public virtual int GuidelineBegin
         {
-            set
-            {
-#if WINDOWS || __ANDROID__
-                (this.Parent as ConstraintLayout).ConstraintSet.Constraints[this.GetHashCode()].layout.guideBegin = value;
-#elif __IOS__
-                (this.Superview as ConstraintLayout).ConstraintSet.Constraints[this.GetHashCode()].layout.guideBegin = value;
-#endif
-            }
+            set=>mGuideline.GuideBegin = value;
+            get => mGuideline.RelativeBegin;
         }
 
         /// <summary>
@@ -128,14 +109,8 @@ namespace SharpConstraintLayout.Maui.Pure.Core
         /// <param name="margin"> the margin to the right or bottom side of container </param>
         public virtual int GuidelineEnd
         {
-            set
-            {
-#if WINDOWS || __ANDROID__
-                (this.Parent as ConstraintLayout).ConstraintSet.Constraints[this.GetHashCode()].layout.guideEnd = value;
-#elif __IOS__
-                (this.Superview as ConstraintLayout).ConstraintSet.Constraints[this.GetHashCode()].layout.guideEnd = value;
-#endif
-            }
+            set => mGuideline.GuideEnd = value;
+            get => mGuideline.RelativeEnd;
         }
 
         /// <summary>
@@ -143,17 +118,13 @@ namespace SharpConstraintLayout.Maui.Pure.Core
         /// <param name="ratio"> the ratio between the gap on the left and right 0.0 is top/left 0.5 is middle </param>
         public virtual float GuidelinePercent
         {
-            set
-            {
-#if WINDOWS
-                (this.Parent as ConstraintLayout).ConstraintSet.Constraints[this.GetHashCode()].layout.guidePercent = value;
-#elif __IOS__
-                (this.Superview as ConstraintLayout).ConstraintSet.Constraints[this.GetHashCode()].layout.guidePercent = value;
-#elif __ANDROID__
-                (this.Parent as ConstraintLayout).ConstraintSet.Constraints[this.GetHashCode()].layout.guidePercent = value;
+            set => mGuideline.setGuidePercent(value);
+            get => mGuideline.RelativePercent;
+        }
 
-#endif
-            }
+        public void Dispose()
+        {
+            mGuideline = null;
         }
     }
 }

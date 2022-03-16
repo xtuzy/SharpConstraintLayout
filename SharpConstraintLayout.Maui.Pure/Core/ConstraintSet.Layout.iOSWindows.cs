@@ -427,7 +427,7 @@ namespace SharpConstraintLayout.Maui.Pure.Core
             public bool verticalDimensionFixed = true;
 
             public bool needsBaseline = false;
-            public bool isGuideline = false;
+            //public bool isGuideline = false;//重复mIsGuideline
             public bool isHelper = false;
             public bool isInPlaceholder = false;
             public bool isVirtualGroup = false;
@@ -451,7 +451,7 @@ namespace SharpConstraintLayout.Maui.Pure.Core
             /// Add From layoutParams.
             /// 验证?看起来时可以处理WrapContent
             /// </summary>
-            public void validate()
+            public void validate(ConstraintWidget  widget)
             {
                 mIsGuideline = false;
                 horizontalDimensionFixed = true;
@@ -508,21 +508,26 @@ namespace SharpConstraintLayout.Maui.Pure.Core
                         constrainedHeight = true;
                     }
                 }
-#if __ANDROID__
+
                 if (guidePercent != UNSET || guideBegin != UNSET || guideEnd != UNSET)
                 {
-                    isGuideline = true;
+                    mIsGuideline = true;
                     horizontalDimensionFixed = true;
                     verticalDimensionFixed = true;
-                    if (!(widget is Guideline))
+                    if (!(widget is androidx.constraintlayout.core.widgets.Guideline))//必须是Guideline,新建的话需要更新一些逻辑,TODO:
                     {
-                        widget = new Guideline();
+                        //widget = new Guideline();
                     }
-                    ((Guideline)widget).Orientation = orientation;
+                    else
+                    {
+                        var guideline = (androidx.constraintlayout.core.widgets.Guideline)widget;
+                        if(guideline != null && orientation != UNSET)//如果有新的orientation
+                        {
+                            guideline.Orientation = orientation;
+                        }
+                    }
                 }
-#endif
             }
-
 #endregion
         }
     }

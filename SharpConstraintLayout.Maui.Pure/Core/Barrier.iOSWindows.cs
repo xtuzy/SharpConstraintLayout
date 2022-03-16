@@ -198,8 +198,6 @@ namespace SharpConstraintLayout.Maui.Pure.Core
 			updateType(widget, mIndicatedType, isRtl);
 		}
 
-		/// <param name="attrs">
-		/// @suppress </param>
 		protected internal override void init()
 		{
 			base.init();

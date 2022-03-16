@@ -10,11 +10,14 @@ using Microsoft.UI.Xaml.Controls;
 #elif __IOS__
 using UIElement = UIKit.UIView;
 using UIKit;
+#elif __ANDROID__
+using UIElement = Android.Views.View;
 #endif
 namespace SharpConstraintLayout.Maui.Pure.Core
 {
     public static class ViewExtension
     {
+#if WINDOWS ||__IOS__
         /// <summary>
         /// Baseline To Font Center Height
         /// </summary>
@@ -51,6 +54,7 @@ namespace SharpConstraintLayout.Maui.Pure.Core
                 return ConstraintSet.UNSET;
 #endif
         }
+#endif
 
         /// <summary>
         /// 每个Element的ID从该方法获取
@@ -59,7 +63,11 @@ namespace SharpConstraintLayout.Maui.Pure.Core
         /// <returns></returns>
         public static int GetId(this UIElement view)
         {
+#if __ANDROID__
+            return view.Id;
+#else
             return view.GetHashCode();
+#endif
         }
     }
 }
