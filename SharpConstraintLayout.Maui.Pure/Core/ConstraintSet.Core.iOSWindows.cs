@@ -176,8 +176,17 @@ namespace SharpConstraintLayout.Maui.Pure.Core
 
                     //将新的约束更新到ConstraintLayout的ConstraintSet中
                     var param = constraintLayout.ConstraintSet.Constraints[id];
-                    param.layout.validate(null);
-                    constraint.applyTo(param.layout, constraintLayout.idsToConstraintWidgets[id]);
+                    param.layout.validate();
+                    constraint.applyTo(param.layout);
+
+                    if (view is Guideline)//不像Android一样用户提供指定约束是isGuideline就创建Guideline,必须通过Guideline控件实现
+                    {
+                        if (constraint.layout.orientation != UNSET)//如果用户设置了新的orientation
+                        {
+                            //Orientation在这里设置的原因是在Measure中当约束update到widget时,其他的widget需要对齐Guideline的widget,如果guideline没有设置orientation,那么widget找不到对应的边的Anchor,因为Guideline需要方向才有正确的Anchor
+                            (view as Guideline).Orientation = constraint.layout.orientation;
+                        }
+                    }
 
                     /*//if (applyPostLayout)
                     if (true)
@@ -246,7 +255,7 @@ namespace SharpConstraintLayout.Maui.Pure.Core
             foreach (int id in used)//剩下的约束不在ConstraintLayout的Children中,找出特殊的,如Barrier,Guideline,但是这里我们不弄,因为添加新的View有新的Id,那么就需要更新全部的约束,费时
             {
                 if (id == ConstraintSet.PARENT_ID || id == constraintLayout.GetHashCode())//还要处理下layout
-                    mConstraints[id].applyTo(constraintLayout.ConstraintSet.Constraints[id].layout,null);
+                    mConstraints[id].applyTo(constraintLayout.ConstraintSet.Constraints[id].layout);
                 else
                     throw new NotImplementedException("如果还有约束身下而且是重要的,那么需要新建View插入原来的布局中,那么但是id怎么办,新建的有新的哈希,而约束是相对旧的哈希.");
                 /*Constraint constraint = mConstraints[id];

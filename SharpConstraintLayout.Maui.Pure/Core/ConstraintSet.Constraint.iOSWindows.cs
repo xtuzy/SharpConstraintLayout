@@ -334,7 +334,7 @@ namespace SharpConstraintLayout.Maui.Pure.Core
 				//}
 			}
 
-			public virtual void applyTo(ConstraintSet.Layout param,ConstraintWidget widget)
+			public virtual void applyTo(ConstraintSet.Layout param)
 			{
 				param.leftToLeft = layout.leftToLeft;
 				param.leftToRight = layout.leftToRight;
@@ -406,7 +406,7 @@ namespace SharpConstraintLayout.Maui.Pure.Core
 					param.endMargin = layout.endMargin;
 				//}
 
-				param.validate(widget);//validate可以根据MatchParent这个设置其他的
+				param.validate();//validate可以根据MatchParent这个设置其他的
 			}
 		}
 	}

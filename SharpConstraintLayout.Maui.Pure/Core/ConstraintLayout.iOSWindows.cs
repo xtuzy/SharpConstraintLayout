@@ -1484,16 +1484,12 @@ namespace SharpConstraintLayout.Maui.Pure.Core
         {
             UIElement view = idToViews[baselineTarget];
             ConstraintWidget target = idToWidget[baselineTarget];
-            //if (target != null && view != null && view.LayoutParams is LayoutParams)
             if (target != null && view != null)
             {
                 layoutParams.layout.needsBaseline = true;
                 if (type == ConstraintAnchor.Type.BASELINE)
                 {
                     // baseline to baseline
-                    /*LayoutParams targetParams = (LayoutParams)view.LayoutParams;
-                    targetParams.needsBaseline = true;
-                    targetParams.widget.HasBaseline = true;*/
                     var targetParams = ConstraintSet.Constraints[baselineTarget];
                     targetParams.layout.needsBaseline = true;
                     target.HasBaseline = true;

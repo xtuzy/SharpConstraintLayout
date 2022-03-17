@@ -38,14 +38,13 @@ namespace SharpConstraintLayout.Maui.Pure.Example
             var guide = new Guideline()
             {
                 //GuidelinePercent = 0.3f,
+                Orientation = ConstraintSet.VERTICAL,
             };
             this.AddView(layout);
             this.AddView(guide);
 
             var pageSet = new ConstraintSet();
             pageSet.Clone(this);
-            pageSet.SetGuidelineOrientation(guide.GetId(), ConstraintSet.VERTICAL);
-            pageSet.SetGuidelinePercent(guide.GetId(),0.5f);
             pageSet.ConstrainWidth(guide.GetId(), ConstraintSet.WRAP_CONTENT);
             pageSet.ConstrainHeight(guide.GetId(), ConstraintSet.WRAP_CONTENT);
 

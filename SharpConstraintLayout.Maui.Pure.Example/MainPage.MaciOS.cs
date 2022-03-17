@@ -15,7 +15,7 @@ namespace SharpConstraintLayout.Maui.Pure.Example
     public class MainPage
     {
         private ConstraintLayout layout;
-        public UIView Page;
+        public ConstraintLayout Page;
         private UIButton FirstButton;
         private UIButton SecondButton;
         private UIView ThirdCanvas;
@@ -26,14 +26,39 @@ namespace SharpConstraintLayout.Maui.Pure.Example
         public MainPage(CGRect frame)
         {
 
-            Page = layout = new ConstraintLayout()
+            Page = new ConstraintLayout()
             {
-                Frame = frame,
+                //Frame = frame,
                 AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight,
+                BackgroundColor = UIColor.SystemPinkColor
+            }; 
+            layout = new ConstraintLayout()
+            {
+                //Frame = frame,
+                //AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight,
                 BackgroundColor = UIColor.White
             };
-            
-            //Page.AddSubview(layout); 
+            var guide = new Guideline()
+            {
+                GuidelinePercent = 0.3f,
+            };
+            Page.AddView(layout);
+            Page.AddView(guide);
+
+            var pageSet = new ConstraintSet();
+            pageSet.Clone(Page);
+            pageSet.SetGuidelineOrientation(guide.GetId(), ConstraintSet.HORIZONTAL);
+            //pageSet.SetGuidelinePercent(guide.GetId(), 0.5f);
+            pageSet.ConstrainWidth(guide.GetId(), ConstraintSet.WRAP_CONTENT);
+            pageSet.ConstrainHeight(guide.GetId(), ConstraintSet.WRAP_CONTENT);
+
+            pageSet.Connect(layout.GetId(), ConstraintSet.LEFT, Page.GetId(), ConstraintSet.LEFT);
+            pageSet.Connect(layout.GetId(), ConstraintSet.RIGHT, Page.GetId(), ConstraintSet.RIGHT);
+            pageSet.Connect(layout.GetId(), ConstraintSet.TOP, guide.GetId(), ConstraintSet.TOP);
+            pageSet.Connect(layout.GetId(), ConstraintSet.BOTTOM, Page.GetId(), ConstraintSet.BOTTOM);
+            pageSet.ConstrainWidth(layout.GetId(), ConstraintSet.MATCH_CONSTRAINT);
+            pageSet.ConstrainHeight(layout.GetId(), ConstraintSet.MATCH_CONSTRAINT);
+            pageSet.ApplyTo(Page);
 
             FirstButton = new UIButton() 
             {

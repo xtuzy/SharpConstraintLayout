@@ -122,6 +122,12 @@ namespace SharpConstraintLayout.Maui.Pure.Core
             get => mGuideline.RelativePercent;
         }
 
+        public virtual int Orientation
+        {
+            set => mGuideline.Orientation = value;
+            get => mGuideline.Orientation;
+        }
+
         public void Dispose()
         {
             mGuideline = null;

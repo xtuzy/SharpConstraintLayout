@@ -451,7 +451,7 @@ namespace SharpConstraintLayout.Maui.Pure.Core
             /// Add From layoutParams.
             /// 验证?看起来时可以处理WrapContent
             /// </summary>
-            public void validate(ConstraintWidget  widget)
+            public void validate()
             {
                 mIsGuideline = false;
                 horizontalDimensionFixed = true;
@@ -514,7 +514,9 @@ namespace SharpConstraintLayout.Maui.Pure.Core
                     mIsGuideline = true;
                     horizontalDimensionFixed = true;
                     verticalDimensionFixed = true;
-                    if (!(widget is androidx.constraintlayout.core.widgets.Guideline))//必须是Guideline,新建的话需要更新一些逻辑,TODO:
+
+                    //这里的给Guideline指定方向的逻辑放到ApplyTo中去,避免传递Widget
+                    /*if (!(widget is androidx.constraintlayout.core.widgets.Guideline))//必须是Guideline,新建的话需要更新一些逻辑,TODO:
                     {
                         //widget = new Guideline();
                     }
@@ -525,7 +527,7 @@ namespace SharpConstraintLayout.Maui.Pure.Core
                         {
                             guideline.Orientation = orientation;
                         }
-                    }
+                    }*/
                 }
             }
 #endregion
