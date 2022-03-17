@@ -113,8 +113,7 @@ namespace SharpConstraintLayout.Maui.Widget
 
         /// <summary>
         /// @suppress
-        /// </summary>
-        //protected internal virtual void init(AttributeSet attrs)
+        /// </summary> 
         protected internal virtual void init()
         {
 #if WINDOWS
@@ -297,52 +296,16 @@ namespace SharpConstraintLayout.Maui.Widget
         /// @suppress
         /// Allows a helper to replace the default ConstraintWidget in LayoutParams by its own subclass
         /// </summary>
-        public virtual void validateParams()
+        public virtual void validateParams(Dictionary<int,ConstraintWidget> idsToConstraintWidgets=null)
         {
             if (mHelperWidget == null)
             {
                 return;
             }
 
-#if WINDOWS || __ANDROID__
-            (this.Parent as ConstraintLayout).idsToConstraintWidgets[this.GetHashCode()] = (ConstraintWidget)mHelperWidget;
-#elif __IOS__
-            (this.Superview as ConstraintLayout).idsToConstraintWidgets[this.GetHashCode()] = (ConstraintWidget)mHelperWidget;
-#endif
+            if (idsToConstraintWidgets != null && idsToConstraintWidgets.ContainsKey(this.GetId()))
+                idsToConstraintWidgets[this.GetId()] = (ConstraintWidget)mHelperWidget;
         }
-
-        /// <summary>
-        /// @suppress
-        /// </summary>
-        /*private void addID(string idString)
-        {
-            if (string.ReferenceEquals(idString, null) || idString.Length == 0)
-            {
-                return;
-            }
-            *//*if (myContext == null)
-            {
-                return;
-            }*//*
-
-            idString = idString.Trim();
-
-            ConstraintLayout parent = null;
-            if (Parent is ConstraintLayout)
-            {
-                parent = (ConstraintLayout)Parent;
-            }
-            int rscId = findId(idString);
-            if (rscId != 0)
-            {
-                mMap[rscId] = idString; // let's remember the idString used, as we may need it for dynamic modules
-                addRscID(rscId);
-            }
-            else
-            {
-                Debug.WriteLine("ConstraintHelper", "Could not find id of \"" + idString + "\"");
-            }
-        }*/
 
         /// <summary>
         /// @suppress
@@ -392,132 +355,6 @@ namespace SharpConstraintLayout.Maui.Widget
                     }
                 }
 
-            }
-        }*/
-
-        /// <summary>
-        /// Attempt to find the id given a reference string </summary>
-        /// <param name="referenceId">
-        /// @return </param>
-        /*private int findId(string referenceId)
-        {
-            ConstraintLayout parent = null;
-            if (Parent is ConstraintLayout)
-            {
-                parent = (ConstraintLayout)Parent;
-            }
-            int rscId = 0;
-
-            // First, if we are in design mode let's get the cached information
-            *//*if (InEditMode && parent != null)
-            {
-                object value = parent.getDesignInformation(0, referenceId);
-                if (value is int?)
-                {
-                    rscId = (int?)value.Value;
-                }
-            }*//*
-
-            // ... if not, let's check our siblings
-            if (rscId == 0 && parent != null)
-            {
-                // TODO: cache this in ConstraintLayout
-                rscId = findId(parent, referenceId);
-            }
-
-            *//*if (rscId == 0)
-            {
-                try
-                {
-                    Type res = typeof(R.id);
-                    Field field = res.GetField(referenceId);
-                    rscId = field.getInt(null);
-                }
-                catch (Exception)
-                {
-                    // Do nothing
-                }
-            }
-
-            if (rscId == 0)
-            {
-                // this will first try to parse the string id as a number (!) in ResourcesImpl, so
-                // let's try that last...
-                rscId = myContext.Resources.getIdentifier(referenceId, "id", myContext.PackageName);
-            }*//*
-
-            return rscId;
-        }*/
-
-        /// <summary>
-        /// Iterate through the container's children to find a matching id.
-        /// Slow path, seems necessary to handle dynamic modules resolution...
-        /// </summary>
-        /// <param name="container"> </param>
-        /// <param name="idString">
-        /// @return </param>
-        /*private int findId(ConstraintLayout container, string idString)
-        {
-            if (string.ReferenceEquals(idString, null) || container == null)
-            {
-                return 0;
-            }
-            *//*Resources resources = myContext.Resources;
-            if (resources == null)
-            {
-                return 0;
-            }*//*
-            //ORIGINAL LINE: final int count = container.getChildCount();
-            int count = container.ChildCount;
-            for (int j = 0; j < count; j++)
-            {
-                View child = container.getChildAt(j);
-                if (child.Id != -1)
-                if (child.Id != -1)
-                {
-                    string res = null;
-                    try
-                    {
-                        res = resources.getResourceEntryName(child.Id);
-                    }
-                    catch (Resources.NotFoundException)
-                    {
-                        // nothing
-                    }
-                    if (idString.Equals(res))
-                    {
-                        return child.Id;
-                    }
-                }
-            }
-            return 0;
-        }*/
-
-        /// <summary>
-        /// @suppress
-        /// </summary>
-       /* protected internal virtual string Ids
-        {
-            set
-            {
-                mReferenceIds = value;
-                if (string.ReferenceEquals(value, null))
-                {
-                    return;
-                }
-                int begin = 0;
-                mCount = 0;
-                while (true)
-                {
-                    int end = value.IndexOf(',', begin);
-                    if (end == -1)
-                    {
-                        addID(value.Substring(begin));
-                        break;
-                    }
-                    addID(value.Substring(begin, end - begin));
-                    begin = end + 1;
-                }
             }
         }*/
 
@@ -744,29 +581,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 }
             }
         }
-
-        /*private int[] convertReferenceString(View view, string referenceIdString)
-        {
-            string[] split = referenceIdString.Split(",", true);
-            Context context = view.Context;
-            int[] rscIds = new int[split.Length];
-            int count = 0;
-            for (int i = 0; i < split.Length; i++)
-            {
-                string idString = split[i];
-                idString = idString.Trim();
-                int id = findId(idString);
-                if (id != 0)
-                {
-                    rscIds[count++] = id;
-                }
-            }
-            if (count != split.Length)
-            {
-                rscIds = Arrays.copyOf(rscIds, count);
-            }
-            return rscIds;
-        }*/
+        
 
         public virtual void resolveRtl(ConstraintWidget widget, bool isRtl)
         {

@@ -22,6 +22,7 @@ using System.Diagnostics;
 using static SharpConstraintLayout.Maui.Widget.ConstraintSet;
 namespace SharpConstraintLayout.Maui.Widget
 {
+
     using androidx.constraintlayout.core.widgets;
     using ConstraintWidget = androidx.constraintlayout.core.widgets.ConstraintWidget;
     using ConstraintWidgetContainer = androidx.constraintlayout.core.widgets.ConstraintWidgetContainer;
@@ -51,6 +52,7 @@ namespace SharpConstraintLayout.Maui.Widget
     public class ConstraintLayout : Panel
     {
         public const string VERSION = "ConstraintLayout-2.1.1";
+        public const bool ISSUPPORTRTLPLATFORM = false;//现在完全不支持,需要对照原来的代码看删除了那些关于Rtl的
 
         public static bool DEBUG = true;//if is true,will print some layout info.
         public static bool MEASURE = false;//if is true,will print time of measure+layout spend.
@@ -163,7 +165,7 @@ namespace SharpConstraintLayout.Maui.Widget
             if (element is ConstraintHelper)//ConstraintHelper also have default widget
             {
                 ConstraintHelper helper = (ConstraintHelper)element;
-                helper.validateParams();//其中会替换widget类型
+                helper.validateParams(idsToConstraintWidgets);//其中会替换widget类型
                 if (!mConstraintHelpers.Contains(helper))
                 {
                     mConstraintHelpers.Add(helper);
@@ -1077,57 +1079,6 @@ namespace SharpConstraintLayout.Maui.Widget
                 widget.reset();//全部widget的数据重置
             }
 
-            /*if (isInEditMode)
-            {
-                // In design mode, let's make sure we keep track of the ids; in Studio, a build step
-                // might not have been done yet, so asking the system for ids can break. So to be safe,
-                // we save the current ids, which helpers can ask for.
-                for (int i = 0; i < count; i++)
-                {
-                    //ORIGINAL LINE: final android.view.View view = getChildAt(i);
-                    View view = getChildAt(i);
-                    try
-                    {
-                        string IdAsString = Resources.getResourceName(view.Id);
-                        setDesignInformation(DESIGN_INFO_ID, IdAsString, view.Id);
-                        int slashIndex = IdAsString.IndexOf('/');
-                        if (slashIndex != -1)
-                        {
-                            IdAsString = IdAsString.Substring(slashIndex + 1);
-                        }
-                        getTargetWidget(view.Id).DebugName = IdAsString;
-                    }
-                    catch (Resources.NotFoundException)
-                    {
-                        // nothing
-                    }
-                }
-            }
-            else if (DEBUG)
-            {
-                mLayoutWidget.DebugName = "root";
-                for (int i = 0; i < count; i++)
-                {
-                    //ORIGINAL LINE: final android.view.View view = getChildAt(i);
-                    View view = getChildAt(i);
-                    try
-                    {
-                        string IdAsString = Resources.getResourceName(view.Id);
-                        setDesignInformation(DESIGN_INFO_ID, IdAsString, view.Id);
-                        int slashIndex = IdAsString.IndexOf('/');
-                        if (slashIndex != -1)
-                        {
-                            IdAsString = IdAsString.Substring(slashIndex + 1);
-                        }
-                        getTargetWidget(view.Id).DebugName = IdAsString;
-                    }
-                    catch (Resources.NotFoundException)
-                    {
-                        // nothing
-                    }
-                }
-            }*/
-
             /*if (USE_CONSTRAINTS_HELPER && mConstraintSetId != -1)
             {
                 for (int i = 0; i < count; i++)
@@ -1149,14 +1100,13 @@ namespace SharpConstraintLayout.Maui.Widget
 
             RootWidget.removeAllChildren();
 
-            //ORIGINAL LINE: final int helperCount = mConstraintHelpers.size();
             int helperCount = mConstraintHelpers.Count;
             if (helperCount > 0)
             {
                 for (int i = 0; i < helperCount; i++)
                 {
                     ConstraintHelper helper = mConstraintHelpers[i];
-                    helper.updatePreLayout(this);
+                    helper.updatePreLayout(this);//可以整理一下数据
                 }
             }
 
