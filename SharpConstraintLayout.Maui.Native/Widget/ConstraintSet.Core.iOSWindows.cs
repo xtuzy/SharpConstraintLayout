@@ -27,9 +27,9 @@ using View = UIKit.UIView;
 #endif
 namespace SharpConstraintLayout.Maui.Widget
 {
-    public partial class ConstraintSet
+    public partial class ConstraintSet:IConstraintSet
     {
-        public virtual Constraint getParameters(int mId)
+        public virtual Constraint GetParameters(int mId)
         {
             return get(mId);
         }
@@ -910,7 +910,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// </summary>
         /// <param name="viewId"> ID of view to center Horizontally </param>
         /// <param name="toView"> ID of view to center on (or in) </param>
-        public virtual void centerHorizontally(int viewId, int toView)
+        public virtual void CenterHorizontally(int viewId, int toView)
         {
             if (toView == PARENT_ID)
             {
@@ -927,7 +927,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// </summary>
         /// <param name="viewId"> ID of view to center Horizontally </param>
         /// <param name="toView"> ID of view to center on (or in) </param>
-        public virtual void centerHorizontallyRtl(int viewId, int toView)
+        public virtual void CenterHorizontallyRtl(int viewId, int toView)
         {
             if (toView == PARENT_ID)
             {
@@ -944,7 +944,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// </summary>
         /// <param name="viewId"> ID of view to center Horizontally </param>
         /// <param name="toView"> ID of view to center on (or in) </param>
-        public virtual void centerVertically(int viewId, int toView)
+        public virtual void CenterVertically(int viewId, int toView)
         {
             if (toView == PARENT_ID)
             {
@@ -1032,7 +1032,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <param name="viewId"> ID of view to adjust the margin on </param>
         /// <param name="anchor"> The side to adjust the margin on </param>
         /// <param name="value">  The new value for the margin </param>
-        public virtual void setMargin(int viewId, int anchor, int value)
+        public virtual void SetMargin(int viewId, int anchor, int value)
         {
             Constraint constraint = get(viewId);
             switch (anchor)
@@ -1069,7 +1069,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <param name="viewId"> ID of view to adjust the margin on </param>
         /// <param name="anchor"> The side to adjust the margin on </param>
         /// <param name="value">  The new value for the margin </param>
-        public virtual void setGoneMargin(int viewId, int anchor, int value)
+        public virtual void SetGoneMargin(int viewId, int anchor, int value)
         {
             Constraint constraint = get(viewId);
             switch (anchor)
@@ -1105,7 +1105,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// </summary>
         /// <param name="viewId"> ID of view to adjust the horizontal </param>
         /// <param name="bias">   the new bias 0.5 is in the middle </param>
-        public virtual void setHorizontalBias(int viewId, float bias)
+        public virtual void SetHorizontalBias(int viewId, float bias)
         {
             get(viewId).layout.horizontalBias = bias;
         }
@@ -1115,7 +1115,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// </summary>
         /// <param name="viewId"> ID of view to adjust the vertical </param>
         /// <param name="bias">   the new bias 0.5 is in the middle </param>
-        public virtual void setVerticalBias(int viewId, float bias)
+        public virtual void SetVerticalBias(int viewId, float bias)
         {
             get(viewId).layout.verticalBias = bias;
         }
@@ -1126,7 +1126,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// </summary>
         /// <param name="viewId"> ID of view to constrain </param>
         /// <param name="ratio">  The ratio of the width to height (width / height) </param>
-        public virtual void setDimensionRatio(int viewId, string ratio)
+        public virtual void SetDimensionRatio(int viewId, string ratio)
         {
             get(viewId).layout.dimensionRatio = ratio;
         }
@@ -1136,7 +1136,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// </summary>
         /// <param name="viewId">     ID of view to adjust the vertical </param>
         /// <param name="visibility"> the visibility </param>
-        public virtual void setVisibility(int viewId, int visibility)
+        public virtual void SetVisibility(int viewId, int visibility)
         {
             get(viewId).propertySet.visibility = visibility;
         }
@@ -1146,7 +1146,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// </summary>
         /// <param name="viewId">         ID of view </param>
         /// <param name="visibilityMode"> </param>
-        public virtual void setVisibilityMode(int viewId, int visibilityMode)
+        public virtual void SetVisibilityMode(int viewId, int visibilityMode)
         {
             get(viewId).propertySet.mVisibilityMode = visibilityMode;
         }
@@ -1155,7 +1155,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// ConstraintSet will not setVisibility. <seealso cref="VISIBILITY_MODE_IGNORE"/> or <see cref="VISIBILITY_MODE_NORMAL"/>
         /// </summary>
         /// <param name="viewId"> ID of view </param>
-        public virtual int getVisibilityMode(int viewId)
+        public virtual int GetVisibilityMode(int viewId)
         {
             return get(viewId).propertySet.mVisibilityMode;
         }
@@ -1165,7 +1165,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// </summary>
         /// <param name="viewId"> the id of the view </param>
         /// <returns> the visibility constraint for the view </returns>
-        public virtual int getVisibility(int viewId)
+        public virtual int GetVisibility(int viewId)
         {
             return get(viewId).propertySet.visibility;
         }
@@ -1176,7 +1176,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// </summary>
         /// <param name="viewId"> the id of the view </param>
         /// <returns> return the height constraint of the view </returns>
-        public virtual int getHeight(int viewId)
+        public virtual int GetHeight(int viewId)
         {
             return get(viewId).layout.mHeight;
         }
@@ -1187,7 +1187,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// </summary>
         /// <param name="viewId"> the id of the view </param>
         /// <returns> return the width constraint of the view </returns>
-        public virtual int getWidth(int viewId)
+        public virtual int GetWidth(int viewId)
         {
             return get(viewId).layout.mWidth;
         }
@@ -1197,7 +1197,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// </summary>
         /// <param name="viewId"> ID of view to adjust the vertical </param>
         /// <param name="alpha">  the alpha </param>
-        public virtual void setAlpha(int viewId, float alpha)
+        public virtual void SetAlpha(int viewId, float alpha)
         {
             get(viewId).propertySet.alpha = alpha;
         }
@@ -1206,7 +1206,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// return with the constraint set will apply elevation for the specified view.
         /// </summary>
         /// <returns> true if the elevation will be set on this view (default is false) </returns>
-        public virtual bool getApplyElevation(int viewId)
+        public virtual bool GetApplyElevation(int viewId)
         {
             return get(viewId).transform.applyElevation;
         }
@@ -1217,7 +1217,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// lead to unexpected results.
         /// </summary>
         /// <param name="apply"> true if this constraint set applies elevation to this view </param>
-        public virtual void setApplyElevation(int viewId, bool apply)
+        public virtual void SetApplyElevation(int viewId, bool apply)
         {
             //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             //{
@@ -1230,7 +1230,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// </summary>
         /// <param name="viewId">    ID of view to adjust the elevation </param>
         /// <param name="elevation"> the elevation </param>
-        public virtual void setElevation(int viewId, float elevation)
+        public virtual void SetElevation(int viewId, float elevation)
         {
             //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             //{
@@ -1244,7 +1244,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// </summary>
         /// <param name="viewId">   ID of view to adjust th Z rotation </param>
         /// <param name="rotation"> the rotation about the X axis </param>
-        public virtual void setRotation(int viewId, float rotation)
+        public virtual void SetRotation(int viewId, float rotation)
         {
             get(viewId).transform.rotation = rotation;
         }
@@ -1254,7 +1254,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// </summary>
         /// <param name="viewId">    ID of view to adjust th X rotation </param>
         /// <param name="rotationX"> the rotation about the X axis </param>
-        public virtual void setRotationX(int viewId, float rotationX)
+        public virtual void SetRotationX(int viewId, float rotationX)
         {
             get(viewId).transform.rotationX = rotationX;
         }
@@ -1264,7 +1264,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// </summary>
         /// <param name="viewId">    ID of view to adjust the Y rotation </param>
         /// <param name="rotationY"> the rotationY </param>
-        public virtual void setRotationY(int viewId, float rotationY)
+        public virtual void SetRotationY(int viewId, float rotationY)
         {
             get(viewId).transform.rotationY = rotationY;
         }
@@ -1274,7 +1274,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// </summary>
         /// <param name="viewId"> ID of view to adjust the scale in X </param>
         /// <param name="scaleX"> the scale in X </param>
-        public virtual void setScaleX(int viewId, float scaleX)
+        public virtual void SetScaleX(int viewId, float scaleX)
         {
             get(viewId).transform.scaleX = scaleX;
         }
@@ -1284,7 +1284,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// </summary>
         /// <param name="viewId"> ID of view to adjust the scale in Y </param>
         /// <param name="scaleY"> the scale in Y </param>
-        public virtual void setScaleY(int viewId, float scaleY)
+        public virtual void SetScaleY(int viewId, float scaleY)
         {
             get(viewId).transform.scaleY = scaleY;
         }
@@ -1296,7 +1296,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// </summary>
         /// <param name="viewId">          ID of view to adjust the transforms pivot point about X </param>
         /// <param name="transformPivotX"> X location of the pivot point. </param>
-        public virtual void setTransformPivotX(int viewId, float transformPivotX)
+        public virtual void SetTransformPivotX(int viewId, float transformPivotX)
         {
             get(viewId).transform.transformPivotX = transformPivotX;
         }
@@ -1308,7 +1308,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// </summary>
         /// <param name="viewId">          ID of view to adjust the transforms pivot point about Y </param>
         /// <param name="transformPivotY"> Y location of the pivot point. </param>
-        public virtual void setTransformPivotY(int viewId, float transformPivotY)
+        public virtual void SetTransformPivotY(int viewId, float transformPivotY)
         {
             get(viewId).transform.transformPivotY = transformPivotY;
         }
@@ -1321,7 +1321,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <param name="viewId">          ID of view to adjust the transforms pivot point </param>
         /// <param name="transformPivotX"> X location of the pivot point. </param>
         /// <param name="transformPivotY"> Y location of the pivot point. </param>
-        public virtual void setTransformPivot(int viewId, float transformPivotX, float transformPivotY)
+        public virtual void SetTransformPivot(int viewId, float transformPivotX, float transformPivotY)
         {
             Constraint constraint = get(viewId);
             constraint.transform.transformPivotY = transformPivotY;
@@ -1333,7 +1333,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// </summary>
         /// <param name="viewId">       ID of view to translate in X </param>
         /// <param name="translationX"> the translation in X </param>
-        public virtual void setTranslationX(int viewId, float translationX)
+        public virtual void SetTranslationX(int viewId, float translationX)
         {
             get(viewId).transform.translationX = translationX;
         }
@@ -1343,7 +1343,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// </summary>
         /// <param name="viewId">       ID of view to to translate in Y </param>
         /// <param name="translationY"> the translation in Y </param>
-        public virtual void setTranslationY(int viewId, float translationY)
+        public virtual void SetTranslationY(int viewId, float translationY)
         {
             get(viewId).transform.translationY = translationY;
         }
@@ -1354,7 +1354,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <param name="viewId">       ID of view to adjust its translation in X & Y </param>
         /// <param name="translationX"> the translation in X </param>
         /// <param name="translationY"> the translation in Y </param>
-        public virtual void setTranslation(int viewId, float translationX, float translationY)
+        public virtual void SetTranslation(int viewId, float translationX, float translationY)
         {
             Constraint constraint = get(viewId);
             constraint.transform.translationX = translationX;
@@ -1366,7 +1366,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// </summary>
         /// <param name="viewId">       ID of view to adjust </param>
         /// <param name="translationZ"> the translationZ </param>
-        public virtual void setTranslationZ(int viewId, float translationZ)
+        public virtual void SetTranslationZ(int viewId, float translationZ)
         {
             //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             //{
@@ -1377,7 +1377,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <summary>
         /// @suppress
         /// </summary>
-        public virtual void setEditorAbsoluteX(int viewId, int position)
+        public virtual void SetEditorAbsoluteX(int viewId, int position)
         {
             get(viewId).layout.editorAbsoluteX = position;
         }
@@ -1385,7 +1385,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <summary>
         /// @suppress
         /// </summary>
-        public virtual void setEditorAbsoluteY(int viewId, int position)
+        public virtual void SetEditorAbsoluteY(int viewId, int position)
         {
             get(viewId).layout.editorAbsoluteY = position;
         }
@@ -1393,7 +1393,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <summary>
         /// Sets the wrap behavior of the widget in the parent's wrap computation
         /// </summary>
-        public virtual void setLayoutWrapBehavior(int viewId, int behavior)
+        public virtual void SetLayoutWrapBehavior(int viewId, int behavior)
         {
             if (behavior >= 0 && behavior <= ConstraintWidget.WRAP_BEHAVIOR_SKIPPED)
             {
@@ -1431,7 +1431,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <param name="radius"> the radius of the circle in degrees </param>
         /// <param name="angle">  the angle
         /// @since 1.1 </param>
-        public virtual void constrainCircle(int viewId, int id, int radius, float angle)
+        public virtual void ConstrainCircle(int viewId, int id, int radius, float angle)
         {
             Constraint constraint = get(viewId);
             constraint.layout.circleConstraint = id;
@@ -1446,7 +1446,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <param name="viewId"> ID of view to adjust it height </param>
         /// <param name="height"> the maximum height of the constraint
         /// @since 1.1 </param>
-        public virtual void constrainMaxHeight(int viewId, int height)
+        public virtual void ConstrainMaxHeight(int viewId, int height)
         {
             get(viewId).layout.matchConstraintMaxHeight = height;
         }
@@ -1458,7 +1458,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <param name="viewId"> ID of view to adjust its max height </param>
         /// <param name="width">  the maximum width of the view
         /// @since 1.1 </param>
-        public virtual void constrainMaxWidth(int viewId, int width)
+        public virtual void ConstrainMaxWidth(int viewId, int width)
         {
             get(viewId).layout.matchConstraintMaxWidth = width;
         }
@@ -1470,7 +1470,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <param name="viewId"> ID of view to adjust its min height </param>
         /// <param name="height"> the minimum height of the view
         /// @since 1.1 </param>
-        public virtual void constrainMinHeight(int viewId, int height)
+        public virtual void ConstrainMinHeight(int viewId, int height)
         {
             get(viewId).layout.matchConstraintMinHeight = height;
         }
@@ -1482,7 +1482,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <param name="viewId"> ID of view to adjust its min height </param>
         /// <param name="width">  the minimum width of the view
         /// @since 1.1 </param>
-        public virtual void constrainMinWidth(int viewId, int width)
+        public virtual void ConstrainMinWidth(int viewId, int width)
         {
             get(viewId).layout.matchConstraintMinWidth = width;
         }
@@ -1493,7 +1493,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <param name="viewId"> </param>
         /// <param name="percent">
         /// @since 1.1 </param>
-        public virtual void constrainPercentWidth(int viewId, float percent)
+        public virtual void ConstrainPercentWidth(int viewId, float percent)
         {
             get(viewId).layout.matchConstraintPercentWidth = percent;
         }
@@ -1504,7 +1504,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <param name="viewId"> </param>
         /// <param name="percent">
         /// @since 1.1 </param>
-        public virtual void constrainPercentHeight(int viewId, float percent)
+        public virtual void ConstrainPercentHeight(int viewId, float percent)
         {
             get(viewId).layout.matchConstraintPercentHeight = percent;
         }
@@ -1516,7 +1516,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <param name="viewId"> ID of view to adjust its matchConstraintDefaultHeight </param>
         /// <param name="height"> MATCH_CONSTRAINT_WRAP or MATCH_CONSTRAINT_SPREAD
         /// @since 1.1 </param>
-        public virtual void constrainDefaultHeight(int viewId, int height)
+        public virtual void ConstrainDefaultHeight(int viewId, int height)
         {
             get(viewId).layout.matchConstraintDefaultHeight = height;
         }
@@ -1528,7 +1528,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <param name="viewId">      ID of view to adjust its matchConstraintDefaultWidth </param>
         /// <param name="constrained"> if true with will be constrained
         /// @since 1.1 </param>
-        public virtual void constrainedWidth(int viewId, bool constrained)
+        public virtual void ConstrainedWidth(int viewId, bool constrained)
         {
             get(viewId).layout.constrainedWidth = constrained;
         }
@@ -1540,7 +1540,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <param name="viewId">      ID of view to adjust its matchConstraintDefaultHeight </param>
         /// <param name="constrained"> if true height will be constrained
         /// @since 1.1 </param>
-        public virtual void constrainedHeight(int viewId, bool constrained)
+        public virtual void ConstrainedHeight(int viewId, bool constrained)
         {
             get(viewId).layout.constrainedHeight = constrained;
         }
@@ -1552,7 +1552,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <param name="viewId"> ID of view to adjust its matchConstraintDefaultWidth </param>
         /// <param name="width">  SPREAD or WRAP
         /// @since 1.1 </param>
-        public virtual void constrainDefaultWidth(int viewId, int width)
+        public virtual void ConstrainDefaultWidth(int viewId, int width)
         {
             get(viewId).layout.matchConstraintDefaultWidth = width;
         }
@@ -1563,7 +1563,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// </summary>
         /// <param name="viewId"> ID of view to adjust its HorizontalWeight </param>
         /// <param name="weight"> the weight that we can use to distribute the horizontal space </param>
-        public virtual void setHorizontalWeight(int viewId, float weight)
+        public virtual void SetHorizontalWeight(int viewId, float weight)
         {
             get(viewId).layout.horizontalWeight = weight;
         }
@@ -1574,7 +1574,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// </summary>
         /// <param name="viewId"> ID of view to adjust its VerticalWeight </param>
         /// <param name="weight"> the weight that we can use to distribute the vertical space </param>
-        public virtual void setVerticalWeight(int viewId, float weight)
+        public virtual void SetVerticalWeight(int viewId, float weight)
         {
             get(viewId).layout.verticalWeight = weight;
         }
@@ -1592,7 +1592,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// </summary>
         /// <param name="viewId">     ID of view to adjust its HorizontalChainStyle </param>
         /// <param name="chainStyle"> the weight that we can use to distribute the horizontal space </param>
-        public virtual void setHorizontalChainStyle(int viewId, int chainStyle)
+        public virtual void SetHorizontalChainStyle(int viewId, int chainStyle)
         {
             get(viewId).layout.horizontalChainStyle = chainStyle;
         }
@@ -1610,7 +1610,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// </summary>
         /// <param name="viewId">     ID of view to adjust its VerticalChainStyle </param>
         /// <param name="chainStyle"> the weight that we can use to distribute the horizontal space </param>
-        public virtual void setVerticalChainStyle(int viewId, int chainStyle)
+        public virtual void SetVerticalChainStyle(int viewId, int chainStyle)
         {
             get(viewId).layout.verticalChainStyle = chainStyle;
         }
@@ -1621,7 +1621,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <param name="viewId">  view to add </param>
         /// <param name="leftId">  view in chain to the left </param>
         /// <param name="rightId"> view in chain to the right </param>
-        public virtual void addToHorizontalChain(int viewId, int leftId, int rightId)
+        public virtual void AddToHorizontalChain(int viewId, int leftId, int rightId)
         {
             Connect(viewId, LEFT, leftId, (leftId == PARENT_ID) ? LEFT : RIGHT, 0);
             Connect(viewId, RIGHT, rightId, (rightId == PARENT_ID) ? RIGHT : LEFT, 0);
@@ -1641,7 +1641,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <param name="viewId">  view to add </param>
         /// <param name="leftId">  view to the start side </param>
         /// <param name="rightId"> view to the end side </param>
-        public virtual void addToHorizontalChainRTL(int viewId, int leftId, int rightId)
+        public virtual void AddToHorizontalChainRTL(int viewId, int leftId, int rightId)
         {
             Connect(viewId, START, leftId, (leftId == PARENT_ID) ? START : END, 0);
             Connect(viewId, END, rightId, (rightId == PARENT_ID) ? END : START, 0);
@@ -1661,7 +1661,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <param name="viewId">   view to add to a vertical chain </param>
         /// <param name="topId">    view above. </param>
         /// <param name="bottomId"> view below </param>
-        public virtual void addToVerticalChain(int viewId, int topId, int bottomId)
+        public virtual void AddToVerticalChain(int viewId, int topId, int bottomId)
         {
             Connect(viewId, TOP, topId, (topId == PARENT_ID) ? TOP : BOTTOM, 0);
             Connect(viewId, BOTTOM, bottomId, (bottomId == PARENT_ID) ? BOTTOM : TOP, 0);
@@ -1681,7 +1681,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// Its behaviour is undefined if not part of a vertical chain.
         /// </summary>
         /// <param name="viewId"> the view to be removed </param>
-        public virtual void removeFromVerticalChain(int viewId)
+        public virtual void RemoveFromVerticalChain(int viewId)
         {
             if (mConstraints.ContainsKey(viewId))
             {
@@ -1722,7 +1722,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// Its behaviour is undefined if not part of a horizontal chain.
         /// </summary>
         /// <param name="viewId"> the view to be removed </param>
-        public virtual void removeFromHorizontalChain(int viewId)
+        public virtual void RemoveFromHorizontalChain(int viewId)
         {
             if (mConstraints.ContainsKey(viewId))
             {
@@ -1793,7 +1793,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <param name="guidelineID"> ID of guideline to create </param>
         /// <param name="orientation"> the Orientation of the guideline </param>
         /// public virtual void create(int guidelineID, int orientation)
-        public virtual void SetGuidelineOrientation(int guidelineID, int orientation)
+        public virtual void Create(int guidelineID, int orientation)
         {
             Constraint constraint = get(guidelineID);
             constraint.layout.mIsGuideline = true;
@@ -1807,7 +1807,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <param name="direction">  Barrier.{LEFT,RIGHT,TOP,BOTTOM,START,END} </param>
         /// <param name="referenced">
         /// @since 1.1 </param>
-        public virtual void createBarrier(int id, int direction, int margin, params int[] referenced)
+        public virtual void CreateBarrier(int id, int direction, int margin, params int[] referenced)
         {
             Constraint constraint = get(id);
             constraint.layout.mHelperType = BARRIER_TYPE;
@@ -1822,7 +1822,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// </summary>
         /// <param name="guidelineID"> ID of the guideline </param>
         /// <param name="margin">      the distance to the top or left edge </param>
-        public virtual void setGuidelineBegin(int guidelineID, int margin)
+        public virtual void SetGuidelineBegin(int guidelineID, int margin)
         {
             get(guidelineID).layout.guideBegin = margin;
             get(guidelineID).layout.guideEnd = Layout.UNSET;
@@ -1834,7 +1834,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// </summary>
         /// <param name="guidelineID"> ID of the guideline </param>
         /// <param name="margin">      the margin to the right or bottom side of container </param>
-        public virtual void setGuidelineEnd(int guidelineID, int margin)
+        public virtual void SetGuidelineEnd(int guidelineID, int margin)
         {
             get(guidelineID).layout.guideEnd = margin;
             get(guidelineID).layout.guideBegin = Layout.UNSET;
@@ -1858,7 +1858,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// </summary>
         /// <param name="id"> </param>
         /// <returns> array of id's </returns>
-        public virtual int[] getReferencedIds(int id)
+        public virtual int[] GetReferencedIds(int id)
         {
             Constraint constraint = get(id);
             if (constraint.layout.mReferenceIds == null)
@@ -1875,13 +1875,13 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <param name="id"> </param>
         /// <param name="referenced">
         /// @since 2.0 </param>
-        public virtual void setReferencedIds(int id, params int[] referenced)
+        public virtual void SetReferencedIds(int id, params int[] referenced)
         {
             Constraint constraint = get(id);
             constraint.layout.mReferenceIds = referenced;
         }
 
-        public virtual void setBarrierType(int id, int type)
+        public virtual void SetBarrierType(int id, int type)
         {
             Constraint constraint = get(id);
             constraint.layout.mHelperType = type;
@@ -2203,7 +2203,7 @@ namespace SharpConstraintLayout.Maui.Widget
             }
         }
 
-        public virtual Constraint getConstraint(int id)
+        public virtual Constraint GetConstraint(int id)
         {
             if (mConstraints.ContainsKey(id))
             {

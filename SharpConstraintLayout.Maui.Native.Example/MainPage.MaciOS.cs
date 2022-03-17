@@ -47,7 +47,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
 
             var pageSet = new ConstraintSet();
             pageSet.Clone(Page);
-            pageSet.SetGuidelineOrientation(guide.GetId(), ConstraintSet.HORIZONTAL);
+            pageSet.Create(guide.GetId(), ConstraintSet.HORIZONTAL);
             //pageSet.SetGuidelinePercent(guide.GetId(), 0.5f);
             pageSet.ConstrainWidth(guide.GetId(), ConstraintSet.WRAP_CONTENT);
             pageSet.ConstrainHeight(guide.GetId(), ConstraintSet.WRAP_CONTENT);
@@ -133,7 +133,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             set.Connect(ThirdCanvas.GetId(), ConstraintSet.RIGHT, layout.GetId(), ConstraintSet.RIGHT, 10);
             set.Connect(ThirdCanvas.GetId(), ConstraintSet.TOP, FirstButton.GetId(), ConstraintSet.BOTTOM, 50);
             set.Connect(ThirdCanvas.GetId(), ConstraintSet.BOTTOM, layout.GetId(), ConstraintSet.BOTTOM, 50);
-            set.setVisibility(ThirdCanvas.GetId(), ConstraintSet.GONE);//BUG:设置Visibility无效
+            set.SetVisibility(ThirdCanvas.GetId(), ConstraintSet.GONE);//BUG:设置Visibility无效
             set.ConstrainWidth(ThirdCanvas.GetId(), ConstraintSet.MATCH_CONSTRAINT);
             set.ConstrainHeight(ThirdCanvas.GetId(), ConstraintSet.MATCH_PARENT);
 

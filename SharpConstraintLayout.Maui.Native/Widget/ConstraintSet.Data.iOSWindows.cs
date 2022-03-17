@@ -117,14 +117,14 @@ namespace SharpConstraintLayout.Maui.Widget
 
         /// <summary>
         /// This view is visible.
-        /// Use with <see cref="setVisibility"/> and <a href="#attr_android:visibility">{@code
+        /// Use with <see cref="SetVisibility"/> and <a href="#attr_android:visibility">{@code
         /// android:visibility}.
         /// </summary>
         public const int VISIBLE = ConstraintWidget.VISIBLE;
 
         /// <summary>
         /// This view is invisible, but it still takes up space for layout purposes.
-        /// Use with <seealso cref="setVisibility"/> and <a href="#attr_android:visibility">{@code
+        /// Use with <seealso cref="SetVisibility"/> and <a href="#attr_android:visibility">{@code
         /// android:visibility}.
         /// </summary>
         public const int INVISIBLE = ConstraintWidget.INVISIBLE;

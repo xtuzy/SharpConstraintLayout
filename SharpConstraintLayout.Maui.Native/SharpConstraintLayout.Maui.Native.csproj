@@ -79,7 +79,7 @@
     <Compile Remove="**\iOSWindows\**\*.cs" />
     <None Include="**\iOSWindows\**\*.cs" />
   </ItemGroup>
-  <ItemGroup  Condition="'$(TargetFramework)'!= 'net6.0-android'">
+  <ItemGroup Condition="'$(TargetFramework)'!= 'net6.0-android'">
     <ProjectReference Include="..\SharpConstraintLayout.Core\SharpConstraintLayout.Core.csproj" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net6.0-windows10.0.19041'">

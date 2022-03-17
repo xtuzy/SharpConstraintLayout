@@ -141,7 +141,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             layoutSet.Connect(ThirdCanvas.GetId(), ConstraintSet.RIGHT, layout.GetId(), ConstraintSet.RIGHT, 50);
             layoutSet.Connect(ThirdCanvas.GetId(), ConstraintSet.TOP, layout.GetId(), ConstraintSet.TOP, 50);
             layoutSet.Connect(ThirdCanvas.GetId(), ConstraintSet.BOTTOM, layout.GetId(), ConstraintSet.BOTTOM, 50);
-            layoutSet.setVisibility(ThirdCanvas.GetHashCode(), ConstraintSet.GONE);
+            layoutSet.SetVisibility(ThirdCanvas.GetHashCode(), ConstraintSet.GONE);
             layoutSet.ConstrainWidth(ThirdCanvas.GetId(), 100);
             layoutSet.ConstrainHeight(ThirdCanvas.GetId(), ConstraintSet.MATCH_CONSTRAINT);
 
