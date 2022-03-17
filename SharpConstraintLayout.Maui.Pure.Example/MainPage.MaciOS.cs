@@ -26,14 +26,14 @@ namespace SharpConstraintLayout.Maui.Pure.Example
         public MainPage(CGRect frame)
         {
 
-            Page = new UIView(frame) { };
-            layout = new ConstraintLayout()
+            Page = layout = new ConstraintLayout()
             {
-                //AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight,
+                Frame = frame,
+                AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight,
                 BackgroundColor = UIColor.White
             };
             
-            Page.AddSubview(layout); 
+            //Page.AddSubview(layout); 
 
             FirstButton = new UIButton() 
             {

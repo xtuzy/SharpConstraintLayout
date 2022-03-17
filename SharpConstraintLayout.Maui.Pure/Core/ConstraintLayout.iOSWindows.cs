@@ -44,7 +44,7 @@ namespace SharpConstraintLayout.Maui.Pure.Core
     /// <summary>
     /// ConstraintLayout is a AndroidX layout form google. Now you can use it at iOS and WinUI, that means you can reuse some layout code.<br/>
     /// 
-    /// You can use ConstraintLayout as Root Layout of UIViewController or Window. It also can be as a normal layout, but notice the size of ConstraintLayout need be set by its parent. Such as add a ConstraintLayout to UIView and constrainted size is <see cref="ConstraintSet.MATCH_PARENT"/>, if you not set <code>AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight</code>
+    /// Notice the size of ConstraintLayout need be set by its parent. Such as add a ConstraintLayout to UIView and constrainted size is <see cref="ConstraintSet.MATCH_PARENT"/>, if you not set <code>AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight</code>
     /// ,when you rotate screen, maybe constraintlayout's width and height is not correct.<br/>
     /// Another, not set <see cref="ConstraintSet.MATCH_PARENT"/> when Parent can have infinity size, such as StackPanel can have infinity height at WinUI, if you set ConstraintLayout is <see cref="ConstraintSet.MATCH_PARENT"/>, it will throw exception or get false size.
     /// </summary>
