@@ -25,15 +25,11 @@ namespace SharpConstraintLayout.Maui.Pure.Example
 
         public MainPage(CGRect frame)
         {
-            
-            Page = new UIView(frame)
-            {
-                BackgroundColor = UIColor.SystemYellowColor,
-                //Axis = UILayoutConstraintAxis.Vertical
-            };
+
+            Page = new UIView(frame) { };
             layout = new ConstraintLayout()
             {
-                Frame = frame,
+                //AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight,
                 BackgroundColor = UIColor.White
             };
             

@@ -42,10 +42,16 @@ namespace SharpConstraintLayout.Maui.Pure.Core
 #endif
 
     /// <summary>
-    /// WPF implementation of ConstraintLayout copy from Swing's ConstraintLayout
+    /// ConstraintLayout is a AndroidX layout form google. Now you can use it at iOS and WinUI, that means you can reuse some layout code.<br/>
+    /// 
+    /// You can use ConstraintLayout as Root Layout of UIViewController or Window. It also can be as a normal layout, but notice the size of ConstraintLayout need be set by its parent. Such as add a ConstraintLayout to UIView and constrainted size is <see cref="ConstraintSet.MATCH_PARENT"/>, if you not set <code>AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight</code>
+    /// ,when you rotate screen, maybe constraintlayout's width and height is not correct.<br/>
+    /// Another, not set <see cref="ConstraintSet.MATCH_PARENT"/> when Parent can have infinity size, such as StackPanel can have infinity height at WinUI, if you set ConstraintLayout is <see cref="ConstraintSet.MATCH_PARENT"/>, it will throw exception or get false size.
     /// </summary>
     public class ConstraintLayout : Panel
     {
+        public const string VERSION = "ConstraintLayout-2.1.1";
+
         public static bool DEBUG = true;//if is true,will print some layout info.
         public static bool MEASURE = false;//if is true,will print time of measure+layout spend.
         private readonly ConstraintWidgetContainer mLayout = new ConstraintWidgetContainer();//default widget
@@ -468,9 +474,9 @@ namespace SharpConstraintLayout.Maui.Pure.Core
         /// </summary>
         public override void LayoutSubviews()
         {
-            //base.LayoutSubviews();
+            base.LayoutSubviews();
             if (DEBUG) Debug.WriteLine($"{nameof(LayoutSubviews)} {this} {this.Frame}");
-            if (DEBUG) Debug.WriteLine($"{nameof(LayoutSubviews)} {Superview} {this.Superview.Frame}");
+            if (DEBUG) Debug.WriteLine($"{nameof(LayoutSubviews)} {Superview} {this.Superview?.Frame}");
 
             //得到自身或Superview的大小作为availableSize
             if (this.Frame.Size.Width > 0)
@@ -479,6 +485,7 @@ namespace SharpConstraintLayout.Maui.Pure.Core
             }
             else
             {
+                if(Superview!=null)
                     MeasureOverride(this.Superview.Frame.Size);
             }
             
