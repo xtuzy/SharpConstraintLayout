@@ -31,8 +31,8 @@ namespace SharpConstraintLayout.Maui.Widget
             /// Returns the visibility status for this view.
             /// @return One of {@link #VISIBLE}, {@link #INVISIBLE}, or {@link #GONE}.
             /// </summary>
-            public int visibility = VISIBLE;
-            public int mVisibilityMode = VISIBILITY_MODE_NORMAL;
+            public int visibility = Visible;
+            public int mVisibilityMode = VisibilityModeNormal;
             /// <summary>
             /// Copy Form Android.Views.View.Alpha
             /// The opacity of the view.This is a value from 0 to 1, where 0 means the view is

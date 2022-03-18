@@ -56,33 +56,33 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <summary>
         /// Dimension will be controlled by constraints
         /// </summary>
-        public const int MATCH_CONSTRAINT = 0;
+        public const int MatchConstraint = 0;
 
         /// <summary>
         /// Special value for the height or width requested by a View.
         /// MATCH_PARENT means that the view wants to be as big as its parent,
         /// minus the parent's padding, if any. Introduced in API Level 8.
         /// </summary>
-        public const int MATCH_PARENT = -1;
+        public const int MatchParent = -1;
 
         /// <summary>
         /// Special value for the height or width requested by a View.
         /// WRAP_CONTENT means that the view wants to be just large enough to fit
         /// its own internal content, taking its own padding into account.
         /// </summary>
-        public const int WRAP_CONTENT = -2;
+        public const int WrapContent = -2;
 
         /// <summary>
         /// How to calculate the size of a view in 0 dp by using its wrap_content size
         /// </summary>
-        public const int MATCH_CONSTRAINT_WRAP = ConstraintWidget.MATCH_CONSTRAINT_WRAP;
+        public const int MatchConstraintWrap = ConstraintWidget.MATCH_CONSTRAINT_WRAP;
 
         /// <summary>
         /// Calculate the size of a view in 0 dp by reducing the constrains gaps as much as possible
         /// </summary>
-        public const int MATCH_CONSTRAINT_SPREAD = ConstraintWidget.MATCH_CONSTRAINT_SPREAD;
+        public const int MatchConstraintSpread = ConstraintWidget.MATCH_CONSTRAINT_SPREAD;
 
-        public const int MATCH_CONSTRAINT_PERCENT = ConstraintWidget.MATCH_CONSTRAINT_PERCENT;
+        public const int MatchConstraintPercent = ConstraintWidget.MATCH_CONSTRAINT_PERCENT;
 
         /// <summary>
         /// References the id of the parent.
@@ -92,112 +92,112 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <li><seealso cref="ConstraintSet.Center(int, int, int, int, int, int, int, float)"/></li>
         /// </ul>
         /// </summary>
-        public const int PARENT_ID = 0;
+        public const int ParentId = 0;
 
         /// <summary>
         /// The horizontal orientation.
         /// </summary>
-        public const int HORIZONTAL = ConstraintWidget.HORIZONTAL;
+        public const int Horizontal = ConstraintWidget.HORIZONTAL;
 
         /// <summary>
         /// The vertical orientation.
         /// </summary>
-        public const int VERTICAL = ConstraintWidget.VERTICAL;
+        public const int Vertical = ConstraintWidget.VERTICAL;
 
         /// <summary>
         /// Used to create a horizontal create guidelines.
         /// </summary>
-        public const int HORIZONTAL_GUIDELINE = 0;
+        public const int HorizontalGuideline = 0;
 
         /// <summary>
         /// Used to create a vertical create guidelines.
-        /// see <seealso cref="#create(int, int)"/>
+        /// see <seealso cref="Create(int, int)"/>
         /// </summary>
-        public const int VERTICAL_GUIDELINE = 1;
+        public const int VerticalGuideline = 1;
 
         /// <summary>
         /// This view is visible.
         /// Use with <see cref="SetVisibility"/> and <a href="#attr_android:visibility">{@code
         /// android:visibility}.
         /// </summary>
-        public const int VISIBLE = ConstraintWidget.VISIBLE;
+        public const int Visible = ConstraintWidget.VISIBLE;
 
         /// <summary>
         /// This view is invisible, but it still takes up space for layout purposes.
         /// Use with <seealso cref="SetVisibility"/> and <a href="#attr_android:visibility">{@code
         /// android:visibility}.
         /// </summary>
-        public const int INVISIBLE = ConstraintWidget.INVISIBLE;
+        public const int Invisible = ConstraintWidget.INVISIBLE;
 
         /// <summary>
         /// This view is gone, and will not take any space for layout
         /// purposes. Use with <seealso cref="#setVisibility"/> and <a href="#attr_android:visibility">{@code
         /// android:visibility}.
         /// </summary>
-        public const int GONE = ConstraintWidget.GONE;
+        public const int Gone = ConstraintWidget.GONE;
 
         /// <summary>
         /// The left side of a view.
         /// </summary>
-        public const int LEFT = 1;
+        public const int Left = 1;
 
         /// <summary>
         /// The right side of a view.
         /// </summary>
-        public const int RIGHT = 2;
+        public const int Right = 2;
 
         /// <summary>
         /// The top of a view.
         /// </summary>
-        public const int TOP = 3;
+        public const int Top = 3;
 
         /// <summary>
         /// The bottom side of a view.
         /// </summary>
-        public const int BOTTOM = 4;
+        public const int Bottom = 4;
 
         /// <summary>
         /// The baseline of the text in a view.
         /// </summary>
-        public const int BASELINE = 5;
+        public const int Baseline = 5;
 
         /// <summary>
         /// The left side of a view in left to right languages.
         /// In right to left languages it corresponds to the right side of the view
         /// </summary>
-        public const int START = 6;
+        public const int Start = 6;
 
         /// <summary>
         /// The right side of a view in right to left languages.
         /// In right to left languages it corresponds to the left side of the view
         /// </summary>
-        public const int END = 7;
+        public const int End = 7;
 
         /// <summary>
         /// Circle reference from a view.
         /// </summary>
         /// public static final int CIRCLE = 8;
-        public const int CIRCLE_REFERENCE = 8;
+        public const int CircleReference = 8;
 
         /// <summary>
         /// Chain spread style
         /// </summary>
-        public const int CHAIN_SPREAD = ConstraintWidget.CHAIN_SPREAD;
+        public const int ChainSpread = ConstraintWidget.CHAIN_SPREAD;
 
         /// <summary>
         /// Chain spread inside style
         /// </summary>
-        public const int CHAIN_SPREAD_INSIDE = ConstraintWidget.CHAIN_SPREAD_INSIDE;
+        public const int ChainSpreadInside = ConstraintWidget.CHAIN_SPREAD_INSIDE;
 
-        public const int VISIBILITY_MODE_NORMAL = 0;
-        public const int VISIBILITY_MODE_IGNORE = 1;
+        public const int VisibilityModeNormal = 0;
+        public const int VisibilityModeIgnore = 1;
         /// <summary>
         /// Chain packed style
         /// </summary>
-        public const int CHAIN_PACKED = ConstraintWidget.CHAIN_PACKED;
+        public const int ChainPacked = ConstraintWidget.CHAIN_PACKED;
 
         private const bool DEBUG = false;
-        private static readonly int[] VISIBILITY_FLAGS = new int[] { VISIBLE, INVISIBLE, GONE };
+        private static readonly int[] VISIBILITY_FLAGS = new int[] { Visible, Invisible, Gone };
         private const int BARRIER_TYPE = 1;
 
         private Dictionary<int, Constraint> mConstraints = new Dictionary<int, Constraint>();
@@ -316,41 +316,5 @@ namespace SharpConstraintLayout.Maui.Widget
         /// 定义了全部约束,测量时从其中取出分析
         /// </summary>
         public Dictionary<int, Constraint> Constraints { get { return mConstraints; } }
-
-#if WINDOWS
-        /// <summary>
-        /// Notice:Windows no default <see cref="ConstraintSet.INVISIBLE"/>, you need set <see cref="Microsoft.UI.Xaml.UIElement.Opacity"/> instead.
-        /// </summary>
-        /// <param name="constraintSetVisibility"></param>
-        /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
-        public static Microsoft.UI.Xaml.Visibility ConvertVisibilityConstraintToPlaform(int constraintSetVisibility)
-        {
-            switch (constraintSetVisibility)
-            {
-                case ConstraintSet.VISIBLE:
-                    return Microsoft.UI.Xaml.Visibility.Visible;
-                case ConstraintSet.GONE:
-                    return Microsoft.UI.Xaml.Visibility.Collapsed;
-                default:
-                    throw new NotImplementedException("Use false visibility.");
-                    break;
-            }
-        }
-
-        public static int ConvertVisibilityPlaformToConstraint(Microsoft.UI.Xaml.Visibility visibility)
-        {
-            switch (visibility)
-            {
-                case Microsoft.UI.Xaml.Visibility.Visible:
-                    return ConstraintSet.VISIBLE;
-                case Microsoft.UI.Xaml.Visibility.Collapsed:
-                    return ConstraintSet.GONE;
-                default:
-                    throw new NotImplementedException("Use false visibility.");
-                    break;
-            }
-        }
-#endif
     }
 }

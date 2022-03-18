@@ -20,7 +20,7 @@ namespace SharpConstraintLayout.Maui.Widget
 {
 #if WINDOWS
     using FrameworkElement = Microsoft.UI.Xaml.FrameworkElement;
-    using UIElement =  Microsoft.UI.Xaml.UIElement;
+    using UIElement = Microsoft.UI.Xaml.UIElement;
 #elif __IOS__
     using FrameworkElement = UIKit.UIView;
     using UIElement = UIKit.UIView;
@@ -43,13 +43,13 @@ namespace SharpConstraintLayout.Maui.Widget
     /// </para>
     /// 
     /// </summary>
-    public class Placeholder : FrameworkElement
+    public class Placeholder : FrameworkElement, IPlaceholder
     {
         bool InEditMode = false;
 
         private int mContentId = -1;
         private FrameworkElement mContent = null;
-        private int mEmptyVisibility = ConstraintSet.INVISIBLE;
+        private int mEmptyVisibility = ConstraintSet.Invisible;
 
         public Placeholder() : base()
         {
@@ -58,7 +58,7 @@ namespace SharpConstraintLayout.Maui.Widget
 
         private void init()
         {
-            ConstraintHelper.SetPlatformVisibility(this,mEmptyVisibility);
+            ConstraintHelper.SetPlatformVisibility(this, mEmptyVisibility);
             mContentId = -1;
         }
 
@@ -91,47 +91,47 @@ namespace SharpConstraintLayout.Maui.Widget
             }
         }
 
-       /* /// <summary>
-        /// Placeholder does not draw anything itself - therefore Paint and Rect allocations
-        /// are fine to suppress and ignore.
-        /// 
-        /// @suppress </summary>
-        /// <param name="canvas"> </param>
-        public virtual void onDraw(Canvas canvas)
-        {
-            if (InEditMode)
-            {
-                canvas.drawRGB(223, 223, 223);
+        /* /// <summary>
+         /// Placeholder does not draw anything itself - therefore Paint and Rect allocations
+         /// are fine to suppress and ignore.
+         /// 
+         /// @suppress </summary>
+         /// <param name="canvas"> </param>
+         public virtual void onDraw(Canvas canvas)
+         {
+             if (InEditMode)
+             {
+                 canvas.drawRGB(223, 223, 223);
 
-                //ORIGINAL LINE: @SuppressLint("DrawAllocation") android.graphics.Paint paint = new android.graphics.Paint();
-                Paint paint = new Paint();
-                paint.setARGB(255, 210, 210, 210);
-                paint.TextAlign = Paint.Align.CENTER;
-                paint.Typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL);
+                 //ORIGINAL LINE: @SuppressLint("DrawAllocation") android.graphics.Paint paint = new android.graphics.Paint();
+                 Paint paint = new Paint();
+                 paint.setARGB(255, 210, 210, 210);
+                 paint.TextAlign = Paint.Align.CENTER;
+                 paint.Typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL);
 
-                //ORIGINAL LINE: @SuppressLint("DrawAllocation") android.graphics.Rect r = new android.graphics.Rect();
-                Rect r = new Rect();
-                canvas.getClipBounds(r);
-                paint.TextSize = r.height();
-                int cHeight = r.height();
-                int cWidth = r.width();
-                paint.TextAlign = Paint.Align.LEFT;
-                string text = "?";
-                paint.getTextBounds(text, 0, text.Length, r);
-                float x = cWidth / 2f - r.width() / 2f - r.left;
-                float y = cHeight / 2f + r.height() / 2f - r.bottom;
-                canvas.drawText(text, x, y, paint);
-            }
-        }*/
+                 //ORIGINAL LINE: @SuppressLint("DrawAllocation") android.graphics.Rect r = new android.graphics.Rect();
+                 Rect r = new Rect();
+                 canvas.getClipBounds(r);
+                 paint.TextSize = r.height();
+                 int cHeight = r.height();
+                 int cWidth = r.width();
+                 paint.TextAlign = Paint.Align.LEFT;
+                 string text = "?";
+                 paint.getTextBounds(text, 0, text.Length, r);
+                 float x = cWidth / 2f - r.width() / 2f - r.left;
+                 float y = cHeight / 2f + r.height() / 2f - r.bottom;
+                 canvas.drawText(text, x, y, paint);
+             }
+         }*/
 
-        public virtual void updatePreLayout(ConstraintLayout container)
+        public virtual void UpdatePreLayout(ConstraintLayout container)
         {
             if (mContentId == -1)
             {
                 if (!InEditMode)
                 {
                     //Visibility = (Microsoft.UI.Xaml.Visibility)mEmptyVisibility;
-                    ConstraintHelper.SetPlatformVisibility(this,mEmptyVisibility);
+                    ConstraintHelper.SetPlatformVisibility(this, mEmptyVisibility);
                 }
             }
 
@@ -155,52 +155,49 @@ namespace SharpConstraintLayout.Maui.Widget
         /// Sets the content view id
         /// </summary>
         /// <param name="id"> the id of the content view we want to place in the Placeholder </param>
-        public virtual int ContentId
+        public virtual void SetContentId(int value)
         {
-            set
+            if (mContentId == value)
             {
-                if (mContentId == value)
-                {
-                    return;
-                }
-                if (mContent != null)
-                {
+                return;
+            }
+            if (mContent != null)
+            {
 #if WINDOWS
-                    mContent.Visibility = Microsoft.UI.Xaml.Visibility.Visible; // ???
-                    //ConstraintLayout.LayoutParams layoutParamsContent = (ConstraintLayout.LayoutParams)mContent.LayoutParams;
-                    //layoutParamsContent.isInPlaceholder = false;
-                    ((mContent.Parent) as ConstraintLayout).mConstraintSet.Constraints[mContent.GetHashCode()].layout.isInPlaceholder = true;
+                mContent.Visibility = Microsoft.UI.Xaml.Visibility.Visible; // ???
+                                                                            //ConstraintLayout.LayoutParams layoutParamsContent = (ConstraintLayout.LayoutParams)mContent.LayoutParams;
+                                                                            //layoutParamsContent.isInPlaceholder = false;
+                ((mContent.Parent) as ConstraintLayout).mConstraintSet.Constraints[mContent.GetHashCode()].layout.isInPlaceholder = true;
 #elif __IOS__
-                    mContent.Hidden = false; // ???
-                    ((mContent.Superview) as ConstraintLayout).mConstraintSet.Constraints[mContent.GetHashCode()].layout.isInPlaceholder = true;
+                mContent.Hidden = false; // ???
+                ((mContent.Superview) as ConstraintLayout).mConstraintSet.Constraints[mContent.GetHashCode()].layout.isInPlaceholder = true;
 #endif
 
-                    mContent = null;
-                }
+                mContent = null;
+            }
 
-                mContentId = value;
-                if (value != ConstraintSet.Unset)
-                {
+            mContentId = value;
+            if (value != ConstraintSet.Unset)
+            {
 #if WINDOWS
-                    //View v = ((View)Parent).findViewById(value);
-                    UIElement v = ((ConstraintLayout)Parent).findViewById(value);
-                    if (v != null)
-                    {
-                        v.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
-                    }
-#elif __IOS__
-                    UIElement v = ((ConstraintLayout)Superview).findViewById(value);
-                    if (v != null)
-                    {
-                        //v.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
-                        throw new NotImplementedException("iOS没有默认的Visibility = ConstraintSet.Gone");
-                    }
-#endif
+                //View v = ((View)Parent).findViewById(value);
+                UIElement v = ((ConstraintLayout)Parent).findViewById(value);
+                if (v != null)
+                {
+                    v.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
                 }
+#elif __IOS__
+                UIElement v = ((ConstraintLayout)Superview).findViewById(value);
+                if (v != null)
+                {
+                    //v.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
+                    throw new NotImplementedException("iOS没有默认的Visibility = ConstraintSet.Gone");
+                }
+#endif
             }
         }
 
-        public virtual void updatePostMeasure(ConstraintLayout container)
+        public virtual void UpdatePostMeasure(ConstraintLayout container)
         {
             if (mContent == null)
             {
@@ -209,8 +206,8 @@ namespace SharpConstraintLayout.Maui.Widget
 
             var layoutParams = container.GetWidget(this);
             var layoutParamsContent = container.GetWidget(mContent);
-            
-            layoutParamsContent.Visibility = ConstraintSet.VISIBLE;
+
+            layoutParamsContent.Visibility = ConstraintSet.Visible;
 
             if (layoutParams.HorizontalDimensionBehaviour != ConstraintWidget.DimensionBehaviour.FIXED)
             {
@@ -220,7 +217,7 @@ namespace SharpConstraintLayout.Maui.Widget
             {
                 layoutParams.Height = layoutParamsContent.Height;
             }
-            layoutParamsContent.Visibility = ConstraintSet.GONE;
+            layoutParamsContent.Visibility = ConstraintSet.Gone;
         }
     }
 }

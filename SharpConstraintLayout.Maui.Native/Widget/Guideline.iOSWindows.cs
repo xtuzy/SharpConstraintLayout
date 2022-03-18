@@ -66,7 +66,7 @@ namespace SharpConstraintLayout.Maui.Widget
     /// {@sample resources/examples/Guideline.xml Guideline}
     /// </para>
     /// </summary>
-    public class Guideline : View,IDisposable
+    public class Guideline : View,IDisposable,IGuideline
     {
 #if __ANDROID__
         public Guideline(Context context) : base(context)
@@ -97,31 +97,29 @@ namespace SharpConstraintLayout.Maui.Widget
         /// Set the guideline's distance from the top or left edge.
         /// </summary>
         /// <param name="margin"> the distance to the top or left edge </param>
-        public virtual int GuidelineBegin
+        public virtual void SetGuidelineBegin(int value)
         {
-            set=>mGuideline.GuideBegin = value;
-            get => mGuideline.RelativeBegin;
+            mGuideline.GuideBegin = value;
         }
 
         /// <summary>
         /// Set a guideline's distance to end.
         /// </summary>
         /// <param name="margin"> the margin to the right or bottom side of container </param>
-        public virtual int GuidelineEnd
+        public virtual void SetGuidelineEnd(int value)
         {
-            set => mGuideline.GuideEnd = value;
-            get => mGuideline.RelativeEnd;
+            mGuideline.GuideEnd = value;
         }
 
         /// <summary>
         /// Set a Guideline's percent. </summary>
         /// <param name="ratio"> the ratio between the gap on the left and right 0.0 is top/left 0.5 is middle </param>
-        public virtual float GuidelinePercent
+        public virtual void SetGuidelinePercent(float value)
         {
-            set => mGuideline.setGuidePercent(value);
-            get => mGuideline.RelativePercent;
+            mGuideline.setGuidePercent(value);
         }
 
+        [Obsolete("Android need set at layoutparams, please use constraintset.create to set orientation.")]
         public virtual int Orientation
         {
             set => mGuideline.Orientation = value;

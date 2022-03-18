@@ -50,7 +50,7 @@ namespace SharpConstraintLayout.Maui.Widget
     ///         define the final visibility state (the group declared last will have the last word).
     /// </para>
     /// </summary>
-    public class Group : ConstraintHelper
+    public class Group : ConstraintHelper,IGroup
     {
 
         public Group() : base()
@@ -92,7 +92,7 @@ namespace SharpConstraintLayout.Maui.Widget
             applyLayoutFeatures(container);
         }
 
-        public override void updatePostLayout(ConstraintLayout container)
+        public override void UpdatePostLayout(ConstraintLayout container)
         {
             ConstraintWidget widget = container.idsToConstraintWidgets[this.GetId()];
             widget.Width = 0;

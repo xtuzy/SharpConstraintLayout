@@ -29,7 +29,7 @@ namespace SharpConstraintLayout.Maui.Widget
     ///  </para>
     ///  @suppress
     /// </summary>
-    public abstract class VirtualLayout : ConstraintHelper
+    public abstract class VirtualLayout : ConstraintHelper,IVirtualLayout
     {
         private bool mApplyVisibilityOnAttach;
         private bool mApplyElevationOnAttach;
@@ -43,7 +43,7 @@ namespace SharpConstraintLayout.Maui.Widget
             base.init();
         }
 
-        public virtual void onMeasure(androidx.constraintlayout.core.widgets.VirtualLayout layout, int widthMeasureSpec, int heightMeasureSpec)
+        public virtual void OnMeasure(androidx.constraintlayout.core.widgets.VirtualLayout layout, int widthMeasureSpec, int heightMeasureSpec)
         {
             // nothing
         }

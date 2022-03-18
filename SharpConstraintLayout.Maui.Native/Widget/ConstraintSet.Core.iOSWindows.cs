@@ -184,7 +184,7 @@ namespace SharpConstraintLayout.Maui.Widget
                         if (constraint.layout.orientation != Unset)//如果用户设置了新的orientation
                         {
                             //Orientation在这里设置的原因是在Measure中当约束update到widget时,其他的widget需要对齐Guideline的widget,如果guideline没有设置orientation,那么widget找不到对应的边的Anchor,因为Guideline需要方向才有正确的Anchor
-                            (view as Guideline).Orientation = constraint.layout.orientation;
+                            (view as Guideline).mGuideline.Orientation = constraint.layout.orientation;
                         }
                     }
 
@@ -193,7 +193,7 @@ namespace SharpConstraintLayout.Maui.Widget
                         ConstraintAttribute.setAttributes(view, constraint.mCustomConstraints);
                     }*/
 
-                    if (constraint.propertySet.mVisibilityMode == VISIBILITY_MODE_NORMAL)
+                    if (constraint.propertySet.mVisibilityMode == VisibilityModeNormal)
                     {
                         //view.Visibility = constraint.propertySet.visibility;
                         param.propertySet.visibility = constraint.propertySet.visibility;//这里我变成设置constraint
@@ -254,7 +254,7 @@ namespace SharpConstraintLayout.Maui.Widget
 
             foreach (int id in used)//剩下的约束不在ConstraintLayout的Children中,找出特殊的,如Barrier,Guideline,但是这里我们不弄,因为添加新的View有新的Id,那么就需要更新全部的约束,费时
             {
-                if (id == ConstraintSet.PARENT_ID || id == constraintLayout.GetHashCode())//还要处理下layout
+                if (id == ConstraintSet.ParentId || id == constraintLayout.GetHashCode())//还要处理下layout
                     mConstraints[id].applyTo(constraintLayout.mConstraintSet.Constraints[id].layout);
                 else
                     throw new NotImplementedException("如果还有约束身下而且是重要的,那么需要新建View插入原来的布局中,那么但是id怎么办,新建的有新的哈希,而约束是相对旧的哈希.");
@@ -309,9 +309,8 @@ namespace SharpConstraintLayout.Maui.Widget
             constraintLayout.mConstraintSet.IsChanged = true;
 #if WINDOWS
             constraintLayout.InvalidateMeasure();
-            constraintLayout.UpdateLayout();
 #elif __IOS__
-            constraintLayout.LayoutIfNeeded();
+            constraintLayout.SetNeedsLayout();
 #endif
         }
 
@@ -345,20 +344,20 @@ namespace SharpConstraintLayout.Maui.Widget
                 throw new System.ArgumentException("bias must be between 0 and 1 inclusive");
             }
 
-            if (firstSide == LEFT || firstSide == RIGHT)
+            if (firstSide == Left || firstSide == Right)
             {
-                Connect(centerID, LEFT, firstID, firstSide, firstMargin);
-                Connect(centerID, RIGHT, secondId, secondSide, secondMargin);
+                Connect(centerID, Left, firstID, firstSide, firstMargin);
+                Connect(centerID, Right, secondId, secondSide, secondMargin);
                 Constraint constraint = mConstraints[centerID];
                 if (constraint != null)
                 {
                     constraint.layout.horizontalBias = bias;
                 }
             }
-            else if (firstSide == START || firstSide == END)
+            else if (firstSide == Start || firstSide == End)
             {
-                Connect(centerID, START, firstID, firstSide, firstMargin);
-                Connect(centerID, END, secondId, secondSide, secondMargin);
+                Connect(centerID, Start, firstID, firstSide, firstMargin);
+                Connect(centerID, End, secondId, secondSide, secondMargin);
                 Constraint constraint = mConstraints[centerID];
                 if (constraint != null)
                 {
@@ -367,8 +366,8 @@ namespace SharpConstraintLayout.Maui.Widget
             }
             else
             {
-                Connect(centerID, TOP, firstID, firstSide, firstMargin);
-                Connect(centerID, BOTTOM, secondId, secondSide, secondMargin);
+                Connect(centerID, Top, firstID, firstSide, firstMargin);
+                Connect(centerID, Bottom, secondId, secondSide, secondMargin);
                 Constraint constraint = mConstraints[centerID];
                 if (constraint != null)
                 {
@@ -391,8 +390,8 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <param name="bias">        The ratio of the space on the left vs. right sides 0.5 is centered (default) </param>
         public virtual void CenterHorizontally(int centerID, int leftId, int leftSide, int leftMargin, int rightId, int rightSide, int rightMargin, float bias)
         {
-            Connect(centerID, LEFT, leftId, leftSide, leftMargin);
-            Connect(centerID, RIGHT, rightId, rightSide, rightMargin);
+            Connect(centerID, Left, leftId, leftSide, leftMargin);
+            Connect(centerID, Right, rightId, rightSide, rightMargin);
             Constraint constraint = mConstraints[centerID];
             if (constraint != null)
             {
@@ -415,8 +414,8 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <param name="bias">        The ratio of the space on the start vs end side 0.5 is centered (default) </param>
         public virtual void CenterHorizontallyRtl(int centerID, int startId, int startSide, int startMargin, int endId, int endSide, int endMargin, float bias)
         {
-            Connect(centerID, START, startId, startSide, startMargin);
-            Connect(centerID, END, endId, endSide, endMargin);
+            Connect(centerID, Start, startId, startSide, startMargin);
+            Connect(centerID, End, endId, endSide, endMargin);
             Constraint constraint = mConstraints[centerID];
             if (constraint != null)
             {
@@ -438,8 +437,8 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <param name="bias">         The ratio of the space on the top vs. bottom sides 0.5 is centered (default) </param>
         public virtual void CenterVertically(int centerID, int topId, int topSide, int topMargin, int bottomId, int bottomSide, int bottomMargin, float bias)
         {
-            Connect(centerID, TOP, topId, topSide, topMargin);
-            Connect(centerID, BOTTOM, bottomId, bottomSide, bottomMargin);
+            Connect(centerID, Top, topId, topSide, topMargin);
+            Connect(centerID, Bottom, bottomId, bottomSide, bottomMargin);
             Constraint constraint = mConstraints[centerID];
             if (constraint != null)
             {
@@ -479,18 +478,18 @@ namespace SharpConstraintLayout.Maui.Widget
             }
             get(chainIds[0]).layout.verticalChainStyle = style;
 
-            Connect(chainIds[0], TOP, topId, topSide, 0);
+            Connect(chainIds[0], Top, topId, topSide, 0);
             for (int i = 1; i < chainIds.Length; i++)
             {
                 int chainId = chainIds[i];
-                Connect(chainIds[i], TOP, chainIds[i - 1], BOTTOM, 0);
-                Connect(chainIds[i - 1], BOTTOM, chainIds[i], TOP, 0);
+                Connect(chainIds[i], Top, chainIds[i - 1], Bottom, 0);
+                Connect(chainIds[i - 1], Bottom, chainIds[i], Top, 0);
                 if (weights != null)
                 {
                     get(chainIds[i]).layout.verticalWeight = weights[i];
                 }
             }
-            Connect(chainIds[chainIds.Length - 1], BOTTOM, bottomId, bottomSide, 0);
+            Connect(chainIds[chainIds.Length - 1], Bottom, bottomId, bottomSide, 0);
         }
 
         /// <summary>
@@ -512,7 +511,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <param name="style">     The type of chain </param>
         public virtual void CreateHorizontalChain(int leftId, int leftSide, int rightId, int rightSide, int[] chainIds, float[] weights, int style)
         {
-            createHorizontalChain(leftId, leftSide, rightId, rightSide, chainIds, weights, style, LEFT, RIGHT);
+            createHorizontalChain(leftId, leftSide, rightId, rightSide, chainIds, weights, style, Left, Right);
         }
 
         /// <summary>
@@ -530,7 +529,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <param name="style">     The type of chain </param>
         public virtual void CreateHorizontalChainRtl(int startId, int startSide, int endId, int endSide, int[] chainIds, float[] weights, int style)
         {
-            createHorizontalChain(startId, startSide, endId, endSide, chainIds, weights, style, START, END);
+            createHorizontalChain(startId, startSide, endId, endSide, chainIds, weights, style, Start, End);
         }
 
         private void createHorizontalChain(int leftId, int leftSide, int rightId, int rightSide, int[] chainIds, float[] weights, int style, int left, int right)
@@ -567,8 +566,8 @@ namespace SharpConstraintLayout.Maui.Widget
 
         /// <summary>
         /// Create a constraint between two widgets.
-        /// (for sides see: {@link #TOP, <seealso cref="BOTTOM"/>, {@link #START, <seealso cref="END"/>,
-        /// {@link #LEFT, <seealso cref="RIGHT"/>, <seealso cref="BASELINE"/>)
+        /// (for sides see: {@link #TOP, <seealso cref="Bottom"/>, {@link #START, <seealso cref="End"/>,
+        /// {@link #LEFT, <seealso cref="Right"/>, <seealso cref="Baseline"/>)
         /// </summary>
         /// <param name="startID">   the ID of the widget to be constrained </param>
         /// <param name="startSide"> the side of the widget to constrain </param>
@@ -588,13 +587,13 @@ namespace SharpConstraintLayout.Maui.Widget
             }
             switch (startSide)
             {
-                case LEFT:
-                    if (endSide == LEFT)
+                case Left:
+                    if (endSide == Left)
                     {
                         constraint.layout.leftToLeft = endID;
                         constraint.layout.leftToRight = Layout.UNSET;
                     }
-                    else if (endSide == RIGHT)
+                    else if (endSide == Right)
                     {
                         constraint.layout.leftToRight = endID;
                         constraint.layout.leftToLeft = Layout.UNSET;
@@ -606,14 +605,14 @@ namespace SharpConstraintLayout.Maui.Widget
                     }
                     constraint.layout.leftMargin = margin;
                     break;
-                case RIGHT:
-                    if (endSide == LEFT)
+                case Right:
+                    if (endSide == Left)
                     {
                         constraint.layout.rightToLeft = endID;
                         constraint.layout.rightToRight = Layout.UNSET;
 
                     }
-                    else if (endSide == RIGHT)
+                    else if (endSide == Right)
                     {
                         constraint.layout.rightToRight = endID;
                         constraint.layout.rightToLeft = Layout.UNSET;
@@ -625,8 +624,8 @@ namespace SharpConstraintLayout.Maui.Widget
                     }
                     constraint.layout.rightMargin = margin;
                     break;
-                case TOP:
-                    if (endSide == TOP)
+                case Top:
+                    if (endSide == Top)
                     {
                         constraint.layout.topToTop = endID;
                         constraint.layout.topToBottom = Layout.UNSET;
@@ -634,7 +633,7 @@ namespace SharpConstraintLayout.Maui.Widget
                         constraint.layout.baselineToTop = Layout.UNSET;
                         constraint.layout.baselineToBottom = Layout.UNSET;
                     }
-                    else if (endSide == BOTTOM)
+                    else if (endSide == Bottom)
                     {
                         constraint.layout.topToBottom = endID;
                         constraint.layout.topToTop = Layout.UNSET;
@@ -648,8 +647,8 @@ namespace SharpConstraintLayout.Maui.Widget
                     }
                     constraint.layout.topMargin = margin;
                     break;
-                case BOTTOM:
-                    if (endSide == BOTTOM)
+                case Bottom:
+                    if (endSide == Bottom)
                     {
                         constraint.layout.bottomToBottom = endID;
                         constraint.layout.bottomToTop = Layout.UNSET;
@@ -657,7 +656,7 @@ namespace SharpConstraintLayout.Maui.Widget
                         constraint.layout.baselineToTop = Layout.UNSET;
                         constraint.layout.baselineToBottom = Layout.UNSET;
                     }
-                    else if (endSide == TOP)
+                    else if (endSide == Top)
                     {
                         constraint.layout.bottomToTop = endID;
                         constraint.layout.bottomToBottom = Layout.UNSET;
@@ -671,8 +670,8 @@ namespace SharpConstraintLayout.Maui.Widget
                     }
                     constraint.layout.bottomMargin = margin;
                     break;
-                case BASELINE:
-                    if (endSide == BASELINE)
+                case Baseline:
+                    if (endSide == Baseline)
                     {
                         constraint.layout.baselineToBaseline = endID;
                         constraint.layout.bottomToBottom = Layout.UNSET;
@@ -680,7 +679,7 @@ namespace SharpConstraintLayout.Maui.Widget
                         constraint.layout.topToTop = Layout.UNSET;
                         constraint.layout.topToBottom = Layout.UNSET;
                     }
-                    else if (endSide == TOP)
+                    else if (endSide == Top)
                     {
                         constraint.layout.baselineToTop = endID;
                         constraint.layout.bottomToBottom = Layout.UNSET;
@@ -688,7 +687,7 @@ namespace SharpConstraintLayout.Maui.Widget
                         constraint.layout.topToTop = Layout.UNSET;
                         constraint.layout.topToBottom = Layout.UNSET;
                     }
-                    else if (endSide == BOTTOM)
+                    else if (endSide == Bottom)
                     {
                         constraint.layout.baselineToBottom = endID;
                         constraint.layout.bottomToBottom = Layout.UNSET;
@@ -701,13 +700,13 @@ namespace SharpConstraintLayout.Maui.Widget
                         throw new System.ArgumentException("right to " + sideToString(endSide) + " undefined");
                     }
                     break;
-                case START:
-                    if (endSide == START)
+                case Start:
+                    if (endSide == Start)
                     {
                         constraint.layout.startToStart = endID;
                         constraint.layout.startToEnd = Layout.UNSET;
                     }
-                    else if (endSide == END)
+                    else if (endSide == End)
                     {
                         constraint.layout.startToEnd = endID;
                         constraint.layout.startToStart = Layout.UNSET;
@@ -718,13 +717,13 @@ namespace SharpConstraintLayout.Maui.Widget
                     }
                     constraint.layout.startMargin = margin;
                     break;
-                case END:
-                    if (endSide == END)
+                case End:
+                    if (endSide == End)
                     {
                         constraint.layout.endToEnd = endID;
                         constraint.layout.endToStart = Layout.UNSET;
                     }
-                    else if (endSide == START)
+                    else if (endSide == Start)
                     {
                         constraint.layout.endToStart = endID;
                         constraint.layout.endToEnd = Layout.UNSET;
@@ -761,13 +760,13 @@ namespace SharpConstraintLayout.Maui.Widget
             }
             switch (startSide)
             {
-                case LEFT:
-                    if (endSide == LEFT)
+                case Left:
+                    if (endSide == Left)
                     {
                         constraint.layout.leftToLeft = endID;
                         constraint.layout.leftToRight = Layout.UNSET;
                     }
-                    else if (endSide == RIGHT)
+                    else if (endSide == Right)
                     {
                         constraint.layout.leftToRight = endID;
                         constraint.layout.leftToLeft = Layout.UNSET;
@@ -777,14 +776,14 @@ namespace SharpConstraintLayout.Maui.Widget
                         throw new System.ArgumentException("left to " + sideToString(endSide) + " undefined");
                     }
                     break;
-                case RIGHT:
-                    if (endSide == LEFT)
+                case Right:
+                    if (endSide == Left)
                     {
                         constraint.layout.rightToLeft = endID;
                         constraint.layout.rightToRight = Layout.UNSET;
 
                     }
-                    else if (endSide == RIGHT)
+                    else if (endSide == Right)
                     {
                         constraint.layout.rightToRight = endID;
                         constraint.layout.rightToLeft = Layout.UNSET;
@@ -794,8 +793,8 @@ namespace SharpConstraintLayout.Maui.Widget
                         throw new System.ArgumentException("right to " + sideToString(endSide) + " undefined");
                     }
                     break;
-                case TOP:
-                    if (endSide == TOP)
+                case Top:
+                    if (endSide == Top)
                     {
                         constraint.layout.topToTop = endID;
                         constraint.layout.topToBottom = Layout.UNSET;
@@ -803,7 +802,7 @@ namespace SharpConstraintLayout.Maui.Widget
                         constraint.layout.baselineToTop = Layout.UNSET;
                         constraint.layout.baselineToBottom = Layout.UNSET;
                     }
-                    else if (endSide == BOTTOM)
+                    else if (endSide == Bottom)
                     {
                         constraint.layout.topToBottom = endID;
                         constraint.layout.topToTop = Layout.UNSET;
@@ -816,8 +815,8 @@ namespace SharpConstraintLayout.Maui.Widget
                         throw new System.ArgumentException("right to " + sideToString(endSide) + " undefined");
                     }
                     break;
-                case BOTTOM:
-                    if (endSide == BOTTOM)
+                case Bottom:
+                    if (endSide == Bottom)
                     {
                         constraint.layout.bottomToBottom = endID;
                         constraint.layout.bottomToTop = Layout.UNSET;
@@ -825,7 +824,7 @@ namespace SharpConstraintLayout.Maui.Widget
                         constraint.layout.baselineToTop = Layout.UNSET;
                         constraint.layout.baselineToBottom = Layout.UNSET;
                     }
-                    else if (endSide == TOP)
+                    else if (endSide == Top)
                     {
                         constraint.layout.bottomToTop = endID;
                         constraint.layout.bottomToBottom = Layout.UNSET;
@@ -838,8 +837,8 @@ namespace SharpConstraintLayout.Maui.Widget
                         throw new System.ArgumentException("right to " + sideToString(endSide) + " undefined");
                     }
                     break;
-                case BASELINE:
-                    if (endSide == BASELINE)
+                case Baseline:
+                    if (endSide == Baseline)
                     {
                         constraint.layout.baselineToBaseline = endID;
                         constraint.layout.bottomToBottom = Layout.UNSET;
@@ -847,7 +846,7 @@ namespace SharpConstraintLayout.Maui.Widget
                         constraint.layout.topToTop = Layout.UNSET;
                         constraint.layout.topToBottom = Layout.UNSET;
                     }
-                    else if (endSide == TOP)
+                    else if (endSide == Top)
                     {
                         constraint.layout.baselineToTop = endID;
                         constraint.layout.bottomToBottom = Layout.UNSET;
@@ -855,7 +854,7 @@ namespace SharpConstraintLayout.Maui.Widget
                         constraint.layout.topToTop = Layout.UNSET;
                         constraint.layout.topToBottom = Layout.UNSET;
                     }
-                    else if (endSide == BOTTOM)
+                    else if (endSide == Bottom)
                     {
                         constraint.layout.baselineToBottom = endID;
                         constraint.layout.bottomToBottom = Layout.UNSET;
@@ -868,13 +867,13 @@ namespace SharpConstraintLayout.Maui.Widget
                         throw new System.ArgumentException("right to " + sideToString(endSide) + " undefined");
                     }
                     break;
-                case START:
-                    if (endSide == START)
+                case Start:
+                    if (endSide == Start)
                     {
                         constraint.layout.startToStart = endID;
                         constraint.layout.startToEnd = Layout.UNSET;
                     }
-                    else if (endSide == END)
+                    else if (endSide == End)
                     {
                         constraint.layout.startToEnd = endID;
                         constraint.layout.startToStart = Layout.UNSET;
@@ -884,13 +883,13 @@ namespace SharpConstraintLayout.Maui.Widget
                         throw new System.ArgumentException("right to " + sideToString(endSide) + " undefined");
                     }
                     break;
-                case END:
-                    if (endSide == END)
+                case End:
+                    if (endSide == End)
                     {
                         constraint.layout.endToEnd = endID;
                         constraint.layout.endToStart = Layout.UNSET;
                     }
-                    else if (endSide == START)
+                    else if (endSide == Start)
                     {
                         constraint.layout.endToStart = endID;
                         constraint.layout.endToEnd = Layout.UNSET;
@@ -912,13 +911,13 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <param name="toView"> ID of view to center on (or in) </param>
         public virtual void CenterHorizontally(int viewId, int toView)
         {
-            if (toView == PARENT_ID)
+            if (toView == ParentId)
             {
-                Center(viewId, PARENT_ID, ConstraintSet.LEFT, 0, PARENT_ID, ConstraintSet.RIGHT, 0, 0.5f);
+                Center(viewId, ParentId, ConstraintSet.Left, 0, ParentId, ConstraintSet.Right, 0, 0.5f);
             }
             else
             {
-                Center(viewId, toView, ConstraintSet.RIGHT, 0, toView, ConstraintSet.LEFT, 0, 0.5f);
+                Center(viewId, toView, ConstraintSet.Right, 0, toView, ConstraintSet.Left, 0, 0.5f);
             }
         }
 
@@ -929,13 +928,13 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <param name="toView"> ID of view to center on (or in) </param>
         public virtual void CenterHorizontallyRtl(int viewId, int toView)
         {
-            if (toView == PARENT_ID)
+            if (toView == ParentId)
             {
-                Center(viewId, PARENT_ID, ConstraintSet.START, 0, PARENT_ID, ConstraintSet.END, 0, 0.5f);
+                Center(viewId, ParentId, ConstraintSet.Start, 0, ParentId, ConstraintSet.End, 0, 0.5f);
             }
             else
             {
-                Center(viewId, toView, ConstraintSet.END, 0, toView, ConstraintSet.START, 0, 0.5f);
+                Center(viewId, toView, ConstraintSet.End, 0, toView, ConstraintSet.Start, 0, 0.5f);
             }
         }
 
@@ -946,13 +945,13 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <param name="toView"> ID of view to center on (or in) </param>
         public virtual void CenterVertically(int viewId, int toView)
         {
-            if (toView == PARENT_ID)
+            if (toView == ParentId)
             {
-                Center(viewId, PARENT_ID, ConstraintSet.TOP, 0, PARENT_ID, ConstraintSet.BOTTOM, 0, 0.5f);
+                Center(viewId, ParentId, ConstraintSet.Top, 0, ParentId, ConstraintSet.Bottom, 0, 0.5f);
             }
             else
             {
-                Center(viewId, toView, ConstraintSet.BOTTOM, 0, toView, ConstraintSet.TOP, 0, 0.5f);
+                Center(viewId, toView, ConstraintSet.Bottom, 0, toView, ConstraintSet.Top, 0, 0.5f);
             }
         }
 
@@ -972,50 +971,50 @@ namespace SharpConstraintLayout.Maui.Widget
                 }
                 switch (anchor)
                 {
-                    case LEFT:
+                    case Left:
                         constraint.layout.leftToRight = Layout.UNSET;
                         constraint.layout.leftToLeft = Layout.UNSET;
                         constraint.layout.leftMargin = Layout.UNSET;
                         constraint.layout.goneLeftMargin = Layout.UNSET_GONE_MARGIN;
                         break;
-                    case RIGHT:
+                    case Right:
                         constraint.layout.rightToRight = Layout.UNSET;
                         constraint.layout.rightToLeft = Layout.UNSET;
                         constraint.layout.rightMargin = Layout.UNSET;
                         constraint.layout.goneRightMargin = Layout.UNSET_GONE_MARGIN;
                         break;
-                    case TOP:
+                    case Top:
                         constraint.layout.topToBottom = Layout.UNSET;
                         constraint.layout.topToTop = Layout.UNSET;
                         constraint.layout.topMargin = 0;
                         constraint.layout.goneTopMargin = Layout.UNSET_GONE_MARGIN;
                         break;
-                    case BOTTOM:
+                    case Bottom:
                         constraint.layout.bottomToTop = Layout.UNSET;
                         constraint.layout.bottomToBottom = Layout.UNSET;
                         constraint.layout.bottomMargin = 0;
                         constraint.layout.goneBottomMargin = Layout.UNSET_GONE_MARGIN;
                         break;
-                    case BASELINE:
+                    case Baseline:
                         constraint.layout.baselineToBaseline = Layout.UNSET;
                         constraint.layout.baselineToTop = Layout.UNSET;
                         constraint.layout.baselineToBottom = Layout.UNSET;
                         constraint.layout.baselineMargin = 0;
                         constraint.layout.goneBaselineMargin = Layout.UNSET_GONE_MARGIN;
                         break;
-                    case START:
+                    case Start:
                         constraint.layout.startToEnd = Layout.UNSET;
                         constraint.layout.startToStart = Layout.UNSET;
                         constraint.layout.startMargin = 0;
                         constraint.layout.goneStartMargin = Layout.UNSET_GONE_MARGIN;
                         break;
-                    case END:
+                    case End:
                         constraint.layout.endToStart = Layout.UNSET;
                         constraint.layout.endToEnd = Layout.UNSET;
                         constraint.layout.endMargin = 0;
                         constraint.layout.goneEndMargin = Layout.UNSET_GONE_MARGIN;
                         break;
-                    case CIRCLE_REFERENCE:
+                    case CircleReference:
                         constraint.layout.circleAngle = Layout.UNSET;
                         constraint.layout.circleRadius = Layout.UNSET;
                         constraint.layout.circleConstraint = Layout.UNSET;
@@ -1037,25 +1036,25 @@ namespace SharpConstraintLayout.Maui.Widget
             Constraint constraint = get(viewId);
             switch (anchor)
             {
-                case LEFT:
+                case Left:
                     constraint.layout.leftMargin = value;
                     break;
-                case RIGHT:
+                case Right:
                     constraint.layout.rightMargin = value;
                     break;
-                case TOP:
+                case Top:
                     constraint.layout.topMargin = value;
                     break;
-                case BOTTOM:
+                case Bottom:
                     constraint.layout.bottomMargin = value;
                     break;
-                case BASELINE:
+                case Baseline:
                     constraint.layout.baselineMargin = value;
                     break;
-                case START:
+                case Start:
                     constraint.layout.startMargin = value;
                     break;
-                case END:
+                case End:
                     constraint.layout.endMargin = value;
                     break;
                 default:
@@ -1074,25 +1073,25 @@ namespace SharpConstraintLayout.Maui.Widget
             Constraint constraint = get(viewId);
             switch (anchor)
             {
-                case LEFT:
+                case Left:
                     constraint.layout.goneLeftMargin = value;
                     break;
-                case RIGHT:
+                case Right:
                     constraint.layout.goneRightMargin = value;
                     break;
-                case TOP:
+                case Top:
                     constraint.layout.goneTopMargin = value;
                     break;
-                case BOTTOM:
+                case Bottom:
                     constraint.layout.goneBottomMargin = value;
                     break;
-                case BASELINE:
+                case Baseline:
                     constraint.layout.goneBaselineMargin = value;
                     break;
-                case START:
+                case Start:
                     constraint.layout.goneStartMargin = value;
                     break;
-                case END:
+                case End:
                     constraint.layout.goneEndMargin = value;
                     break;
                 default:
@@ -1132,7 +1131,7 @@ namespace SharpConstraintLayout.Maui.Widget
         }
 
         /// <summary>
-        /// Adjust the visibility of a view.<see cref="GONE"/> or <see cref="INVISIBLE"/> or <see cref="VISIBLE"/>
+        /// Adjust the visibility of a view.<see cref="Gone"/> or <see cref="Invisible"/> or <see cref="Visible"/>
         /// </summary>
         /// <param name="viewId">     ID of view to adjust the vertical </param>
         /// <param name="visibility"> the visibility </param>
@@ -1142,7 +1141,7 @@ namespace SharpConstraintLayout.Maui.Widget
         }
 
         /// <summary>
-        /// ConstraintSet will not setVisibility. <seealso cref="VISIBILITY_MODE_IGNORE"/> or <see cref="VISIBILITY_MODE_NORMAL"/>
+        /// ConstraintSet will not setVisibility. <seealso cref="VisibilityModeIgnore"/> or <see cref="VisibilityModeNormal"/>
         /// </summary>
         /// <param name="viewId">         ID of view </param>
         /// <param name="visibilityMode"> </param>
@@ -1152,7 +1151,7 @@ namespace SharpConstraintLayout.Maui.Widget
         }
 
         /// <summary>
-        /// ConstraintSet will not setVisibility. <seealso cref="VISIBILITY_MODE_IGNORE"/> or <see cref="VISIBILITY_MODE_NORMAL"/>
+        /// ConstraintSet will not setVisibility. <seealso cref="VisibilityModeIgnore"/> or <see cref="VisibilityModeNormal"/>
         /// </summary>
         /// <param name="viewId"> ID of view </param>
         public virtual int GetVisibilityMode(int viewId)
@@ -1161,7 +1160,7 @@ namespace SharpConstraintLayout.Maui.Widget
         }
 
         /// <summary>
-        /// Get the visibility flag set in this view.<see cref="GONE"/> or <see cref="INVISIBLE"/> or <see cref="VISIBLE"/>
+        /// Get the visibility flag set in this view.<see cref="Gone"/> or <see cref="Invisible"/> or <see cref="Visible"/>
         /// </summary>
         /// <param name="viewId"> the id of the view </param>
         /// <returns> the visibility constraint for the view </returns>
@@ -1172,7 +1171,7 @@ namespace SharpConstraintLayout.Maui.Widget
 
         /// <summary>
         /// Get the height set in the view.
-        /// It can be number, or <see cref="MATCH_CONSTRAINT"/>,or <see cref="MATCH_PARENT"/>,or <see cref="WRAP_CONTENT"/>
+        /// It can be number, or <see cref="MatchConstraint"/>,or <see cref="MatchParent"/>,or <see cref="WrapContent"/>
         /// </summary>
         /// <param name="viewId"> the id of the view </param>
         /// <returns> return the height constraint of the view </returns>
@@ -1183,7 +1182,7 @@ namespace SharpConstraintLayout.Maui.Widget
 
         /// <summary>
         /// Get the width set in the view.
-        /// It can be number, or <see cref="MATCH_CONSTRAINT"/>,or <see cref="MATCH_PARENT"/>,or <see cref="WRAP_CONTENT"/>
+        /// It can be number, or <see cref="MatchConstraint"/>,or <see cref="MatchParent"/>,or <see cref="WrapContent"/>
         /// </summary>
         /// <param name="viewId"> the id of the view </param>
         /// <returns> return the width constraint of the view </returns>
@@ -1402,7 +1401,7 @@ namespace SharpConstraintLayout.Maui.Widget
         }
 
         /// <summary>
-        /// Sets the height of the view. It can be a dimension, <seealso cref="WRAP_CONTENT"/> or <see cref="MATCH_CONSTRAINT"/>
+        /// Sets the height of the view. It can be a dimension, <seealso cref="WrapContent"/> or <see cref="MatchConstraint"/>
         /// </summary>
         /// <param name="viewId"> ID of view to adjust its height </param>
         /// <param name="height"> the height of the view
@@ -1413,7 +1412,7 @@ namespace SharpConstraintLayout.Maui.Widget
         }
 
         /// <summary>
-        /// Sets the width of the view. It can be a dimension, <seealso cref="#WRAP_CONTENT"/> or <seealso cref="WRAP_CONTENT"/> or <see cref="MATCH_CONSTRAINT"/>
+        /// Sets the width of the view. It can be a dimension, <seealso cref="#WRAP_CONTENT"/> or <seealso cref="WrapContent"/> or <see cref="MatchConstraint"/>
         /// </summary>
         /// <param name="viewId"> ID of view to adjust its width </param>
         /// <param name="width">  the width of the view
@@ -1441,7 +1440,7 @@ namespace SharpConstraintLayout.Maui.Widget
 
         /// <summary>
         /// Sets the maximum height of the view. It is a dimension, It is only applicable if height is
-        /// <see cref="MATCH_CONSTRAINT"/>.
+        /// <see cref="MatchConstraint"/>.
         /// </summary>
         /// <param name="viewId"> ID of view to adjust it height </param>
         /// <param name="height"> the maximum height of the constraint
@@ -1453,7 +1452,7 @@ namespace SharpConstraintLayout.Maui.Widget
 
         /// <summary>
         /// Sets the maximum width of the view. It is a dimension, It is only applicable if width is
-        /// <see cref="MATCH_CONSTRAINT"/>.
+        /// <see cref="MatchConstraint"/>.
         /// </summary>
         /// <param name="viewId"> ID of view to adjust its max height </param>
         /// <param name="width">  the maximum width of the view
@@ -1465,7 +1464,7 @@ namespace SharpConstraintLayout.Maui.Widget
 
         /// <summary>
         /// Sets the height of the view. It is a dimension, It is only applicable if height is
-        /// <see cref="MATCH_CONSTRAINT"/>.
+        /// <see cref="MatchConstraint"/>.
         /// </summary>
         /// <param name="viewId"> ID of view to adjust its min height </param>
         /// <param name="height"> the minimum height of the view
@@ -1477,7 +1476,7 @@ namespace SharpConstraintLayout.Maui.Widget
 
         /// <summary>
         /// Sets the width of the view.  It is a dimension, It is only applicable if width is
-        /// <see cref="MATCH_CONSTRAINT"/>.
+        /// <see cref="MatchConstraint"/>.
         /// </summary>
         /// <param name="viewId"> ID of view to adjust its min height </param>
         /// <param name="width">  the minimum width of the view
@@ -1510,7 +1509,7 @@ namespace SharpConstraintLayout.Maui.Widget
         }
 
         /// <summary>
-        /// Sets how the height is calculated ether <see cref="MATCH_CONSTRAINT_WRAP"/> or <see cref="MATCH_CONSTRAINT_SPREAD"/>.
+        /// Sets how the height is calculated ether <see cref="MatchConstraintWrap"/> or <see cref="MatchConstraintSpread"/>.
         /// Default is spread.
         /// </summary>
         /// <param name="viewId"> ID of view to adjust its matchConstraintDefaultHeight </param>
@@ -1522,7 +1521,7 @@ namespace SharpConstraintLayout.Maui.Widget
         }
 
         /// <summary>
-        /// Sets how the width is calculated ether <see cref="MATCH_CONSTRAINT_WRAP"/> or <see cref="MATCH_CONSTRAINT_SPREAD"/>.
+        /// Sets how the width is calculated ether <see cref="MatchConstraintWrap"/> or <see cref="MatchConstraintSpread"/>.
         /// Default is spread.
         /// </summary>
         /// <param name="viewId">      ID of view to adjust its matchConstraintDefaultWidth </param>
@@ -1534,7 +1533,7 @@ namespace SharpConstraintLayout.Maui.Widget
         }
 
         /// <summary>
-        /// Sets how the height is calculated ether <see cref="MATCH_CONSTRAINT_WRAP"/> or <see cref="MATCH_CONSTRAINT_SPREAD"/>.
+        /// Sets how the height is calculated ether <see cref="MatchConstraintWrap"/> or <see cref="MatchConstraintSpread"/>.
         /// Default is spread.
         /// </summary>
         /// <param name="viewId">      ID of view to adjust its matchConstraintDefaultHeight </param>
@@ -1546,7 +1545,7 @@ namespace SharpConstraintLayout.Maui.Widget
         }
 
         /// <summary>
-        /// Sets how the width is calculated ether <see cref="MATCH_CONSTRAINT_WRAP"/> or <see cref="MATCH_CONSTRAINT_SPREAD"/>.
+        /// Sets how the width is calculated ether <see cref="MatchConstraintWrap"/> or <see cref="MatchConstraintSpread"/>.
         /// Default is spread.
         /// </summary>
         /// <param name="viewId"> ID of view to adjust its matchConstraintDefaultWidth </param>
@@ -1559,7 +1558,7 @@ namespace SharpConstraintLayout.Maui.Widget
 
         /// <summary>
         /// The child's weight that we can use to distribute the available horizontal space
-        /// in a chain, if the dimension behaviour is set to <see cref="MATCH_CONSTRAINT"/>
+        /// in a chain, if the dimension behaviour is set to <see cref="MatchConstraint"/>
         /// </summary>
         /// <param name="viewId"> ID of view to adjust its HorizontalWeight </param>
         /// <param name="weight"> the weight that we can use to distribute the horizontal space </param>
@@ -1570,7 +1569,7 @@ namespace SharpConstraintLayout.Maui.Widget
 
         /// <summary>
         /// The child's weight that we can use to distribute the available vertical space
-        /// in a chain, if the dimension behaviour is set to <see cref="MATCH_CONSTRAINT"/>T
+        /// in a chain, if the dimension behaviour is set to <see cref="MatchConstraint"/>T
         /// </summary>
         /// <param name="viewId"> ID of view to adjust its VerticalWeight </param>
         /// <param name="weight"> the weight that we can use to distribute the vertical space </param>
@@ -1581,12 +1580,12 @@ namespace SharpConstraintLayout.Maui.Widget
 
         /// <summary>
         /// How the elements of the horizontal chain will be positioned. if the dimension
-        /// behaviour is set to <see cref="MATCH_CONSTRAINT"/>. The possible values are:
+        /// behaviour is set to <see cref="MatchConstraint"/>. The possible values are:
         /// <br/>
-        /// <seealso cref="CHAIN_SPREAD"/> -- the elements will be spread out<br/>
-        /// <seealso cref="CHAIN_SPREAD_INSIDE"/> -- similar, but the endpoints of the chain will not
+        /// <seealso cref="ChainSpread"/> -- the elements will be spread out<br/>
+        /// <seealso cref="ChainSpreadInside"/> -- similar, but the endpoints of the chain will not
         /// be spread out <br/>
-        /// <seealso cref="CHAIN_PACKED"/> -- the elements of the chain will be packed together. The
+        /// <seealso cref="ChainPacked"/> -- the elements of the chain will be packed together. The
         /// horizontal bias attribute of the child will then affect the positioning of the packed
         /// elements<br/>
         /// </summary>
@@ -1601,10 +1600,10 @@ namespace SharpConstraintLayout.Maui.Widget
         /// How the elements of the vertical chain will be positioned. in a chain, if the dimension
         /// behaviour is set to MATCH_CONSTRAINT
         /// <br/>
-        /// <seealso cref="CHAIN_SPREAD"/> -- the elements will be spread out<br/>
-        /// <seealso cref="CHAIN_SPREAD_INSIDE"/> -- similar, but the endpoints of the chain will not
+        /// <seealso cref="ChainSpread"/> -- the elements will be spread out<br/>
+        /// <seealso cref="ChainSpreadInside"/> -- similar, but the endpoints of the chain will not
         /// be spread out<br/>
-        /// <seealso cref="CHAIN_PACKED"/> -- the elements of the chain will be packed together. The
+        /// <seealso cref="ChainPacked"/> -- the elements of the chain will be packed together. The
         /// vertical bias attribute of the child will then affect the positioning of the packed
         /// elements<br/>
         /// </summary>
@@ -1623,15 +1622,15 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <param name="rightId"> view in chain to the right </param>
         public virtual void AddToHorizontalChain(int viewId, int leftId, int rightId)
         {
-            Connect(viewId, LEFT, leftId, (leftId == PARENT_ID) ? LEFT : RIGHT, 0);
-            Connect(viewId, RIGHT, rightId, (rightId == PARENT_ID) ? RIGHT : LEFT, 0);
-            if (leftId != PARENT_ID)
+            Connect(viewId, Left, leftId, (leftId == ParentId) ? Left : Right, 0);
+            Connect(viewId, Right, rightId, (rightId == ParentId) ? Right : Left, 0);
+            if (leftId != ParentId)
             {
-                Connect(leftId, RIGHT, viewId, LEFT, 0);
+                Connect(leftId, Right, viewId, Left, 0);
             }
-            if (rightId != PARENT_ID)
+            if (rightId != ParentId)
             {
-                Connect(rightId, LEFT, viewId, RIGHT, 0);
+                Connect(rightId, Left, viewId, Right, 0);
             }
         }
 
@@ -1643,15 +1642,15 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <param name="rightId"> view to the end side </param>
         public virtual void AddToHorizontalChainRTL(int viewId, int leftId, int rightId)
         {
-            Connect(viewId, START, leftId, (leftId == PARENT_ID) ? START : END, 0);
-            Connect(viewId, END, rightId, (rightId == PARENT_ID) ? END : START, 0);
-            if (leftId != PARENT_ID)
+            Connect(viewId, Start, leftId, (leftId == ParentId) ? Start : End, 0);
+            Connect(viewId, End, rightId, (rightId == ParentId) ? End : Start, 0);
+            if (leftId != ParentId)
             {
-                Connect(leftId, END, viewId, START, 0);
+                Connect(leftId, End, viewId, Start, 0);
             }
-            if (rightId != PARENT_ID)
+            if (rightId != ParentId)
             {
-                Connect(rightId, START, viewId, END, 0);
+                Connect(rightId, Start, viewId, End, 0);
             }
         }
 
@@ -1663,15 +1662,15 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <param name="bottomId"> view below </param>
         public virtual void AddToVerticalChain(int viewId, int topId, int bottomId)
         {
-            Connect(viewId, TOP, topId, (topId == PARENT_ID) ? TOP : BOTTOM, 0);
-            Connect(viewId, BOTTOM, bottomId, (bottomId == PARENT_ID) ? BOTTOM : TOP, 0);
-            if (topId != PARENT_ID)
+            Connect(viewId, Top, topId, (topId == ParentId) ? Top : Bottom, 0);
+            Connect(viewId, Bottom, bottomId, (bottomId == ParentId) ? Bottom : Top, 0);
+            if (topId != ParentId)
             {
-                Connect(topId, BOTTOM, viewId, TOP, 0);
+                Connect(topId, Bottom, viewId, Top, 0);
             }
-            if (bottomId != PARENT_ID)
+            if (bottomId != ParentId)
             {
-                Connect(bottomId, TOP, viewId, BOTTOM, 0);
+                Connect(bottomId, Top, viewId, Bottom, 0);
             }
         }
 
@@ -1697,23 +1696,23 @@ namespace SharpConstraintLayout.Maui.Widget
                     if (topId != Layout.UNSET && bottomId != Layout.UNSET)
                     {
                         // top and bottom connected to views
-                        Connect(topId, BOTTOM, bottomId, TOP, 0);
-                        Connect(bottomId, TOP, topId, BOTTOM, 0);
+                        Connect(topId, Bottom, bottomId, Top, 0);
+                        Connect(bottomId, Top, topId, Bottom, 0);
                     }
                     else if (constraint.layout.bottomToBottom != Layout.UNSET)
                     {
                         // top connected to view. Bottom connected to parent
-                        Connect(topId, BOTTOM, constraint.layout.bottomToBottom, BOTTOM, 0);
+                        Connect(topId, Bottom, constraint.layout.bottomToBottom, Bottom, 0);
                     }
                     else if (constraint.layout.topToTop != Layout.UNSET)
                     {
                         // bottom connected to view. Top connected to parent
-                        Connect(bottomId, TOP, constraint.layout.topToTop, TOP, 0);
+                        Connect(bottomId, Top, constraint.layout.topToTop, Top, 0);
                     }
                 }
             }
-            Clear(viewId, TOP);
-            Clear(viewId, BOTTOM);
+            Clear(viewId, Top);
+            Clear(viewId, Bottom);
         }
 
         /// <summary>
@@ -1738,21 +1737,21 @@ namespace SharpConstraintLayout.Maui.Widget
                     if (leftId != Layout.UNSET && rightId != Layout.UNSET)
                     {
                         // left and right connected to views
-                        Connect(leftId, RIGHT, rightId, LEFT, 0);
-                        Connect(rightId, LEFT, leftId, RIGHT, 0);
+                        Connect(leftId, Right, rightId, Left, 0);
+                        Connect(rightId, Left, leftId, Right, 0);
                     }
                     else if (constraint.layout.rightToRight != Layout.UNSET)
                     {
                         // left connected to view. right connected to parent
-                        Connect(leftId, RIGHT, constraint.layout.rightToRight, RIGHT, 0);
+                        Connect(leftId, Right, constraint.layout.rightToRight, Right, 0);
                     }
                     else if (constraint.layout.leftToLeft != Layout.UNSET)
                     {
                         // right connected to view. left connected to parent
-                        Connect(rightId, LEFT, constraint.layout.leftToLeft, LEFT, 0);
+                        Connect(rightId, Left, constraint.layout.leftToLeft, Left, 0);
                     }
-                    Clear(viewId, LEFT);
-                    Clear(viewId, RIGHT);
+                    Clear(viewId, Left);
+                    Clear(viewId, Right);
                 }
                 else
                 {
@@ -1764,25 +1763,25 @@ namespace SharpConstraintLayout.Maui.Widget
                         if (startId != Layout.UNSET && endId != Layout.UNSET)
                         {
                             // start and end connected to views
-                            Connect(startId, END, endId, START, 0);
-                            Connect(endId, START, leftId, END, 0);
+                            Connect(startId, End, endId, Start, 0);
+                            Connect(endId, Start, leftId, End, 0);
                         }
                         else if (endId != Layout.UNSET)
                         {
                             if (constraint.layout.rightToRight != Layout.UNSET)
                             {
                                 // left connected to view. right connected to parent
-                                Connect(leftId, END, constraint.layout.rightToRight, END, 0);
+                                Connect(leftId, End, constraint.layout.rightToRight, End, 0);
                             }
                             else if (constraint.layout.leftToLeft != Layout.UNSET)
                             {
                                 // right connected to view. left connected to parent
-                                Connect(endId, START, constraint.layout.leftToLeft, START, 0);
+                                Connect(endId, Start, constraint.layout.leftToLeft, Start, 0);
                             }
                         }
                     }
-                    Clear(viewId, START);
-                    Clear(viewId, END);
+                    Clear(viewId, Start);
+                    Clear(viewId, End);
                 }
             }
         }
@@ -1905,19 +1904,19 @@ namespace SharpConstraintLayout.Maui.Widget
         {
             switch (side)
             {
-                case LEFT:
+                case Left:
                     return "left";
-                case RIGHT:
+                case Right:
                     return "right";
-                case TOP:
+                case Top:
                     return "top";
-                case BOTTOM:
+                case Bottom:
                     return "bottom";
-                case BASELINE:
+                case Baseline:
                     return "baseline";
-                case START:
+                case Start:
                     return "start";
-                case END:
+                case End:
                     return "end";
             }
             return "undefined";

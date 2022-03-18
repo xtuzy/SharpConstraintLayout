@@ -62,7 +62,7 @@ namespace SharpConstraintLayout.Maui.Widget
     ///     </pre>
     /// </para>
     /// </summary>
-    public abstract partial class ConstraintHelper : View
+    public abstract partial class ConstraintHelper : View,IConstraintHelper
     {
         bool InEditMode = false;
 
@@ -124,17 +124,14 @@ namespace SharpConstraintLayout.Maui.Widget
             base.OnAttachedToWindow();
         }
 #endif
-        public virtual void OnAttachedToWindow()
-        {
-
-        }
+        public virtual void OnAttachedToWindow() { }
 
         /// <summary>
         /// Add a view to the helper. The referenced view need to be a child of the helper's parent.
         /// The view also need to have its id set in order to be added.
         /// </summary>
         /// <param name="view"> </param>
-        public virtual void addView(View view)
+        public virtual void AddView(View view)
         {
 
             if (view == this)
@@ -166,7 +163,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// </summary>
         /// <param name="view"> </param>
         /// <returns> index of view removed </returns>
-        public virtual int removeView(View view)
+        public virtual int RemoveView(View view)
         {
             int index = -1;
             //int id = view.Id;
@@ -261,7 +258,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// @suppress
         /// Allows a helper to replace the default ConstraintWidget in LayoutParams by its own subclass
         /// </summary>
-        public virtual void validateParams(Dictionary<int, ConstraintWidget> idsToConstraintWidgets = null)
+        public virtual void ValidateParams(Dictionary<int, ConstraintWidget> idsToConstraintWidgets = null)
         {
             if (mHelperWidget == null)
             {
@@ -403,7 +400,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// Allows a helper a chance to update its internal object pre layout or set up connections for the pointed elements
         /// </summary>
         /// <param name="container"> </param>
-        public virtual void updatePreLayout(ConstraintLayout container)
+        public virtual void UpdatePreLayout(ConstraintLayout container)
         {
             /*if (InEditMode)
             {
@@ -439,7 +436,7 @@ namespace SharpConstraintLayout.Maui.Widget
             mHelperWidget.updateConstraints(container.RootWidget);
         }
 
-        public virtual void updatePreLayout(ConstraintWidgetContainer container, Helper helper, Dictionary<int, ConstraintWidget> map)
+        public virtual void UpdatePreLayout(ConstraintWidgetContainer container, Helper helper, Dictionary<int, ConstraintWidget> map)
         {
             helper.removeAllIds();
             for (int i = 0; i < mCount; i++)
@@ -471,28 +468,28 @@ namespace SharpConstraintLayout.Maui.Widget
         /// Allows a helper a chance to update its internal object post layout or set up connections for the pointed elements
         /// </summary>
         /// <param name="container"> </param>
-        public virtual void updatePostLayout(ConstraintLayout container)
+        public virtual void UpdatePostLayout(ConstraintLayout container)
         {
             // Do nothing
         }
 
-        public virtual void updatePostMeasure(ConstraintLayout container)
+        public virtual void UpdatePostMeasure(ConstraintLayout container)
         {
             // Do nothing
         }
 
-        public virtual void updatePostConstraints(ConstraintLayout container)
+        public virtual void UpdatePostConstraints(ConstraintLayout container)
         {
             // Do nothing
         }
 
-        public virtual void updatePreDraw(ConstraintLayout container)
+        public virtual void UpdatePreDraw(ConstraintLayout container)
         {
             // Do nothing
         }
 
         //public virtual void loadParameters(ConstraintSet.Constraint constraint, HelperWidget child, ConstraintLayout.LayoutParams layoutParams, SparseArray<ConstraintWidget> mapIdToWidget)
-        public virtual void loadParameters(ConstraintSet.Constraint constraint, HelperWidget child, Dictionary<int, ConstraintWidget> mapIdToWidget)
+        public virtual void LoadParameters(ConstraintSet.Constraint constraint, HelperWidget child, Dictionary<int, ConstraintWidget> mapIdToWidget)
         {
             // TODO: we need to rethink this -- the list of referenced views shouldn't be resolved at updatePreLayout stage,
             // as this makes changing referenced views tricky at runtime
@@ -529,7 +526,7 @@ namespace SharpConstraintLayout.Maui.Widget
             }
         }
 
-        public virtual void resolveRtl(ConstraintWidget widget, bool isRtl)
+        public virtual void ResolveRtl(ConstraintWidget widget, bool isRtl)
         {
             // nothing here
         }
@@ -544,7 +541,7 @@ namespace SharpConstraintLayout.Maui.Widget
         }*/
 
         //ORIGINAL LINE: public boolean containsId(final int id)
-        public virtual bool containsId(int id)
+        public virtual bool ContainsId(int id)
         {
             bool result = false;
             foreach (int i in mIds)
@@ -559,7 +556,7 @@ namespace SharpConstraintLayout.Maui.Widget
         }
 
         //ORIGINAL LINE: public int indexFromId(final int id)
-        public virtual int indexFromId(int id)
+        public virtual int IndexFromId(int id)
         {
             int index = -1;
             foreach (int i in mIds)
@@ -576,9 +573,9 @@ namespace SharpConstraintLayout.Maui.Widget
         public static void SetPlatformVisibility(UIElement element, int ConstraintSetVisible)
         {
 #if WINDOWS
-            if (ConstraintSetVisible == ConstraintSet.INVISIBLE)
+            if (ConstraintSetVisible == ConstraintSet.Invisible)
                 element.Opacity = 0;//https://stackoverflow.com/questions/28097153/workaround-for-visibilty-hidden-state-windows-phone-8-1-app-development
-            else if (ConstraintSetVisible == ConstraintSet.VISIBLE)
+            else if (ConstraintSetVisible == ConstraintSet.Visible)
             {
                 element.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
                 if (element.Opacity == 0)
@@ -589,9 +586,9 @@ namespace SharpConstraintLayout.Maui.Widget
                 element.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;//GONE
             }
 #elif __IOS__
-            if (ConstraintSetVisible == ConstraintSet.INVISIBLE)
+            if (ConstraintSetVisible == ConstraintSet.Invisible)
                 element.Hidden = true;
-            else if (ConstraintSetVisible == ConstraintSet.VISIBLE)
+            else if (ConstraintSetVisible == ConstraintSet.Visible)
                 element.Hidden = false;
             else//Gone
             {

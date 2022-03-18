@@ -120,28 +120,28 @@ namespace SharpConstraintLayout.Maui.Widget
             /// If the child is the start of a horizontal chain, this attribute will drive how
             /// the elements of the chain will be positioned. The possible values are:
             /// <ul>
-            /// <li><seealso cref="CHAIN_SPREAD"/> -- the elements will be spread out</li>
-            /// <li><seealso cref="CHAIN_SPREAD_INSIDE"/> -- similar, but the endpoints of the chain will not
+            /// <li><seealso cref="ChainSpread"/> -- the elements will be spread out</li>
+            /// <li><seealso cref="ChainSpreadInside"/> -- similar, but the endpoints of the chain will not
             /// be spread out</li>
-            /// <li><seealso cref="CHAIN_PACKED"/> -- the elements of the chain will be packed together. The
+            /// <li><seealso cref="ChainPacked"/> -- the elements of the chain will be packed together. The
             /// horizontal bias attribute of the child will then affect the positioning of the packed
             /// elements</li>
             /// </ul>
             /// </summary>
-            public int horizontalChainStyle = CHAIN_SPREAD;
+            public int horizontalChainStyle = ChainSpread;
             /// <summary>
             /// If the child is the start of a vertical chain, this attribute will drive how
             /// the elements of the chain will be positioned. The possible values are:
             /// <ul>
-            /// <li><seealso cref="CHAIN_SPREAD"/> -- the elements will be spread out</li>
-            /// <li><seealso cref="CHAIN_SPREAD_INSIDE"/> -- similar, but the endpoints of the chain will not
+            /// <li><seealso cref="ChainSpread"/> -- the elements will be spread out</li>
+            /// <li><seealso cref="ChainSpreadInside"/> -- similar, but the endpoints of the chain will not
             /// be spread out</li>
-            /// <li><seealso cref="CHAIN_PACKED"/> -- the elements of the chain will be packed together. The
+            /// <li><seealso cref="ChainPacked"/> -- the elements of the chain will be packed together. The
             /// vertical bias attribute of the child will then affect the positioning of the packed
             /// elements</li>
             /// </ul>
             /// </summary>
-            public int verticalChainStyle = CHAIN_SPREAD;
+            public int verticalChainStyle = ChainSpread;
 
 
             /// <summary>
@@ -468,43 +468,43 @@ namespace SharpConstraintLayout.Maui.Widget
 
                 ///////////////////////////////////////////////////////////////////////////////////////////
 
-                if (mWidth == WRAP_CONTENT && constrainedWidth)
+                if (mWidth == WrapContent && constrainedWidth)
                 {
                     horizontalDimensionFixed = false;
-                    if (matchConstraintDefaultWidth == MATCH_CONSTRAINT_SPREAD)
+                    if (matchConstraintDefaultWidth == MatchConstraintSpread)
                     {
-                        matchConstraintDefaultWidth = MATCH_CONSTRAINT_WRAP;
+                        matchConstraintDefaultWidth = MatchConstraintWrap;
                     }
                 }
-                if (mHeight == WRAP_CONTENT && constrainedHeight)
+                if (mHeight == WrapContent && constrainedHeight)
                 {
                     verticalDimensionFixed = false;
-                    if (matchConstraintDefaultHeight == MATCH_CONSTRAINT_SPREAD)
+                    if (matchConstraintDefaultHeight == MatchConstraintSpread)
                     {
-                        matchConstraintDefaultHeight = MATCH_CONSTRAINT_WRAP;
+                        matchConstraintDefaultHeight = MatchConstraintWrap;
                     }
                 }
-                if (mWidth == MATCH_CONSTRAINT || mWidth == MATCH_PARENT)
+                if (mWidth == MatchConstraint || mWidth == MatchParent)
                 {
                     horizontalDimensionFixed = false;
                     // We have to reset LayoutParams width/height to WRAP_CONTENT here, as some widgets like TextView
                     // will use the layout params directly as a hint to know if they need to request a layout
                     // when their content change (e.g. during setTextView)
-                    if (mWidth == MATCH_CONSTRAINT && matchConstraintDefaultWidth == MATCH_CONSTRAINT_WRAP)
+                    if (mWidth == MatchConstraint && matchConstraintDefaultWidth == MatchConstraintWrap)
                     {
-                        mWidth = WRAP_CONTENT;
+                        mWidth = WrapContent;
                         constrainedWidth = true;
                     }
                 }
-                if (mHeight == MATCH_CONSTRAINT || mHeight == MATCH_PARENT)
+                if (mHeight == MatchConstraint || mHeight == MatchParent)
                 {
                     verticalDimensionFixed = false;
                     // We have to reset LayoutParams width/height to WRAP_CONTENT here, as some widgets like TextView
                     // will use the layout params directly as a hint to know if they need to request a layout
                     // when their content change (e.g. during setTextView)
-                    if (mHeight == MATCH_CONSTRAINT && matchConstraintDefaultHeight == MATCH_CONSTRAINT_WRAP)
+                    if (mHeight == MatchConstraint && matchConstraintDefaultHeight == MatchConstraintWrap)
                     {
-                        mHeight = WRAP_CONTENT;
+                        mHeight = WrapContent;
                         constrainedHeight = true;
                     }
                 }

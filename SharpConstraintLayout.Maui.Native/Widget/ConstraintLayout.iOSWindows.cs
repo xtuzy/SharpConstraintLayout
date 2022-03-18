@@ -45,9 +45,9 @@ namespace SharpConstraintLayout.Maui.Widget
     /// <summary>
     /// ConstraintLayout is a AndroidX layout form google. Now you can use it at iOS and WinUI, that means you can reuse some layout code.<br/>
     /// 
-    /// Notice the size of ConstraintLayout need be set by its parent. Such as add a ConstraintLayout to UIView and constrainted size is <see cref="ConstraintSet.MATCH_PARENT"/>, if you not set <code>AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight</code>
+    /// Notice the size of ConstraintLayout need be set by its parent. Such as add a ConstraintLayout to UIView and constrainted size is <see cref="ConstraintSet.MatchParent"/>, if you not set <code>AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight</code>
     /// ,when you rotate screen, maybe constraintlayout's width and height is not correct.<br/>
-    /// Another, not set <see cref="ConstraintSet.MATCH_PARENT"/> when Parent can have infinity size, such as StackPanel can have infinity height at WinUI, if you set ConstraintLayout is <see cref="ConstraintSet.MATCH_PARENT"/>, it will throw exception or get false size.
+    /// Another, not set <see cref="ConstraintSet.MatchParent"/> when Parent can have infinity size, such as StackPanel can have infinity height at WinUI, if you set ConstraintLayout is <see cref="ConstraintSet.MatchParent"/>, it will throw exception or get false size.
     /// </summary>
     public class ConstraintLayout : Panel
     {
@@ -75,7 +75,7 @@ namespace SharpConstraintLayout.Maui.Widget
             //ConstraintSet.Constraints.Add(ConstraintSet.PARENT_ID, new ConstraintSet.Constraint());//对于Layout,都用ParentID代替GetHashCode,这是因为Layout可以在ApplyTo时替换
             //这里换种思路,不管是ParentId还是HashCode对应的应该都是同一个约束,修改也是同一个
             var rootConstraint = new ConstraintSet.Constraint();
-            mConstraintSet.Constraints.Add(ConstraintSet.PARENT_ID, rootConstraint);
+            mConstraintSet.Constraints.Add(ConstraintSet.ParentId, rootConstraint);
             mConstraintSet.Constraints.Add(this.GetHashCode(), rootConstraint);
 
             mLayout.Measurer = new MeasurerAnonymousInnerClass(this);
@@ -165,7 +165,7 @@ namespace SharpConstraintLayout.Maui.Widget
             if (element is ConstraintHelper)//ConstraintHelper also have default widget
             {
                 ConstraintHelper helper = (ConstraintHelper)element;
-                helper.validateParams(idsToConstraintWidgets);//其中会替换widget类型
+                helper.ValidateParams(idsToConstraintWidgets);//其中会替换widget类型
                 if (!mConstraintHelpers.Contains(helper))
                 {
                     mConstraintHelpers.Add(helper);
@@ -191,7 +191,7 @@ namespace SharpConstraintLayout.Maui.Widget
 
         private ConstraintWidget CreateOrGetWidgetAndAddToLayout(int id)
         {
-            if (id == this.GetHashCode() || id == ConstraintSet.PARENT_ID)
+            if (id == this.GetHashCode() || id == ConstraintSet.ParentId)
             {
                 return RootWidget;
             }
@@ -207,93 +207,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 }
             }
         }
-#if WPF
-        bool isInfinity = false;
-        protected override Size MeasureOverride(Size availableSize)
-        {
-            //更新约束到widget
-            if (updateHierarchy())
-            {
-                RootWidget.updateHierarchy();
-            }
-            //first measure all child size,we need know some default size.
-            foreach (UIElement child in Children)
-            {
-                var widget = GetWidget(child);
-                //匹配约束的先不测量,因为没有固定的值
-                if (widget.HorizontalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT
-                    && widget.VerticalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT)
-                    continue;
-                //if(!IsMeasureValid)
-                child.Measure(availableSize);
-            }
 
-            //we have know some view default size, so we can calculate other view size that they should be.
-            if (double.IsPositiveInfinity(availableSize.Width))
-            {
-                mLayout.Width = int.MaxValue;
-                isInfinity = true;
-            }
-            else
-            {
-                mLayout.Width = (int)availableSize.Width;
-            }
-
-            if (double.IsPositiveInfinity(availableSize.Height))
-            {
-                mLayout.Height = int.MaxValue;
-                isInfinity = true;
-            }
-            else
-            {
-                mLayout.Height = (int)availableSize.Height;
-            }
-            mLayout.OptimizationLevel = mOptimizationLevel;
-            mLayout.layout();
-            mLayout.measure(mOptimizationLevel, BasicMeasure.EXACTLY, mLayout.Width, BasicMeasure.EXACTLY, mLayout.Height, 0, 0, 0, 0);
-            double w;
-            double h; 
-            //now we know all view corrected size in constaint, so give it to child,let them to caculate their child.
-            foreach (UIElement child in Children)
-            {
-
-                var widget = GetWidget(child);
-
-                if (widget.HorizontalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT
-                    || widget.VerticalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT)
-                {
-                    if (widget.HorizontalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.WRAP_CONTENT)
-                        //newMeasureSize.Width = (int)child.DesiredSize.Width;
-                        w = availableSize.Width;
-                    else
-                        w = widget.Width;
-                    if (widget.VerticalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.WRAP_CONTENT)
-                        //newMeasureSize.Height = (int)child.DesiredSize.Height;
-                        h = availableSize.Height;
-                    else
-                        h = widget.Height;
-                    child.Measure(new Size(w, h));
-                }
-                if (DEBUG)
-                    Debug.WriteLine($"{(child as FrameworkElement).Tag as string},Size {widget.Width},{widget.Height} ,Baseline {widget.BaselineDistance} ");
-            }
-
-            //return availableSize;
-            //自身的位置绘制由父控件决定,所以这里要传的正确.
-            //如果自身是要Match_Parent,而父控件传进来MaxValue,那么应该传回MaxValue?
-            //如果自身是Match_Parent,而父控件能传来特定值,那么直接传回特定值
-            //如果自身是Warp_Content和Match_Constraint,那么应该能从子控件约束中计算出特定值传回
-            /*if(mLayout.HorizontalDimensionBehaviour==ConstraintWidget.DimensionBehaviour.MATCH_PARENT&&double.IsInfinity(availableSize.Width))
-                w= 0;
-            else*/
-            w = mLayout.Width;
-            /*if(mLayout.VerticalDimensionBehaviour==ConstraintWidget.DimensionBehaviour.MATCH_PARENT&&double.IsInfinity(availableSize.Height))
-                h= 0;
-            else*/
-            h = mLayout.Height;
-            return new Size(w, h);
-        }
-#elif WINDOWS || __IOS__
         bool isInfinityAvailabelSize = false;
 #if WINDOWS
         protected override Size MeasureOverride(Size availableSize)
@@ -402,42 +316,9 @@ namespace SharpConstraintLayout.Maui.Widget
 #endif
             return new Size(RootWidget.Width, RootWidget.Height);
         }
-#endif
 
-#if WPF
-        protected override Size ArrangeOverride(Size finalSize)
-        {
-            if (DEBUG)
-                Debug.WriteLine($"{this.Tag as string},finalSize {finalSize}, DesiredSize {this.DesiredSize}");
 
-            //recalculate?,because when constraintlayout size be define by parent,it size need parent to arrange
-            //such as it as child of listview,listview will send double.infinity to measure,if you set listview's content to strenth,
-            //you need get that size at Arrage. 
-            if (isInfinity && finalSize.Width != 0 && finalSize.Height != 0)//only when parent give me measure size is size isInfinity and finalSize can use(not 0),we recalculate layout.
-            {
-                if (DEBUG)
-                    Debug.WriteLine($"{this.Tag as string} Re layout");
-                mLayout.Width = (int)finalSize.Width;
-                mLayout.Height = (int)finalSize.Height;
-                mLayout.layout();
-                mLayout.OptimizationLevel = Optimizer.OPTIMIZATION_STANDARD;
-                mLayout.measure(Optimizer.OPTIMIZATION_STANDARD, BasicMeasure.EXACTLY, (int)finalSize.Width, BasicMeasure.EXACTLY, (int)finalSize.Height, 0, 0, 0, 0);
-                //isInfinity = false;//Wpf's ArrangeOverride can be load mutiple times, not by measure.
-            }
-
-            //layout child
-            foreach (ConstraintWidget child in mLayout.Children)
-            {
-                UIElement component = (UIElement)child.CompanionWidget;
-                if (component != null)
-                {
-                    component.Arrange(new Rect(child.X, child.Y, child.Width, child.Height));
-                }
-            }
-
-            return finalSize;
-        }
-#elif WINDOWS
+#if WINDOWS
         protected override Size ArrangeOverride(Size finalSize)
         {
             if (DEBUG) Debug.WriteLine($"{nameof(ArrangeOverride)} {this} {finalSize}");
@@ -457,7 +338,7 @@ namespace SharpConstraintLayout.Maui.Widget
             {
                 UIElement component = (UIElement)child.CompanionWidget;
 
-                if (child.Visibility == GONE && !(component is Guideline) && !(component is ConstraintHelper) && !(component is VirtualLayout))
+                if (child.Visibility == Gone && !(component is Guideline) && !(component is ConstraintHelper) && !(component is VirtualLayout))
                 {
                     // If we are in edit mode, let's layout the widget so that they are at "the right place"
                     // visually in the editor (as we get our positions from layoutlib)
@@ -522,7 +403,7 @@ namespace SharpConstraintLayout.Maui.Widget
             {
                 UIElement component = (UIElement)child.CompanionWidget;
 
-                if (child.Visibility == GONE && !(component is Guideline) && !(component is ConstraintHelper) && !(component is VirtualLayout)) {
+                if (child.Visibility == Gone && !(component is Guideline) && !(component is ConstraintHelper) && !(component is VirtualLayout)) {
                     // If we are in edit mode, let's layout the widget so that they are at "the right place"
                     // visually in the editor (as we get our positions from layoutlib)
                     continue;
@@ -624,7 +505,7 @@ namespace SharpConstraintLayout.Maui.Widget
                     UIElement child = (UIElement)outerInstance.Children[i];
                     if (child is Placeholder)
                     {
-                        ((Placeholder)child).updatePostMeasure(outerInstance);
+                        ((Placeholder)child).UpdatePostMeasure(outerInstance);
                     }
                 }
                 // TODO refactor into an updatePostMeasure interface
@@ -635,7 +516,7 @@ namespace SharpConstraintLayout.Maui.Widget
                     for (int i = 0; i < helperCount; i++)
                     {
                         ConstraintHelper helper = outerInstance.mConstraintHelpers[i];
-                        helper.updatePostMeasure(outerInstance);
+                        helper.UpdatePostMeasure(outerInstance);
                     }
                 }
             }
@@ -651,7 +532,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 {
                     return;
                 }
-                if (widget.Visibility == GONE && !widget.InPlaceholder)
+                if (widget.Visibility == Gone && !widget.InPlaceholder)
                 {
                     measure.measuredWidth = 0;
                     measure.measuredHeight = 0;
@@ -708,7 +589,7 @@ namespace SharpConstraintLayout.Maui.Widget
                     case ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT:
                         {
                             horizontalSpec = layoutWidthSpec;
-                            bool shouldDoWrap = widget.mMatchConstraintDefaultWidth == MATCH_CONSTRAINT_WRAP;
+                            bool shouldDoWrap = widget.mMatchConstraintDefaultWidth == MatchConstraintWrap;
                             if (measure.measureStrategy == BasicMeasure.Measure.TRY_GIVEN_DIMENSIONS || measure.measureStrategy == BasicMeasure.Measure.USE_GIVEN_DIMENSIONS)
                             {
                                 // the solver gives us our new dimension, but if we previously had it measured with
@@ -751,7 +632,7 @@ namespace SharpConstraintLayout.Maui.Widget
                     case ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT:
                         {
                             verticalSpec = layoutHeightSpec - heightPadding;
-                            bool shouldDoWrap = widget.mMatchConstraintDefaultHeight == MATCH_CONSTRAINT_WRAP;
+                            bool shouldDoWrap = widget.mMatchConstraintDefaultHeight == MatchConstraintWrap;
                             if (measure.measureStrategy == BasicMeasure.Measure.TRY_GIVEN_DIMENSIONS || measure.measureStrategy == BasicMeasure.Measure.USE_GIVEN_DIMENSIONS)
                             {
                                 // the solver gives us our new dimension, but if we previously had it measured with
@@ -813,13 +694,13 @@ namespace SharpConstraintLayout.Maui.Widget
                 int height = 0;
                 int baseline = 0;
 
-                if ((measure.measureStrategy == BasicMeasure.Measure.TRY_GIVEN_DIMENSIONS || measure.measureStrategy == BasicMeasure.Measure.USE_GIVEN_DIMENSIONS) || !(horizontalMatchConstraints && widget.mMatchConstraintDefaultWidth == MATCH_CONSTRAINT_SPREAD && verticalMatchConstraints && widget.mMatchConstraintDefaultHeight == MATCH_CONSTRAINT_SPREAD))
+                if ((measure.measureStrategy == BasicMeasure.Measure.TRY_GIVEN_DIMENSIONS || measure.measureStrategy == BasicMeasure.Measure.USE_GIVEN_DIMENSIONS) || !(horizontalMatchConstraints && widget.mMatchConstraintDefaultWidth == MatchConstraintSpread && verticalMatchConstraints && widget.mMatchConstraintDefaultHeight == MatchConstraintSpread))
                 {
 
                     if (child is VirtualLayout && widget is androidx.constraintlayout.core.widgets.VirtualLayout)
                     {
                         androidx.constraintlayout.core.widgets.VirtualLayout layout = (androidx.constraintlayout.core.widgets.VirtualLayout)widget;
-                        ((VirtualLayout)child).onMeasure(layout, horizontalSpec, verticalSpec);
+                        ((VirtualLayout)child).OnMeasure(layout, horizontalSpec, verticalSpec);
                     }
                     else
                     {
@@ -1149,7 +1030,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 for (int i = 0; i < helperCount; i++)
                 {
                     ConstraintHelper helper = mConstraintHelpers[i];
-                    helper.updatePreLayout(this);//可以整理一下数据
+                    helper.UpdatePreLayout(this);//可以整理一下数据
                 }
             }
 
@@ -1159,12 +1040,12 @@ namespace SharpConstraintLayout.Maui.Widget
                 UIElement child = Children[i];
                 if (child is Placeholder)
                 {
-                    ((Placeholder)child).updatePreLayout(this);
+                    ((Placeholder)child).UpdatePreLayout(this);
                 }
             }
 
             mTempMapIdToWidget.Clear();
-            mTempMapIdToWidget.Add(ConstraintSet.PARENT_ID, RootWidget);
+            mTempMapIdToWidget.Add(ConstraintSet.ParentId, RootWidget);
             mTempMapIdToWidget.Add(this.GetHashCode(), RootWidget);
             for (int i = 0; i < count; i++)//添加widgets到临时字典
             {
@@ -1209,14 +1090,14 @@ namespace SharpConstraintLayout.Maui.Widget
             if (layoutParams.layout.isInPlaceholder)
             {
                 widget.InPlaceholder = true;
-                widget.Visibility = ConstraintSet.GONE;
+                widget.Visibility = ConstraintSet.Gone;
             }
             widget.CompanionWidget = child;
 
             if (child is ConstraintHelper)
             {
                 ConstraintHelper helper = (ConstraintHelper)child;
-                helper.resolveRtl(widget, RootWidget.Rtl);
+                helper.ResolveRtl(widget, RootWidget.Rtl);
             }
 
             if (layoutParams.layout.mIsGuideline)
@@ -1407,7 +1288,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 // FIXME: need to agree on the correct magic value for this rather than simply using zero.
                 if (!layoutParams.layout.horizontalDimensionFixed)//Match_Parent和Match_Constraint是不固定
                 {
-                    if (layoutParams.layout.mWidth == ConstraintSet.MATCH_PARENT)
+                    if (layoutParams.layout.mWidth == ConstraintSet.MatchParent)
                     {
                         if (layoutParams.layout.constrainedWidth)
                         {
@@ -1430,14 +1311,14 @@ namespace SharpConstraintLayout.Maui.Widget
                 {
                     widget.HorizontalDimensionBehaviour = ConstraintWidget.DimensionBehaviour.FIXED;
                     widget.Width = layoutParams.layout.mWidth;
-                    if (layoutParams.layout.mWidth == WRAP_CONTENT)
+                    if (layoutParams.layout.mWidth == WrapContent)
                     {
                         widget.HorizontalDimensionBehaviour = ConstraintWidget.DimensionBehaviour.WRAP_CONTENT;
                     }
                 }
                 if (!layoutParams.layout.verticalDimensionFixed)
                 {
-                    if (layoutParams.layout.mHeight == ConstraintSet.MATCH_PARENT)
+                    if (layoutParams.layout.mHeight == ConstraintSet.MatchParent)
                     {
                         if (layoutParams.layout.constrainedHeight)
                         {
@@ -1460,7 +1341,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 {
                     widget.VerticalDimensionBehaviour = ConstraintWidget.DimensionBehaviour.FIXED;
                     widget.Height = layoutParams.layout.mHeight;
-                    if (layoutParams.layout.mHeight == WRAP_CONTENT)
+                    if (layoutParams.layout.mHeight == WrapContent)
                     {
                         widget.VerticalDimensionBehaviour = ConstraintWidget.DimensionBehaviour.WRAP_CONTENT;
                     }

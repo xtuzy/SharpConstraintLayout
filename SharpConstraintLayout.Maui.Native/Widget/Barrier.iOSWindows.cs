@@ -83,7 +83,7 @@ namespace SharpConstraintLayout.Maui.Widget
     /// </p>
     /// 
     /// </summary>
-    public class Barrier : ConstraintHelper
+    public class Barrier : ConstraintHelper, IBarrier
     {
 
         /// <summary>
@@ -109,12 +109,12 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <summary>
         /// Start direction constant
         /// </summary>
-        public static readonly int START = BOTTOM + 2;
+        public static readonly int Start = BOTTOM + 2;
 
         /// <summary>
         /// End Barrier constant
         /// </summary>
-        public static readonly int END = START + 1;
+        public static readonly int End = Start + 1;
 
         private int mIndicatedType;
         private int mResolvedType;
@@ -122,7 +122,7 @@ namespace SharpConstraintLayout.Maui.Widget
 
         public Barrier() : base()
         {
-            Visible = ConstraintSet.GONE;
+            Visible = ConstraintSet.Gone;
         }
 
         /// <summary>
@@ -150,11 +150,11 @@ namespace SharpConstraintLayout.Maui.Widget
             {
                 // Pre JB MR1, left/right should take precedence, unless they are
                 // not defined and somehow a corresponding start/end constraint exists
-                if (mIndicatedType == START)
+                if (mIndicatedType == Start)
                 {
                     mResolvedType = LEFT;
                 }
-                else if (mIndicatedType == END)
+                else if (mIndicatedType == End)
                 {
                     mResolvedType = RIGHT;
                 }
@@ -164,22 +164,22 @@ namespace SharpConstraintLayout.Maui.Widget
                 // Post JB MR1, if start/end are defined, they take precedence over left/right
                 if (isRtl)
                 {
-                    if (mIndicatedType == START)
+                    if (mIndicatedType == Start)
                     {
                         mResolvedType = RIGHT;
                     }
-                    else if (mIndicatedType == END)
+                    else if (mIndicatedType == End)
                     {
                         mResolvedType = LEFT;
                     }
                 }
                 else
                 {
-                    if (mIndicatedType == START)
+                    if (mIndicatedType == Start)
                     {
                         mResolvedType = LEFT;
                     }
-                    else if (mIndicatedType == END)
+                    else if (mIndicatedType == End)
                     {
                         mResolvedType = RIGHT;
                     }
@@ -187,12 +187,12 @@ namespace SharpConstraintLayout.Maui.Widget
             }
             if (widget is androidx.constraintlayout.core.widgets.Barrier)
             {
-                androidx.constraintlayout.core.widgets.Barrier barrier = (androidx.constraintlayout.core.widgets.Barrier) widget;
+                androidx.constraintlayout.core.widgets.Barrier barrier = (androidx.constraintlayout.core.widgets.Barrier)widget;
                 barrier.BarrierType = mResolvedType;
             }
         }
 
-        public override void resolveRtl(ConstraintWidget widget, bool isRtl)
+        public override void ResolveRtl(ConstraintWidget widget, bool isRtl)
         {
             updateType(widget, mIndicatedType, isRtl);
         }
@@ -201,9 +201,9 @@ namespace SharpConstraintLayout.Maui.Widget
         {
             base.init();
             mBarrier = new androidx.constraintlayout.core.widgets.Barrier();
-            
+
             mHelperWidget = mBarrier;
-            validateParams();
+            ValidateParams();
         }
 
         public virtual bool AllowsGoneWidget
@@ -219,40 +219,22 @@ namespace SharpConstraintLayout.Maui.Widget
         }
 
         /// <summary>
-        /// Find if this barrier supports gone widgets.
-        /// </summary>
-        /// <returns> true if this barrier supports gone widgets, otherwise false
-        /// </returns>
-        /// @deprecated This method should be called {@code getAllowsGoneWidget} such that {@code allowsGoneWidget} 
-        /// can be accessed as a property from Kotlin; {<seealso cref= https://android.github.io/kotlin-guides/interop.html#property-prefixes}.
-        /// Use <seealso cref="#getAllowsGoneWidget()"/> instead. </seealso>
-        [Obsolete("This method should be called {@code getAllowsGoneWidget} such that {@code allowsGoneWidget}")]
-        public virtual bool allowsGoneWidget()
-        {
-            return mBarrier.AllowsGoneWidget;
-        }
-
-
-        /// <summary>
         /// Set a margin on the barrier
         /// </summary>
         /// <param name="margin"> in dp </param>
-        public virtual int DpMargin
+        public virtual void SetDpMargin(int margin)
         {
-            set
-            {
-                //float density = Resources.DisplayMetrics.density;
-                float density = (float)Microsoft.Maui.Essentials.DeviceDisplay.MainDisplayInfo.Density;
-                int px = (int)(0.5f + value * density);
-                mBarrier.Margin = px;
-            }
+            //float density = Resources.DisplayMetrics.density;
+            float density = (float)Microsoft.Maui.Essentials.DeviceDisplay.MainDisplayInfo.Density;
+            int px = (int)(0.5f + margin * density);
+            mBarrier.Margin = px;
         }
 
         /// <summary>
         /// Returns the barrier margin
         /// </summary>
         /// <returns> the barrier margin (in pixels) </returns>
-        public virtual int Margin
+        public new virtual int Margin
         {
             get
             {
@@ -264,13 +246,13 @@ namespace SharpConstraintLayout.Maui.Widget
             }
         }
 
-        public override void loadParameters(ConstraintSet.Constraint constraint, HelperWidget child,Dictionary<int,ConstraintWidget> mapIdToWidget)
+        public override void LoadParameters(ConstraintSet.Constraint constraint, HelperWidget child, Dictionary<int, ConstraintWidget> mapIdToWidget)
         {
-            base.loadParameters(constraint, child, mapIdToWidget);
+            base.LoadParameters(constraint, child, mapIdToWidget);
             if (child is androidx.constraintlayout.core.widgets.Barrier)
             {
-                androidx.constraintlayout.core.widgets.Barrier barrier = (androidx.constraintlayout.core.widgets.Barrier) child;
-                ConstraintWidgetContainer container = (ConstraintWidgetContainer) child.Parent;
+                androidx.constraintlayout.core.widgets.Barrier barrier = (androidx.constraintlayout.core.widgets.Barrier)child;
+                ConstraintWidgetContainer container = (ConstraintWidgetContainer)child.Parent;
                 bool isRtl = container.Rtl;
                 updateType(barrier, constraint.layout.mBarrierDirection, isRtl);
                 barrier.AllowsGoneWidget = constraint.layout.mBarrierAllowsGoneWidgets;
