@@ -65,6 +65,11 @@
     <None Include="**\Windows\**\*.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Remove="Helper\Widget\CircularFlow.cs" />
+    <Compile Remove="Helper\Widget\Flow.cs" />
+    <Compile Remove="Helper\Widget\Layer.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <Folder Include="Helper\Widget\" />
     <Folder Include="Platforms\Android\" />
     <Folder Include="Platforms\iOS\" />

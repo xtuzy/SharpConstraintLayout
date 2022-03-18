@@ -30,7 +30,7 @@ namespace SharpConstraintLayout.Maui.Widget
             public bool mOverride = false;
             public int mWidth;
             public int mHeight;
-            public const int UNSET = ConstraintSet.UNSET;
+            public const int UNSET = ConstraintSet.Unset;
             public static readonly int UNSET_GONE_MARGIN = int.MinValue;
             
             

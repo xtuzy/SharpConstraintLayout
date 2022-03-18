@@ -56,56 +56,10 @@ namespace SharpConstraintLayout.Maui.Widget
             init();
         }
 
-        public static void SetVisibility(UIElement element,int ConstraintSetVisible)
-        {
-#if WINDOWS
-            if (ConstraintSetVisible== ConstraintSet.INVISIBLE)
-                element.Opacity = 0;//https://stackoverflow.com/questions/28097153/workaround-for-visibilty-hidden-state-windows-phone-8-1-app-development
-            else if(ConstraintSetVisible == ConstraintSet.VISIBLE)
-                element.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
-            else
-            {
-                element.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
-            }
-#elif __IOS__
-            if (ConstraintSetVisible == ConstraintSet.INVISIBLE)
-                element.Hidden = true;
-            else if (ConstraintSetVisible == ConstraintSet.VISIBLE)
-                element.Hidden = false;
-            else
-            {
-                //throw new NotImplementedException("iOS没有默认的Visibility = ConstraintSet.Gone");
-                Debug.WriteLine("iOS没有默认的Visibility = ConstraintSet.Gone");
-            }
-#endif
-        }
-
         private void init()
         {
-            SetVisibility(this,mEmptyVisibility);
+            ConstraintHelper.SetPlatformVisibility(this,mEmptyVisibility);
             mContentId = -1;
-            /*if (attrs != null)
-            {
-                TypedArray a = Context.obtainStyledAttributes(attrs, R.styleable.ConstraintLayout_placeholder);
-                //ORIGINAL LINE: final int N = a.getIndexCount();
-                int N = a.IndexCount;
-                for (int i = 0; i < N; i++)
-                {
-                    int attr = a.getIndex(i);
-                    if (attr == R.styleable.ConstraintLayout_placeholder_content)
-                    {
-                        mContentId = a.getResourceId(attr, mContentId);
-                    }
-                    else
-                    {
-                        if (attr == R.styleable.ConstraintLayout_placeholder_placeholder_emptyVisibility)
-                        {
-                            mEmptyVisibility = a.getInt(attr, mEmptyVisibility);
-                        }
-                    }
-                }
-                a.recycle();
-            }*/
         }
 
         /// <summary>
@@ -128,7 +82,7 @@ namespace SharpConstraintLayout.Maui.Widget
 
         /// <summary>
         /// Returns the content view </summary>
-        /// <returns> {@code null} if no content is set, otherwise the content view </returns>
+        /// <returns>return null if no content is set, otherwise the content view </returns>
         public virtual FrameworkElement Content
         {
             get
@@ -170,9 +124,6 @@ namespace SharpConstraintLayout.Maui.Widget
             }
         }*/
 
-        /// <summary>
-        /// @suppress </summary>
-        /// <param name="container"> </param>
         public virtual void updatePreLayout(ConstraintLayout container)
         {
             if (mContentId == -1)
@@ -180,7 +131,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 if (!InEditMode)
                 {
                     //Visibility = (Microsoft.UI.Xaml.Visibility)mEmptyVisibility;
-                    SetVisibility(this,mEmptyVisibility);
+                    ConstraintHelper.SetPlatformVisibility(this,mEmptyVisibility);
                 }
             }
 
@@ -228,7 +179,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 }
 
                 mContentId = value;
-                if (value != ConstraintSet.UNSET)
+                if (value != ConstraintSet.Unset)
                 {
 #if WINDOWS
                     //View v = ((View)Parent).findViewById(value);
@@ -249,9 +200,6 @@ namespace SharpConstraintLayout.Maui.Widget
             }
         }
 
-        /// <summary>
-        /// @suppress </summary>
-        /// <param name="container"> </param>
         public virtual void updatePostMeasure(ConstraintLayout container)
         {
             if (mContent == null)

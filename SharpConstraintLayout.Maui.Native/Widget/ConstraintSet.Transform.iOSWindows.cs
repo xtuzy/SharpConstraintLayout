@@ -33,7 +33,7 @@ namespace SharpConstraintLayout.Maui.Widget
             public float scaleY = 1;
             public float transformPivotX = float.NaN;
             public float transformPivotY = float.NaN;
-            public int transformPivotTarget = UNSET;
+            public int transformPivotTarget = Unset;
             public float translationX = 0;
             public float translationY = 0;
             public float translationZ = 0;

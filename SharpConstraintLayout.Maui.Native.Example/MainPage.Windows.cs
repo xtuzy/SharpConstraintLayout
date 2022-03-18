@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 using Windows.UI;
 namespace SharpConstraintLayout.Maui.Native.Example
 {
-    public class MainPage : ConstraintLayout
+    public partial class MainPage : ConstraintLayout
     {
         private Button FirstButton;
 
@@ -28,32 +28,19 @@ namespace SharpConstraintLayout.Maui.Native.Example
 
         public MainPage()
         {
+            createControls();
             this.Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.HotPink);
 
-            layout = new ConstraintLayout()
-            {
-                Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.Black)
-            };
-            var guide = new Guideline()
-            {
-                //GuidelinePercent = 0.3f,
-                Orientation = ConstraintSet.VERTICAL,
-                GuidelineBegin = 200,
-            };
-            this.AddView(layout);
-            this.AddView(guide);
+            //controlsTest(this);
+            //baselineTest(this);
+            //guidelineTest(this);
+            //barrierTest(this);
+            visibilityTest(this);
+        }
 
-            var pageSet = new ConstraintSet();
-            pageSet.Clone(this);
-
-            pageSet.Connect(layout.GetId(),ConstraintSet.LEFT,guide.GetId(),ConstraintSet.RIGHT);
-            pageSet.Connect(layout.GetId(), ConstraintSet.RIGHT, this.GetId(), ConstraintSet.RIGHT);
-            pageSet.Connect(layout.GetId(), ConstraintSet.TOP, this.GetId(), ConstraintSet.TOP);
-            pageSet.Connect(layout.GetId(), ConstraintSet.BOTTOM, this.GetId(), ConstraintSet.BOTTOM);
-            pageSet.ConstrainWidth(layout.GetId(), ConstraintSet.MATCH_CONSTRAINT);
-            pageSet.ConstrainHeight(layout.GetId(), ConstraintSet.MATCH_CONSTRAINT);
-            pageSet.ApplyTo(this);
-            
+        
+        private void createControls()
+        {
             FirstButton = new Button()
             {
                 Tag = nameof(FirstButton),
@@ -61,7 +48,6 @@ namespace SharpConstraintLayout.Maui.Native.Example
                 Content = "FirstButton At Center",
                 Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.Red)
             };
-            FirstButton.Click += MainButton_Click;
 
             SecondButton = new Button()
             {
@@ -112,68 +98,9 @@ namespace SharpConstraintLayout.Maui.Native.Example
             paragraph.Inlines.Add(run);
             SixthRichTextBlock.Blocks.Add(paragraph);
 
-            var barrier = new Barrier()
-            {
-                //Type = Barrier.RIGHT,
-                //DpMargin = 10,
-            };
-
-            layout.AddView(FirstButton);
-            layout.AddView(SecondButton);
-            layout.AddView(ThirdCanvas);
-            layout.AddView(FouthTextBlock);
-            layout.AddView(FifthTextBox);
-            layout.AddView(SixthRichTextBlock);
-            layout.AddView(barrier);
-
-            var layoutSet = new ConstraintSet();
-            layoutSet.Clone(layout);
-
-            layoutSet.ConstrainWidth(layout.GetId(), ConstraintSet.MATCH_CONSTRAINT);
-            layoutSet.ConstrainHeight(layout.GetId(), ConstraintSet.MATCH_CONSTRAINT);
-
-            layoutSet.Connect(FirstButton.GetId(), ConstraintSet.LEFT, layout.GetId(), ConstraintSet.LEFT);
-            layoutSet.Connect(FirstButton.GetId(), ConstraintSet.RIGHT, layout.GetId(), ConstraintSet.RIGHT);
-            layoutSet.CenterVertically(FirstButton.GetId(), ConstraintSet.PARENT_ID, ConstraintSet.TOP, 0, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, 0, 0.5f);
-            layoutSet.ConstrainWidth(FirstButton.GetId(), ConstraintSet.WRAP_CONTENT);
-            layoutSet.ConstrainHeight(FirstButton.GetId(), ConstraintSet.WRAP_CONTENT);
-
-            layoutSet.Connect(SecondButton.GetId(), ConstraintSet.RIGHT, FirstButton.GetId(), ConstraintSet.RIGHT);
-            layoutSet.Connect(SecondButton.GetId(), ConstraintSet.TOP, FirstButton.GetId(), ConstraintSet.BOTTOM, 10);
-            layoutSet.ConstrainWidth(SecondButton.GetId(), ConstraintSet.WRAP_CONTENT);
-            layoutSet.ConstrainHeight(SecondButton.GetId(), ConstraintSet.WRAP_CONTENT);
-
-
-            layoutSet.Connect(ThirdCanvas.GetId(), ConstraintSet.LEFT, barrier.GetId(), ConstraintSet.RIGHT, 50);
-            layoutSet.Connect(ThirdCanvas.GetId(), ConstraintSet.RIGHT, layout.GetId(), ConstraintSet.RIGHT, 50);
-            layoutSet.Connect(ThirdCanvas.GetId(), ConstraintSet.TOP, layout.GetId(), ConstraintSet.TOP, 50);
-            layoutSet.Connect(ThirdCanvas.GetId(), ConstraintSet.BOTTOM, layout.GetId(), ConstraintSet.BOTTOM, 50);
-            layoutSet.SetVisibility(ThirdCanvas.GetHashCode(), ConstraintSet.GONE);
-            layoutSet.ConstrainWidth(ThirdCanvas.GetId(), 100);
-            layoutSet.ConstrainHeight(ThirdCanvas.GetId(), ConstraintSet.MATCH_CONSTRAINT);
-
-            layoutSet.Connect(FouthTextBlock.GetId(), ConstraintSet.RIGHT, SecondButton.GetId(), ConstraintSet.RIGHT);
-            layoutSet.Connect(FouthTextBlock.GetId(), ConstraintSet.TOP, SecondButton.GetId(), ConstraintSet.BOTTOM, 10);
-            layoutSet.ConstrainWidth(FouthTextBlock.GetId(), ConstraintSet.WRAP_CONTENT);
-            layoutSet.ConstrainHeight(FouthTextBlock.GetId(), ConstraintSet.WRAP_CONTENT);
-
-            layoutSet.Connect(FifthTextBox.GetId(), ConstraintSet.BOTTOM, FirstButton.GetId(), ConstraintSet.TOP, 50);
-            layoutSet.Connect(FifthTextBox.GetId(), ConstraintSet.LEFT, FirstButton.GetId(), ConstraintSet.LEFT);
-            layoutSet.Connect(FifthTextBox.GetId(), ConstraintSet.RIGHT, FirstButton.GetId(), ConstraintSet.RIGHT);
-            layoutSet.ConstrainWidth(FifthTextBox.GetId(), ConstraintSet.WRAP_CONTENT);
-            layoutSet.ConstrainHeight(FifthTextBox.GetId(), ConstraintSet.WRAP_CONTENT);
-            //barrier.addView(FifthTextBox);
-
-            layoutSet.Connect(SixthRichTextBlock.GetId(), ConstraintSet.RIGHT, FouthTextBlock.GetId(), ConstraintSet.LEFT, 50);
-            layoutSet.Connect(SixthRichTextBlock.GetId(), ConstraintSet.BASELINE, FouthTextBlock.GetId(), ConstraintSet.BASELINE, 50);
-            layoutSet.ConstrainWidth(SixthRichTextBlock.GetId(), ConstraintSet.WRAP_CONTENT);
-            layoutSet.ConstrainHeight(SixthRichTextBlock.GetId(), ConstraintSet.WRAP_CONTENT);
-            
-            layoutSet.CreateBarrier(barrier.GetId(), Barrier.RIGHT, 10, new[] { FifthTextBox.GetId() });
-            
-            layoutSet.ApplyTo(layout);
         }
 
+       
         private void MainButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
             Debug.WriteLine("Hello");

@@ -51,7 +51,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <summary>
         /// Used to indicate a parameter is cleared or not set
         /// </summary>
-        public const int UNSET = -1;
+        public const int Unset = -1;
 
         /// <summary>
         /// Dimension will be controlled by constraints

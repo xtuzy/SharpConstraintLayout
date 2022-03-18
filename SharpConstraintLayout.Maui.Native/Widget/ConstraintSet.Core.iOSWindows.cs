@@ -181,24 +181,24 @@ namespace SharpConstraintLayout.Maui.Widget
 
                     if (view is Guideline)//不像Android一样用户提供指定约束是isGuideline就创建Guideline,必须通过Guideline控件实现
                     {
-                        if (constraint.layout.orientation != UNSET)//如果用户设置了新的orientation
+                        if (constraint.layout.orientation != Unset)//如果用户设置了新的orientation
                         {
                             //Orientation在这里设置的原因是在Measure中当约束update到widget时,其他的widget需要对齐Guideline的widget,如果guideline没有设置orientation,那么widget找不到对应的边的Anchor,因为Guideline需要方向才有正确的Anchor
                             (view as Guideline).Orientation = constraint.layout.orientation;
                         }
                     }
 
-                    /*//if (applyPostLayout)
-                    if (true)
+                    /*if (applyPostLayout)
                     {
                         ConstraintAttribute.setAttributes(view, constraint.mCustomConstraints);
-                    }
-                    view.LayoutParams = param;
+                    }*/
+
                     if (constraint.propertySet.mVisibilityMode == VISIBILITY_MODE_NORMAL)
                     {
-                        view.Visibility = constraint.propertySet.visibility;
+                        //view.Visibility = constraint.propertySet.visibility;
+                        param.propertySet.visibility = constraint.propertySet.visibility;//这里我变成设置constraint
                     }
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1)
+                    /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1)
                     {
                         view.Alpha = constraint.propertySet.alpha;
                         view.Rotation = constraint.transform.rotation;
@@ -549,19 +549,19 @@ namespace SharpConstraintLayout.Maui.Widget
                 get(chainIds[0]).layout.horizontalWeight = weights[0];
             }
             get(chainIds[0]).layout.horizontalChainStyle = style;
-            Connect(chainIds[0], left, leftId, leftSide, UNSET);
+            Connect(chainIds[0], left, leftId, leftSide, Unset);
             for (int i = 1; i < chainIds.Length; i++)
             {
                 int chainId = chainIds[i];
-                Connect(chainIds[i], left, chainIds[i - 1], right, UNSET);
-                Connect(chainIds[i - 1], right, chainIds[i], left, UNSET);
+                Connect(chainIds[i], left, chainIds[i - 1], right, Unset);
+                Connect(chainIds[i - 1], right, chainIds[i], left, Unset);
                 if (weights != null)
                 {
                     get(chainIds[i]).layout.horizontalWeight = weights[i];
                 }
             }
 
-            Connect(chainIds[chainIds.Length - 1], right, rightId, rightSide, UNSET);
+            Connect(chainIds[chainIds.Length - 1], right, rightId, rightSide, Unset);
 
         }
 
@@ -1881,6 +1881,11 @@ namespace SharpConstraintLayout.Maui.Widget
             constraint.layout.mReferenceIds = referenced;
         }
 
+        /// <summary>
+        /// set the barrier type (Barrier.LEFT, Barrier.TOP, Barrier.RIGHT, Barrier.BOTTOM, Barrier.END, Barrier.START)
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="type"></param>
         public virtual void SetBarrierType(int id, int type)
         {
             Constraint constraint = get(id);

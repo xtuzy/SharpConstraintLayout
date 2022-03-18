@@ -41,25 +41,6 @@ namespace SharpConstraintLayout.Maui.Widget
         protected internal  void init()
         {
             base.init();
-            /*if (attrs != null)
-            {
-                TypedArray a = Context.obtainStyledAttributes(attrs, R.styleable.ConstraintLayout_Layout);
-            //ORIGINAL LINE: final int N = a.getIndexCount();
-                int N = a.IndexCount;
-                for (int i = 0; i < N; i++)
-                {
-                    int attr = a.getIndex(i);
-                    if (attr == R.styleable.ConstraintLayout_Layout_android_visibility)
-                    {
-                        mApplyVisibilityOnAttach = true;
-                    }
-                    else if (attr == R.styleable.ConstraintLayout_Layout_android_elevation)
-                    {
-                        mApplyElevationOnAttach = true;
-                    }
-                }
-                a.recycle();
-            }*/
         }
 
         public virtual void onMeasure(androidx.constraintlayout.core.widgets.VirtualLayout layout, int widthMeasureSpec, int heightMeasureSpec)
@@ -99,8 +80,7 @@ namespace SharpConstraintLayout.Maui.Widget
                         {
                             if (mApplyVisibilityOnAttach)
                             {
-                                //view.Visibility = (Visibility)visibility;
-                                Placeholder.SetVisibility(view, visibility);
+                                Visible = visibility;
                             }
 #if __ANDROID__
                             if (mApplyElevationOnAttach)
@@ -124,19 +104,16 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <summary>
         /// @suppress
         /// </summary>
-        public int Visible
+        public override int Visible
         {
             set
             {
-                //base.Visibility = (Visibility)value;
-                Placeholder.SetVisibility(this,value);
-                visible = value;
+                base.Visible= value;
                 applyLayoutFeatures();
             }
 
             get
             {
-                 //return (int)base.Visibility;
                  return visible;
             }
         }

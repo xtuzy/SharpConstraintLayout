@@ -456,15 +456,37 @@ namespace SharpConstraintLayout.Maui.Widget
             foreach (ConstraintWidget child in mLayout.Children)
             {
                 UIElement component = (UIElement)child.CompanionWidget;
+
+                if (child.Visibility == GONE && !(component is Guideline) && !(component is ConstraintHelper) && !(component is VirtualLayout))
+                {
+                    // If we are in edit mode, let's layout the widget so that they are at "the right place"
+                    // visually in the editor (as we get our positions from layoutlib)
+                    continue;
+                }
+
+                if (child.InPlaceholder)
+                {
+                    continue;
+                }
+
                 if (component != null)
                 {
                     if (DEBUG) Debug.WriteLine($"{nameof(ArrangeOverride)} {component} {new Rect(child.X, child.Y, child.Width, child.Height)}");
                     component.Arrange(new Rect(child.X, child.Y, child.Width, child.Height));
                 }
+
+                if (component is Placeholder)
+                {
+                    Placeholder holder = (Placeholder)component;
+                    UIElement content = holder.Content;
+                    if (content != null)
+                    {
+                        content.Visibility = Visibility.Visible;
+                        content.Arrange(new Rect(child.X, child.Y, child.Width, child.Height));
+                    }
+                }
             }
-            /*if (isInfinityAvailabelSize && (RootWidget.HorizontalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.MATCH_PARENT || RootWidget.VerticalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.MATCH_PARENT))
-                return finalSize;
-            else*/
+
             return new Size(RootWidget.Width, RootWidget.Height);//这里必须返回Widget的大小,因为返回值决定了layout的绘制范围?
         }
 
@@ -499,10 +521,31 @@ namespace SharpConstraintLayout.Maui.Widget
             foreach (ConstraintWidget child in mLayout.Children)
             {
                 UIElement component = (UIElement)child.CompanionWidget;
+
+                if (child.Visibility == GONE && !(component is Guideline) && !(component is ConstraintHelper) && !(component is VirtualLayout)) {
+                    // If we are in edit mode, let's layout the widget so that they are at "the right place"
+                    // visually in the editor (as we get our positions from layoutlib)
+                    continue;
+                }
+
+                if (child.InPlaceholder) {
+                    continue;
+                }
+
                 if (component != null) 
                 {
                     if (DEBUG) Debug.WriteLine($"{nameof(LayoutSubviews)} {component} {new CGRect(child.X, child.Y, child.Width, child.Height)}");
                     component.Frame = (new CoreGraphics.CGRect(child.X, child.Y, child.Width, child.Height));
+                }
+
+                if (component is Placeholder) {
+                    Placeholder holder = (Placeholder)component;
+                    UIElement content = holder.Content;
+                    if (content != null)
+                    {
+                        content.Hidden = false; 
+                        content.Frame = (new CoreGraphics.CGRect(child.X, child.Y, child.Width, child.Height));
+                    }
                 }
             }
         }
@@ -1155,15 +1198,14 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <param name="idToWidget">a widget dict for find widget</param>
         protected internal virtual void applyConstraintsFromLayoutParams(bool isInEditMode, UIElement child, ConstraintWidget widget, Constraint layoutParams, Dictionary<int, ConstraintWidget> idToWidget)
         {
-
             //layoutParams.layout.validate();//很奇怪,实在不理解为什么要重置layoutparams再从里面取参数
             layoutParams.layout.helped = false;
-            /*#if WINDOWS
-                        widget.Visibility = (child.Visibility == Visibility.Visible?ConstraintSet.VISIBLE:(child.Opacity==0? ConstraintSet.INVISIBLE:ConstraintSet.GONE));
-#elif __IOS__
-            widget.Visibility = (child.Hidden == true ? ConstraintSet.INVISIBLE: child.Opacity == 0?ConstraintSet.GONE: ConstraintSet.VISIBLE);
-#endif*/
+            
             widget.Visibility = layoutParams.propertySet.visibility;//这里我设置为从constraints中取,涉及布局的都交给constraints
+            
+            //这里我添加对View的可见性设置,因为不知道为什么widget在Windows上设置不了Invisible
+            ConstraintHelper.SetPlatformVisibility(child, widget.Visibility);
+
             if (layoutParams.layout.isInPlaceholder)
             {
                 widget.InPlaceholder = true;
@@ -1189,16 +1231,16 @@ namespace SharpConstraintLayout.Maui.Widget
                 var resolvedGuideEnd = layoutParams.layout.guideEnd;
                 var resolvedGuidePercent = layoutParams.layout.guidePercent;
                 /*}*/
-                if (resolvedGuidePercent != UNSET)
+                if (resolvedGuidePercent != Unset)
                 {
                     //guideline.GuidePercent = resolvedGuidePercent;
                     guideline.setGuidePercent(resolvedGuidePercent);
                 }
-                else if (resolvedGuideBegin != UNSET)
+                else if (resolvedGuideBegin != Unset)
                 {
                     guideline.GuideBegin = resolvedGuideBegin;
                 }
-                else if (resolvedGuideEnd != UNSET)
+                else if (resolvedGuideEnd != Unset)
                 {
                     guideline.GuideEnd = resolvedGuideEnd;
                 }
@@ -1226,24 +1268,24 @@ namespace SharpConstraintLayout.Maui.Widget
                 var resolveGoneRightMargin = layoutParams.layout.goneRightMargin;
                 var resolvedHorizontalBias = layoutParams.layout.horizontalBias;
 
-                if (resolvedLeftToLeft == UNSET && resolvedLeftToRight == UNSET)
+                if (resolvedLeftToLeft == Unset && resolvedLeftToRight == Unset)
                 {
-                    if (layoutParams.layout.startToStart != UNSET)
+                    if (layoutParams.layout.startToStart != Unset)
                     {
                         resolvedLeftToLeft = layoutParams.layout.startToStart;
                     }
-                    else if (layoutParams.layout.startToEnd != UNSET)
+                    else if (layoutParams.layout.startToEnd != Unset)
                     {
                         resolvedLeftToRight = layoutParams.layout.startToEnd;
                     }
                 }
-                if (resolvedRightToLeft == UNSET && resolvedRightToRight == UNSET)
+                if (resolvedRightToLeft == Unset && resolvedRightToRight == Unset)
                 {
-                    if (layoutParams.layout.endToStart != UNSET)
+                    if (layoutParams.layout.endToStart != Unset)
                     {
                         resolvedRightToLeft = layoutParams.layout.endToStart;
                     }
-                    else if (layoutParams.layout.endToEnd != UNSET)
+                    else if (layoutParams.layout.endToEnd != Unset)
                     {
                         resolvedRightToRight = layoutParams.layout.endToEnd;
                     }
@@ -1251,7 +1293,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 /*}*/
 
                 // Circular constraint
-                if (layoutParams.layout.circleConstraint != UNSET)
+                if (layoutParams.layout.circleConstraint != Unset)
                 {
                     ConstraintWidget target = idToWidget[layoutParams.layout.circleConstraint];
                     if (target != null)
@@ -1262,7 +1304,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 else
                 {
                     // Left constraint
-                    if (resolvedLeftToLeft != UNSET)
+                    if (resolvedLeftToLeft != Unset)
                     {
                         ConstraintWidget target = idToWidget[resolvedLeftToLeft];
                         if (target != null)
@@ -1270,7 +1312,7 @@ namespace SharpConstraintLayout.Maui.Widget
                             widget.immediateConnect(ConstraintAnchor.Type.LEFT, target, ConstraintAnchor.Type.LEFT, layoutParams.layout.leftMargin, resolveGoneLeftMargin);
                         }
                     }
-                    else if (resolvedLeftToRight != UNSET)
+                    else if (resolvedLeftToRight != Unset)
                     {
                         ConstraintWidget target = idToWidget[resolvedLeftToRight];
                         if (target != null)
@@ -1280,7 +1322,7 @@ namespace SharpConstraintLayout.Maui.Widget
                     }
 
                     // Right constraint
-                    if (resolvedRightToLeft != UNSET)
+                    if (resolvedRightToLeft != Unset)
                     {
                         ConstraintWidget target = idToWidget[resolvedRightToLeft];
                         if (target != null)
@@ -1288,7 +1330,7 @@ namespace SharpConstraintLayout.Maui.Widget
                             widget.immediateConnect(ConstraintAnchor.Type.RIGHT, target, ConstraintAnchor.Type.LEFT, layoutParams.layout.rightMargin, resolveGoneRightMargin);
                         }
                     }
-                    else if (resolvedRightToRight != UNSET)
+                    else if (resolvedRightToRight != Unset)
                     {
                         ConstraintWidget target = idToWidget[resolvedRightToRight];
                         if (target != null)
@@ -1298,7 +1340,7 @@ namespace SharpConstraintLayout.Maui.Widget
                     }
 
                     // Top constraint
-                    if (layoutParams.layout.topToTop != UNSET)
+                    if (layoutParams.layout.topToTop != Unset)
                     {
                         ConstraintWidget target = idToWidget[layoutParams.layout.topToTop];
                         if (target != null)
@@ -1306,7 +1348,7 @@ namespace SharpConstraintLayout.Maui.Widget
                             widget.immediateConnect(ConstraintAnchor.Type.TOP, target, ConstraintAnchor.Type.TOP, layoutParams.layout.topMargin, layoutParams.layout.goneTopMargin);
                         }
                     }
-                    else if (layoutParams.layout.topToBottom != UNSET)
+                    else if (layoutParams.layout.topToBottom != Unset)
                     {
                         ConstraintWidget target = idToWidget[layoutParams.layout.topToBottom];
                         if (target != null)
@@ -1316,7 +1358,7 @@ namespace SharpConstraintLayout.Maui.Widget
                     }
 
                     // Bottom constraint
-                    if (layoutParams.layout.bottomToTop != UNSET)
+                    if (layoutParams.layout.bottomToTop != Unset)
                     {
                         ConstraintWidget target = idToWidget[layoutParams.layout.bottomToTop];
                         if (target != null)
@@ -1324,7 +1366,7 @@ namespace SharpConstraintLayout.Maui.Widget
                             widget.immediateConnect(ConstraintAnchor.Type.BOTTOM, target, ConstraintAnchor.Type.TOP, layoutParams.layout.bottomMargin, layoutParams.layout.goneBottomMargin);
                         }
                     }
-                    else if (layoutParams.layout.bottomToBottom != UNSET)
+                    else if (layoutParams.layout.bottomToBottom != Unset)
                     {
                         ConstraintWidget target = idToWidget[layoutParams.layout.bottomToBottom];
                         if (target != null)
@@ -1334,15 +1376,15 @@ namespace SharpConstraintLayout.Maui.Widget
                     }
 
                     // Baseline constraint
-                    if (layoutParams.layout.baselineToBaseline != UNSET)
+                    if (layoutParams.layout.baselineToBaseline != Unset)
                     {
                         setWidgetBaseline(widget, layoutParams, idToWidget, layoutParams.layout.baselineToBaseline, ConstraintAnchor.Type.BASELINE);
                     }
-                    else if (layoutParams.layout.baselineToTop != UNSET)
+                    else if (layoutParams.layout.baselineToTop != Unset)
                     {
                         setWidgetBaseline(widget, layoutParams, idToWidget, layoutParams.layout.baselineToTop, ConstraintAnchor.Type.TOP);
                     }
-                    else if (layoutParams.layout.baselineToBottom != UNSET)
+                    else if (layoutParams.layout.baselineToBottom != Unset)
                     {
                         setWidgetBaseline(widget, layoutParams, idToWidget, layoutParams.layout.baselineToBottom, ConstraintAnchor.Type.BOTTOM);
                     }
@@ -1357,7 +1399,7 @@ namespace SharpConstraintLayout.Maui.Widget
                     }
                 }
 
-                if (isInEditMode && ((layoutParams.layout.editorAbsoluteX != UNSET) || (layoutParams.layout.editorAbsoluteY != UNSET)))
+                if (isInEditMode && ((layoutParams.layout.editorAbsoluteX != Unset) || (layoutParams.layout.editorAbsoluteY != Unset)))
                 {
                     widget.setOrigin(layoutParams.layout.editorAbsoluteX, layoutParams.layout.editorAbsoluteY);
                 }

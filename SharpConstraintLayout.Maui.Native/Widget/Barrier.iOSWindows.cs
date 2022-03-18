@@ -122,8 +122,7 @@ namespace SharpConstraintLayout.Maui.Widget
 
         public Barrier() : base()
         {
-            //base.Visibility = ConstraintSet.GONE;
-            Placeholder.SetVisibility(this,ConstraintSet.GONE);
+            Visible = ConstraintSet.GONE;
         }
 
         /// <summary>

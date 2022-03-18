@@ -28,11 +28,14 @@ namespace SharpConstraintLayout.Maui.Widget
 
 #if WINDOWS
     using View = Microsoft.UI.Xaml.FrameworkElement;
+    using UIElement = Microsoft.UI.Xaml.UIElement;
+
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
     using Windows.Foundation;
 #elif __IOS__
     using View = UIKit.UIView;
+    using UIElement = UIKit.UIView;
 #elif __ANDROID__
     using Android.Content;
     using View = Android.Views.View;
@@ -63,39 +66,21 @@ namespace SharpConstraintLayout.Maui.Widget
     {
         bool InEditMode = false;
 
-        /// <summary>
-        /// @suppress
-        /// </summary>
         protected internal int[] mIds = new int[32];
-        /// <summary>
-        /// @suppress
-        /// </summary>
+
         protected internal int mCount;
 
-        /// <summary>
-        /// @suppress
-        /// </summary>
         //protected internal Context myContext;
-        /// <summary>
-        /// @suppress
-        /// </summary>
+
         protected internal Helper mHelperWidget;
-        /// <summary>
-        /// @suppress
-        /// </summary>
+
         protected internal bool mUseViewMeasure = false;
-        /// <summary>
-        /// @suppress
-        /// </summary>
+
         protected internal string mReferenceIds;
-        /// <summary>
-        /// @suppress
-        /// </summary>
+
         protected internal string mReferenceTags;
 
-        /// <summary>
-        /// @suppress
-        /// </summary>
+
         private View[] mViews = null;
 
         protected internal Dictionary<int?, string> mMap = new Dictionary<int?, string>();
@@ -110,10 +95,6 @@ namespace SharpConstraintLayout.Maui.Widget
             init();
         }
 
-
-        /// <summary>
-        /// @suppress
-        /// </summary> 
         protected internal virtual void init()
         {
 #if WINDOWS
@@ -124,15 +105,6 @@ namespace SharpConstraintLayout.Maui.Widget
 #if WINDOWS
         public virtual void MovedToWindow(object sender, RoutedEventArgs e)
         {
-            //base.onAttachedToWindow();
-            /*if (!string.ReferenceEquals(mReferenceIds, null))
-            {
-                Ids = mReferenceIds;
-            }
-            if (!string.ReferenceEquals(mReferenceTags, null))
-            {
-                ReferenceTags = mReferenceTags;
-            }*/
             OnAttachedToWindow();
         }
 #elif __IOS__
@@ -249,10 +221,6 @@ namespace SharpConstraintLayout.Maui.Widget
             }
         }
 
-
-        /// <summary>
-        /// @suppress
-        /// </summary>
         private void addRscID(int id)
         {
             //if (id == Id)
@@ -269,9 +237,6 @@ namespace SharpConstraintLayout.Maui.Widget
             mCount++;
         }
 
-        /// <summary>
-        /// @suppress
-        /// </summary>
         /*public override void onDraw(Canvas canvas)
         {
             // Nothing
@@ -296,7 +261,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// @suppress
         /// Allows a helper to replace the default ConstraintWidget in LayoutParams by its own subclass
         /// </summary>
-        public virtual void validateParams(Dictionary<int,ConstraintWidget> idsToConstraintWidgets=null)
+        public virtual void validateParams(Dictionary<int, ConstraintWidget> idsToConstraintWidgets = null)
         {
             if (mHelperWidget == null)
             {
@@ -307,9 +272,6 @@ namespace SharpConstraintLayout.Maui.Widget
                 idsToConstraintWidgets[this.GetId()] = (ConstraintWidget)mHelperWidget;
         }
 
-        /// <summary>
-        /// @suppress
-        /// </summary>
         /*private void addTag(string tagString)
         {
             if (string.ReferenceEquals(tagString, null) || tagString.Length == 0)
@@ -358,9 +320,6 @@ namespace SharpConstraintLayout.Maui.Widget
             }
         }*/
 
-        /// <summary>
-        /// @suppress
-        /// </summary>
         /*protected internal virtual string ReferenceTags
         {
             set
@@ -386,9 +345,6 @@ namespace SharpConstraintLayout.Maui.Widget
             }
         }*/
 
-        /// <summary>
-        /// @suppress </summary>
-        /// <param name="container"> </param>
         protected internal virtual void applyLayoutFeatures(ConstraintLayout container)
         {
 #if WINDOWS || __ANDROID__
@@ -425,15 +381,12 @@ namespace SharpConstraintLayout.Maui.Widget
             }
         }
 
-        /// <summary>
-        /// @suppress
-        /// </summary>
         protected internal virtual void applyLayoutFeatures()
         {
 #if WINDOWS || __ANDROID__
-            Object parent = this.Parent;
+            var parent = this.Parent;
 #elif __IOS__
-            Object parent = this.Superview;
+            var parent = this.Superview;
 #endif
             if (parent != null && parent is ConstraintLayout)
             {
@@ -441,9 +394,6 @@ namespace SharpConstraintLayout.Maui.Widget
             }
         }
 
-        /// <summary>
-        /// @suppress
-        /// </summary>
         protected internal virtual void applyLayoutFeaturesInConstraintSet(ConstraintLayout container)
         {
         }
@@ -526,9 +476,6 @@ namespace SharpConstraintLayout.Maui.Widget
             // Do nothing
         }
 
-        /// <summary>
-        /// @suppress </summary>
-        /// <param name="container"> </param>
         public virtual void updatePostMeasure(ConstraintLayout container)
         {
             // Do nothing
@@ -581,7 +528,6 @@ namespace SharpConstraintLayout.Maui.Widget
                 }
             }
         }
-        
 
         public virtual void resolveRtl(ConstraintWidget widget, bool isRtl)
         {
@@ -626,6 +572,58 @@ namespace SharpConstraintLayout.Maui.Widget
             }
             return index;
         }
-    }
 
+        public static void SetPlatformVisibility(UIElement element, int ConstraintSetVisible)
+        {
+#if WINDOWS
+            if (ConstraintSetVisible == ConstraintSet.INVISIBLE)
+                element.Opacity = 0;//https://stackoverflow.com/questions/28097153/workaround-for-visibilty-hidden-state-windows-phone-8-1-app-development
+            else if (ConstraintSetVisible == ConstraintSet.VISIBLE)
+            {
+                element.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
+                if (element.Opacity == 0)
+                    element.Opacity = 1;
+            }
+            else
+            {
+                element.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;//GONE
+            }
+#elif __IOS__
+            if (ConstraintSetVisible == ConstraintSet.INVISIBLE)
+                element.Hidden = true;
+            else if (ConstraintSetVisible == ConstraintSet.VISIBLE)
+                element.Hidden = false;
+            else//Gone
+            {
+                //throw new NotImplementedException("iOS没有默认的Visibility = ConstraintSet.Gone");
+                element.Hidden = true;
+                Debug.WriteLine("iOS没有默认的Visibility = ConstraintSet.Gone");
+            }
+#endif
+        }
+
+        /// <summary>
+        /// ConstraintSet.VISIBLE,GONE,INVISIBLE
+        /// </summary>
+        int visible;
+        /// <summary>
+        /// 替代平台的Visibility和Hiden
+        /// </summary>
+        public virtual int Visible
+        {
+            set
+            {
+                ConstraintHelper.SetPlatformVisibility(this, value);
+                visible = value;
+            }
+            get { return visible; }
+        }
+
+        float elevation;
+        public virtual float Elevation
+        {
+            set { elevation = value; }
+            get { return elevation; }
+        }
+    }
 }
