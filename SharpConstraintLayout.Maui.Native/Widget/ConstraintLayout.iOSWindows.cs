@@ -43,13 +43,13 @@ namespace SharpConstraintLayout.Maui.Widget
 #endif
 
     /// <summary>
-    /// ConstraintLayout is a AndroidX layout form google. Now you can use it at iOS and WinUI, that means you can reuse some layout code.<br/>
+    /// ConstraintLayout is a AndroidX layout for <see href="https://developer.android.com/reference/androidx/constraintlayout/widget/ConstraintLayout">google </see>. Now you can use it at iOS and WinUI, that means you can reuse some android layout code when use UIKit and WinUI.<br/>
     /// 
     /// Notice the size of ConstraintLayout need be set by its parent. Such as add a ConstraintLayout to UIView and constrainted size is <see cref="ConstraintSet.MatchParent"/>, if you not set <code>AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight</code>
     /// ,when you rotate screen, maybe constraintlayout's width and height is not correct.<br/>
     /// Another, not set <see cref="ConstraintSet.MatchParent"/> when Parent can have infinity size, such as StackPanel can have infinity height at WinUI, if you set ConstraintLayout is <see cref="ConstraintSet.MatchParent"/>, it will throw exception or get false size.
     /// </summary>
-    public class ConstraintLayout : Panel
+    public class ConstraintLayout : Panel,IConstraintLayout
     {
         public const string VERSION = "ConstraintLayout-2.1.1";
         public const bool ISSUPPORTRTLPLATFORM = false;//现在完全不支持,需要对照原来的代码看删除了那些关于Rtl的
@@ -136,7 +136,7 @@ namespace SharpConstraintLayout.Maui.Widget
             return idToViews[id];
         }
 
-        public UIElement getViewById(int id)
+        public UIElement GetViewById(int id)
         {
             return idToViews[id];
         }
@@ -193,7 +193,7 @@ namespace SharpConstraintLayout.Maui.Widget
         {
             if (id == this.GetHashCode() || id == ConstraintSet.ParentId)
             {
-                return RootWidget;
+                return MLayoutWidget;
             }
             else
             {
@@ -222,12 +222,12 @@ namespace SharpConstraintLayout.Maui.Widget
                 //约束到child的widget
                 if (updateHierarchy())
                 {
-                    RootWidget.updateHierarchy();
+                    MLayoutWidget.updateHierarchy();
                 }
 
                 //更新约束到Container的Widget
                 var constraint = mConstraintSet.Constraints[this.GetHashCode()];
-                applyConstraintsFromLayoutParams(false, this, RootWidget, constraint, idsToConstraintWidgets);
+                applyConstraintsFromLayoutParams(false, this, MLayoutWidget, constraint, idsToConstraintWidgets);
 
                 mConstraintSet.IsChanged = false;
             }
@@ -250,14 +250,14 @@ namespace SharpConstraintLayout.Maui.Widget
             int availableHeight = (int)availableSize.Height;  
 #endif
             //Container的大小需要根据程序指定
-            switch (RootWidget.HorizontalDimensionBehaviour)
+            switch (MLayoutWidget.HorizontalDimensionBehaviour)
             {
                 case ConstraintWidget.DimensionBehaviour.FIXED:
                     {
                         //已知是Fixed时说明默认没有赋值或者赋值了,赋值了的话原始的约束绝对有值,那么Widget.Width不用变,没有赋值的直接按available大小处理,因为
                         //父布局会指定值,而我们不指定则代表遵从父布局的指定
                         if (mConstraintSet.Constraints[this.GetHashCode()].layout.mWidth <= 0)//用原始的约束来判断是否为固定值
-                            RootWidget.Width = availableWidth;
+                            MLayoutWidget.Width = availableWidth;
                     }
                     break;
 
@@ -265,17 +265,17 @@ namespace SharpConstraintLayout.Maui.Widget
                 case ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT:
                 case ConstraintWidget.DimensionBehaviour.MATCH_PARENT:
                     //需要足够的空间,这个空间由Layout的父布局决定
-                    RootWidget.Width = availableWidth;
+                    MLayoutWidget.Width = availableWidth;
                     break;
             }
 
-            switch (RootWidget.VerticalDimensionBehaviour)
+            switch (MLayoutWidget.VerticalDimensionBehaviour)
             {
                 case ConstraintWidget.DimensionBehaviour.FIXED:
                     {
                         if (mConstraintSet.Constraints[this.GetHashCode()].layout.mHeight <= 0)//用原始的约束来判断是否为固定值
                         {
-                            RootWidget.Height = availableHeight;
+                            MLayoutWidget.Height = availableHeight;
                         }
                     }
                     break;
@@ -284,7 +284,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 case ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT:
                 case ConstraintWidget.DimensionBehaviour.MATCH_PARENT:
                     //需要足够的空间,这个空间由Layout的父布局决定
-                    RootWidget.Height = availableHeight;
+                    MLayoutWidget.Height = availableHeight;
                     break;
             }
 
@@ -300,21 +300,21 @@ namespace SharpConstraintLayout.Maui.Widget
             //如果需要MatchParent
 
             //传入布局的测量数据,用于测量child时
-            (RootWidget.Measurer as MeasurerAnonymousInnerClass).captureLayoutInfo(RootWidget.Width, RootWidget.Height, 0, 0, 0, 0);
+            (MLayoutWidget.Measurer as MeasurerAnonymousInnerClass).captureLayoutInfo(MLayoutWidget.Width, MLayoutWidget.Height, 0, 0, 0, 0);
 
             //交给Container去测量
-            RootWidget.OptimizationLevel = mOptimizationLevel;
-            RootWidget.layout();
-            RootWidget.measure(mOptimizationLevel, BasicMeasure.EXACTLY, RootWidget.Width, BasicMeasure.EXACTLY, RootWidget.Height, 0, 0, 0, 0);
+            MLayoutWidget.OptimizationLevel = mOptimizationLevel;
+            MLayoutWidget.layout();
+            MLayoutWidget.measure(mOptimizationLevel, BasicMeasure.EXACTLY, MLayoutWidget.Width, BasicMeasure.EXACTLY, MLayoutWidget.Height, 0, 0, 0, 0);
 #if WINDOWS
             //如果存在一个方向是无限值,且Layout是MatchParent,则会出错
-            if (isInfinityAvailabelSize && (RootWidget.HorizontalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.MATCH_PARENT || RootWidget.VerticalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.MATCH_PARENT))
+            if (isInfinityAvailabelSize && (MLayoutWidget.HorizontalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.MATCH_PARENT || MLayoutWidget.VerticalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.MATCH_PARENT))
             {
                 Debug.Fail($"ConstraintLayout's Parent {this.Parent} has infinity size, please not let ConstraintLayout is MatchParent.");
                 throw new InvalidOperationException($"ConstraintLayout's Parent {this.Parent} has infinity size, please not let ConstraintLayout is MatchParent.");
             }
 #endif
-            return new Size(RootWidget.Width, RootWidget.Height);
+            return new Size(MLayoutWidget.Width, MLayoutWidget.Height);
         }
 
 
@@ -368,7 +368,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 }
             }
 
-            return new Size(RootWidget.Width, RootWidget.Height);//这里必须返回Widget的大小,因为返回值决定了layout的绘制范围?
+            return new Size(MLayoutWidget.Width, MLayoutWidget.Height);//这里必须返回Widget的大小,因为返回值决定了layout的绘制范围?
         }
 
 #elif __IOS__
@@ -394,10 +394,10 @@ namespace SharpConstraintLayout.Maui.Widget
                     MeasureOverride(this.Superview.Frame.Size);
             }
             
-            if (DEBUG) Debug.WriteLine($"{nameof(LayoutSubviews)} RootWidget {this.RootWidget.ToString()}");
+            if (DEBUG) Debug.WriteLine($"{nameof(LayoutSubviews)} RootWidget {this.MLayoutWidget.ToString()}");
 
             //更新layout的大小
-            Frame = new CGRect(Frame.X,Frame.Y,RootWidget.Width, RootWidget.Height);
+            Frame = new CGRect(Frame.X,Frame.Y,MLayoutWidget.Width, MLayoutWidget.Height);
             //layout child
             foreach (ConstraintWidget child in mLayout.Children)
             {
@@ -436,12 +436,15 @@ namespace SharpConstraintLayout.Maui.Widget
         /// default widget of ConstraintLayout.
         /// you can constrol more action by it.
         /// </summary>
-        public virtual ConstraintWidgetContainer RootWidget
+        public virtual ConstraintWidgetContainer MLayoutWidget
         {
-            get
-            {
-                return mLayout;
-            }
+            get => mLayout;
+        }
+
+        public int OptimizationLevel 
+        { 
+            get => mOptimizationLevel; 
+            set { mOptimizationLevel = value;MLayoutWidget.OptimizationLevel = value; }
         }
 
         /// <summary>
@@ -449,14 +452,13 @@ namespace SharpConstraintLayout.Maui.Widget
         /// </summary>
         /// <param name="view"></param>
         /// <returns>widget is a virtual control for caculate constraint</returns>
-        public ConstraintWidget GetWidget(UIElement view)
+        public ConstraintWidget GetViewWidget(UIElement view)
         {
             if (view == this)
-                return RootWidget;
+                return MLayoutWidget;
             return this.idsToConstraintWidgets[view.GetHashCode()];
         }
 
-        //copy from swing
         private class MeasurerAnonymousInnerClass : BasicMeasure.Measurer
         {
             private readonly ConstraintLayout outerInstance;
@@ -857,6 +859,7 @@ namespace SharpConstraintLayout.Maui.Widget
             }
         }
 
+#if WPF //旧的WPF布局逻辑
         /// <summary>
         /// copy from swing
         /// </summary>
@@ -956,7 +959,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 }
             }
         }
-
+#endif
 
         private bool updateHierarchy()
         {
@@ -995,7 +998,7 @@ namespace SharpConstraintLayout.Maui.Widget
             for (int i = 0; i < count; i++)
             {
                 UIElement child = Children[i];
-                ConstraintWidget widget = GetWidget(child);
+                ConstraintWidget widget = GetViewWidget(child);
                 if (widget == null)
                 {
                     continue;
@@ -1022,7 +1025,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 //ConstraintSet.applyToInternal(this, true);
             }*/
 
-            RootWidget.removeAllChildren();
+            MLayoutWidget.removeAllChildren();
 
             int helperCount = mConstraintHelpers.Count;
             if (helperCount > 0)
@@ -1045,25 +1048,25 @@ namespace SharpConstraintLayout.Maui.Widget
             }
 
             mTempMapIdToWidget.Clear();
-            mTempMapIdToWidget.Add(ConstraintSet.ParentId, RootWidget);
-            mTempMapIdToWidget.Add(this.GetHashCode(), RootWidget);
+            mTempMapIdToWidget.Add(ConstraintSet.ParentId, MLayoutWidget);
+            mTempMapIdToWidget.Add(this.GetHashCode(), MLayoutWidget);
             for (int i = 0; i < count; i++)//添加widgets到临时字典
             {
                 UIElement child = Children[i];
-                ConstraintWidget widget = GetWidget(child);
+                ConstraintWidget widget = GetViewWidget(child);
                 mTempMapIdToWidget.Add(child.GetHashCode(), widget);
             }
 
             for (int i = 0; i < count; i++)//apply constraint到每个widget
             {
                 UIElement child = Children[i];
-                ConstraintWidget widget = GetWidget(child);
+                ConstraintWidget widget = GetViewWidget(child);
                 if (widget == null)
                 {
                     continue;
                 }
                 Constraint layoutConstraint = mConstraintSet.Constraints[child.GetHashCode()];
-                RootWidget.add(widget);
+                MLayoutWidget.add(widget);
                 applyConstraintsFromLayoutParams(isInEditMode, child, widget, layoutConstraint, mTempMapIdToWidget);
             }
         }
@@ -1097,7 +1100,7 @@ namespace SharpConstraintLayout.Maui.Widget
             if (child is ConstraintHelper)
             {
                 ConstraintHelper helper = (ConstraintHelper)child;
-                helper.ResolveRtl(widget, RootWidget.Rtl);
+                helper.ResolveRtl(widget, MLayoutWidget.Rtl);
             }
 
             if (layoutParams.layout.mIsGuideline)

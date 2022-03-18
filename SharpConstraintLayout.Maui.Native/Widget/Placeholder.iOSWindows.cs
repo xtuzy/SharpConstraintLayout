@@ -204,8 +204,8 @@ namespace SharpConstraintLayout.Maui.Widget
                 return;
             }
 
-            var layoutParams = container.GetWidget(this);
-            var layoutParamsContent = container.GetWidget(mContent);
+            var layoutParams = container.GetViewWidget(this);
+            var layoutParamsContent = container.GetViewWidget(mContent);
 
             layoutParamsContent.Visibility = ConstraintSet.Visible;
 

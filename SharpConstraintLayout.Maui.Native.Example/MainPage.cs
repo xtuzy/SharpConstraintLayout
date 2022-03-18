@@ -5,13 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-//using ConstraintSet = SharpConstraintLayout.Maui.Widget.ConstraintSet;
 #if __ANDROID__
-using AndroidConstraintSet = AndroidX.ConstraintLayout.Widget.ConstraintSet;
-using ConstraintSet = AndroidX.ConstraintLayout.Widget.ConstraintSet;
 using Android.Views;
 #else
-using AndroidConstraintSet = SharpConstraintLayout.Maui.Widget.ConstraintSet;
 #endif
 
 #if __ANDROID__
@@ -33,7 +29,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             layout.AddView(SecondButton);
             layout.AddView(ThirdCanvas);
 
-            var layoutSet = new AndroidConstraintSet();
+            var layoutSet = new ConstraintSet();
             layoutSet.Clone(layout);
 
             layoutSet.ConstrainWidth(layout.GetId(), ConstraintSet.MatchConstraint);

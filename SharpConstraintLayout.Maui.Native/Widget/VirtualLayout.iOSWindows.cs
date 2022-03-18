@@ -75,7 +75,7 @@ namespace SharpConstraintLayout.Maui.Widget
                     for (int i = 0; i < mCount; i++)
                     {
                         int id = mIds[i];
-                        View view = (View)container.getViewById(id);
+                        View view = (View)container.GetViewById(id);
                         if (view != null)
                         {
                             if (mApplyVisibilityOnAttach)

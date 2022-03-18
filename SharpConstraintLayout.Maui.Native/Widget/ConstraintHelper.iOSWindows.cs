@@ -359,7 +359,7 @@ namespace SharpConstraintLayout.Maui.Widget
             for (int i = 0; i < mCount; i++)
             {
                 int id = mIds[i];
-                View view = (View)container.getViewById(id);
+                View view = (View)container.GetViewById(id);
                 if (view != null)
                 {
 #if WINDOWS || __ANDROID__
@@ -414,7 +414,7 @@ namespace SharpConstraintLayout.Maui.Widget
             for (int i = 0; i < mCount; i++)
             {
                 int id = mIds[i];
-                View view = (View)container.getViewById(id);
+                View view = (View)container.GetViewById(id);
                 /*if (view == null)
                 {
                     // hm -- we couldn't find the view.
@@ -430,10 +430,10 @@ namespace SharpConstraintLayout.Maui.Widget
                 }*/
                 if (view != null)
                 {
-                    mHelperWidget.add(container.GetWidget(view));
+                    mHelperWidget.add(container.GetViewWidget(view));
                 }
             }
-            mHelperWidget.updateConstraints(container.RootWidget);
+            mHelperWidget.updateConstraints(container.MLayoutWidget);
         }
 
         public virtual void UpdatePreLayout(ConstraintWidgetContainer container, Helper helper, Dictionary<int, ConstraintWidget> map)
@@ -458,7 +458,7 @@ namespace SharpConstraintLayout.Maui.Widget
             for (int i = 0; i < mCount; i++)
             {
                 int id = mIds[i];
-                mViews[i] = (View)layout.getViewById(id);
+                mViews[i] = (View)layout.GetViewById(id);
             }
             return mViews;
         }

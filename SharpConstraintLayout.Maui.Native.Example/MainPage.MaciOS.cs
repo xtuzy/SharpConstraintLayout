@@ -29,7 +29,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             {
                 //Frame = frame,
                 AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight,
-                BackgroundColor = UIColor.SystemPinkColor
+                BackgroundColor = UIColor.SystemPink
             };
 
             createControls();
