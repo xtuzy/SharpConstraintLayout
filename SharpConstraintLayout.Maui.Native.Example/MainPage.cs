@@ -30,25 +30,32 @@ namespace SharpConstraintLayout.Maui.Native.Example
             {
                 Id = View.GenerateViewId(),
             };
+            flow.SetBackgroundColor(Android.Graphics.Color.Cyan);
 #else
             var flow = new Flow();
+#if WINDOWS
+           
+#elif IOS
+            flow.BackgroundColor = UIColor.Cyan;
 #endif
-            flow.SetOrientation(Flow.Vertical);
+#endif
+                        flow.SetOrientation(Flow.Horizontal);
             flow.SetWrapMode(Flow.WrapChain);
             flow.SetHorizontalStyle(Flow.ChainPacked);
             layout = page;
-
+            layout.AddView(ThirdCanvas);
             layout.AddView(FirstButton);
             layout.AddView(SecondButton);
-            layout.AddView(ThirdCanvas);
+            
             layout.AddView(FouthTextBlock);
             layout.AddView(FifthTextBox);
             layout.AddView(SixthRichTextBlock);
+            
             layout.AddView(flow);
 
             flow.AddView(FirstButton);
             flow.AddView(SecondButton);
-            flow.AddView(ThirdCanvas);
+            //flow.AddView(ThirdCanvas);
             flow.AddView(FouthTextBlock);
             flow.AddView(FifthTextBox);
             flow.AddView(SixthRichTextBlock);
@@ -70,22 +77,22 @@ namespace SharpConstraintLayout.Maui.Native.Example
             layoutSet.ConstrainWidth(SixthRichTextBlock.GetId(), ConstraintSet.WrapContent);
             layoutSet.ConstrainHeight(SixthRichTextBlock.GetId(), ConstraintSet.WrapContent);
 #if ANDROID
-            layoutSet.ConstrainWidth(flow.GetId(), LayoutParams.MatchParent);
+            layoutSet.ConstrainWidth(flow.GetId(), ConstraintSet.MatchConstraint);
 #else
-            layoutSet.ConstrainWidth(flow.GetId(), ConstraintSet.MatchParent);
+            layoutSet.ConstrainWidth(flow.GetId(), ConstraintSet.MatchConstraint);
 # endif
             layoutSet.ConstrainHeight(flow.GetId(), ConstraintSet.WrapContent);
 
-            //layoutSet.Connect(ThirdCanvas.GetId(), ConstraintSet.Left, flow.GetId(), ConstraintSet.Left);
-            //layoutSet.Connect(ThirdCanvas.GetId(), ConstraintSet.Right, flow.GetId(), ConstraintSet.Right);
-            //layoutSet.Connect(ThirdCanvas.GetId(), ConstraintSet.Top, flow.GetId(), ConstraintSet.Top);
-            //layoutSet.Connect(ThirdCanvas.GetId(), ConstraintSet.Bottom, flow.GetId(), ConstraintSet.Bottom);
-            layoutSet.ConstrainWidth(ThirdCanvas.GetId(), 600);
-            layoutSet.ConstrainHeight(ThirdCanvas.GetId(), 1800);
+            layoutSet.Connect(ThirdCanvas.GetId(), ConstraintSet.Left, flow.GetId(), ConstraintSet.Left);
+            layoutSet.Connect(ThirdCanvas.GetId(), ConstraintSet.Right, flow.GetId(), ConstraintSet.Right);
+            layoutSet.Connect(ThirdCanvas.GetId(), ConstraintSet.Top, flow.GetId(), ConstraintSet.Top);
+            layoutSet.Connect(ThirdCanvas.GetId(), ConstraintSet.Bottom, flow.GetId(), ConstraintSet.Bottom);
+            layoutSet.ConstrainWidth(ThirdCanvas.GetId(), ConstraintSet.MatchConstraint);
+            layoutSet.ConstrainHeight(ThirdCanvas.GetId(), ConstraintSet.MatchConstraint);
 
-            layoutSet.SetVisibility(ThirdCanvas.GetId(),ConstraintSet.Invisible);
+            layoutSet.SetVisibility(ThirdCanvas.GetId(), ConstraintSet.Visible);
 #if ANDROID
-            ThirdCanvas.Visibility = ViewStates.Invisible;
+            ThirdCanvas.Visibility = ViewStates.Visible;
 #endif
             layoutSet.ApplyTo(layout);
         }
@@ -100,18 +107,17 @@ namespace SharpConstraintLayout.Maui.Native.Example
             var layoutSet = new ConstraintSet();
             layoutSet.Clone(layout);
 
-            //layoutSet.ConstrainWidth(layout.GetId(), ConstraintSet.MatchConstraint);
-            //layoutSet.ConstrainHeight(layout.GetId(), ConstraintSet.MatchConstraint);
+            layoutSet.Connect(FirstButton.GetId(), ConstraintSet.Left, layout.GetId(), ConstraintSet.Left);
+            layoutSet.Connect(FirstButton.GetId(), ConstraintSet.Right, layout.GetId(), ConstraintSet.Right);
 
-            layoutSet.CenterHorizontally(FirstButton.GetId(), ConstraintSet.ParentId);
             layoutSet.CenterVertically(FirstButton.GetId(), ConstraintSet.ParentId);
+
             layoutSet.ConstrainWidth(FirstButton.GetId(), ConstraintSet.WrapContent);
             layoutSet.ConstrainHeight(FirstButton.GetId(), ConstraintSet.WrapContent);
 
             layoutSet.Connect(SecondButton.GetId(), ConstraintSet.Left, FirstButton.GetId(), ConstraintSet.Right);
-            //layoutSet.Connect(SecondButton.GetId(), ConstraintSet.Top, FirstButton.GetId(), ConstraintSet.Top);
-            //layoutSet.Connect(SecondButton.GetId(), ConstraintSet.Bottom, FirstButton.GetId(), ConstraintSet.Bottom);
-            layoutSet.CenterVertically(SecondButton.GetId(), ConstraintSet.ParentId);
+            layoutSet.Connect(SecondButton.GetId(), ConstraintSet.Top, FirstButton.GetId(), ConstraintSet.Top);
+            layoutSet.Connect(SecondButton.GetId(), ConstraintSet.Bottom, FirstButton.GetId(), ConstraintSet.Bottom);
 
             layoutSet.ConstrainWidth(SecondButton.GetId(), ConstraintSet.WrapContent);
             layoutSet.ConstrainHeight(SecondButton.GetId(), ConstraintSet.WrapContent);
@@ -171,11 +177,8 @@ namespace SharpConstraintLayout.Maui.Native.Example
             var layoutSet = new ConstraintSet();
             layoutSet.Clone(layout);
 
-            layoutSet.ConstrainWidth(layout.GetId(), ConstraintSet.MatchConstraint);
-            layoutSet.ConstrainHeight(layout.GetId(), ConstraintSet.MatchConstraint);
-
-            layoutSet.CenterVertically(FifthTextBox.GetId(), layout.GetId());
-            layoutSet.CenterHorizontally(FifthTextBox.GetId(), layout.GetId());
+            layoutSet.CenterVertically(FifthTextBox.GetId(), ConstraintSet.ParentId);
+            layoutSet.CenterHorizontally(FifthTextBox.GetId(), ConstraintSet.ParentId);
             layoutSet.ConstrainWidth(FifthTextBox.GetId(), ConstraintSet.WrapContent);
             layoutSet.ConstrainHeight(FifthTextBox.GetId(), ConstraintSet.WrapContent);
 
@@ -201,9 +204,9 @@ namespace SharpConstraintLayout.Maui.Native.Example
             {
                 Id = View.GenerateViewId(),
             };
+            layout.SetBackgroundColor(Android.Graphics.Color.Black);
 #else
             layout = new ConstraintLayout()
-
             {
 #if WINDOWS
                 Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.Black)
@@ -224,7 +227,9 @@ namespace SharpConstraintLayout.Maui.Native.Example
 
             var pageSet = new ConstraintSet();
             pageSet.Clone(page);
-
+            pageSet.Create(guide.GetId(), ConstraintSet.Vertical);
+            pageSet.SetGuidelinePercent(guide.GetId(), 0.5f);
+            //pageSet.SetGuidelineEnd(guide.GetId(), 300);
             pageSet.Connect(layout.GetId(), ConstraintSet.Left, guide.GetId(), ConstraintSet.Right);
             pageSet.Connect(layout.GetId(), ConstraintSet.Right, page.GetId(), ConstraintSet.Right);
             pageSet.Connect(layout.GetId(), ConstraintSet.Top, page.GetId(), ConstraintSet.Top);

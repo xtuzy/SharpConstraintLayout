@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 
-
-
 /*
  * Copyright (C) 2021 The Android Open Source Project
  *
@@ -215,6 +213,7 @@ namespace SharpConstraintLayout.Maui.Widget
         protected Size MeasureOverride(Size availableSize)
 #endif
         {
+
             if (DEBUG) Debug.WriteLine($"{nameof(MeasureOverride)} {this} {availableSize}");
 
             if (mConstraintSet.IsChanged)
@@ -244,6 +243,7 @@ namespace SharpConstraintLayout.Maui.Widget
             { availableHeight = int.MaxValue; isInfinityAvailabelSize = true; }
             else
                 availableHeight = (int)availableSize.Height;
+
 #elif __IOS__
             //iOS中,如果指定了Frame,那么能获得自身的值,如果没有,那么可以取Superview的Frame,因为布局child必须要layout的大小去参照
             int availableWidth = (int)availableSize.Width;
@@ -316,7 +316,6 @@ namespace SharpConstraintLayout.Maui.Widget
 #endif
             return new Size(MLayoutWidget.Width, MLayoutWidget.Height);
         }
-
 
 #if WINDOWS
         protected override Size ArrangeOverride(Size finalSize)
@@ -1193,7 +1192,6 @@ namespace SharpConstraintLayout.Maui.Widget
                 applyConstraintsFromLayoutParams(isInEditMode, child, widget, layoutConstraint, mTempMapIdToWidget);
             }
         }
-
 
         /// <summary>
         /// Apply constraint to widget

@@ -13,7 +13,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
     {
         public MainController(UIWindow window)
         {
-            HotReload.Instance.Init("192.168.0.108");
+            HotReload.Instance.Init("192.168.0.108",200);
             HotReload.Instance.Reload += () =>
             {
                 try
