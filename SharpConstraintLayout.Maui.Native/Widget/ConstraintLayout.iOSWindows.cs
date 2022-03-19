@@ -206,7 +206,6 @@ namespace SharpConstraintLayout.Maui.Widget
             }
         }
 
-        bool isInfinityAvailabelSize = false;
 #if WINDOWS
         protected override Size MeasureOverride(Size availableSize)
 #elif __IOS__
@@ -215,24 +214,30 @@ namespace SharpConstraintLayout.Maui.Widget
         {
 
             if (DEBUG) Debug.WriteLine($"{nameof(MeasureOverride)} {this} {availableSize}");
-
+            /*
+             * Update Constraints to wigets
+             */
             if (mConstraintSet.IsChanged)
             {
-                //约束到child的widget
+                //update widget of child
                 if (updateHierarchy())
                 {
                     MLayoutWidget.updateHierarchy();
                 }
 
-                //更新约束到Container的Widget
+                //update widget of Container
                 var constraint = mConstraintSet.Constraints[this.GetId()];
                 applyConstraintsFromLayoutParams(false, this, MLayoutWidget, constraint, idsToConstraintWidgets);
 
                 mConstraintSet.IsChanged = false;
             }
 #if WINDOWS
+            /*
+             * Analysis available size
+             */
             int availableWidth = 0;
             int availableHeight = 0;
+            bool isInfinityAvailabelSize = false;
             //sometimes no fixsize
             if (double.IsPositiveInfinity(availableSize.Width))
             { availableWidth = int.MaxValue; isInfinityAvailabelSize = true; }
@@ -243,13 +248,20 @@ namespace SharpConstraintLayout.Maui.Widget
             { availableHeight = int.MaxValue; isInfinityAvailabelSize = true; }
             else
                 availableHeight = (int)availableSize.Height;
-
+            //If a direction available value and we need MATCH_PARENT, that always generate mistake result, so we not accept it. please modify constraint.
+            if (isInfinityAvailabelSize && (MLayoutWidget.HorizontalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.MATCH_PARENT || MLayoutWidget.VerticalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.MATCH_PARENT))
+            {
+                var errorStr = $"ConstraintLayout's parent {this.Parent} gived ConstraintLayout a infinity size, you set ConstraintLayout have MATCH_PARENT size, ConstraintLayout can't generate correct result.";
+                throw new InvalidOperationException(errorStr);
+            }
 #elif __IOS__
-            //iOS中,如果指定了Frame,那么能获得自身的值,如果没有,那么可以取Superview的Frame,因为布局child必须要layout的大小去参照
+            //iOS中,如果指定了Frame,那么能获得自身的值,如果没有,那么可以取Superview的Frame,因为布局child必须要layout的大小去参照,iOS开始会Measure两次,能拿到Superview的大小
             int availableWidth = (int)availableSize.Width;
             int availableHeight = (int)availableSize.Height;  
 #endif
-            //Container的大小需要根据程序指定
+            /*
+             * Analysis Container need which size
+             */
             switch (MLayoutWidget.HorizontalDimensionBehaviour)
             {
                 case ConstraintWidget.DimensionBehaviour.FIXED:
@@ -288,32 +300,31 @@ namespace SharpConstraintLayout.Maui.Widget
                     break;
             }
 
-            //分析Windows测量
-            //对Layout的约束中,
-            //Fixed直接将值给Widget值,无需使用available;
-            //MatchParent需要available,直接赋值,如果存在无限大情况,也直接赋值,在Arrange时再次取finalSize赋值测量,当然,注意WrapLayout这类可以容纳无限大的布局可能出现问题.
-            //MatchContraint和WrapContent是大小不明的,需要依赖child的测量,而child需要根据父布局的可容纳大小来测量,因此也将available值传入
-
-            //分析iOS测量
-            //iOS的Layout没有Measure方法,其IntrinsicContentSize需要知道测量方式才能计算出来,这里不适用
-            //Fixed和赋值Frame一样,
-            //如果需要MatchParent
-
+#if WINDOWS
+            /*
+             * First measure all WRAP_CONTENT child size,we need know some default size. 
+             */
+            var layoutAvailableSize = new Size(MLayoutWidget.Width, MLayoutWidget.Height);
+            foreach (UIElement child in Children)
+            {
+                var widget = GetViewWidget(child);
+                //依赖自己大小的先测量
+                if (widget.HorizontalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.WRAP_CONTENT
+                    && widget.VerticalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.WRAP_CONTENT)
+                    child.Measure(availableSize);
+            }
+#endif
+            /*
+             * Other MATCH_PARENT and MATCH_CONSTRAINT we let ConstraintLayout.Core analysis.
+             */
             //传入布局的测量数据,用于测量child时
             (MLayoutWidget.Measurer as MeasurerAnonymousInnerClass).captureLayoutInfo(MLayoutWidget.Width, MLayoutWidget.Height, 0, 0, 0, 0);
 
-            //交给Container去测量
+            //交给ConstraintLayout.Core去测量
             MLayoutWidget.OptimizationLevel = mOptimizationLevel;
             MLayoutWidget.layout();
             MLayoutWidget.measure(mOptimizationLevel, BasicMeasure.EXACTLY, MLayoutWidget.Width, BasicMeasure.EXACTLY, MLayoutWidget.Height, 0, 0, 0, 0);
-#if WINDOWS
-            //如果存在一个方向是无限值,且Layout是MatchParent,则会出错
-            if (isInfinityAvailabelSize && (MLayoutWidget.HorizontalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.MATCH_PARENT || MLayoutWidget.VerticalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.MATCH_PARENT))
-            {
-                Debug.Fail($"ConstraintLayout's Parent {this.Parent} has infinity size, please not let ConstraintLayout is MatchParent.");
-                throw new InvalidOperationException($"ConstraintLayout's Parent {this.Parent} has infinity size, please not let ConstraintLayout is MatchParent.");
-            }
-#endif
+            //windows需要返回值
             return new Size(MLayoutWidget.Width, MLayoutWidget.Height);
         }
 
@@ -322,17 +333,6 @@ namespace SharpConstraintLayout.Maui.Widget
         {
             if (DEBUG) Debug.WriteLine($"{nameof(ArrangeOverride)} {this} {finalSize}");
 
-            //何时需要重新测量?需要Parent大小但MeasureOverride中拿不到时,那么就只有MeasureOverride中拿到的值是无限值且layout需要MatchParent时.
-            /*if (isInfinityAvailabelSize && (RootWidget.HorizontalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.MATCH_PARENT || RootWidget.VerticalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.MATCH_PARENT))
-            {
-                var parentSize = (Parent as UIElement).DesiredSize;
-                RootWidget.Width = (int)parentSize.Width;
-                RootWidget.Height = (int)parentSize.Height;
-                RootWidget.layout();
-                RootWidget.measure(mOptimizationLevel, BasicMeasure.EXACTLY, RootWidget.Width, BasicMeasure.EXACTLY, RootWidget.Height, 0, 0, 0, 0);
-            }*/
-
-            //layout child
             foreach (ConstraintWidget child in mLayout.Children)
             {
                 UIElement component = (UIElement)child.CompanionWidget;
@@ -374,7 +374,7 @@ namespace SharpConstraintLayout.Maui.Widget
         public override Size IntrinsicContentSize => this.Frame.Size;
 
         /// <summary>
-        /// 貌似在开始会被调用两次,应该在第二次时是能获得superview和child默认大小的
+        /// iOS don't have measure method, but at first show, it will load LayoutSubviews twice, that means we can get child size at second time layout.
         /// </summary>
         public override void LayoutSubviews()
         {
@@ -713,7 +713,7 @@ namespace SharpConstraintLayout.Maui.Widget
                     else
                     {
 #if WINDOWS
-                        child.Measure(new Size(horizontalSpec, verticalSpec));
+                        child.Measure(new Size(horizontalSpec, verticalSpec));//注释原因:如果是WrapContent那么已经测量,其它需要这样测量吗?可能也需要,如果嵌套的Child需要呢
 #elif __IOS__
                         //iOS没有Measure
 #endif
@@ -980,108 +980,6 @@ namespace SharpConstraintLayout.Maui.Widget
                 }
             }
         }
-
-#if WPF //旧的WPF布局逻辑
-        /// <summary>
-        /// copy from swing
-        /// </summary>
-        /// <param name="constraintWidget"></param>
-        /// <param name="measure"></param>
-        private void innerMeasure(ConstraintWidget constraintWidget, BasicMeasure.Measure measure)
-        {
-            UIElement component = (UIElement)constraintWidget.CompanionWidget;
-            int measuredWidth = constraintWidget.Width;
-            int measuredHeight = constraintWidget.Height;
-            //if (DEBUG)
-            //Debug.WriteLine($"{(component as FrameworkElement)?.Tag as string} measureWidget " + measuredWidth + " " + measuredHeight);
-            if (measure.horizontalBehavior == ConstraintWidget.DimensionBehaviour.WRAP_CONTENT)
-            {
-#if WINDOWS
-                //measuredWidth = component.MinimumSize.width;
-                measuredWidth = (int)(component.DesiredSize.Width + 0.5);
-#elif __IOS__
-                measuredWidth = (int)(component.Frame.Width + 0.5);
-#endif
-            }
-            else if (measure.horizontalBehavior == ConstraintWidget.DimensionBehaviour.MATCH_PARENT)
-            {
-                measuredWidth = mLayout.Width;
-            }
-            if (measure.verticalBehavior == ConstraintWidget.DimensionBehaviour.WRAP_CONTENT)
-            {
-#if WINDOWS
-                //measuredHeight = component.MinimumSize.height;
-                measuredHeight = (int)(component.DesiredSize.Height + 0.5);
-#elif __IOS__
-                measuredHeight = (int)(component.Frame.Height + 0.5);
-#endif
-            }
-            else if (measure.verticalBehavior == ConstraintWidget.DimensionBehaviour.MATCH_PARENT)
-            {
-                measuredHeight = mLayout.Height;
-            }
-            measure.measuredWidth = measuredWidth;
-            measure.measuredHeight = measuredHeight;
-            //baseline
-            measure.measuredBaseline = (int)component.GetBaseline();
-        }
-
-        /// <summary>
-        /// copy from FlowTest
-        /// </summary>
-        /// <param name="widget"></param>
-        /// <param name="measure"></param>
-        private void measureFlow(ConstraintWidget widget, BasicMeasure.Measure measure)
-        {
-            ConstraintWidget.DimensionBehaviour horizontalBehavior = measure.horizontalBehavior;
-            ConstraintWidget.DimensionBehaviour verticalBehavior = measure.verticalBehavior;
-            int horizontalDimension = measure.horizontalDimension;
-            int verticalDimension = measure.verticalDimension;
-
-            if (widget is VirtualLayoutWidget)
-            {
-                VirtualLayoutWidget layout = (VirtualLayoutWidget)widget;
-                int widthMode = BasicMeasure.UNSPECIFIED;
-                int heightMode = BasicMeasure.UNSPECIFIED;
-                int widthSize = 0;
-                int heightSize = 0;
-                if (layout.HorizontalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.MATCH_PARENT)
-                {
-                    widthSize = layout.Parent != null ? layout.Parent.Width : 0;
-                    widthMode = BasicMeasure.EXACTLY;
-                }
-                else if (horizontalBehavior == ConstraintWidget.DimensionBehaviour.FIXED)
-                {
-                    widthSize = horizontalDimension;
-                    widthMode = BasicMeasure.EXACTLY;
-                }
-                if (layout.VerticalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.MATCH_PARENT)
-                {
-                    heightSize = layout.Parent != null ? layout.Parent.Height : 0;
-                    heightMode = BasicMeasure.EXACTLY;
-                }
-                else if (verticalBehavior == ConstraintWidget.DimensionBehaviour.FIXED)
-                {
-                    heightSize = verticalDimension;
-                    heightMode = BasicMeasure.EXACTLY;
-                }
-                layout.measure(widthMode, widthSize, heightMode, heightSize);
-                measure.measuredWidth = layout.MeasuredWidth;
-                measure.measuredHeight = layout.MeasuredHeight;
-            }
-            else
-            {
-                if (horizontalBehavior == ConstraintWidget.DimensionBehaviour.FIXED)
-                {
-                    measure.measuredWidth = horizontalDimension;
-                }
-                if (verticalBehavior == ConstraintWidget.DimensionBehaviour.FIXED)
-                {
-                    measure.measuredHeight = verticalDimension;
-                }
-            }
-        }
-#endif
 
         private bool updateHierarchy()
         {
