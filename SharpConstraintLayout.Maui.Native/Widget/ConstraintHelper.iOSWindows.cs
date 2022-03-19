@@ -62,8 +62,10 @@ namespace SharpConstraintLayout.Maui.Widget
     ///     </pre>
     /// </para>
     /// </summary>
-    public abstract partial class ConstraintHelper : View,IConstraintHelper
+    public abstract partial class ConstraintHelper : View, IConstraintHelper
     {
+        private const string TAG = "ConstraintHelper";
+
         bool InEditMode = false;
 
         protected internal int[] mIds = new int[32];
@@ -144,18 +146,13 @@ namespace SharpConstraintLayout.Maui.Widget
             if (view.Superview == null)
 #endif
             {
-                Debug.WriteLine("ConstraintHelper", "Views added to a ConstraintHelper need to have a parent");
-                return;
+                Debug.WriteLine("Views added to a ConstraintHelper need to have a parent.", TAG);
+                //return;
             }
             mReferenceIds = null;
-            addRscID(view.GetHashCode());
-#if WINDOWS
-            UpdateLayout();
-#elif __IOS__
-            SetNeedsLayout();
-#elif __ANDROID__
-            RequestLayout();
-#endif
+            addRscID(view.GetId());
+
+            requestLayout();
         }
 
         /// <summary>
@@ -167,7 +164,7 @@ namespace SharpConstraintLayout.Maui.Widget
         {
             int index = -1;
             //int id = view.Id;
-            int id = view.GetHashCode();
+            int id = view.GetId();
             if (id == -1)
             {
                 return index;
@@ -187,13 +184,8 @@ namespace SharpConstraintLayout.Maui.Widget
                     break;
                 }
             }
-#if WINDOWS
-            UpdateLayout();
-#elif __IOS__
-            SetNeedsLayout();
-#elif __ANDROID__
-            RequestLayout();
-#endif
+            requestLayout();
+
             return index;
         }
 
@@ -621,6 +613,21 @@ namespace SharpConstraintLayout.Maui.Widget
         {
             set { elevation = value; }
             get { return elevation; }
+        }
+
+        /// <summary>
+        /// Call this when something has changed which has invalidated the layout of this view. This will schedule a layout pass of the view tree. This should not be called while the view hierarchy is currently in a layout pass (isInLayout(). If layout is happening, the request may be honored at the end of the current layout pass (and then layout will run again) or after the current frame is drawn and the next layout occurs.
+        /// Subclasses which override this method should call the superclass method to handle possible request-during-layout errors correctly.
+        /// </summary>
+        protected virtual void requestLayout()
+        {
+            //According to https://stackoverflow.com/questions/13856180/usage-of-forcelayout-requestlayout-and-invalidate
+            //At Android,this will let remeasure layout
+#if WINDOWS
+            InvalidateMeasure();
+#elif __IOS__
+            SetNeedsLayout();
+#endif
         }
     }
 }

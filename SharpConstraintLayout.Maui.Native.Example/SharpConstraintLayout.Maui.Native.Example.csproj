@@ -53,10 +53,9 @@
     <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
 
-
   <ItemGroup Condition="$(TargetFramework.Contains('-windows'))">
     <!-- Required - WinUI does not yet have buildTransitive for everything -->
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.0.0" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.0.1" />
     <PackageReference Include="Microsoft.Graphics.Win2D" Version="1.0.0.30" />
 
   </ItemGroup>
@@ -66,10 +65,11 @@
     <RuntimeIdentifier>win10-x64</RuntimeIdentifier>
   </PropertyGroup>
 
-  <ItemGroup>
+  <ItemGroup >
     <!--use this you can "hotreload" when use Native code write ui-->
     <PackageReference Include="ReloadPreview" Version="3.0.5" />
   </ItemGroup>
+  
   <!--only ios and maccatalyst have these-->
   <ItemGroup Condition="'$(TargetFramework)'!= 'net6.0-ios' and '$(TargetFramework)' != 'net6.0-maccatalyst'">
     <Compile Remove="**\*.iOS.cs" />
@@ -125,5 +125,11 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SharpConstraintLayout.Maui.Native\SharpConstraintLayout.Maui.Native.csproj" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net6.0-android'">
+    <PackageReference Include="Xamarin.AndroidX.ConstraintLayout">
+      <Version>2.1.2.1</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.AndroidX.Core" Version="1.7.0.1" />
   </ItemGroup>
 </Project>

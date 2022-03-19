@@ -23,15 +23,17 @@ namespace SharpConstraintLayout.Maui.Native.Example
 
         public MainPage(Context? context) : base(context)
         {
+            Id = View.GenerateViewId();
             this.LayoutParameters = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent);
             createControls();
             this.SetBackgroundColor(Color.HotPink);
 
-            //controlsTest(this);
+            controlsTest(this);
             //baselineTest(this);
             //guidelineTest(this);
             //barrierTest(this);
-            visibilityTest(this);
+            //visibilityTest(this);
+            //flowTest(this);
         }
 
         private void createControls()
@@ -39,6 +41,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             FirstButton = new Button(this.Context)
             {
                 //Tag = nameof(FirstButton),
+                Id = View.GenerateViewId(),
                 Text = "FirstButton At Center",
                 //Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.Red)
             };
@@ -46,21 +49,24 @@ namespace SharpConstraintLayout.Maui.Native.Example
 
             SecondButton = new Button(this.Context)
             {
+                Id = View.GenerateViewId(),
                 //Width = 100,Height = 100,
                 //Tag = nameof(SecondButton),
-                Text = "Second At Bottom",
+                Text = "Second Button",
                 //Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.Black)
             };
-            SecondButton.SetBackgroundColor(Color.Black);
+            SecondButton.SetBackgroundColor(Color.DarkCyan);
 
             ThirdCanvas = new View(this.Context)
             {
+                Id = View.GenerateViewId(),
                 //Tag = nameof(ThirdCanvas),
                 //Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.LightGreen)
             };
             ThirdCanvas.SetBackgroundColor(Color.LightGreen);
             FouthTextBlock = new TextView(this.Context)
             {
+                Id = View.GenerateViewId(),
                 Tag = nameof(FouthTextBlock),
                 //Width = 100,
                 //Height = 100,
@@ -69,6 +75,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
 
             FifthTextBox = new EditText(this.Context)
             {
+                Id = View.GenerateViewId(),
                 Tag = nameof(FifthTextBox),
                 Text = "TextBox",
                 //AcceptsReturn = true
@@ -77,14 +84,14 @@ namespace SharpConstraintLayout.Maui.Native.Example
             //https://stackoverflow.com/questions/35710355/uwpc-adding-text-to-richtextblock
             SixthRichTextBlock = new TextView(this.Context)
             {
+                Id = View.GenerateViewId(),
                 //Tag = nameof(SixthRichTextBlock),
                 //IsTextSelectionEnabled = true,
                 //TextWrapping = TextWrapping.Wrap
-                Text= "RichTextBlock",
+                Text = "RichTextBlock",
                 TextSize = 18,
             };
         }
-
 
         private void MainButton_Click(object sender, EventArgs e)
         {

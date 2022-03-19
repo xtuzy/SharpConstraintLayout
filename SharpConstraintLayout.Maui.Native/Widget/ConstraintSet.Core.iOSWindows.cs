@@ -52,7 +52,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 View view = constraintLayout.Subviews[i];
 #endif
                 //ConstraintLayout.LayoutParams param = (ConstraintLayout.LayoutParams)view.LayoutParams;
-                int id = view.GetHashCode();
+                int id = view.GetId();
                 var param = constraintLayout.mConstraintSet.Constraints[id];//获取旧的constraint
 
                 if (mForceId && id == -1)
@@ -124,10 +124,11 @@ namespace SharpConstraintLayout.Maui.Widget
         /// </summary>
         public virtual void ApplyTo(ConstraintLayout constraintLayout)
         {
-            int parentID = constraintLayout.GetHashCode();
+            int parentID = constraintLayout.GetId();
 
             int count = constraintLayout.ChildCount;
             List<int> used = mConstraints.Keys.ToList();//已经设置了约束的id
+            if (count != used.Count) Debug.WriteLine("The count of ConstraintLayout children is not equal to temprary constraints list, maybe you not use clone.",TAG);
             for (int i = 0; i < count; i++)//查看layout的child
             {
 #if WINDOWS
@@ -135,10 +136,10 @@ namespace SharpConstraintLayout.Maui.Widget
 #elif __IOS__
                 View view = constraintLayout.Subviews[i];
 #endif
-                int id = view.GetHashCode();
+                int id = view.GetId();
                 if (!mConstraints.ContainsKey(id))
                 {
-                    Debug.WriteLine(TAG, $"id unknown {view}");
+                    Debug.WriteLine($"id unknown {view}", TAG);
                     continue;
                 }
 
@@ -254,7 +255,7 @@ namespace SharpConstraintLayout.Maui.Widget
 
             foreach (int id in used)//剩下的约束不在ConstraintLayout的Children中,找出特殊的,如Barrier,Guideline,但是这里我们不弄,因为添加新的View有新的Id,那么就需要更新全部的约束,费时
             {
-                if (id == ConstraintSet.ParentId || id == constraintLayout.GetHashCode())//还要处理下layout
+                if (id == ConstraintSet.ParentId || id == constraintLayout.GetId())//还要处理下layout
                     mConstraints[id].applyTo(constraintLayout.mConstraintSet.Constraints[id].layout);
                 else
                     throw new NotImplementedException("如果还有约束身下而且是重要的,那么需要新建View插入原来的布局中,那么但是id怎么办,新建的有新的哈希,而约束是相对旧的哈希.");

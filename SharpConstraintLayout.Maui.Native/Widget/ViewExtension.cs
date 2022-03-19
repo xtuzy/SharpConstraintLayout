@@ -64,6 +64,8 @@ namespace SharpConstraintLayout.Maui.Widget
         public static int GetId(this UIElement view)
         {
 #if __ANDROID__
+            if(view.Id == UIElement.NoId)
+                view.Id = UIElement.GenerateViewId();
             return view.Id;
 #else
             return view.GetHashCode();

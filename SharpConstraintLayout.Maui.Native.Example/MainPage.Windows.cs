@@ -36,9 +36,9 @@ namespace SharpConstraintLayout.Maui.Native.Example
             //guidelineTest(this);
             //barrierTest(this);
             visibilityTest(this);
+            //flowTest(this);
         }
 
-        
         private void createControls()
         {
             FirstButton = new Button()
@@ -100,7 +100,6 @@ namespace SharpConstraintLayout.Maui.Native.Example
 
         }
 
-       
         private void MainButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
             Debug.WriteLine("Hello");

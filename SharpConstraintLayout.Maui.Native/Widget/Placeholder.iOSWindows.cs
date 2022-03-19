@@ -140,7 +140,7 @@ namespace SharpConstraintLayout.Maui.Widget
             {
                 //ConstraintLayout.LayoutParams layoutParamsContent = (ConstraintLayout.LayoutParams)mContent.LayoutParams;
                 //layoutParamsContent.isInPlaceholder = true;
-                container.mConstraintSet.Constraints[mContent.GetHashCode()].layout.isInPlaceholder = true;
+                container.mConstraintSet.Constraints[mContent.GetId()].layout.isInPlaceholder = true;
 #if WINDOWS
                 mContent.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
                 Visibility = Microsoft.UI.Xaml.Visibility.Visible;
@@ -167,7 +167,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 mContent.Visibility = Microsoft.UI.Xaml.Visibility.Visible; // ???
                                                                             //ConstraintLayout.LayoutParams layoutParamsContent = (ConstraintLayout.LayoutParams)mContent.LayoutParams;
                                                                             //layoutParamsContent.isInPlaceholder = false;
-                ((mContent.Parent) as ConstraintLayout).mConstraintSet.Constraints[mContent.GetHashCode()].layout.isInPlaceholder = true;
+                ((mContent.Parent) as ConstraintLayout).mConstraintSet.Constraints[mContent.GetId()].layout.isInPlaceholder = true;
 #elif __IOS__
                 mContent.Hidden = false; // ???
                 ((mContent.Superview) as ConstraintLayout).mConstraintSet.Constraints[mContent.GetHashCode()].layout.isInPlaceholder = true;

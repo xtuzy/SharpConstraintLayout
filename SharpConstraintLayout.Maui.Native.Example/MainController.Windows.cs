@@ -36,7 +36,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
                 }
 
             };
-            HotReload.Instance.Init("192.168.0.108");
+            HotReload.Instance.Init("192.168.0.108",100);
 #endif
 
         }

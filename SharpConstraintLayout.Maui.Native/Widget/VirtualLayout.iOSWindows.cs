@@ -15,9 +15,11 @@
  */
 #if WINDOWS
 using Microsoft.UI.Xaml;
+using System.Diagnostics;
 using View = Microsoft.UI.Xaml.FrameworkElement;
 #elif __IOS__
 using System;
+using System.Diagnostics;
 using View = UIKit.UIView;
 #endif
 namespace SharpConstraintLayout.Maui.Widget
@@ -38,7 +40,7 @@ namespace SharpConstraintLayout.Maui.Widget
         {
         }
 
-        protected internal  void init()
+        protected internal override void init()
         {
             base.init();
         }
@@ -57,10 +59,12 @@ namespace SharpConstraintLayout.Maui.Widget
             if (mApplyVisibilityOnAttach || mApplyElevationOnAttach)
             {
 #if WINDOWS
-                object parent = Parent;
+                var parent = Parent;
 #elif __IOS__
-                object parent = Superview;
+                var parent = Superview;
 #endif
+                if (parent == null) Debug.WriteLine("Parent is null, maybe something is false.", this.GetType().Name);
+
                 if (parent is ConstraintLayout)
                 {
                     ConstraintLayout container = (ConstraintLayout) parent;
