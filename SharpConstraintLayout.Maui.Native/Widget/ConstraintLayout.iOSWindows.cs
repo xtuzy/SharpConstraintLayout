@@ -119,6 +119,7 @@ namespace SharpConstraintLayout.Maui.Widget
 
         public int ChildCount { get { return Children != null ? Children.Count : 0; } }
 #elif __IOS__
+
         private UIElement[] Children
         { get { return Subviews; } }
 
@@ -151,6 +152,7 @@ namespace SharpConstraintLayout.Maui.Widget
 
         public int ChildCount
         { get { return Subviews.Length; } }
+
 #endif
 
         public UIElement findViewById(int id)
@@ -271,7 +273,9 @@ namespace SharpConstraintLayout.Maui.Widget
             if (double.IsPositiveInfinity(availableSize.Height))
             { availableHeight = int.MaxValue; isInfinityAvailabelSize = true; }
             else
+            {
                 availableHeight = (int)availableSize.Height;
+            }
             //If a direction available value and we need MATCH_PARENT, that always generate mistake result, so we not accept it. please modify constraint.
             if (isInfinityAvailabelSize && (MLayoutWidget.HorizontalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.MATCH_PARENT || MLayoutWidget.VerticalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.MATCH_PARENT))
             {
@@ -1351,7 +1355,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 }
 
                 // FIXME: need to agree on the correct magic value for this rather than simply using
-                //        zero.
+                // zero.
                 if (!layoutParams.layout.horizontalDimensionFixed)//Match_Parent和Match_Constraint是不固定
                 {
                     if (layoutParams.layout.mWidth == ConstraintSet.MatchParent)
