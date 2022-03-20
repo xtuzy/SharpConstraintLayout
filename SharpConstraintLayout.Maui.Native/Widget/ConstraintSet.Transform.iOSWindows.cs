@@ -23,7 +23,7 @@ namespace SharpConstraintLayout.Maui.Widget
 {
     public partial class ConstraintSet
     {
-        public class Transform
+        public class Transform:IDisposable
         {
             public bool mApply = false;
             public float rotation = 0;
@@ -58,7 +58,12 @@ namespace SharpConstraintLayout.Maui.Widget
                 elevation = src.elevation;
             }
 
-            internal static Dictionary<int,int> mapToConstant = new Dictionary<int, int>();
+            public void Dispose()
+            {
+                
+            }
+
+            //internal static Dictionary<int,int> mapToConstant = new Dictionary<int, int>();
             internal const int ROTATION = 1;
             internal const int ROTATION_X = 2;
             internal const int ROTATION_Y = 3;
@@ -71,66 +76,6 @@ namespace SharpConstraintLayout.Maui.Widget
             internal const int TRANSLATION_Z = 10;
             internal const int ELEVATION = 11;
             internal const int TRANSFORM_PIVOT_TARGET = 12;
-
-            /*internal virtual void fillFromAttributeList(Context context, AttributeSet attrs)
-            {
-                TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.Transform);
-                mApply = true;
-                //ORIGINAL LINE: final int N = a.getIndexCount();
-                int N = a.IndexCount;
-                for (int i = 0; i < N; i++)
-                {
-                    int attr = a.getIndex(i);
-
-                    switch (mapToConstant.get(attr))
-                    {
-                        case ROTATION:
-                            rotation = a.getFloat(attr, rotation);
-                            break;
-                        case ROTATION_X:
-                            rotationX = a.getFloat(attr, rotationX);
-                            break;
-                        case ROTATION_Y:
-                            rotationY = a.getFloat(attr, rotationY);
-                            break;
-                        case SCALE_X:
-                            scaleX = a.getFloat(attr, scaleX);
-                            break;
-                        case SCALE_Y:
-                            scaleY = a.getFloat(attr, scaleY);
-                            break;
-                        case TRANSFORM_PIVOT_X:
-                            transformPivotX = a.getDimension(attr, transformPivotX);
-                            break;
-                        case TRANSFORM_PIVOT_Y:
-                            transformPivotY = a.getDimension(attr, transformPivotY);
-                            break;
-                        case TRANSFORM_PIVOT_TARGET:
-                            transformPivotTarget = lookupID(a, attr, transformPivotTarget);
-                            break;
-                        case TRANSLATION_X:
-                            translationX = a.getDimension(attr, translationX);
-                            break;
-                        case TRANSLATION_Y:
-                            translationY = a.getDimension(attr, translationY);
-                            break;
-                        case TRANSLATION_Z:
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-                            {
-                                translationZ = a.getDimension(attr, translationZ);
-                            }
-                            break;
-                        case ELEVATION:
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-                            {
-                                applyElevation = true;
-                                elevation = a.getDimension(attr, elevation);
-                            }
-                            break;
-                    }
-                }
-                a.recycle();
-            }*/
         }
     }
 }

@@ -13,17 +13,19 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
+
 using androidx.constraintlayout.core.widgets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 namespace SharpConstraintLayout.Maui.Widget
 {
     public partial class ConstraintSet
     {
-        public class Layout
+        public class Layout : IDisposable
         {
             public bool mIsGuideline = false;
             public bool mApply = false;
@@ -32,24 +34,28 @@ namespace SharpConstraintLayout.Maui.Widget
             public int mHeight;
             public const int UNSET = ConstraintSet.Unset;
             public static readonly int UNSET_GONE_MARGIN = int.MinValue;
-            
-            
+
             /// <summary>
             /// The distance of child (guideline) to the top or left edge of its parent.
             /// </summary>
             public int guideBegin = UNSET;
+
             /// <summary>
             /// The distance of child (guideline) to the bottom or right edge of its parent.
             /// </summary>
             public int guideEnd = UNSET;
+
             /// <summary>
             /// The ratio of the distance to the parent's sides
             /// </summary>
             public float guidePercent = UNSET;
+
             /// <summary>
-            /// Constrains the left side of a child to the left side of a target child (contains the target child id).
+            /// Constrains the left side of a child to the left side of a target child (contains the
+            /// target child id).
             /// </summary>
             public int leftToLeft = UNSET;
+
             public int leftToRight = UNSET;
             public int rightToLeft = UNSET;
             public int rightToRight = UNSET;
@@ -61,14 +67,19 @@ namespace SharpConstraintLayout.Maui.Widget
             public int baselineToTop = UNSET;
             public int baselineToBottom = UNSET;
             public int startToEnd = UNSET;
+
             /// <summary>
-            /// Constrains the start side of a child to the start side of a target child (contains the target child id).
+            /// Constrains the start side of a child to the start side of a target child (contains
+            /// the target child id).
             /// </summary>
             public int startToStart = UNSET;
+
             public int endToStart = UNSET;
             public int endToEnd = UNSET;
+
             /// <summary>
-            /// The ratio between two connections when the left and right (or start and end) sides are constrained.
+            /// The ratio between two connections when the left and right (or start and end) sides
+            /// are constrained.
             /// </summary>
             public float horizontalBias = 0.5f;
 
@@ -81,6 +92,7 @@ namespace SharpConstraintLayout.Maui.Widget
             /// The ratio information.
             /// </summary>
             public string dimensionRatio = null;
+
             public int circleConstraint = UNSET;
             public int circleRadius = 0;
             public float circleAngle = 0;
@@ -94,106 +106,105 @@ namespace SharpConstraintLayout.Maui.Widget
             public int endMargin = 0;
             public int startMargin = 0;
             public int baselineMargin = 0;
+
             /// <summary>
             /// The left margin to use when the target is gone.
             /// </summary>
             public int goneLeftMargin = UNSET_GONE_MARGIN;
+
             public int goneTopMargin = UNSET_GONE_MARGIN;
             public int goneRightMargin = UNSET_GONE_MARGIN;
             public int goneBottomMargin = UNSET_GONE_MARGIN;
             public int goneEndMargin = UNSET_GONE_MARGIN;
             public int goneStartMargin = UNSET_GONE_MARGIN;
             public int goneBaselineMargin = UNSET_GONE_MARGIN;
+
             /// <summary>
-            /// The child's weight that we can use to distribute the available horizontal space
-            /// in a chain, if the dimension behaviour is set to MATCH_CONSTRAINT
+            /// The child's weight that we can use to distribute the available horizontal space in a
+            /// chain, if the dimension behaviour is set to MATCH_CONSTRAINT
             /// </summary>
             public float horizontalWeight = UNSET;
 
             /// <summary>
-            /// The child's weight that we can use to distribute the available vertical space
-            /// in a chain, if the dimension behaviour is set to MATCH_CONSTRAINT
+            /// The child's weight that we can use to distribute the available vertical space in a
+            /// chain, if the dimension behaviour is set to MATCH_CONSTRAINT
             /// </summary>
             public float verticalWeight = UNSET;
 
             /// <summary>
-            /// If the child is the start of a horizontal chain, this attribute will drive how
-            /// the elements of the chain will be positioned. The possible values are:
-            /// <ul>
-            /// <li><seealso cref="ChainSpread"/> -- the elements will be spread out</li>
-            /// <li><seealso cref="ChainSpreadInside"/> -- similar, but the endpoints of the chain will not
-            /// be spread out</li>
-            /// <li><seealso cref="ChainPacked"/> -- the elements of the chain will be packed together. The
-            /// horizontal bias attribute of the child will then affect the positioning of the packed
-            /// elements</li>
-            /// </ul>
+            /// If the child is the start of a horizontal chain, this attribute will drive how the
+            /// elements of the chain will be positioned. The possible values are: <ul><li><seealso
+            /// cref="ChainSpread"/> -- the elements will be spread out</li><li><seealso
+            /// cref="ChainSpreadInside"/> -- similar, but the endpoints of the chain will not be
+            /// spread out</li><li><seealso cref="ChainPacked"/> -- the elements of the chain will
+            /// be packed together. The horizontal bias attribute of the child will then affect the
+            /// positioning of the packed elements</li></ul>
             /// </summary>
             public int horizontalChainStyle = ChainSpread;
+
             /// <summary>
-            /// If the child is the start of a vertical chain, this attribute will drive how
-            /// the elements of the chain will be positioned. The possible values are:
-            /// <ul>
-            /// <li><seealso cref="ChainSpread"/> -- the elements will be spread out</li>
-            /// <li><seealso cref="ChainSpreadInside"/> -- similar, but the endpoints of the chain will not
-            /// be spread out</li>
-            /// <li><seealso cref="ChainPacked"/> -- the elements of the chain will be packed together. The
-            /// vertical bias attribute of the child will then affect the positioning of the packed
-            /// elements</li>
-            /// </ul>
+            /// If the child is the start of a vertical chain, this attribute will drive how the
+            /// elements of the chain will be positioned. The possible values are: <ul><li><seealso
+            /// cref="ChainSpread"/> -- the elements will be spread out</li><li><seealso
+            /// cref="ChainSpreadInside"/> -- similar, but the endpoints of the chain will not be
+            /// spread out</li><li><seealso cref="ChainPacked"/> -- the elements of the chain will
+            /// be packed together. The vertical bias attribute of the child will then affect the
+            /// positioning of the packed elements</li></ul>
             /// </summary>
             public int verticalChainStyle = ChainSpread;
 
+            /// <summary> Define how the widget horizontal dimension is handled when set to
+            /// MATCH_CONSTRAINT <ul> <li><seealso cref="#MATCH_CONSTRAINT_SPREAD"/> -- the default.
+            /// The dimension will expand up to the constraints, minus margins</li> <li><seealso
+            /// cref="#MATCH_CONSTRAINT_WRAP"/> -- DEPRECATED -- use instead WRAP_CONTENT and
+            /// constrainedWidth=true<br> The dimension will be the same as WRAP_CONTENT, unless the
+            /// size ends up too large for the constraints; in that case the dimension will expand
+            /// up to the constraints, minus margins This attribute may not be applied if the widget
+            /// is part of a chain in that dimension.</li> <li><seealso
+            /// cref="#MATCH_CONSTRAINT_PERCENT"/> -- The dimension will be a percent of another
+            /// widget (by default, the parent)</li> </ul> </summary>
+            public int matchConstraintDefaultWidth = ConstraintWidget.MATCH_CONSTRAINT_SPREAD;
+
+            /// <summary> Define how the widget vertical dimension is handled when set to
+            /// MATCH_CONSTRAINT <ul> <li><seealso cref="#MATCH_CONSTRAINT_SPREAD"/> -- the default.
+            /// The dimension will expand up to the constraints, minus margins</li> <li><seealso
+            /// cref="#MATCH_CONSTRAINT_WRAP"/> -- DEPRECATED -- use instead WRAP_CONTENT and
+            /// constrainedWidth=true<br> The dimension will be the same as WRAP_CONTENT, unless the
+            /// size ends up too large for the constraints; in that case the dimension will expand
+            /// up to the constraints, minus margins This attribute may not be applied if the widget
+            /// is part of a chain in that dimension.</li> <li><seealso
+            /// cref="#MATCH_CONSTRAINT_PERCENT"/> -- The dimension will be a percent of another
+            /// widget (by default, the parent)</li> </ul> </summary>
+            public int matchConstraintDefaultHeight = ConstraintWidget.MATCH_CONSTRAINT_SPREAD;
 
             /// <summary>
-            /// Define how the widget horizontal dimension is handled when set to MATCH_CONSTRAINT
-            /// <ul>
-            /// <li><seealso cref="#MATCH_CONSTRAINT_SPREAD"/> -- the default. The dimension will expand up to
-            /// the constraints, minus margins</li>
-            /// <li><seealso cref="#MATCH_CONSTRAINT_WRAP"/> -- DEPRECATED -- use instead WRAP_CONTENT and
-            /// constrainedWidth=true<br>
-            /// The dimension will be the same as WRAP_CONTENT, unless the size ends
-            /// up too large for the constraints; in that case the dimension will expand up to the constraints, minus margins
-            /// This attribute may not be applied if the widget is part of a chain in that dimension.</li>
-            /// <li><seealso cref="#MATCH_CONSTRAINT_PERCENT"/> -- The dimension will be a percent of another
-            /// widget (by default, the parent)</li>
-            /// </ul>
-            /// </summary>
-            public int matchConstraintDefaultWidth = ConstraintWidget.MATCH_CONSTRAINT_SPREAD;
-            /// <summary>
-            /// Define how the widget vertical dimension is handled when set to MATCH_CONSTRAINT
-            /// <ul>
-            /// <li><seealso cref="#MATCH_CONSTRAINT_SPREAD"/> -- the default. The dimension will expand up to
-            /// the constraints, minus margins</li>
-            /// <li><seealso cref="#MATCH_CONSTRAINT_WRAP"/> -- DEPRECATED -- use instead WRAP_CONTENT and
-            /// constrainedWidth=true<br>
-            /// The dimension will be the same as WRAP_CONTENT, unless the size ends
-            /// up too large for the constraints; in that case the dimension will expand up to the constraints, minus margins
-            /// This attribute may not be applied if the widget is part of a chain in that dimension.</li>
-            /// <li><seealso cref="#MATCH_CONSTRAINT_PERCENT"/> -- The dimension will be a percent of another
-            /// widget (by default, the parent)</li>
-            /// </ul>
-            /// </summary>
-            public int matchConstraintDefaultHeight = ConstraintWidget.MATCH_CONSTRAINT_SPREAD;
-            /// <summary>
-            /// Specify a maximum width size for the widget. It will only apply if the size of the widget
-            /// is set to MATCH_CONSTRAINT. Don't apply if the widget is part of a horizontal chain.
+            /// Specify a maximum width size for the widget. It will only apply if the size of the
+            /// widget is set to MATCH_CONSTRAINT. Don't apply if the widget is part of a horizontal
+            /// chain.
             /// </summary>
             public int matchConstraintMaxWidth = 0;
+
             /// <summary>
-            /// Specify a maximum height size for the widget. It will only apply if the size of the widget
-            /// is set to MATCH_CONSTRAINT. Don't apply if the widget is part of a vertical chain.
+            /// Specify a maximum height size for the widget. It will only apply if the size of the
+            /// widget is set to MATCH_CONSTRAINT. Don't apply if the widget is part of a vertical
+            /// chain.
             /// </summary>
             public int matchConstraintMaxHeight = 0;
+
             /// <summary>
-            /// Specify a minimum width size for the widget. It will only apply if the size of the widget
-            /// is set to MATCH_CONSTRAINT. Don't apply if the widget is part of a horizontal chain.
+            /// Specify a minimum width size for the widget. It will only apply if the size of the
+            /// widget is set to MATCH_CONSTRAINT. Don't apply if the widget is part of a horizontal
+            /// chain.
             /// </summary>
             public int matchConstraintMinWidth = 0;
+
             /// <summary>
-            /// Specify a minimum height size for the widget. It will only apply if the size of the widget
-            /// is set to MATCH_CONSTRAINT. Don't apply if the widget is part of a vertical chain.
+            /// Specify a minimum height size for the widget. It will only apply if the size of the
+            /// widget is set to MATCH_CONSTRAINT. Don't apply if the widget is part of a vertical
+            /// chain.
             /// </summary>
             public int matchConstraintMinHeight = 0;
+
             /// <summary>
             /// Specify the percentage when using the match constraint percent mode. From 0 to 1.
             /// </summary>
@@ -203,6 +214,7 @@ namespace SharpConstraintLayout.Maui.Widget
             /// Specify the percentage when using the match constraint percent mode. From 0 to 1.
             /// </summary>
             public float matchConstraintPercentHeight = 1;
+
             public int mBarrierDirection = UNSET;
             public int mBarrierMargin = 0;
             public int mHelperType = UNSET;
@@ -211,20 +223,21 @@ namespace SharpConstraintLayout.Maui.Widget
             public string constraintTag;
             public bool constrainedWidth = false;
             public bool constrainedHeight = false;
+
             // TODO public boolean mChainUseRtl = false;
             public bool mBarrierAllowsGoneWidgets = true;
+
             /// <summary>
             /// Specify how this view is taken in account during the parent's wrap computation
-            /// 
-            /// Can be either of:
-            /// WRAP_BEHAVIOR_INCLUDED the widget is taken in account for the wrap (default)
-            /// WRAP_BEHAVIOR_HORIZONTAL_ONLY the widget will be included in the wrap only horizontally
-            /// WRAP_BEHAVIOR_VERTICAL_ONLY the widget will be included in the wrap only vertically
-            /// WRAP_BEHAVIOR_SKIPPED the widget is not part of the wrap computation
+            ///
+            /// Can be either of: WRAP_BEHAVIOR_INCLUDED the widget is taken in account for the wrap
+            /// (default) WRAP_BEHAVIOR_HORIZONTAL_ONLY the widget will be included in the wrap only
+            /// horizontally WRAP_BEHAVIOR_VERTICAL_ONLY the widget will be included in the wrap
+            /// only vertically WRAP_BEHAVIOR_SKIPPED the widget is not part of the wrap computation
             /// </summary>
             public int wrapBehaviorInParent = ConstraintWidget.WRAP_BEHAVIOR_INCLUDED;
 
-            public virtual void copyFrom(Layout src)
+            public virtual void CopyFrom(Layout src)
             {
                 mIsGuideline = src.mIsGuideline;
                 mWidth = src.mWidth;
@@ -305,8 +318,9 @@ namespace SharpConstraintLayout.Maui.Widget
                 wrapBehaviorInParent = src.wrapBehaviorInParent;
             }
 
-            internal static Dictionary<int, int> mapToConstant = new Dictionary<int, int>();
+            //internal static Dictionary<int, int> mapToConstant = new Dictionary<int, int>();
             internal const int BASELINE_TO_BASELINE = 1;
+
             internal const int BOTTOM_MARGIN = 2;
             internal const int BOTTOM_TO_BOTTOM = 3;
             internal const int BOTTOM_TO_TOP = 4;
@@ -373,11 +387,8 @@ namespace SharpConstraintLayout.Maui.Widget
                     {
                         continue;
                     }
-                    //                 if (!field.isAccessible()) {
-                    //                    continue;
-                    //                }       if (!field.isAccessible()) {
-                    //                    continue;
-                    //                }
+                    // if (!field.isAccessible()) { continue; } if (!field.isAccessible()) {
+                    // continue; }
 
                     try
                     {
@@ -406,29 +417,29 @@ namespace SharpConstraintLayout.Maui.Widget
                                 stringBuilder.Append(" = \"");
                                 stringBuilder.Append(fValue);
                                 stringBuilder.Append("\"\n");
-
                             }
                         }
-
                     }
                     catch (IllegalAccessException e)
                     {
                         Console.WriteLine(e.ToString());
                         Console.Write(e.StackTrace);
                     }
-
-
                 }
             }*/
+
             #region Add From LayoutPamas
 
             // Internal use only
             public bool horizontalDimensionFixed = true;
+
             public bool verticalDimensionFixed = true;
 
             public bool needsBaseline = false;
+
             //public bool isGuideline = false;//重复mIsGuideline
             public bool isHelper = false;
+
             public bool isInPlaceholder = false;
             public bool isVirtualGroup = false;
 
@@ -436,10 +447,13 @@ namespace SharpConstraintLayout.Maui.Widget
             public int resolvedLeftToRight = UNSET;
             public int resolvedRightToLeft = UNSET;
             public int resolvedRightToRight = UNSET;
+
             //public int resolveGoneLeftMargin = GONE_UNSET;
             public int resolveGoneLeftMargin = int.MaxValue;
+
             //public int resolveGoneRightMargin = GONE_UNSET;
             public int resolveGoneRightMargin = int.MaxValue;
+
             public float resolvedHorizontalBias = 0.5f;
 
             public bool helped = false;
@@ -448,10 +462,9 @@ namespace SharpConstraintLayout.Maui.Widget
             internal bool heightSet = true; // need to be set to false when we reactivate this in 3.0
 
             /// <summary>
-            /// Add From layoutParams.
-            /// 验证?看起来时可以处理WrapContent
+            /// Add From layoutParams. 验证?看起来时可以处理WrapContent
             /// </summary>
-            public void validate()
+            public void Validate()
             {
                 mIsGuideline = false;
                 horizontalDimensionFixed = true;
@@ -487,9 +500,10 @@ namespace SharpConstraintLayout.Maui.Widget
                 if (mWidth == MatchConstraint || mWidth == MatchParent)
                 {
                     horizontalDimensionFixed = false;
-                    // We have to reset LayoutParams width/height to WRAP_CONTENT here, as some widgets like TextView
-                    // will use the layout params directly as a hint to know if they need to request a layout
-                    // when their content change (e.g. during setTextView)
+                    // We have to reset LayoutParams width/height to WRAP_CONTENT here, as some
+                    // widgets like TextView will use the layout params directly as a hint to know
+                    // if they need to request a layout when their content change (e.g. during
+                    // setTextView)
                     if (mWidth == MatchConstraint && matchConstraintDefaultWidth == MatchConstraintWrap)
                     {
                         mWidth = WrapContent;
@@ -499,9 +513,10 @@ namespace SharpConstraintLayout.Maui.Widget
                 if (mHeight == MatchConstraint || mHeight == MatchParent)
                 {
                     verticalDimensionFixed = false;
-                    // We have to reset LayoutParams width/height to WRAP_CONTENT here, as some widgets like TextView
-                    // will use the layout params directly as a hint to know if they need to request a layout
-                    // when their content change (e.g. during setTextView)
+                    // We have to reset LayoutParams width/height to WRAP_CONTENT here, as some
+                    // widgets like TextView will use the layout params directly as a hint to know
+                    // if they need to request a layout when their content change (e.g. during
+                    // setTextView)
                     if (mHeight == MatchConstraint && matchConstraintDefaultHeight == MatchConstraintWrap)
                     {
                         mHeight = WrapContent;
@@ -530,7 +545,12 @@ namespace SharpConstraintLayout.Maui.Widget
                     }*/
                 }
             }
-#endregion
+
+            public void Dispose()
+            {
+            }
+
+            #endregion Add From LayoutPamas
         }
     }
 }

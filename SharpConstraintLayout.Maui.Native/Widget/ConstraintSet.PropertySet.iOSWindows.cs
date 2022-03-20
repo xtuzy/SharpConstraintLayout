@@ -13,6 +13,7 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,26 +22,27 @@ using System.Threading.Tasks;
 
 namespace SharpConstraintLayout.Maui.Widget
 {
-    public partial class ConstraintSet
+    public partial class ConstraintSet 
     {
-        public class PropertySet
+        public class PropertySet:IDisposable
         {
             public bool mApply = false;
+
             /// <summary>
-            /// Copy Form Android.Views.View.Visibility
-            /// Returns the visibility status for this view.
-            /// @return One of {@link #VISIBLE}, {@link #INVISIBLE}, or {@link #GONE}.
+            /// Copy Form Android.Views.View.Visibility Returns the visibility status for this view.
+            /// <see cref="ConstraintSet.Visible"/>, <see cref="ConstraintSet.Invisible"/>,<see cref="ConstraintSet.Gone"/>.
             /// </summary>
             public int visibility = Visible;
+
             public int mVisibilityMode = VisibilityModeNormal;
+
             /// <summary>
-            /// Copy Form Android.Views.View.Alpha
-            /// The opacity of the view.This is a value from 0 to 1, where 0 means the view is
-            /// completely transparent and 1 means the view is completely opaque.
-            /// By default this is 1.0f.
-            /// @return The opacity of the view.
+            /// Copy Form Android.Views.View.Alpha The opacity of the view.This is a value from 0 to
+            /// 1, where 0 means the view is completely transparent and 1 means the view is
+            /// completely opaque. By default this is 1.0f.
             /// </summary>
             public float alpha = 1;
+
             public float mProgress = float.NaN;
 
             public virtual void copyFrom(PropertySet src)
@@ -52,36 +54,10 @@ namespace SharpConstraintLayout.Maui.Widget
                 mVisibilityMode = src.mVisibilityMode;
             }
 
-            /*internal virtual void fillFromAttributeList(Context context, AttributeSet attrs)
+            public void Dispose()
             {
-                TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.PropertySet);
-                mApply = true;
-                //ORIGINAL LINE: final int N = a.getIndexCount();
-                int N = a.IndexCount;
-                for (int i = 0; i < N; i++)
-                {
-                    int attr = a.getIndex(i);
-
-                    if (attr == R.styleable.PropertySet_android_alpha)
-                    {
-                        alpha = a.getFloat(attr, alpha);
-                    }
-                    else if (attr == R.styleable.PropertySet_android_visibility)
-                    {
-                        visibility = a.getInt(attr, visibility);
-                        visibility = VISIBILITY_FLAGS[visibility];
-                    }
-                    else if (attr == R.styleable.PropertySet_visibilityMode)
-                    {
-                        mVisibilityMode = a.getInt(attr, mVisibilityMode);
-                    }
-                    else if (attr == R.styleable.PropertySet_motionProgress)
-                    {
-                        mProgress = a.getFloat(attr, mProgress);
-                    }
-                }
-                a.recycle();
-            }*/
+               
+            }
         }
     }
 }

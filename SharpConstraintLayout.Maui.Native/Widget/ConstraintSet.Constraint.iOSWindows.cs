@@ -13,6 +13,7 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
+
 using androidx.constraintlayout.core.widgets;
 using System;
 using System.Collections.Generic;
@@ -23,391 +24,359 @@ using System.Threading.Tasks;
 
 namespace SharpConstraintLayout.Maui.Widget
 {
-	public partial class ConstraintSet
-	{
-		public class Constraint
-		{
-			internal int mViewId;
-			internal string mTargetString;
-			public readonly PropertySet propertySet = new PropertySet();
-			//public readonly Motion motion = new Motion();
-			public readonly Layout layout = new Layout();
-			public readonly Transform transform = new Transform();
-			//public Dictionary<string, ConstraintAttribute> mCustomConstraints = new Dictionary<string, ConstraintAttribute>();
-			internal Delta mDelta;
+    public partial class ConstraintSet
+    {
+        public class Constraint : IDisposable
+        {
+            internal int mViewId;
+            internal string mTargetString;
+            public readonly PropertySet propertySet = new PropertySet();
 
-			internal class Delta
-			{
-				internal const int INITIAL_BOOLEAN = 4;
-				internal const int INITIAL_INT = 10;
-				internal const int INITIAL_FLOAT = 10;
-				internal const int INITIAL_STRING = 5;
-				internal int[] mTypeInt = new int[INITIAL_INT];
-				internal int[] mValueInt = new int[INITIAL_INT];
-				internal int mCountInt = 0;
+            //public readonly Motion motion = new Motion();
+            public readonly Layout layout = new Layout();
 
-				internal virtual void add(int type, int value)
-				{
-					if (mCountInt >= mTypeInt.Length)
-					{
-						//mTypeInt = Arrays.copyOf(mTypeInt, mTypeInt.Length * 2);
-						mTypeInt = ArrayHelperClass.Copy(mTypeInt, mTypeInt.Length * 2);
-						//mValueInt = Arrays.copyOf(mValueInt, mValueInt.Length * 2);
-						mValueInt = ArrayHelperClass.Copy(mValueInt, mValueInt.Length * 2);
-					}
-					mTypeInt[mCountInt] = type;
-					mValueInt[mCountInt++] = value;
-				}
+            public readonly Transform transform = new Transform();
+            internal Delta mDelta;
 
-				internal int[] mTypeFloat = new int[INITIAL_FLOAT];
-				internal float[] mValueFloat = new float[INITIAL_FLOAT];
-				internal int mCountFloat = 0;
+            internal class Delta
+            {
+                internal const int INITIAL_BOOLEAN = 4;
+                internal const int INITIAL_INT = 10;
+                internal const int INITIAL_FLOAT = 10;
+                internal const int INITIAL_STRING = 5;
+                internal int[] mTypeInt = new int[INITIAL_INT];
+                internal int[] mValueInt = new int[INITIAL_INT];
+                internal int mCountInt = 0;
 
-				internal virtual void add(int type, float value)
-				{
-					if (mCountFloat >= mTypeFloat.Length)
-					{
-						//mTypeFloat = Arrays.copyOf(mTypeFloat, mTypeFloat.Length * 2);
-						mTypeFloat = ArrayHelperClass.Copy(mTypeFloat, mTypeFloat.Length * 2);
-						//mValueFloat = Arrays.copyOf(mValueFloat, mValueFloat.Length * 2);
-						mValueFloat = ArrayHelperClass.Copy(mValueFloat, mValueFloat.Length * 2);
-					}
-					mTypeFloat[mCountFloat] = type;
-					mValueFloat[mCountFloat++] = value;
-				}
+                internal virtual void Add(int type, int value)
+                {
+                    if (mCountInt >= mTypeInt.Length)
+                    {
+                        //mTypeInt = Arrays.copyOf(mTypeInt, mTypeInt.Length * 2);
+                        mTypeInt = ArrayHelperClass.Copy(mTypeInt, mTypeInt.Length * 2);
+                        //mValueInt = Arrays.copyOf(mValueInt, mValueInt.Length * 2);
+                        mValueInt = ArrayHelperClass.Copy(mValueInt, mValueInt.Length * 2);
+                    }
+                    mTypeInt[mCountInt] = type;
+                    mValueInt[mCountInt++] = value;
+                }
 
-				internal int[] mTypeString = new int[INITIAL_STRING];
-				internal string[] mValueString = new string[INITIAL_STRING];
-				internal int mCountString = 0;
+                internal int[] mTypeFloat = new int[INITIAL_FLOAT];
+                internal float[] mValueFloat = new float[INITIAL_FLOAT];
+                internal int mCountFloat = 0;
 
-				internal virtual void add(int type, string value)
-				{
-					if (mCountString >= mTypeString.Length)
-					{
-						//mTypeString = Arrays.copyOf(mTypeString, mTypeString.Length * 2);
-						mTypeString = ArrayHelperClass.Copy(mTypeString, mTypeString.Length * 2);
-						//mValueString = Arrays.copyOf(mValueString, mValueString.Length * 2);
-						mValueString = ArrayHelperClass.Copy(mValueString, mValueString.Length * 2);
-					}
-					mTypeString[mCountString] = type;
-					mValueString[mCountString++] = value;
-				}
+                internal virtual void Add(int type, float value)
+                {
+                    if (mCountFloat >= mTypeFloat.Length)
+                    {
+                        //mTypeFloat = Arrays.copyOf(mTypeFloat, mTypeFloat.Length * 2);
+                        mTypeFloat = ArrayHelperClass.Copy(mTypeFloat, mTypeFloat.Length * 2);
+                        //mValueFloat = Arrays.copyOf(mValueFloat, mValueFloat.Length * 2);
+                        mValueFloat = ArrayHelperClass.Copy(mValueFloat, mValueFloat.Length * 2);
+                    }
+                    mTypeFloat[mCountFloat] = type;
+                    mValueFloat[mCountFloat++] = value;
+                }
 
-				internal int[] mTypeBoolean = new int[INITIAL_BOOLEAN];
-				internal bool[] mValueBoolean = new bool[INITIAL_BOOLEAN];
-				internal int mCountBoolean = 0;
+                internal int[] mTypeString = new int[INITIAL_STRING];
+                internal string[] mValueString = new string[INITIAL_STRING];
+                internal int mCountString = 0;
 
-				internal virtual void add(int type, bool value)
-				{
-					if (mCountBoolean >= mTypeBoolean.Length)
-					{
-						//mTypeBoolean = Arrays.copyOf(mTypeBoolean, mTypeBoolean.Length * 2);
-						mTypeBoolean = ArrayHelperClass.Copy(mTypeBoolean, mTypeBoolean.Length * 2);
-						//mValueBoolean = Arrays.copyOf(mValueBoolean, mValueBoolean.Length * 2);
-						mValueBoolean = ArrayHelperClass.Copy(mValueBoolean, mValueBoolean.Length * 2);
-					}
-					mTypeBoolean[mCountBoolean] = type;
-					mValueBoolean[mCountBoolean++] = value;
-				}
+                internal virtual void Add(int type, string value)
+                {
+                    if (mCountString >= mTypeString.Length)
+                    {
+                        //mTypeString = Arrays.copyOf(mTypeString, mTypeString.Length * 2);
+                        mTypeString = ArrayHelperClass.Copy(mTypeString, mTypeString.Length * 2);
+                        //mValueString = Arrays.copyOf(mValueString, mValueString.Length * 2);
+                        mValueString = ArrayHelperClass.Copy(mValueString, mValueString.Length * 2);
+                    }
+                    mTypeString[mCountString] = type;
+                    mValueString[mCountString++] = value;
+                }
 
-				internal virtual void applyDelta(Constraint c)
-				{
-					for (int i = 0; i < mCountInt; i++)
-					{
-						setDeltaValue(c, mTypeInt[i], mValueInt[i]);
-					}
-					for (int i = 0; i < mCountFloat; i++)
-					{
-						setDeltaValue(c, mTypeFloat[i], mValueFloat[i]);
-					}
-					for (int i = 0; i < mCountString; i++)
-					{
-						setDeltaValue(c, mTypeString[i], mValueString[i]);
-					}
-					for (int i = 0; i < mCountBoolean; i++)
-					{
-						setDeltaValue(c, mTypeBoolean[i], mValueBoolean[i]);
-					}
-				}
+                internal int[] mTypeBoolean = new int[INITIAL_BOOLEAN];
+                internal bool[] mValueBoolean = new bool[INITIAL_BOOLEAN];
+                internal int mCountBoolean = 0;
 
-				//ORIGINAL LINE: @SuppressLint("LogConditional") void printDelta(String tag)
-				internal virtual void printDelta(string tag)
-				{
-					Debug.WriteLine(tag, "int");
+                internal virtual void Add(int type, bool value)
+                {
+                    if (mCountBoolean >= mTypeBoolean.Length)
+                    {
+                        //mTypeBoolean = Arrays.copyOf(mTypeBoolean, mTypeBoolean.Length * 2);
+                        mTypeBoolean = ArrayHelperClass.Copy(mTypeBoolean, mTypeBoolean.Length * 2);
+                        //mValueBoolean = Arrays.copyOf(mValueBoolean, mValueBoolean.Length * 2);
+                        mValueBoolean = ArrayHelperClass.Copy(mValueBoolean, mValueBoolean.Length * 2);
+                    }
+                    mTypeBoolean[mCountBoolean] = type;
+                    mValueBoolean[mCountBoolean++] = value;
+                }
 
-					for (int i = 0; i < mCountInt; i++)
-					{
-						Debug.WriteLine(tag, mTypeInt[i] + " = " + mValueInt[i]);
-					}
-					Debug.WriteLine(tag, "float");
+                internal virtual void ApplyDelta(Constraint c)
+                {
+                    for (int i = 0; i < mCountInt; i++)
+                    {
+                        setDeltaValue(c, mTypeInt[i], mValueInt[i]);
+                    }
+                    for (int i = 0; i < mCountFloat; i++)
+                    {
+                        setDeltaValue(c, mTypeFloat[i], mValueFloat[i]);
+                    }
+                    for (int i = 0; i < mCountString; i++)
+                    {
+                        setDeltaValue(c, mTypeString[i], mValueString[i]);
+                    }
+                    for (int i = 0; i < mCountBoolean; i++)
+                    {
+                        setDeltaValue(c, mTypeBoolean[i], mValueBoolean[i]);
+                    }
+                }
 
-					for (int i = 0; i < mCountFloat; i++)
-					{
-						Debug.WriteLine(tag, mTypeFloat[i] + " = " + mValueFloat[i]);
-					}
-					Debug.WriteLine(tag, "strings");
+                internal virtual void PrintDelta(string tag)
+                {
+                    Debug.WriteLine(tag, "int");
 
-					for (int i = 0; i < mCountString; i++)
-					{
-						Debug.WriteLine(tag, mTypeString[i] + " = " + mValueString[i]);
-					}
-					Debug.WriteLine(tag, "boolean");
-					for (int i = 0; i < mCountBoolean; i++)
-					{
-						Debug.WriteLine(tag, mTypeBoolean[i] + " = " + mValueBoolean[i]);
-					}
-				}
-			}
+                    for (int i = 0; i < mCountInt; i++)
+                    {
+                        Debug.WriteLine(tag, mTypeInt[i] + " = " + mValueInt[i]);
+                    }
+                    Debug.WriteLine(tag, "float");
 
-			public virtual void applyDelta(Constraint c)
-			{
-				if (mDelta != null)
-				{
-					mDelta.applyDelta(c);
-				}
-			}
+                    for (int i = 0; i < mCountFloat; i++)
+                    {
+                        Debug.WriteLine(tag, mTypeFloat[i] + " = " + mValueFloat[i]);
+                    }
+                    Debug.WriteLine(tag, "strings");
 
-			public virtual void printDelta(string tag)
-			{
-				if (mDelta != null)
-				{
-					mDelta.printDelta(tag);
-				}
-				else
-				{
-					//Debug.WriteLine(tag, "DELTA IS NULL");
-					Debug.WriteLine(tag, "DELTA IS NULL");
-				}
-			}
+                    for (int i = 0; i < mCountString; i++)
+                    {
+                        Debug.WriteLine(tag, mTypeString[i] + " = " + mValueString[i]);
+                    }
+                    Debug.WriteLine(tag, "boolean");
+                    for (int i = 0; i < mCountBoolean; i++)
+                    {
+                        Debug.WriteLine(tag, mTypeBoolean[i] + " = " + mValueBoolean[i]);
+                    }
+                }
+            }
 
-			/*internal virtual ConstraintAttribute get(string attributeName, AttributeType attributeType)
-			{
-				ConstraintAttribute ret;
-				if (mCustomConstraints.ContainsKey(attributeName))
-				{
-					ret = mCustomConstraints[attributeName];
-					if (ret.Type != attributeType)
-					{
-						throw new System.ArgumentException("ConstraintAttribute is already a " + ret.Type.name());
-					}
-				}
-				else
-				{
-					ret = new ConstraintAttribute(attributeName, attributeType);
-					mCustomConstraints[attributeName] = ret;
-				}
-				return ret;
-			}
+            public virtual void ApplyDelta(Constraint c)
+            {
+                if (mDelta != null)
+                {
+                    mDelta.ApplyDelta(c);
+                }
+            }
 
-			internal virtual void setStringValue(string attributeName, string value)
-			{
-				get(attributeName, AttributeType.STRING_TYPE).StringValue = value;
-			}
+            public virtual void PrintDelta(string tag)
+            {
+                if (mDelta != null)
+                {
+                    mDelta.PrintDelta(tag);
+                }
+                else
+                {
+                    //Debug.WriteLine(tag, "DELTA IS NULL");
+                    Debug.WriteLine(tag, "DELTA IS NULL");
+                }
+            }
 
-			internal virtual void setFloatValue(string attributeName, float value)
-			{
-				get(attributeName, AttributeType.FLOAT_TYPE).FloatValue = value;
-			}
+            public virtual Constraint Clone()
+            {
+                Constraint clone = new Constraint();
+                clone.layout.CopyFrom(layout);
+                //clone.motion.copyFrom(motion);
+                clone.propertySet.copyFrom(propertySet);
+                clone.transform.copyFrom(transform);
+                clone.mViewId = mViewId;
+                clone.mDelta = mDelta;
+                return clone;
+            }
 
-			internal virtual void setIntValue(string attributeName, int value)
-			{
-				get(attributeName, AttributeType.INT_TYPE).IntValue = value;
-			}
+            internal virtual void FillFromConstraints(ConstraintHelper helper, int viewId, ConstraintSet.Constraint param)
+            {
+                FillFromConstraints(viewId, param);
+                if (helper is Barrier)
+                {
+                    layout.mHelperType = BARRIER_TYPE;
+                    Barrier barrier = (Barrier)helper;
+                    layout.mBarrierDirection = barrier.Type;
+                    layout.mReferenceIds = barrier.ReferencedIds;
+                    layout.mBarrierMargin = barrier.Margin;
+                }
+            }
 
-			internal virtual void setColorValue(string attributeName, int value)
-			{
-				get(attributeName, AttributeType.COLOR_TYPE).ColorValue = value;
-			}*/
+            internal virtual void FillFromConstraints(int viewId, ConstraintSet.Constraint param)
+            {
+                FillFrom(viewId, param.layout);
+                propertySet.alpha = param.propertySet.alpha;
+                transform.rotation = param.transform.rotation;
+                transform.rotationX = param.transform.rotationX;
+                transform.rotationY = param.transform.rotationY;
+                transform.scaleX = param.transform.scaleX;
+                transform.scaleY = param.transform.scaleY;
+                transform.transformPivotX = param.transform.transformPivotX;
+                transform.transformPivotY = param.transform.transformPivotY;
+                transform.translationX = param.transform.translationX;
+                transform.translationY = param.transform.translationY;
+                transform.translationZ = param.transform.translationZ;
+                transform.elevation = param.transform.elevation;
+                transform.applyElevation = param.transform.applyElevation;
+            }
 
-			public virtual Constraint clone()
-			{
-				Constraint clone = new Constraint();
-				clone.layout.copyFrom(layout);
-				//clone.motion.copyFrom(motion);
-				clone.propertySet.copyFrom(propertySet);
-				clone.transform.copyFrom(transform);
-				clone.mViewId = mViewId;
-				clone.mDelta = mDelta;
-				return clone;
-			}
+            internal virtual void FillFrom(int viewId, ConstraintSet.Layout param)
+            {
+                mViewId = viewId;
+                layout.leftToLeft = param.leftToLeft;
+                layout.leftToRight = param.leftToRight;
+                layout.rightToLeft = param.rightToLeft;
+                layout.rightToRight = param.rightToRight;
+                layout.topToTop = param.topToTop;
+                layout.topToBottom = param.topToBottom;
+                layout.bottomToTop = param.bottomToTop;
+                layout.bottomToBottom = param.bottomToBottom;
+                layout.baselineToBaseline = param.baselineToBaseline;
+                layout.baselineToTop = param.baselineToTop;
+                layout.baselineToBottom = param.baselineToBottom;
+                layout.startToEnd = param.startToEnd;
+                layout.startToStart = param.startToStart;
+                layout.endToStart = param.endToStart;
+                layout.endToEnd = param.endToEnd;
 
-			internal virtual void fillFromConstraints(ConstraintHelper helper, int viewId, ConstraintSet.Constraint param)
-			{
-				fillFromConstraints(viewId, param);
-				if (helper is Barrier)
-				{
-					layout.mHelperType = BARRIER_TYPE;
-					Barrier barrier = (Barrier)helper;
-					layout.mBarrierDirection = barrier.Type;
-					layout.mReferenceIds = barrier.ReferencedIds;
-					layout.mBarrierMargin = barrier.Margin;
-				}
-			}
+                layout.horizontalBias = param.horizontalBias;
+                layout.verticalBias = param.verticalBias;
+                layout.dimensionRatio = param.dimensionRatio;
 
-			internal virtual void fillFromConstraints(int viewId, ConstraintSet.Constraint param)
-			{
-				fillFrom(viewId, param.layout);
-				propertySet.alpha = param.propertySet.alpha;
-				transform.rotation = param.transform.rotation;
-				transform.rotationX = param.transform.rotationX;
-				transform.rotationY = param.transform.rotationY;
-				transform.scaleX = param.transform.scaleX;
-				transform.scaleY = param.transform.scaleY;
-				transform.transformPivotX = param.transform.transformPivotX;
-				transform.transformPivotY = param.transform.transformPivotY;
-				transform.translationX = param.transform.translationX;
-				transform.translationY = param.transform.translationY;
-				transform.translationZ = param.transform.translationZ;
-				transform.elevation = param.transform.elevation;
-				transform.applyElevation = param.transform.applyElevation;
-			}
+                layout.circleConstraint = param.circleConstraint;
+                layout.circleRadius = param.circleRadius;
+                layout.circleAngle = param.circleAngle;
 
-			internal virtual void fillFrom(int viewId, ConstraintSet.Layout param)
-			{
-				mViewId = viewId;
-				layout.leftToLeft = param.leftToLeft;
-				layout.leftToRight = param.leftToRight;
-				layout.rightToLeft = param.rightToLeft;
-				layout.rightToRight = param.rightToRight;
-				layout.topToTop = param.topToTop;
-				layout.topToBottom = param.topToBottom;
-				layout.bottomToTop = param.bottomToTop;
-				layout.bottomToBottom = param.bottomToBottom;
-				layout.baselineToBaseline = param.baselineToBaseline;
-				layout.baselineToTop = param.baselineToTop;
-				layout.baselineToBottom = param.baselineToBottom;
-				layout.startToEnd = param.startToEnd;
-				layout.startToStart = param.startToStart;
-				layout.endToStart = param.endToStart;
-				layout.endToEnd = param.endToEnd;
+                layout.editorAbsoluteX = param.editorAbsoluteX;
+                layout.editorAbsoluteY = param.editorAbsoluteY;
+                layout.orientation = param.orientation;
+                layout.guidePercent = param.guidePercent;
+                layout.guideBegin = param.guideBegin;
+                layout.guideEnd = param.guideEnd;
+                layout.mWidth = param.mWidth;
+                layout.mHeight = param.mHeight;
+                layout.leftMargin = param.leftMargin;
+                layout.rightMargin = param.rightMargin;
+                layout.topMargin = param.topMargin;
+                layout.bottomMargin = param.bottomMargin;
+                layout.baselineMargin = param.baselineMargin;
+                layout.verticalWeight = param.verticalWeight;
+                layout.horizontalWeight = param.horizontalWeight;
+                layout.verticalChainStyle = param.verticalChainStyle;
+                layout.horizontalChainStyle = param.horizontalChainStyle;
+                layout.constrainedWidth = param.constrainedWidth;
+                layout.constrainedHeight = param.constrainedHeight;
+                layout.matchConstraintDefaultWidth = param.matchConstraintDefaultWidth;
+                layout.matchConstraintDefaultHeight = param.matchConstraintDefaultHeight;
+                layout.matchConstraintMaxWidth = param.matchConstraintMaxWidth;
+                layout.matchConstraintMaxHeight = param.matchConstraintMaxHeight;
+                layout.matchConstraintMinWidth = param.matchConstraintMinWidth;
+                layout.matchConstraintMinHeight = param.matchConstraintMinHeight;
+                layout.matchConstraintPercentWidth = param.matchConstraintPercentWidth;
+                layout.matchConstraintPercentHeight = param.matchConstraintPercentHeight;
+                layout.constraintTag = param.constraintTag;
+                layout.goneTopMargin = param.goneTopMargin;
+                layout.goneBottomMargin = param.goneBottomMargin;
+                layout.goneLeftMargin = param.goneLeftMargin;
+                layout.goneRightMargin = param.goneRightMargin;
+                layout.goneStartMargin = param.goneStartMargin;
+                layout.goneEndMargin = param.goneEndMargin;
+                layout.goneBaselineMargin = param.goneBaselineMargin;
+                layout.wrapBehaviorInParent = param.wrapBehaviorInParent;
 
-				layout.horizontalBias = param.horizontalBias;
-				layout.verticalBias = param.verticalBias;
-				layout.dimensionRatio = param.dimensionRatio;
+                //int currentApiVersion = Build.VERSION.SDK_INT;
+                //if (currentApiVersion >= Build.VERSION_CODES.JELLY_BEAN_MR1)
+                //{
+                layout.endMargin = param.endMargin;
+                layout.startMargin = param.startMargin;
+                //}
+            }
 
-				layout.circleConstraint = param.circleConstraint;
-				layout.circleRadius = param.circleRadius;
-				layout.circleAngle = param.circleAngle;
+            public virtual void ApplyTo(ConstraintSet.Layout param)
+            {
+                param.leftToLeft = layout.leftToLeft;
+                param.leftToRight = layout.leftToRight;
+                param.rightToLeft = layout.rightToLeft;
+                param.rightToRight = layout.rightToRight;
 
-				layout.editorAbsoluteX = param.editorAbsoluteX;
-				layout.editorAbsoluteY = param.editorAbsoluteY;
-				layout.orientation = param.orientation;
-				layout.guidePercent = param.guidePercent;
-				layout.guideBegin = param.guideBegin;
-				layout.guideEnd = param.guideEnd;
-				layout.mWidth = param.mWidth;
-				layout.mHeight = param.mHeight;
-				layout.leftMargin = param.leftMargin;
-				layout.rightMargin = param.rightMargin;
-				layout.topMargin = param.topMargin;
-				layout.bottomMargin = param.bottomMargin;
-				layout.baselineMargin = param.baselineMargin;
-				layout.verticalWeight = param.verticalWeight;
-				layout.horizontalWeight = param.horizontalWeight;
-				layout.verticalChainStyle = param.verticalChainStyle;
-				layout.horizontalChainStyle = param.horizontalChainStyle;
-				layout.constrainedWidth = param.constrainedWidth;
-				layout.constrainedHeight = param.constrainedHeight;
-				layout.matchConstraintDefaultWidth = param.matchConstraintDefaultWidth;
-				layout.matchConstraintDefaultHeight = param.matchConstraintDefaultHeight;
-				layout.matchConstraintMaxWidth = param.matchConstraintMaxWidth;
-				layout.matchConstraintMaxHeight = param.matchConstraintMaxHeight;
-				layout.matchConstraintMinWidth = param.matchConstraintMinWidth;
-				layout.matchConstraintMinHeight = param.matchConstraintMinHeight;
-				layout.matchConstraintPercentWidth = param.matchConstraintPercentWidth;
-				layout.matchConstraintPercentHeight = param.matchConstraintPercentHeight;
-				layout.constraintTag = param.constraintTag;
-				layout.goneTopMargin = param.goneTopMargin;
-				layout.goneBottomMargin = param.goneBottomMargin;
-				layout.goneLeftMargin = param.goneLeftMargin;
-				layout.goneRightMargin = param.goneRightMargin;
-				layout.goneStartMargin = param.goneStartMargin;
-				layout.goneEndMargin = param.goneEndMargin;
-				layout.goneBaselineMargin = param.goneBaselineMargin;
-				layout.wrapBehaviorInParent = param.wrapBehaviorInParent;
+                param.topToTop = layout.topToTop;
+                param.topToBottom = layout.topToBottom;
+                param.bottomToTop = layout.bottomToTop;
+                param.bottomToBottom = layout.bottomToBottom;
 
-				//int currentApiVersion = Build.VERSION.SDK_INT;
-				//if (currentApiVersion >= Build.VERSION_CODES.JELLY_BEAN_MR1)
-				//{
-					layout.endMargin = param.endMargin;
-					layout.startMargin = param.startMargin;
-				//}
-			}
+                param.baselineToBaseline = layout.baselineToBaseline;
+                param.baselineToTop = layout.baselineToTop;
+                param.baselineToBottom = layout.baselineToBottom;
 
-			public virtual void applyTo(ConstraintSet.Layout param)
-			{
-				param.leftToLeft = layout.leftToLeft;
-				param.leftToRight = layout.leftToRight;
-				param.rightToLeft = layout.rightToLeft;
-				param.rightToRight = layout.rightToRight;
+                param.startToEnd = layout.startToEnd;
+                param.startToStart = layout.startToStart;
+                param.endToStart = layout.endToStart;
+                param.endToEnd = layout.endToEnd;
 
-				param.topToTop = layout.topToTop;
-				param.topToBottom = layout.topToBottom;
-				param.bottomToTop = layout.bottomToTop;
-				param.bottomToBottom = layout.bottomToBottom;
+                param.leftMargin = layout.leftMargin;
+                param.rightMargin = layout.rightMargin;
+                param.topMargin = layout.topMargin;
+                param.bottomMargin = layout.bottomMargin;
+                param.goneStartMargin = layout.goneStartMargin;
+                param.goneEndMargin = layout.goneEndMargin;
+                param.goneTopMargin = layout.goneTopMargin;
+                param.goneBottomMargin = layout.goneBottomMargin;
 
-				param.baselineToBaseline = layout.baselineToBaseline;
-				param.baselineToTop = layout.baselineToTop;
-				param.baselineToBottom = layout.baselineToBottom;
+                param.horizontalBias = layout.horizontalBias;
+                param.verticalBias = layout.verticalBias;
 
-				param.startToEnd = layout.startToEnd;
-				param.startToStart = layout.startToStart;
-				param.endToStart = layout.endToStart;
-				param.endToEnd = layout.endToEnd;
+                param.circleConstraint = layout.circleConstraint;
+                param.circleRadius = layout.circleRadius;
+                param.circleAngle = layout.circleAngle;
 
-				param.leftMargin = layout.leftMargin;
-				param.rightMargin = layout.rightMargin;
-				param.topMargin = layout.topMargin;
-				param.bottomMargin = layout.bottomMargin;
-				param.goneStartMargin = layout.goneStartMargin;
-				param.goneEndMargin = layout.goneEndMargin;
-				param.goneTopMargin = layout.goneTopMargin;
-				param.goneBottomMargin = layout.goneBottomMargin;
+                param.dimensionRatio = layout.dimensionRatio;
+                param.editorAbsoluteX = layout.editorAbsoluteX;
+                param.editorAbsoluteY = layout.editorAbsoluteY;
+                param.verticalWeight = layout.verticalWeight;
+                param.horizontalWeight = layout.horizontalWeight;
+                param.verticalChainStyle = layout.verticalChainStyle;
+                param.horizontalChainStyle = layout.horizontalChainStyle;
+                param.constrainedWidth = layout.constrainedWidth;
+                param.constrainedHeight = layout.constrainedHeight;
+                param.matchConstraintDefaultWidth = layout.matchConstraintDefaultWidth;
+                param.matchConstraintDefaultHeight = layout.matchConstraintDefaultHeight;
+                param.matchConstraintMaxWidth = layout.matchConstraintMaxWidth;
+                param.matchConstraintMaxHeight = layout.matchConstraintMaxHeight;
+                param.matchConstraintMinWidth = layout.matchConstraintMinWidth;
+                param.matchConstraintMinHeight = layout.matchConstraintMinHeight;
+                param.matchConstraintPercentWidth = layout.matchConstraintPercentWidth;
+                param.matchConstraintPercentHeight = layout.matchConstraintPercentHeight;
+                param.orientation = layout.orientation;
+                param.guidePercent = layout.guidePercent;
+                param.guideBegin = layout.guideBegin;
+                param.guideEnd = layout.guideEnd;
+                param.mWidth = layout.mWidth;
+                param.mHeight = layout.mHeight;
+                if (!string.ReferenceEquals(layout.constraintTag, null))
+                {
+                    param.constraintTag = layout.constraintTag;
+                }
+                param.wrapBehaviorInParent = layout.wrapBehaviorInParent;
 
-				param.horizontalBias = layout.horizontalBias;
-				param.verticalBias = layout.verticalBias;
+                //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1)
+                //{
+                param.startMargin = layout.startMargin;
+                param.endMargin = layout.endMargin;
+                //}
 
-				param.circleConstraint = layout.circleConstraint;
-				param.circleRadius = layout.circleRadius;
-				param.circleAngle = layout.circleAngle;
+                param.Validate();//validate可以根据MatchParent这个设置其他的
+            }
 
-				param.dimensionRatio = layout.dimensionRatio;
-				param.editorAbsoluteX = layout.editorAbsoluteX;
-				param.editorAbsoluteY = layout.editorAbsoluteY;
-				param.verticalWeight = layout.verticalWeight;
-				param.horizontalWeight = layout.horizontalWeight;
-				param.verticalChainStyle = layout.verticalChainStyle;
-				param.horizontalChainStyle = layout.horizontalChainStyle;
-				param.constrainedWidth = layout.constrainedWidth;
-				param.constrainedHeight = layout.constrainedHeight;
-				param.matchConstraintDefaultWidth = layout.matchConstraintDefaultWidth;
-				param.matchConstraintDefaultHeight = layout.matchConstraintDefaultHeight;
-				param.matchConstraintMaxWidth = layout.matchConstraintMaxWidth;
-				param.matchConstraintMaxHeight = layout.matchConstraintMaxHeight;
-				param.matchConstraintMinWidth = layout.matchConstraintMinWidth;
-				param.matchConstraintMinHeight = layout.matchConstraintMinHeight;
-				param.matchConstraintPercentWidth = layout.matchConstraintPercentWidth;
-				param.matchConstraintPercentHeight = layout.matchConstraintPercentHeight;
-				param.orientation = layout.orientation;
-				param.guidePercent = layout.guidePercent;
-				param.guideBegin = layout.guideBegin;
-				param.guideEnd = layout.guideEnd;
-				param.mWidth = layout.mWidth;
-				param.mHeight = layout.mHeight;
-				if (!string.ReferenceEquals(layout.constraintTag, null))
-				{
-					param.constraintTag = layout.constraintTag;
-				}
-				param.wrapBehaviorInParent = layout.wrapBehaviorInParent;
-
-				//if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1)
-				//{
-					param.startMargin = layout.startMargin;
-					param.endMargin = layout.endMargin;
-				//}
-
-				param.validate();//validate可以根据MatchParent这个设置其他的
-			}
-		}
-	}
+            public void Dispose()
+            {
+                propertySet.Dispose();
+                layout.Dispose();
+                transform.Dispose();
+            }
+        }
+    }
 }
