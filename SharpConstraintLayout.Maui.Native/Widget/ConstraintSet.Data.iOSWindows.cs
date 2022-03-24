@@ -23,6 +23,9 @@ namespace SharpConstraintLayout.Maui.Widget
 {
     public partial class ConstraintSet : IDisposable
     {
+        /// <summary>
+        /// 只对ConstraintLayout中的有效,用户设置中使用的ConstraintSet不使用该Tag
+        /// </summary>
         public bool IsChanged = false;
 
         private const string TAG = "ConstraintSet";
@@ -197,7 +200,7 @@ namespace SharpConstraintLayout.Maui.Widget
         public const int ChainPacked = ConstraintWidget.CHAIN_PACKED;
 
         private const bool DEBUG = false;
-        private static readonly int[] VISIBILITY_FLAGS = new int[] { Visible, Invisible, Gone };
+        //private static readonly int[] VISIBILITY_FLAGS = new int[] { Visible, Invisible, Gone };
         private const int BARRIER_TYPE = 1;
 
         private Dictionary<int, Constraint> mConstraints = new Dictionary<int, Constraint>();

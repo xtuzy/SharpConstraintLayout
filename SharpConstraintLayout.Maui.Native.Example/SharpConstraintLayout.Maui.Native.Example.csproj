@@ -65,11 +65,10 @@
     <RuntimeIdentifier>win10-x64</RuntimeIdentifier>
   </PropertyGroup>
 
-  <ItemGroup >
+  <ItemGroup>
     <!--use this you can "hotreload" when use Native code write ui-->
     <PackageReference Include="ReloadPreview" Version="3.0.5" />
   </ItemGroup>
-  
   <!--only ios and maccatalyst have these-->
   <ItemGroup Condition="'$(TargetFramework)'!= 'net6.0-ios' and '$(TargetFramework)' != 'net6.0-maccatalyst'">
     <Compile Remove="**\*.iOS.cs" />
@@ -123,6 +122,7 @@
   <ItemGroup>
     <Folder Remove="bin\" />
   </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\SharpConstraintLayout.Maui.Native\SharpConstraintLayout.Maui.Native.csproj" />
   </ItemGroup>

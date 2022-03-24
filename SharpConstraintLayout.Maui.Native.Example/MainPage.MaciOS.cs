@@ -25,29 +25,29 @@ namespace SharpConstraintLayout.Maui.Native.Example
 
         public MainPage(CGRect frame)
         {
+            ConstraintLayout.DEBUG = true;
+
             Page = new ConstraintLayout()
             {
-                //Frame = frame,
                 AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight,
-                BackgroundColor = UIColor.SystemPink
+                BackgroundColor = UIColor.Orange
             };
 
             createControls();
 
             //controlsTest(Page);
             //baselineTest(Page);
-            //guidelineTest(Page);
+            //guidelineTest(Page);//bug meause and arrange infinity loop
             //barrierTest(Page);
             //visibilityTest(Page);
             flowTest(Page);
+            //nestedLayoutTest(Page);
         }
 
         private void createControls()
         {
             FirstButton = new UIButton()
             {
-                //Tag = nameof(FirstButton),
-                //ClickMode = ClickMode.Press,
                 BackgroundColor = UIColor.Red
             };
             FirstButton.SetTitle("FirstButton", UIControlState.Normal);
@@ -55,42 +55,48 @@ namespace SharpConstraintLayout.Maui.Native.Example
 
             SecondButton = new UIButton()
             {
-                //Width = 100,Height = 100,
-                //Tag = nameof(SecondButton),
                 BackgroundColor = UIColor.Black
             };
             SecondButton.SetTitle("SecondButton", UIControlState.Normal);
 
             ThirdCanvas = new UIView()
             {
-                //Tag = nameof(ThirdCanvas),
-                //Width = 100,
-                //Height = 100,
                 BackgroundColor = UIColor.Green
             };
 
             FouthTextBlock = new UITextView()
             {
                 ScrollEnabled = false,
-                //Tag = nameof(FouthTextBlock),
-                //Width = 100,
-                //Height = 100,
                 Text = "FouthTextBlock"
+            };
+            FouthTextBlock.Changed += (sender, e) =>
+            {
+                FouthTextBlock.InvalidateIntrinsicContentSize();
+                FouthTextBlock.Superview.SetNeedsLayout();
             };
 
             FifthTextBox = new UITextField()
             {
-                //Tag = nameof(FifthTextBox),
                 Text = "FifthTextBox",
+            };
+            FifthTextBox.EditingChanged += (sender, e) =>
+            {
+                FifthTextBox.InvalidateIntrinsicContentSize();
+                FifthTextBox.Superview.SetNeedsLayout();
             };
 
             //https://stackoverflow.com/questions/35710355/uwpc-adding-text-to-richtextblock
             SixthRichTextBlock = new UITextView()
             {
                 ScrollEnabled = false,
-                //Tag = nameof(SixthRichTextBlock),
                 AttributedText = new NSAttributedString("RichTextBlock", UIFont.SystemFontOfSize(14))
             };
+            SixthRichTextBlock.Changed += (sender, e) =>
+            {
+                SixthRichTextBlock.InvalidateIntrinsicContentSize();
+                SixthRichTextBlock.Superview.SetNeedsLayout();
+            };
+
         }
 
         private void FirstButton_Click(object sender, EventArgs e)

@@ -52,7 +52,6 @@ namespace SharpConstraintLayout.Maui.Widget
     /// </summary>
     public class Group : ConstraintHelper,IGroup
     {
-
         public Group() : base()
         {
         }
@@ -94,7 +93,7 @@ namespace SharpConstraintLayout.Maui.Widget
 
         public override void UpdatePostLayout(ConstraintLayout container)
         {
-            ConstraintWidget widget = container.idsToConstraintWidgets[this.GetId()];
+            ConstraintWidget widget = container.GetViewWidget(this);
             widget.Width = 0;
             widget.Height = 0;
         }

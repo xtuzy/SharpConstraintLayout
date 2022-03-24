@@ -5,9 +5,10 @@ using Android.Views;
 using Android.Widget;
 using AndroidX.AppCompat.App;
 using ReloadPreview;
+using SharpConstraintLayout.Maui.DebugTool;
+using SharpConstraintLayout.Maui.Native.Example.Tool;
 using System;
 using System.Diagnostics;
-using Debug = System.Diagnostics.Debug;
 
 namespace SharpConstraintLayout.Maui.Native.Example
 {
@@ -24,13 +25,14 @@ namespace SharpConstraintLayout.Maui.Native.Example
                 {
                     var view = HotReload.Instance.ReloadClass<MainPage>(this) as View;
                     SetContentView(view);
-                }catch(Exception ex)
-                {
-                    Debug.WriteLine(ex);
                 }
-                
+                catch (Exception ex)
+                {
+                    SimpleDebug.WriteLine(ex.ToString());
+                }
+
             };
-            HotReload.Instance.Init("192.168.0.108");
+            HotReload.Instance.Init("192.168.0.144");
 #endif
             // Set our view from the "main" layout resource
             //SetContentView(Resource.Layout.activity_main);

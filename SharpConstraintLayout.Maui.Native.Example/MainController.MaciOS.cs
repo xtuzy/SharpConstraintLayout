@@ -1,4 +1,6 @@
 ﻿using ReloadPreview;
+using SharpConstraintLayout.Maui.DebugTool;
+using SharpConstraintLayout.Maui.Native.Example.Tool;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -13,17 +15,26 @@ namespace SharpConstraintLayout.Maui.Native.Example
     {
         public MainController(UIWindow window)
         {
-            HotReload.Instance.Init("192.168.0.108",200);
+            HotReload.Instance.Init("192.168.0.144", 200);
             HotReload.Instance.Reload += () =>
             {
                 try
                 {
-                    dynamic view = HotReload.Instance.ReloadClass<MainPage>(window!.Frame);
-                    this.View = view.GetPage();
+                    CoreFoundation.DispatchQueue.MainQueue.DispatchAsync(() =>
+                    {
+                        dynamic view = HotReload.Instance.ReloadClass<MainPage>(window!.Frame);
+                        this.View = view.GetPage();
+                        SimpleDebug.WriteLine("HotReload:" + view);
+                    });
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine(ex);
+                    CoreFoundation.DispatchQueue.MainQueue.DispatchAsync(() =>
+                    {
+                        View = new UIView() { BackgroundColor = UIColor.White };
+                    });
+
+                    SimpleDebug.WriteLine(ex.ToString());
                 }
             };
             this.View = new MainPage(window!.Frame).Page;

@@ -1,6 +1,8 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using ReloadPreview;
+using SharpConstraintLayout.Maui.DebugTool;
+using SharpConstraintLayout.Maui.Native.Example.Tool;
 using SharpConstraintLayout.Maui.Widget;
 using System;
 using System.Diagnostics;
@@ -15,8 +17,11 @@ namespace SharpConstraintLayout.Maui.Native.Example
     /// </summary>
     public sealed partial class MainController : Window
     {
+        public static Window Current;
         public MainController()
         {
+            Current = this;
+
             this.Content = new MainPage();
 #if DEBUG
             HotReload.Instance.Reload += () =>
@@ -28,17 +33,17 @@ namespace SharpConstraintLayout.Maui.Native.Example
                         var view = HotReload.Instance.ReloadClass<MainPage>() as FrameworkElement;
                         Content = view;
                     });
-                    
+
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine(ex);
+                    SimpleDebug.WriteLine(ex.ToString());
                 }
 
             };
-            HotReload.Instance.Init("192.168.0.108",100);
+            HotReload.Instance.Init("192.168.0.108", 100);
 #endif
-
+            SimpleDebug.WriteLine("App Start");
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+//using System.Diagnostics;
 
 /*
  * Copyright (C) 2021 The Android Open Source Project
@@ -66,8 +66,9 @@ namespace SharpConstraintLayout.Maui.Widget
         public const string VERSION = "ConstraintLayout-2.1.1";
         public const bool ISSUPPORTRTLPLATFORM = false;//现在完全不支持,需要对照原来的代码看删除了那些关于Rtl的
 
-        public static bool DEBUG = true;//if is true,will print some layout info.
+        public static bool DEBUG = false;//if is true,will print some layout info.
         public static bool MEASURE = false;//if is true,will print time of measure+layout spend.
+
         private readonly ConstraintWidgetContainer mLayout = new ConstraintWidgetContainer();//default widget
         private readonly Dictionary<int, UIElement> idToViews = new Dictionary<int, UIElement>();
         public readonly Dictionary<int, ConstraintWidget> idsToConstraintWidgets = new Dictionary<int, ConstraintWidget>();
@@ -112,9 +113,13 @@ namespace SharpConstraintLayout.Maui.Widget
             OnRemovedView(element);
         }
 
-        public void RemoveAll()
+        public void RemoveAllViews()
         {
-            Children?.Clear();
+            foreach (var element in this.Children)
+            {
+                Children?.Remove(element);
+                OnRemovedView(element);
+            }
         }
 
         public int ChildCount { get { return Children != null ? Children.Count : 0; } }
@@ -141,7 +146,7 @@ namespace SharpConstraintLayout.Maui.Widget
             OnRemovedView(element);
         }
 
-        public void RemoveAll()
+        public void RemoveAllViews()
         {
             foreach (var element in this.Subviews)
             {
@@ -407,16 +412,16 @@ namespace SharpConstraintLayout.Maui.Widget
         /// </summary>
         public override void LayoutSubviews()
         {
-            base.LayoutSubviews();
+            //base.LayoutSubviews();
             if (DEBUG) Debug.WriteLine($"{nameof(LayoutSubviews)} {this} {this.Frame}");
             if (DEBUG) Debug.WriteLine($"{nameof(LayoutSubviews)} {Superview} {this.Superview?.Frame}");
 
             //得到自身或Superview的大小作为availableSize
-            if (this.Frame.Size.Width > 0)
-            {
-                MeasureOverride(this.Frame.Size);
-            }
-            else
+            //if (this.Frame.Size.Width > 0)
+            //{
+            //    MeasureOverride(this.Frame.Size);
+            //}
+            //else
             {
                 if (Superview != null)
                     MeasureOverride(this.Superview.Frame.Size);
@@ -425,7 +430,15 @@ namespace SharpConstraintLayout.Maui.Widget
             if (DEBUG) Debug.WriteLine($"{nameof(LayoutSubviews)} RootWidget {this.MLayoutWidget.ToString()}");
 
             //更新layout的大小
-            Frame = new CGRect(Frame.X, Frame.Y, MLayoutWidget.Width, MLayoutWidget.Height);
+            if (this.Frame.Size.Width > 0)
+            {
+                Frame = new CGRect(Frame.X, Frame.Y, MLayoutWidget.Width, MLayoutWidget.Height);
+            }
+            else
+            {
+                if (Superview != null)
+                    Frame = new CGRect(this.Superview.Frame.X, this.Superview.Frame.Y, MLayoutWidget.Width, MLayoutWidget.Height);
+            }
             //layout child
             foreach (ConstraintWidget child in mLayout.Children)
             {

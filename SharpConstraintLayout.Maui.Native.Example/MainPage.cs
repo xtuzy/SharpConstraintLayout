@@ -1,5 +1,7 @@
 ﻿
 using SharpConstraintLayout.Maui.Widget;
+using static SharpConstraintLayout.Maui.Widget.FluentConstraintSet;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,8 +10,14 @@ using System.Threading.Tasks;
 #if __ANDROID__
 using Android.Views;
 using AndroidX.ConstraintLayout.Helper.Widget;
+using Android.Widget;
+using Orientation = SharpConstraintLayout.Maui.Widget.FluentConstraintSet.Orientation;
+using SharpConstraintLayout.Maui.Native.Example.Tool;
 #else
 using SharpConstraintLayout.Maui.Helper.Widget;
+using System.Diagnostics;
+using Microsoft.Maui.Essentials;
+using SharpConstraintLayout.Maui.Native.Example.Tool;
 #endif
 
 #if __ANDROID__
@@ -23,12 +31,6 @@ namespace SharpConstraintLayout.Maui.Native.Example
 {
     public partial class MainPage
     {
-#if ANDROID
-        const int MatchParent = AndroidX.ConstraintLayout.Widget.ConstraintLayout.LayoutParams.MatchParent;
-#else
-        const int MatchParent = ConstraintSet.MatchParent;
-#endif
-
         /// <summary>
         /// test nested layout warp content and it's child match parent
         /// </summary>
@@ -52,32 +54,45 @@ namespace SharpConstraintLayout.Maui.Native.Example
             };
 #endif
 
-            page.AddView(layout);
+            using (var pageSet = new FluentConstraintSet())
+            {
+                page.AddView(layout);
+                pageSet.Clone(page);
+                pageSet.Select(layout)
+                    .CenterYTo(page)
+                    .Width(ConstraintSet.WrapContent)
+                    .Height(ConstraintSet.WrapContent);
+                pageSet.ApplyTo(page);
+                layout.AddView(ThirdCanvas);
+                layout.AddView(FirstButton);
+                using (var layoutSet = new FluentConstraintSet())
+                {
+                    layoutSet.Clone(layout);
+                    layoutSet
+                        .Select(FirstButton).CenterXTo().CenterYTo()
+                        .Width(FluentConstraintSet.SizeBehavier.WrapContent)
+                        .Height(FluentConstraintSet.SizeBehavier.WrapContent)
+                        .Select(ThirdCanvas).EdgesTo(null, 20, 20)
+                        .Width(FluentConstraintSet.SizeBehavier.MatchParent)
+                        .Height(FluentConstraintSet.SizeBehavier.MatchParent);
+                    layoutSet.ApplyTo(layout);
+                }
+            }
 
-            var pageSet = new ConstraintSet();
-            pageSet.Clone(page);
-            pageSet.CenterHorizontally(layout.GetId(), ConstraintSet.ParentId);
-            pageSet.CenterVertically(layout.GetId(), ConstraintSet.ParentId);
-            pageSet.ConstrainWidth(layout.GetId(), ConstraintSet.WrapContent);
-            pageSet.ConstrainHeight(layout.GetId(), ConstraintSet.WrapContent);
-            pageSet.ApplyTo(page);
-            layout.AddView(FirstButton);
-            layout.AddView(ThirdCanvas);
-            var layoutSet = new ConstraintSet();
-            layoutSet.Clone(layout);
-
-            layoutSet.CenterHorizontally(FirstButton.GetId(), ConstraintSet.ParentId);
-            layoutSet.CenterVertically(FirstButton.GetId(), ConstraintSet.ParentId);
-            layoutSet.ConstrainWidth(FirstButton.GetId(), ConstraintSet.WrapContent);
-            layoutSet.ConstrainHeight(FirstButton.GetId(), ConstraintSet.WrapContent);
-
-            //layoutSet.Connect(ThirdCanvas.GetId(), ConstraintSet.Left, page.GetId(), ConstraintSet.Left);
-            //layoutSet.Connect(ThirdCanvas.GetId(), ConstraintSet.Right, page.GetId(), ConstraintSet.Right);
-            //layoutSet.Connect(ThirdCanvas.GetId(), ConstraintSet.Top, page.GetId(), ConstraintSet.Top);
-            //layoutSet.Connect(ThirdCanvas.GetId(), ConstraintSet.Bottom, page.GetId(), ConstraintSet.Bottom);
-            //layoutSet.ConstrainWidth(ThirdCanvas.GetId(), ConstraintSet.WrapContent);
-            //layoutSet.ConstrainHeight(ThirdCanvas.GetId(), ConstraintSet.WrapContent);
-            layoutSet.ApplyTo(layout);
+#if WINDOWS || ANDROID
+            FirstButton.Click += (sender, e) =>
+            {
+#if ANDROID          
+                Toast.MakeText(page.Context, $"Button Y {FirstButton.GetZ()} ,Canvas Y {ThirdCanvas.GetZ()}", ToastLength.Long).Show();
+                //FirstButton.SetZ(ThirdCanvas.GetZ());
+                FirstButton.Elevation = 0;
+                layout.Invalidate();
+                Toast.MakeText(page.Context, $"Button Y {FirstButton.GetZ()} ,Canvas Y {ThirdCanvas.GetZ()}", ToastLength.Long).Show();
+#elif WINDOWS
+                //Debug.WriteLine($"Button Y {FirstButton.Z} ,Canvas Y {ThirdCanvas. GetZ()}");
+#endif
+            };
+#endif
         }
         void flowTest(ConstraintLayout page)
         {
@@ -86,132 +101,118 @@ namespace SharpConstraintLayout.Maui.Native.Example
             {
                 Id = View.GenerateViewId(),
             };
-            flow.SetBackgroundColor(Android.Graphics.Color.Cyan);
 #else
             var flow = new Flow();
-#if WINDOWS
-           
-#elif IOS
-            flow.BackgroundColor = UIColor.Cyan;
 #endif
-#endif
-                        flow.SetOrientation(Flow.Horizontal);
+            flow.SetOrientation(Flow.Horizontal);
             flow.SetWrapMode(Flow.WrapChain);
             flow.SetHorizontalStyle(Flow.ChainPacked);
             layout = page;
-            layout.AddView(ThirdCanvas);
-            layout.AddView(FirstButton);
-            layout.AddView(SecondButton);
-            
-            layout.AddView(FouthTextBlock);
-            layout.AddView(FifthTextBox);
-            layout.AddView(SixthRichTextBlock);
-            
-            layout.AddView(flow);
+            layout.AddView(ThirdCanvas, FirstButton, SecondButton, FouthTextBlock, FifthTextBox, SixthRichTextBlock, flow);
+            flow.AddView(FirstButton, SecondButton, FouthTextBlock, FifthTextBox, SixthRichTextBlock);
 
-            flow.AddView(FirstButton);
-            flow.AddView(SecondButton);
-            //flow.AddView(ThirdCanvas);
-            flow.AddView(FouthTextBlock);
-            flow.AddView(FifthTextBox);
-            flow.AddView(SixthRichTextBlock);
+            using (var layoutSet = new FluentConstraintSet())
+            {
+                layoutSet.Clone(layout);
+                layoutSet
+                    .Select(flow)
+                    .CenterYTo()
+                    .Width(SizeBehavier.MatchConstraint)
+                    .Height(SizeBehavier.WrapContent)
+                    .Select(FirstButton, SecondButton, FouthTextBlock, FifthTextBox, SixthRichTextBlock)
+                    .Width(SizeBehavier.WrapContent)
+                    .Height(SizeBehavier.WrapContent)
+                    .Select(ThirdCanvas).EdgesTo(flow)
+                    .Width(SizeBehavier.MatchConstraint)
+                    .Height(SizeBehavier.MatchConstraint)
+                    .Visibility(FluentConstraintSet.Visibility.Visible);
+                layoutSet.ApplyTo(layout);
+            }
 
-            var layoutSet = new ConstraintSet();
-            layoutSet.Clone(layout);
-            layoutSet.Connect(flow.GetId(), ConstraintSet.Left, layout.GetId(), ConstraintSet.Left);
-            layoutSet.Connect(flow.GetId(), ConstraintSet.Right, layout.GetId(), ConstraintSet.Right);
-            layoutSet.Connect(flow.GetId(), ConstraintSet.Top, layout.GetId(), ConstraintSet.Top);
+            Task.Run(async () =>
+            {
+                int index = 0;
+                while (index < 5)//test 20 times,you can edit textbox
+                {
+                    await Task.Delay(3000);//wait ui show
+                    UIThread.Invoke(() =>
+                    {
+                        SimpleTest.AreEqual(flow.GetBounds().Left, ThirdCanvas.GetBounds().Left, nameof(flowTest), "Canvas Left position should equal to Flow");
+                        SimpleTest.AreEqual(flow.GetBounds().Right, ThirdCanvas.GetBounds().Right, nameof(flowTest), "Canvas Right position should equal to Flow");
+                        SimpleTest.AreEqual(flow.GetBounds().Top, ThirdCanvas.GetBounds().Top, nameof(flowTest), "Canvas Top position should equal to Flow");
+                        SimpleTest.AreEqual(flow.GetBounds().Bottom, ThirdCanvas.GetBounds().Bottom, nameof(flowTest), "Canvas Bottom position should equal to Flow");
+                    });
 
-            layoutSet.ConstrainWidth(FirstButton.GetId(), ConstraintSet.WrapContent);
-            layoutSet.ConstrainHeight(FirstButton.GetId(), ConstraintSet.WrapContent);
-            layoutSet.ConstrainWidth(SecondButton.GetId(), ConstraintSet.WrapContent);
-            layoutSet.ConstrainHeight(SecondButton.GetId(), ConstraintSet.WrapContent);
-            layoutSet.ConstrainWidth(FouthTextBlock.GetId(), ConstraintSet.WrapContent);
-            layoutSet.ConstrainHeight(FouthTextBlock.GetId(), ConstraintSet.WrapContent);
-            layoutSet.ConstrainWidth(FifthTextBox.GetId(), ConstraintSet.WrapContent);
-            layoutSet.ConstrainHeight(FifthTextBox.GetId(), ConstraintSet.WrapContent);
-            layoutSet.ConstrainWidth(SixthRichTextBlock.GetId(), ConstraintSet.WrapContent);
-            layoutSet.ConstrainHeight(SixthRichTextBlock.GetId(), ConstraintSet.WrapContent);
-#if ANDROID
-            layoutSet.ConstrainWidth(flow.GetId(), ConstraintSet.MatchConstraint);
-#else
-            layoutSet.ConstrainWidth(flow.GetId(), ConstraintSet.MatchConstraint);
-#endif
-            layoutSet.ConstrainHeight(flow.GetId(), ConstraintSet.WrapContent);
-
-            layoutSet.Connect(ThirdCanvas.GetId(), ConstraintSet.Left, flow.GetId(), ConstraintSet.Left);
-            layoutSet.Connect(ThirdCanvas.GetId(), ConstraintSet.Right, flow.GetId(), ConstraintSet.Right);
-            layoutSet.Connect(ThirdCanvas.GetId(), ConstraintSet.Top, flow.GetId(), ConstraintSet.Top);
-            layoutSet.Connect(ThirdCanvas.GetId(), ConstraintSet.Bottom, flow.GetId(), ConstraintSet.Bottom);
-            layoutSet.ConstrainWidth(ThirdCanvas.GetId(), ConstraintSet.MatchConstraint);
-            layoutSet.ConstrainHeight(ThirdCanvas.GetId(), ConstraintSet.MatchConstraint);
-
-            layoutSet.SetVisibility(ThirdCanvas.GetId(), ConstraintSet.Visible);
-#if ANDROID
-            ThirdCanvas.Visibility = ViewStates.Visible;
-#endif
-            layoutSet.ApplyTo(layout);
+                    index++;
+                }
+            });
         }
+
         private void visibilityTest(ConstraintLayout page)
         {
             layout = page;
 
-            layout.AddView(FirstButton);
-            layout.AddView(SecondButton);
-            layout.AddView(ThirdCanvas);
+            layout.AddView(FirstButton, SecondButton, ThirdCanvas);
 
-            var layoutSet = new ConstraintSet();
+            var layoutSet = new FluentConstraintSet();
             layoutSet.Clone(layout);
-
-            layoutSet.Connect(FirstButton.GetId(), ConstraintSet.Left, layout.GetId(), ConstraintSet.Left);
-            layoutSet.Connect(FirstButton.GetId(), ConstraintSet.Right, layout.GetId(), ConstraintSet.Right);
-
-            layoutSet.CenterVertically(FirstButton.GetId(), ConstraintSet.ParentId);
-
-            layoutSet.ConstrainWidth(FirstButton.GetId(), ConstraintSet.WrapContent);
-            layoutSet.ConstrainHeight(FirstButton.GetId(), ConstraintSet.WrapContent);
-
-            layoutSet.Connect(SecondButton.GetId(), ConstraintSet.Left, FirstButton.GetId(), ConstraintSet.Right);
-            layoutSet.Connect(SecondButton.GetId(), ConstraintSet.Top, FirstButton.GetId(), ConstraintSet.Top);
-            layoutSet.Connect(SecondButton.GetId(), ConstraintSet.Bottom, FirstButton.GetId(), ConstraintSet.Bottom);
-
-            layoutSet.ConstrainWidth(SecondButton.GetId(), ConstraintSet.WrapContent);
-            layoutSet.ConstrainHeight(SecondButton.GetId(), ConstraintSet.WrapContent);
-
-            layoutSet.Connect(ThirdCanvas.GetId(), ConstraintSet.Left, SecondButton.GetId(), ConstraintSet.Right);
-            layoutSet.Connect(ThirdCanvas.GetId(), ConstraintSet.Right, layout.GetId(), ConstraintSet.Right);
-            layoutSet.Connect(ThirdCanvas.GetId(), ConstraintSet.Top, layout.GetId(), ConstraintSet.Top);
-            layoutSet.Connect(ThirdCanvas.GetId(), ConstraintSet.Bottom, layout.GetId(), ConstraintSet.Bottom);
-            layoutSet.ConstrainWidth(ThirdCanvas.GetId(), ConstraintSet.MatchConstraint);
-            layoutSet.ConstrainHeight(ThirdCanvas.GetId(), ConstraintSet.MatchConstraint);
-
+            layoutSet
+                .Select(FirstButton).CenterTo()
+                .Width(SizeBehavier.WrapContent).Height(SizeBehavier.WrapContent)
+                .Select(SecondButton).LeftToRight(FirstButton).CenterYTo(FirstButton)
+                .Width(SizeBehavier.WrapContent).Height(SizeBehavier.WrapContent)
+                .Select(ThirdCanvas).LeftToRight(SecondButton).RightToRight().EdgesYTo()
+                .Width(SizeBehavier.MatchConstraint)
+                .Height(SizeBehavier.MatchConstraint);
             layoutSet.ApplyTo(layout);
+
             int index = 2;
 #if WINDOWS || ANDROID
             FirstButton.Click += (sender, e) =>
-#elif __IOS__
+#elif IOS
             FirstButton.TouchUpInside += (sender, e) =>
 #endif
             {
                 if (index == 1)
                 {
-                    layoutSet.SetVisibility(SecondButton.GetId(), ConstraintSet.Visible);
+                    layoutSet.Select(SecondButton).Visibility(FluentConstraintSet.Visibility.Visible);
                     index++;
+                    Task.Run(async () =>
+                    {
+                        await Task.Delay(300);//wait ui show
+                        UIThread.Invoke(() =>
+                        {
+                            SimpleTest.AreEqual(FirstButton.GetBounds().Right + SecondButton.GetBounds().Width, ThirdCanvas.GetBounds().Left, nameof(barrierTest), "When Center Button Visiable, Canvas position should equal to FirstButton+SecondButton");
+                        });
+                    });
                 }
                 else if (index == 2)
                 {
-                    layoutSet.SetVisibility(SecondButton.GetId(), ConstraintSet.Invisible);
+                    layoutSet.Select(SecondButton).Visibility(FluentConstraintSet.Visibility.Invisible);
                     index++;
+                    Task.Run(async () =>
+                    {
+                        await Task.Delay(300);//wait ui show
+                        UIThread.Invoke(() =>
+                        {
+                            SimpleTest.AreEqual(FirstButton.GetBounds().Right + SecondButton.GetBounds().Width, ThirdCanvas.GetBounds().Left, nameof(barrierTest), "When Center Button Invisiable, Canvas position should equal to FirstButton+SecondButton");
+                        });
+                    });
                 }
                 else if (index == 3)
                 {
-                    layoutSet.SetVisibility(SecondButton.GetId(), ConstraintSet.Gone);
+                    layoutSet.Select(SecondButton).Visibility(FluentConstraintSet.Visibility.Gone);
                     index = 1;
+                    Task.Run(async () =>
+                    {
+                        await Task.Delay(300);//wait ui show
+                        UIThread.Invoke(() =>
+                        {
+                            SimpleTest.AreEqual(FirstButton.GetBounds().Right, ThirdCanvas.GetBounds().Left, nameof(barrierTest), "When Center Button Gone, Canvas position should equal to FirstButton");
+                        });
+                    });
                 }
                 layoutSet.ApplyTo(layout);
-#if ANDROID
-                layout.Invalidate();
-#endif
             };
         }
 
@@ -226,31 +227,33 @@ namespace SharpConstraintLayout.Maui.Native.Example
 #else
             var barrier = new Barrier();
 #endif
-            layout.AddView(FifthTextBox);
-            layout.AddView(ThirdCanvas);
-            layout.AddView(barrier);
+            layout.AddView(FifthTextBox, ThirdCanvas, barrier);
 
-            var layoutSet = new ConstraintSet();
+            var layoutSet = new FluentConstraintSet();
             layoutSet.Clone(layout);
-
-            layoutSet.CenterVertically(FifthTextBox.GetId(), ConstraintSet.ParentId);
-            layoutSet.CenterHorizontally(FifthTextBox.GetId(), ConstraintSet.ParentId);
-            layoutSet.ConstrainWidth(FifthTextBox.GetId(), ConstraintSet.WrapContent);
-            layoutSet.ConstrainHeight(FifthTextBox.GetId(), ConstraintSet.WrapContent);
-
-            layoutSet.CreateBarrier(barrier.GetId(), Barrier.RIGHT, 0, new[] { FifthTextBox.GetId() });
-
-            layoutSet.Connect(ThirdCanvas.GetId(), ConstraintSet.Left, barrier.GetId(), ConstraintSet.Right, 50);
-            layoutSet.Connect(ThirdCanvas.GetId(), ConstraintSet.Right, layout.GetId(), ConstraintSet.Right, 50);
-
-            layoutSet.ConstrainWidth(ThirdCanvas.GetId(), ConstraintSet.MatchConstraint);
-#if __ANDROID__
-            layoutSet.ConstrainHeight(ThirdCanvas.GetId(), LayoutParams.MatchParent);
-#else
-            layoutSet.ConstrainHeight(ThirdCanvas.GetId(), ConstraintSet.MatchParent);
-#endif
-
+            layoutSet
+                .Select(FifthTextBox).CenterYTo().CenterXTo()
+                .Width(SizeBehavier.WrapContent).Height(SizeBehavier.WrapContent)
+                .Select(barrier).Barrier(Direction.Right, 0, new[] { FifthTextBox })
+                .Select(ThirdCanvas).LeftToRight(barrier).RightToRight()
+                .Width(SizeBehavier.MatchConstraint).Height(SizeBehavier.MatchParent);
             layoutSet.ApplyTo(layout);
+
+            Task.Run(async () =>
+            {
+                int index = 0;
+                while (index < 20)//test 20 times,you can edit textbox
+                {
+                    await Task.Delay(3000);//wait ui show
+                    UIThread.Invoke(() =>
+                    {
+                        SimpleTest.AreEqual(FifthTextBox.GetBounds().Right, barrier.GetBounds().Left, nameof(barrierTest), "Barrier position should equal to TextBox");
+                        SimpleTest.AreEqual(ThirdCanvas.GetBounds().Left, barrier.GetBounds().Left, nameof(barrierTest), "Canvas position should equal to Barrier");
+                    });
+
+                    index++;
+                }
+            });
         }
 
         private void guidelineTest(ConstraintLayout page)
@@ -278,46 +281,41 @@ namespace SharpConstraintLayout.Maui.Native.Example
             var guide = new Guideline();
 #endif
 
-            page.AddView(layout);
-            page.AddView(guide);
+            page.AddView(layout, guide);
 
-            var pageSet = new ConstraintSet();
+            var pageSet = new FluentConstraintSet();
             pageSet.Clone(page);
-            pageSet.Create(guide.GetId(), ConstraintSet.Vertical);
-            pageSet.SetGuidelinePercent(guide.GetId(), 0.5f);
-            //pageSet.SetGuidelineEnd(guide.GetId(), 300);
-            pageSet.Connect(layout.GetId(), ConstraintSet.Left, guide.GetId(), ConstraintSet.Right);
-            pageSet.Connect(layout.GetId(), ConstraintSet.Right, page.GetId(), ConstraintSet.Right);
-            pageSet.Connect(layout.GetId(), ConstraintSet.Top, page.GetId(), ConstraintSet.Top);
-            pageSet.Connect(layout.GetId(), ConstraintSet.Bottom, page.GetId(), ConstraintSet.Bottom);
-            pageSet.ConstrainWidth(layout.GetId(), ConstraintSet.MatchConstraint);
-            pageSet.ConstrainHeight(layout.GetId(), ConstraintSet.MatchConstraint);
+            pageSet.Select(guide).GuidelineOrientation(Orientation.X).GuidelinePercent(0.5f)
+            .Select(layout).LeftToRight(guide).RightToRight(page).TopToTop(page).BottomToBottom(page)
+            .Width(SizeBehavier.MatchConstraint)
+            .Height(SizeBehavier.MatchConstraint);
             pageSet.ApplyTo(page);
+
+            Task.Run(async () =>
+            {
+                await Task.Delay(3000);//wait ui show
+                UIThread.Invoke(() =>
+                {
+                    SimpleTest.AreEqual(page.GetSize().Width / 2, layout.GetBounds().X, nameof(guidelineTest), "Horiable guideline should at center");
+                });
+            });
         }
 
         private void baselineTest(ConstraintLayout page)
         {
             layout = page;
 
-            layout.AddView(FouthTextBlock);
-            layout.AddView(SixthRichTextBlock);
+            layout.AddView(FouthTextBlock, SixthRichTextBlock);
 
-            var layoutSet = new ConstraintSet();
+            var layoutSet = new FluentConstraintSet();
             layoutSet.Clone(layout);
-
-            layoutSet.ConstrainWidth(layout.GetId(), ConstraintSet.MatchConstraint);
-            layoutSet.ConstrainHeight(layout.GetId(), ConstraintSet.MatchConstraint);
-
-            layoutSet.CenterVertically(FouthTextBlock.GetId(), layout.GetId());
-            layoutSet.CenterHorizontally(FouthTextBlock.GetId(), layout.GetId());
-            layoutSet.ConstrainWidth(FouthTextBlock.GetId(), ConstraintSet.WrapContent);
-            layoutSet.ConstrainHeight(FouthTextBlock.GetId(), ConstraintSet.WrapContent);
-
-            layoutSet.Connect(SixthRichTextBlock.GetId(), ConstraintSet.Right, FouthTextBlock.GetId(), ConstraintSet.Left, 50);
-            layoutSet.Connect(SixthRichTextBlock.GetId(), ConstraintSet.Baseline, FouthTextBlock.GetId(), ConstraintSet.Baseline);
-            layoutSet.ConstrainWidth(SixthRichTextBlock.GetId(), ConstraintSet.WrapContent);
-            layoutSet.ConstrainHeight(SixthRichTextBlock.GetId(), ConstraintSet.WrapContent);
-
+            layoutSet
+                .Select(layout)
+                .Width(SizeBehavier.MatchConstraint).Height(SizeBehavier.MatchConstraint)
+                .Select(FouthTextBlock).CenterYTo().CenterXTo()
+                .Width(SizeBehavier.WrapContent).Height(SizeBehavier.WrapContent)
+                .Select(SixthRichTextBlock).RightToLeft(FouthTextBlock, 50).BaselineToBaseline(FouthTextBlock)
+                .Width(SizeBehavier.WrapContent).Height(SizeBehavier.WrapContent);
             layoutSet.ApplyTo(layout);
         }
 
@@ -325,55 +323,19 @@ namespace SharpConstraintLayout.Maui.Native.Example
         {
             layout = page;
 
-            layout.AddView(FirstButton);
-            layout.AddView(SecondButton);
-            layout.AddView(ThirdCanvas);
-            layout.AddView(FouthTextBlock);
-            layout.AddView(FifthTextBox);
-            layout.AddView(SixthRichTextBlock);
+            layout.AddView(FirstButton, SecondButton, ThirdCanvas, FouthTextBlock, FifthTextBox, SixthRichTextBlock);
 
-            var layoutSet = new ConstraintSet();
+            var layoutSet = new FluentConstraintSet();
             layoutSet.Clone(layout);
-
-            //layoutSet.ConstrainWidth(layout.GetId(), ConstraintSet.MatchConstraint);
-            //layoutSet.ConstrainHeight(layout.GetId(), ConstraintSet.MatchConstraint);
-
-            layoutSet.Connect(FirstButton.GetId(), ConstraintSet.Left, layout.GetId(), ConstraintSet.Left);
-            layoutSet.Connect(FirstButton.GetId(), ConstraintSet.Right, layout.GetId(), ConstraintSet.Right);
-
-            //layoutSet.CenterVertically(FirstButton.GetId(), ConstraintSet.ParentId, ConstraintSet.Top, 0, ConstraintSet.ParentId, ConstraintSet.Bottom, 0, 0.5f);
-            layoutSet.CenterVertically(FirstButton.GetId(), layout.GetId());
-            layoutSet.ConstrainWidth(FirstButton.GetId(), ConstraintSet.WrapContent);
-            layoutSet.ConstrainHeight(FirstButton.GetId(), ConstraintSet.WrapContent);
-
-            layoutSet.Connect(SecondButton.GetId(), ConstraintSet.Right, FirstButton.GetId(), ConstraintSet.Right);
-            layoutSet.Connect(SecondButton.GetId(), ConstraintSet.Top, FirstButton.GetId(), ConstraintSet.Bottom, 10);
-            layoutSet.ConstrainWidth(SecondButton.GetId(), ConstraintSet.WrapContent);
-            layoutSet.ConstrainHeight(SecondButton.GetId(), ConstraintSet.WrapContent);
-
-            layoutSet.Connect(ThirdCanvas.GetId(), ConstraintSet.Left, FirstButton.GetId(), ConstraintSet.Right, 50);
-            layoutSet.Connect(ThirdCanvas.GetId(), ConstraintSet.Right, layout.GetId(), ConstraintSet.Right, 50);
-            layoutSet.Connect(ThirdCanvas.GetId(), ConstraintSet.Top, layout.GetId(), ConstraintSet.Top, 50);
-            layoutSet.Connect(ThirdCanvas.GetId(), ConstraintSet.Bottom, layout.GetId(), ConstraintSet.Bottom, 50);
-            layoutSet.ConstrainWidth(ThirdCanvas.GetId(), ConstraintSet.MatchConstraint);
-            layoutSet.ConstrainHeight(ThirdCanvas.GetId(), ConstraintSet.MatchConstraint);
-
-            layoutSet.Connect(FouthTextBlock.GetId(), ConstraintSet.Right, SecondButton.GetId(), ConstraintSet.Right);
-            layoutSet.Connect(FouthTextBlock.GetId(), ConstraintSet.Top, SecondButton.GetId(), ConstraintSet.Bottom, 10);
-            layoutSet.ConstrainWidth(FouthTextBlock.GetId(), ConstraintSet.WrapContent);
-            layoutSet.ConstrainHeight(FouthTextBlock.GetId(), ConstraintSet.WrapContent);
-
-            layoutSet.Connect(FifthTextBox.GetId(), ConstraintSet.Bottom, FirstButton.GetId(), ConstraintSet.Top, 50);
-            layoutSet.Connect(FifthTextBox.GetId(), ConstraintSet.Left, FirstButton.GetId(), ConstraintSet.Left);
-            layoutSet.Connect(FifthTextBox.GetId(), ConstraintSet.Right, FirstButton.GetId(), ConstraintSet.Right);
-            layoutSet.ConstrainWidth(FifthTextBox.GetId(), ConstraintSet.WrapContent);
-            layoutSet.ConstrainHeight(FifthTextBox.GetId(), ConstraintSet.WrapContent);
-
-            layoutSet.Connect(SixthRichTextBlock.GetId(), ConstraintSet.Right, FouthTextBlock.GetId(), ConstraintSet.Left, 50);
-            layoutSet.Connect(SixthRichTextBlock.GetId(), ConstraintSet.Baseline, FouthTextBlock.GetId(), ConstraintSet.Baseline, 50);
-            layoutSet.ConstrainWidth(SixthRichTextBlock.GetId(), ConstraintSet.WrapContent);
-            layoutSet.ConstrainHeight(SixthRichTextBlock.GetId(), ConstraintSet.WrapContent);
-
+            layoutSet
+                .Select(FirstButton).CenterTo()
+                .Select(FirstButton, SecondButton, FouthTextBlock, FifthTextBox, SixthRichTextBlock).Width(SizeBehavier.WrapContent).Height(SizeBehavier.WrapContent)
+                .Select(ThirdCanvas).Width(SizeBehavier.MatchConstraint).Height(SizeBehavier.MatchConstraint)
+                .Select(SecondButton).RightToRight(FirstButton).TopToBottom(FirstButton, 10)
+                .Select(ThirdCanvas).LeftToRight(FirstButton, 50).RightToRight(null, 50).EdgesYTo(null, 50)
+                .Select(FouthTextBlock).RightToRight(SecondButton).TopToBottom(SecondButton, 10)
+                .Select(FifthTextBox).BottomToTop(FirstButton, 50).LeftToLeft(FirstButton).RightToRight(FirstButton)
+                .Select(SixthRichTextBlock).RightToLeft(FouthTextBlock, 50).BaselineToBaseline(FouthTextBlock, 50);
             layoutSet.ApplyTo(layout);
         }
     }

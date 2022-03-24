@@ -1,56 +1,34 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using static SharpConstraintLayout.Maui.Widget.FluentConstraintSet.Element;
 
 #if WINDOWS
-using View = Microsoft.UI.Xaml.FrameworkElement;
+using View = Microsoft.UI.Xaml.UIElement;
 using UIElement = Microsoft.UI.Xaml.UIElement;
-
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Windows.Foundation;
 #elif __IOS__
-
 using View = UIKit.UIView;
-
 using UIElement = UIKit.UIView;
 #elif __ANDROID__
+using UIElement = Android.Views.View;
 using Android.Content;
 using View = Android.Views.View;
 using AndroidX.ConstraintLayout.Widget;
+using static Android.Views.ViewGroup;
 #endif
 
 namespace SharpConstraintLayout.Maui.Widget
 {
     public class FluentConstraintSet : ConstraintSet
     {
-        private ConstraintSet ConstraintSet;
-
-        public FluentConstraintSet()
+        public Element Select(params View[] views)
         {
-            ConstraintSet = this;
+            ElementType type;
+            return new Element(this, views);
         }
 
-        public Element Select(View view)
-        {
-            return new Element(ConstraintSet, view);
-        }
-
-        public FluentConstraintSet ApplyTo(ConstraintLayout constraintLayout)
-        {
-            ConstraintSet.ApplyTo(constraintLayout);
-            return this;
-        }
-
-        public void Dispose()
-        {
-            ConstraintSet?.Dispose();
-            ConstraintSet = null;
-        }
-
-        public void ApiTest()
+        public void ApiDesign()
         {
             using (var c = new FluentConstraintSet())
             {
@@ -63,157 +41,487 @@ namespace SharpConstraintLayout.Maui.Widget
             }
         }
 
-        public class Element : IDisposable
+        public enum SizeBehavier
         {
-            WeakReference<ConstraintSet> setReference;
-            private int id;
+            WrapContent = ConstraintSet.WrapContent,
+#if ANDROID
+            MatchParent = LayoutParams.MatchParent,
+#else
+            MatchParent = ConstraintSet.MatchParent,
+#endif
+            MatchConstraint = ConstraintSet.MatchConstraint,
+        }
 
-            public Element(ConstraintSet set, View view)
+        public enum Edge
+        {
+            Left = ConstraintSet.Left,
+            Right = ConstraintSet.Right,
+            Top = ConstraintSet.Top,
+            Bottom = ConstraintSet.Bottom,
+            Baseline = ConstraintSet.Baseline,
+            Start = ConstraintSet.Start,
+            End = ConstraintSet.End,
+        }
+
+        /// <summary>
+        /// Guideline
+        /// </summary>
+        public enum Orientation
+        {
+            Y = ConstraintSet.Horizontal,
+            X = ConstraintSet.Vertical,
+        }
+
+        /// <summary>
+        /// Barrier
+        /// </summary>
+        public enum Direction
+        {
+            Left = Barrier.LEFT,
+            Right = Barrier.RIGHT,
+            Top = Barrier.TOP,
+            Bottom = Barrier.BOTTOM,
+        }
+
+        public enum Visibility
+        {
+            Visible = ConstraintSet.Visible,
+            Invisible = ConstraintSet.Invisible,
+            Gone = ConstraintSet.Gone,
+        }
+
+        public class Element : IDisposable//,IElement
+        {
+            internal enum ElementType
+            {
+                Normal,
+                Guideline,
+                Barrier,
+                ConstraintHelper,
+            }
+
+            void ValidateGuideline()
+            {
+                if (type != ElementType.Guideline)
+                    throw new ArgumentException($"You select a {type} ui element as Guideline");
+            }
+
+            void ValidateBarrier()
+            {
+                if (type != ElementType.Barrier)
+                    throw new ArgumentException($"You select a {type} ui element as Barrier");
+            }
+
+            void ValidateHelper()
+            {
+                if (type != ElementType.ConstraintHelper)
+                    throw new ArgumentException($"You select a {type} ui element as ConstraintHelper");
+            }
+
+            WeakReference<ConstraintSet> setReference;
+            private int[] ids;
+            private ElementType type;
+
+            internal Element(ConstraintSet set, params View[] views)
             {
                 setReference = new WeakReference<ConstraintSet>(set);
-                id = view.GetId();
+                Select(views);
             }
 
             /// <summary>
             /// It mean reselect, same as <see cref="FluentConstraintSet.Select(View)"/>, only for not recreate element object waste memory and more fluent api.
             /// </summary>
-            /// <param name="view"></param>
+            /// <param name="views"></param>
             /// <returns></returns>
-            public Element Select(View view)
+            public Element Select(params View[] views)
             {
-                id = view.GetId();
+                int[] ids = new int[views.Length];
+                for (var index = 0; index < views.Length; index++)
+                {
+                    ids[index] = views[index].GetId();
+                }
+                this.ids = ids;
+
+                //For validate Guideline,Barrier,ConstraintHepler 
+                View view = views[0];
+                if (view is Guideline)
+                {
+                    type = ElementType.Guideline;
+                }
+                else if (view is Barrier)
+                {
+                    type = ElementType.Barrier;
+                }
+                else if (view is ConstraintHelper)
+                {
+                    type = ElementType.ConstraintHelper;
+                }
+                else
+                {
+                    type = ElementType.Normal;
+                }
+
                 return this;
             }
 
-            public Element LeftToLeft(View secondView, int margin = 0)
+            protected Element LeftToLeft(int secondView, int margin = 0)
             {
                 setReference.TryGetTarget(out var set);
-                set?.Connect(id, ConstraintSet.Left, secondView.GetId(), ConstraintSet.Left, margin);
+                foreach (var id in ids)
+                    set?.Connect(id, ConstraintSet.Left, secondView, ConstraintSet.Left, margin);
                 return this;
             }
 
-            public Element LeftToRight(View secondView, int margin = 0)
+            public Element LeftToLeft(View secondView = null, int margin = 0)
+            {
+                if (secondView == null)
+                {
+                    return this.LeftToLeft(ConstraintSet.ParentId, margin);
+                }
+                return this.LeftToLeft(secondView.GetId(), margin);
+            }
+
+            protected Element LeftToRight(int secondView, int margin = 0)
             {
                 setReference.TryGetTarget(out var set);
-                set?.Connect(id, ConstraintSet.Left, secondView.GetId(), ConstraintSet.Right, margin);
+                foreach (var id in ids)
+                    set?.Connect(id, ConstraintSet.Left, secondView, ConstraintSet.Right, margin);
                 return this;
             }
 
-            public Element TopToTop(View secondView, int margin = 0)
+            public Element LeftToRight(View secondView = null, int margin = 0)
+            {
+                if (secondView == null)
+                {
+                    return this.LeftToRight(ConstraintSet.ParentId, margin);
+                }
+                return this.LeftToRight(secondView.GetId(), margin);
+            }
+
+            protected Element TopToTop(int secondView, int margin = 0)
             {
                 setReference.TryGetTarget(out var set);
-                set?.Connect(id, ConstraintSet.Top, secondView.GetId(), ConstraintSet.Top, margin);
+                foreach (var id in ids)
+                    set?.Connect(id, ConstraintSet.Top, secondView, ConstraintSet.Top, margin);
                 return this;
             }
 
-            public Element TopToBottom(View secondView, int margin = 0)
+            public Element TopToTop(View secondView = null, int margin = 0)
+            {
+                if (secondView == null)
+                {
+                    return this.TopToTop(ConstraintSet.ParentId, margin);
+                }
+                return this.TopToTop(secondView.GetId(), margin);
+            }
+
+            protected Element TopToBottom(int secondView, int margin = 0)
             {
                 setReference.TryGetTarget(out var set);
-                set?.Connect(id, ConstraintSet.Top, secondView.GetId(), ConstraintSet.Bottom, margin);
+                foreach (var id in ids)
+                    set?.Connect(id, ConstraintSet.Top, secondView, ConstraintSet.Bottom, margin);
                 return this;
             }
 
-            public Element RightToLeft(View secondView, int margin = 0)
+            public Element TopToBottom(View secondView = null, int margin = 0)
+            {
+                if (secondView == null)
+                {
+                    return this.TopToBottom(ConstraintSet.ParentId, margin);
+                }
+                return this.TopToBottom(secondView.GetId(), margin);
+            }
+
+            protected Element RightToLeft(int secondView, int margin = 0)
             {
                 setReference.TryGetTarget(out var set);
-                set?.Connect(id, ConstraintSet.Right, secondView.GetId(), ConstraintSet.Left, margin);
+                foreach (var id in ids)
+                    set?.Connect(id, ConstraintSet.Right, secondView, ConstraintSet.Left, margin);
                 return this;
             }
 
-            public Element RightToRight(View secondView, int margin = 0)
+            public Element RightToLeft(View secondView = null, int margin = 0)
+            {
+                if (secondView == null)
+                {
+                    return this.RightToLeft(ConstraintSet.ParentId, margin);
+                }
+                return this.RightToLeft(secondView.GetId(), margin);
+            }
+
+            protected Element RightToRight(int secondView, int margin = 0)
             {
                 setReference.TryGetTarget(out var set);
-                set?.Connect(id, ConstraintSet.Right, secondView.GetId(), ConstraintSet.Right, margin);
+                foreach (var id in ids)
+                    set?.Connect(id, ConstraintSet.Right, secondView, ConstraintSet.Right, margin);
                 return this;
             }
 
-            public Element BottomToTop(View secondView, int margin = 0)
+            public Element RightToRight(View secondView = null, int margin = 0)
+            {
+                if (secondView == null)
+                {
+                    return this.RightToRight(ConstraintSet.ParentId, margin);
+                }
+                return this.RightToRight(secondView.GetId(), margin);
+            }
+
+            protected Element BottomToTop(int secondView, int margin = 0)
             {
                 setReference.TryGetTarget(out var set);
-                set?.Connect(id, ConstraintSet.Bottom, secondView.GetId(), ConstraintSet.Top, margin);
+                foreach (var id in ids)
+                    set?.Connect(id, ConstraintSet.Bottom, secondView, ConstraintSet.Top, margin);
                 return this;
             }
 
-            public Element BottomToBottom(View secondView, int margin = 0)
+            public Element BottomToTop(View secondView = null, int margin = 0)
+            {
+                if (secondView == null)
+                {
+                    return this.BottomToTop(ConstraintSet.ParentId, margin);
+                }
+                return this.BottomToTop(secondView.GetId(), margin);
+            }
+
+            protected Element BottomToBottom(int secondView, int margin = 0)
             {
                 setReference.TryGetTarget(out var set);
-                set?.Connect(id, ConstraintSet.Bottom, secondView.GetId(), ConstraintSet.Bottom, margin);
+                foreach (var id in ids)
+                    set?.Connect(id, ConstraintSet.Bottom, secondView, ConstraintSet.Bottom, margin);
                 return this;
             }
 
-            public Element CenterTo(View secondView)
+            public Element BottomToBottom(View secondView = null, int margin = 0)
             {
-                this.CenterXTo(secondView);
-                this.CenterYTo(secondView);
+                if (secondView == null)
+                {
+                    return this.BottomToBottom(ConstraintSet.ParentId, margin);
+                }
+                return this.BottomToBottom(secondView.GetId(), margin);
+            }
+
+            protected Element BaselineToBaseline(int secondView, int margin = 0)
+            {
+                setReference.TryGetTarget(out var set);
+                foreach (var id in ids)
+                    set?.Connect(id, ConstraintSet.Baseline, secondView, ConstraintSet.Baseline, margin);
                 return this;
             }
 
-            public Element CenterXTo(View secondView)
+            public Element BaselineToBaseline(View secondView = null, int margin = 0)
             {
-                this.LeftToLeft(secondView);
-                this.RightToRight(secondView);
-                return this;
+                if (secondView == null)
+                {
+                    return this.BaselineToBaseline(ConstraintSet.ParentId, margin);
+                }
+                return this.BaselineToBaseline(secondView.GetId(), margin);
             }
 
-            public Element CenterYTo(View secondView)
+            public Element CenterTo(View secondView = null)
             {
-                this.TopToTop(secondView);
-                this.BottomToBottom(secondView);
-                return this;
+                if (secondView == null)
+                {
+                    return this.LeftToLeft(ConstraintSet.ParentId)
+                        .RightToRight(ConstraintSet.ParentId)
+                        .TopToTop(ConstraintSet.ParentId)
+                        .BottomToBottom(ConstraintSet.ParentId);
+                }
+                return this.CenterXTo(secondView).CenterYTo(secondView);
+            }
+
+            public Element CenterXTo(View secondView = null)
+            {
+                if (secondView == null)
+                {
+                    return this.LeftToLeft(ConstraintSet.ParentId).RightToRight(ConstraintSet.ParentId);
+                }
+                return this.LeftToLeft(secondView).RightToRight(secondView);
+            }
+
+            public Element CenterYTo(View secondView = null)
+            {
+                if (secondView == null)
+                {
+                    return this.TopToTop(ConstraintSet.ParentId).BottomToBottom(ConstraintSet.ParentId);
+                }
+                return this.TopToTop(secondView).BottomToBottom(secondView);
             }
 
             public Element Height(int height)
             {
                 setReference.TryGetTarget(out var set);
-                set?.ConstrainHeight(id, height);
+                foreach (var id in ids)
+                    set?.ConstrainHeight(id, height);
                 return this;
+            }
+
+            public Element Height(SizeBehavier behavier)
+            {
+                return this.Height((int)behavier);
             }
 
             public Element Width(int width)
             {
                 setReference.TryGetTarget(out var set);
-                set?.ConstrainWidth(id, width);
+                foreach (var id in ids)
+                    set?.ConstrainWidth(id, width);
                 return this;
             }
 
-            public Element GuidelineOrientation(int orientation)
+            public Element Width(SizeBehavier behavier)
             {
+                return this.Width((int)behavier);
+            }
+
+            public Element GuidelineOrientation(Orientation orientation)
+            {
+                ValidateGuideline();
+
                 setReference.TryGetTarget(out var set);
-                set?.Create(id, orientation);
+                foreach (var id in ids)
+                    set?.Create(id, (int)orientation);
                 return this;
             }
 
             public Element GuidelinePercent(float percent)
             {
+                ValidateGuideline();
+
                 setReference.TryGetTarget(out var set);
-                set?.SetGuidelinePercent(id, percent);
+                foreach (var id in ids)
+                    set?.SetGuidelinePercent(id, percent);
                 return this;
             }
 
             public Element GuidelineBegin(int value)
             {
+                ValidateGuideline();
+
                 setReference.TryGetTarget(out var set);
-                set?.SetGuidelineBegin(id, value);
+                foreach (var id in ids)
+                    set?.SetGuidelineBegin(id, value);
                 return this;
             }
 
             public Element GuidelineEnd(int value)
             {
+                ValidateGuideline();
+
                 setReference.TryGetTarget(out var set);
-                set?.SetGuidelineEnd(id, value);
+                foreach (var id in ids)
+                    set?.SetGuidelineEnd(id, value);
                 return this;
             }
 
-            public Element Barrier(int direction, int margin, params int[] referenced)
+            public Element Barrier(Direction direction, int margin, params int[] referenced)
+            {
+                ValidateBarrier();
+
+                setReference.TryGetTarget(out var set);
+                foreach (var id in ids)
+                    set?.CreateBarrier(id, (int)direction, margin, referenced);
+                return this;
+            }
+
+            public Element Barrier(Direction direction, int margin, params View[] referenced)
+            {
+                ValidateBarrier();
+
+                setReference.TryGetTarget(out var set);
+                int[] referencedIds = new int[referenced.Length];
+                for (var index = 0; index < referenced.Length; index++)
+                {
+                    referencedIds[index] = referenced[index].GetId();
+                }
+                foreach (var id in ids)
+                    set?.CreateBarrier(id, (int)direction, margin, referencedIds);
+                return this;
+            }
+
+            public Element EdgesTo(View secondView = null, int xmargin = 0, int ymargin = 0)
+            {
+                if (secondView == null)
+                {
+                    return this.LeftToLeft(ConstraintSet.ParentId, xmargin)
+                        .RightToRight(ConstraintSet.ParentId, xmargin)
+                        .TopToTop(ConstraintSet.ParentId, ymargin)
+                        .BottomToBottom(ConstraintSet.ParentId, ymargin);
+                }
+                return this.EdgesXTo(secondView, xmargin).EdgesYTo(secondView, ymargin);
+            }
+
+            public Element EdgesXTo(View secondView = null, int xmargin = 0)
+            {
+                if (secondView == null)
+                {
+                    return this.LeftToLeft(ConstraintSet.ParentId, xmargin).RightToRight(ConstraintSet.ParentId, xmargin);
+                }
+                return this.LeftToLeft(secondView, xmargin).RightToRight(secondView, xmargin);
+            }
+
+            public Element EdgesYTo(View secondView = null, int ymargin = 0)
+            {
+                if (secondView == null)
+                {
+                    return this.TopToTop(ConstraintSet.ParentId, ymargin).BottomToBottom(ConstraintSet.ParentId, ymargin);
+                }
+                return this.TopToTop(secondView, ymargin).BottomToBottom(secondView, ymargin);
+            }
+
+            public Element Visibility(Visibility visibility)
             {
                 setReference.TryGetTarget(out var set);
-                set?.CreateBarrier(id, direction, margin, referenced);
+                foreach (var id in ids)
+                    set?.SetVisibility(id, (int)visibility);
+                return this;
+            }
+
+            /// <summary>
+            /// Same as <see cref="ConstraintSet.Connect(int, int, int, int, int)"/>
+            /// </summary>
+            /// <param name="startSide"></param>
+            /// <param name="endView"></param>
+            /// <param name="endSide"></param>
+            /// <param name="margin"></param>
+            /// <returns></returns>
+            public Element EdgeTo(Edge startSide, View endView, Edge endSide, int margin = 0)
+            {
+                setReference.TryGetTarget(out var set);
+                foreach (var id in ids)
+                    set?.Connect(id, (int)startSide, endView.GetId(), (int)endSide, margin);
                 return this;
             }
 
             public void Dispose()
             {
                 setReference = null;
+                ids = null;
+            }
+        }
+    }
+
+    public static class FluentConstraintLayoutExtension
+    {
+        public static void AddView(this ConstraintLayout layout, params View[] views)
+        {
+            foreach (var view in views)
+            {
+                layout.AddView(view);
+            }
+        }
+    }
+
+    public static class FluentConstraintHelperExtension
+    {
+#if WINDOWS
+        public static void AddView(this ConstraintHelper helper, params FrameworkElement[] views)
+#else
+        public static void AddView(this ConstraintHelper helper, params View[] views)
+#endif
+        {
+            foreach (var view in views)
+            {
+                helper.AddView(view);
             }
         }
     }

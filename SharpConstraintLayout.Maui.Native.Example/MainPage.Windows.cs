@@ -1,5 +1,4 @@
-﻿
-using Microsoft.Maui.Essentials;
+﻿using Microsoft.Maui.Essentials;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -28,6 +27,8 @@ namespace SharpConstraintLayout.Maui.Native.Example
 
         public MainPage()
         {
+            ConstraintLayout.DEBUG = true;
+
             createControls();
             this.Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.HotPink);
 
@@ -37,6 +38,8 @@ namespace SharpConstraintLayout.Maui.Native.Example
             //barrierTest(this);
             //visibilityTest(this);
             flowTest(this);
+            //nestedLayoutTest(this);
+
         }
 
         private void createControls()
@@ -110,5 +113,6 @@ namespace SharpConstraintLayout.Maui.Native.Example
             using var stream = await FileSystem.OpenAppPackageFileAsync("favorite_black_24dp.svg");
             System.Diagnostics.Debug.WriteLine($"svg size:{stream.Length}");
         }
+
     }
 }
