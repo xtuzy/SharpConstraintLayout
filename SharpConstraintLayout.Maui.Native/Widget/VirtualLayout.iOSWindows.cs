@@ -31,7 +31,7 @@ namespace SharpConstraintLayout.Maui.Widget
     ///  </para>
     ///  @suppress
     /// </summary>
-    public abstract class VirtualLayout : ConstraintHelper,IVirtualLayout
+    public abstract class VirtualLayout : ConstraintHelper, IVirtualLayout
     {
         private bool mApplyVisibilityOnAttach;
         private bool mApplyElevationOnAttach;
@@ -63,11 +63,11 @@ namespace SharpConstraintLayout.Maui.Widget
 #elif __IOS__
                 var parent = Superview;
 #endif
-                if (parent == null) Debug.WriteLine("Parent is null, maybe something is false.", this.GetType().Name);
+                if (parent == null) Debug.WriteLine(this.GetType().Name, "Parent is null, maybe something is false.");
 
                 if (parent is ConstraintLayout)
                 {
-                    ConstraintLayout container = (ConstraintLayout) parent;
+                    ConstraintLayout container = (ConstraintLayout)parent;
                     int visibility = Visible;
                     float elevation = 0;
 #if __ANDROID__
@@ -79,7 +79,7 @@ namespace SharpConstraintLayout.Maui.Widget
                     for (int i = 0; i < mCount; i++)
                     {
                         int id = mIds[i];
-                        View view = (View)container.GetViewById(id);
+                        View view = (View)container.FindViewById(id);
                         if (view != null)
                         {
                             if (mApplyVisibilityOnAttach)
@@ -112,13 +112,13 @@ namespace SharpConstraintLayout.Maui.Widget
         {
             set
             {
-                base.Visible= value;
+                base.Visible = value;
                 applyLayoutFeatures();
             }
 
             get
             {
-                 return visible;
+                return visible;
             }
         }
 

@@ -82,7 +82,6 @@ namespace SharpConstraintLayout.Maui.Widget
 
         protected internal string mReferenceTags;
 
-
         private View[] mViews = null;
 
         protected internal Dictionary<int?, string> mMap = new Dictionary<int?, string>();
@@ -351,7 +350,7 @@ namespace SharpConstraintLayout.Maui.Widget
             for (int i = 0; i < mCount; i++)
             {
                 int id = mIds[i];
-                View view = (View)container.GetViewById(id);
+                View view = (View)container.FindViewById(id);
                 if (view != null)
                 {
 #if WINDOWS || __ANDROID__
@@ -406,7 +405,7 @@ namespace SharpConstraintLayout.Maui.Widget
             for (int i = 0; i < mCount; i++)
             {
                 int id = mIds[i];
-                View view = (View)container.GetViewById(id);
+                View view = (View)container.FindViewById(id);
                 /*if (view == null)
                 {
                     // hm -- we couldn't find the view.
@@ -450,7 +449,7 @@ namespace SharpConstraintLayout.Maui.Widget
             for (int i = 0; i < mCount; i++)
             {
                 int id = mIds[i];
-                mViews[i] = (View)layout.GetViewById(id);
+                mViews[i] = (View)layout.FindViewById(id);
             }
             return mViews;
         }
@@ -562,35 +561,6 @@ namespace SharpConstraintLayout.Maui.Widget
             return index;
         }
 
-        public static void SetPlatformVisibility(UIElement element, int ConstraintSetVisible)
-        {
-#if WINDOWS
-            if (ConstraintSetVisible == ConstraintSet.Invisible)
-                element.Opacity = 0;//https://stackoverflow.com/questions/28097153/workaround-for-visibilty-hidden-state-windows-phone-8-1-app-development
-            else if (ConstraintSetVisible == ConstraintSet.Visible)
-            {
-                element.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
-                if (element.Opacity == 0)
-                    element.Opacity = 1;
-            }
-            else
-            {
-                element.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;//GONE
-            }
-#elif __IOS__
-            if (ConstraintSetVisible == ConstraintSet.Invisible)
-                element.Hidden = true;
-            else if (ConstraintSetVisible == ConstraintSet.Visible)
-                element.Hidden = false;
-            else//Gone
-            {
-                //throw new NotImplementedException("iOS没有默认的Visibility = ConstraintSet.Gone");
-                element.Hidden = true;
-                Debug.WriteLine("iOS没有默认的Visibility = ConstraintSet.Gone");
-            }
-#endif
-        }
-
         /// <summary>
         /// ConstraintSet.VISIBLE,GONE,INVISIBLE
         /// </summary>
@@ -602,7 +572,7 @@ namespace SharpConstraintLayout.Maui.Widget
         {
             set
             {
-                ConstraintHelper.SetPlatformVisibility(this, value);
+                ViewExtension.SetViewVisibility(this, value);
                 visible = value;
             }
             get { return visible; }

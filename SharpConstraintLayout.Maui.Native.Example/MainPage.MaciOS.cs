@@ -30,7 +30,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             Page = new ConstraintLayout()
             {
                 AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight,
-                BackgroundColor = UIColor.Orange
+                BackgroundColor = UIColor.SystemPink
             };
 
             createControls();

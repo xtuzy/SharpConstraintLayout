@@ -31,6 +31,56 @@ namespace SharpConstraintLayout.Maui.Native.Example
 {
     public partial class MainPage
     {
+        void animationTest(ConstraintLayout page)
+        {
+#if __ANDROID__
+            layout = new ConstraintLayout(page.Context)
+            {
+                Id = View.GenerateViewId(),
+            };
+            layout.SetBackgroundColor(Android.Graphics.Color.Black);
+#else
+            layout = new ConstraintLayout()
+            {
+#if WINDOWS
+                Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.Black)
+#elif __IOS__
+                BackgroundColor = UIColor.Black
+#endif
+            };
+#endif
+
+#if __ANDROID__
+            var guide = new Guideline(page.Context) { Id = View.GenerateViewId() };
+#else
+            var guide = new Guideline();
+#endif
+
+            page.AddView(layout, guide);
+
+            var pageSet = new FluentConstraintSet();
+            pageSet.Clone(page);
+
+#if ANDROID
+            Android.Animation.ValueAnimator animator = Android.Animation.ValueAnimator.OfInt(50, 1000);
+            animator.SetDuration(5000);
+            animator.Start();
+            animator.Update += (object sender, Android.Animation.ValueAnimator.AnimatorUpdateEventArgs e) =>
+            {
+                int newValue = (int)e.Animation.AnimatedValue;
+                // Apply this new value to the object being animated.
+                pageSet.Select(guide).GuidelineOrientation(Orientation.X).GuidelineBegin(newValue)
+                     .Select(layout).LeftToRight(guide).RightToRight(page).TopToTop(page).BottomToBottom(page)
+                     .Width(SizeBehavier.MatchConstraint)
+                     .Height(SizeBehavier.MatchConstraint);
+                pageSet.ApplyTo(page);
+            };
+#elif IOS
+
+#elif WINDOWS
+
+#endif
+        }
         /// <summary>
         /// test nested layout warp content and it's child match parent
         /// </summary>
@@ -82,7 +132,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
 #if WINDOWS || ANDROID
             FirstButton.Click += (sender, e) =>
             {
-#if ANDROID          
+#if ANDROID
                 Toast.MakeText(page.Context, $"Button Y {FirstButton.GetZ()} ,Canvas Y {ThirdCanvas.GetZ()}", ToastLength.Long).Show();
                 //FirstButton.SetZ(ThirdCanvas.GetZ());
                 FirstButton.Elevation = 0;
@@ -124,8 +174,8 @@ namespace SharpConstraintLayout.Maui.Native.Example
                     .Height(SizeBehavier.WrapContent)
                     .Select(ThirdCanvas).EdgesTo(flow)
                     .Width(SizeBehavier.MatchConstraint)
-                    .Height(SizeBehavier.MatchConstraint)
-                    .Visibility(FluentConstraintSet.Visibility.Visible);
+                    .Height(SizeBehavier.MatchConstraint);
+                //.Visibility(FluentConstraintSet.Visibility.Visible);
                 layoutSet.ApplyTo(layout);
             }
 

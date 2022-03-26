@@ -127,12 +127,13 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
 
         public override void OnMeasure(androidx.constraintlayout.core.widgets.VirtualLayout layout, int widthMeasureSpec, int heightMeasureSpec)
         {
-            //int widthMode = MeasureSpec.getMode(widthMeasureSpec);
-            //int widthSize = MeasureSpec.getSize(widthMeasureSpec);
-            //int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-            //int heightSize = MeasureSpec.getSize(heightMeasureSpec);
+            int widthMode = MeasureSpec.getMode(widthMeasureSpec);
+            int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+            int heightMode = MeasureSpec.getMode(heightMeasureSpec);
+            int heightSize = MeasureSpec.getSize(heightMeasureSpec);
 
             #region Copy form FlowTest
+            /*
             int widthMode = BasicMeasure.UNSPECIFIED;
             int heightMode = BasicMeasure.UNSPECIFIED;
             int widthSize = 0;
@@ -157,12 +158,14 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
                 heightSize = heightMeasureSpec;
                 heightMode = BasicMeasure.EXACTLY;
             }
+            */
             #endregion
 
             if (layout != null)
             {
+                if (ConstraintLayout.DEBUG) Debug.WriteLine(TAG, $"widthMode {widthMode}, widthSize {widthSize}, heightMode {heightMode}, heightSize {heightSize}");
                 layout.measure(widthMode, widthSize, heightMode, heightSize);
-                //setMeasuredDimension(layout.MeasuredWidth, layout.MeasuredHeight);
+                //setMeasuredDimension(layout.MeasuredWidth, layout.MeasuredHeight);//Android中这个的作用应该是设置flow的大小,我注释掉
             }
             else
             {

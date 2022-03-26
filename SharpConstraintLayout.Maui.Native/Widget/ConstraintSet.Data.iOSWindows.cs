@@ -199,7 +199,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// </summary>
         public const int ChainPacked = ConstraintWidget.CHAIN_PACKED;
 
-        private const bool DEBUG = false;
+        //private const bool DEBUG = false;
         //private static readonly int[] VISIBILITY_FLAGS = new int[] { Visible, Invisible, Gone };
         private const int BARRIER_TYPE = 1;
 

@@ -21,7 +21,7 @@ namespace SharpConstraintLayout.Maui.Widget
 
         //void FillMetrics(Metrics metrics);
         //Object GetDesignInformation(int type, Object value);
-        View GetViewById(int id);
+        View FindViewById(int id);
         ConstraintWidget GetViewWidget(View view);
         //void LoadLayoutDescription(int layoutDescription);
         //void SetConstraintSet(ConstraintSet set);

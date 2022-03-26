@@ -58,7 +58,7 @@ namespace SharpConstraintLayout.Maui.Widget
 
         private void init()
         {
-            ConstraintHelper.SetPlatformVisibility(this, mEmptyVisibility);
+            ViewExtension.SetViewVisibility(this, mEmptyVisibility);
             mContentId = -1;
         }
 
@@ -78,7 +78,6 @@ namespace SharpConstraintLayout.Maui.Widget
                 return mEmptyVisibility;
             }
         }
-
 
         /// <summary>
         /// Returns the content view </summary>
@@ -131,11 +130,11 @@ namespace SharpConstraintLayout.Maui.Widget
                 if (!InEditMode)
                 {
                     //Visibility = (Microsoft.UI.Xaml.Visibility)mEmptyVisibility;
-                    ConstraintHelper.SetPlatformVisibility(this, mEmptyVisibility);
+                    ViewExtension.SetViewVisibility(this, mEmptyVisibility);
                 }
             }
 
-            mContent = (FrameworkElement)container.findViewById(mContentId);
+            mContent = (FrameworkElement)container.FindViewById(mContentId);
             if (mContent != null)
             {
                 //ConstraintLayout.LayoutParams layoutParamsContent = (ConstraintLayout.LayoutParams)mContent.LayoutParams;
@@ -181,13 +180,13 @@ namespace SharpConstraintLayout.Maui.Widget
             {
 #if WINDOWS
                 //View v = ((View)Parent).findViewById(value);
-                UIElement v = ((ConstraintLayout)Parent).findViewById(value);
+                UIElement v = ((ConstraintLayout)Parent).FindViewById(value);
                 if (v != null)
                 {
                     v.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
                 }
 #elif __IOS__
-                UIElement v = ((ConstraintLayout)Superview).findViewById(value);
+                UIElement v = ((ConstraintLayout)Superview).FindViewById(value);
                 if (v != null)
                 {
                     //v.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
