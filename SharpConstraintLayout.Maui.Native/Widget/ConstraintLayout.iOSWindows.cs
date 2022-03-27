@@ -793,8 +793,6 @@ namespace SharpConstraintLayout.Maui.Widget
                 else
                     outerInstance.innerMeasure(widget, measure);
 #elif WINDOWS || __IOS__
-                //AndroidSourceCodeMeasureNoSpec(widget, measure);
-                //SimpleMeasure(widget, measure);
                 AndroidSourceCodeMeasureUseSpecForWindows(widget, measure);
 #endif
             }
