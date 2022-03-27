@@ -68,8 +68,14 @@ namespace SharpConstraintLayout.Maui.Widget
         public const string VERSION = "ConstraintLayout-2.1.1";
         public const bool ISSUPPORTRTLPLATFORM = false;//现在完全不支持,需要对照原来的代码看删除了那些关于Rtl的
 
-        public static bool DEBUG = false;//if is true,will print some layout info.
-        public static bool MEASURE = false;//if is true,will print time of measure+layout spend.
+        /// <summary>
+        /// if is true,will print some layout info.
+        /// </summary>
+        public static bool DEBUG = false;
+        /// <summary>
+        /// if is true,will print time of measure+layout spend.
+        /// </summary>
+        public static bool MEASURE = false;
 
         private readonly ConstraintWidgetContainer mLayout = new ConstraintWidgetContainer();//default widget
         private readonly Dictionary<int, UIElement> idToViews = new Dictionary<int, UIElement>();
@@ -87,6 +93,7 @@ namespace SharpConstraintLayout.Maui.Widget
         private int mOptimizationLevel = Optimizer.OPTIMIZATION_STANDARD;
 
         private MeasurerAnonymousInnerClass mMeasurer;
+        private androidx.constraintlayout.core.Metrics mMetrics;
 
         public ConstraintLayout()
         {
@@ -270,6 +277,7 @@ namespace SharpConstraintLayout.Maui.Widget
 
         #region Measure
 
+        long measureTime = 0;
 #if WINDOWS
         protected override Size MeasureOverride(Size availableSize)
 #elif __IOS__
@@ -277,11 +285,16 @@ namespace SharpConstraintLayout.Maui.Widget
         protected Size MeasureOverride(Size availableSize)
 #endif
         {
+            if (MEASURE)
+            {
+                measureTime = DateTimeHelperClass.CurrentUnixTimeMillis();
+            }
+
             if (DEBUG) Debug.WriteLine($"{nameof(MeasureOverride)} {this} {availableSize}");
 
             /*
-             * Update Constraints to wigets
-             */
+                * Update Constraints to  wigets
+                */
             if (mConstraintSet.IsChanged)
             {
                 //update widget of child
@@ -290,7 +303,7 @@ namespace SharpConstraintLayout.Maui.Widget
                     MLayoutWidget.updateHierarchy();
                 }
 
-                //update widget of Container
+                //update widget of Container layout
                 var constraint = mConstraintSet.Constraints[this.GetId()];
                 applyConstraintsFromLayoutParams(false, this, MLayoutWidget, constraint, idsToConstraintWidgets);
 
@@ -320,6 +333,7 @@ namespace SharpConstraintLayout.Maui.Widget
             {
                 availableHeight = (int)availableSize.Height;
             }
+
             //If a direction available value and we need MATCH_PARENT, that always generate mistake result, so we not accept it. please modify constraint.
             if (isInfinityAvailabelSize && (MLayoutWidget.HorizontalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.MATCH_PARENT || MLayoutWidget.VerticalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.MATCH_PARENT))
             {
@@ -331,28 +345,37 @@ namespace SharpConstraintLayout.Maui.Widget
             int availableWidth = (int)availableSize.Width;
             int availableHeight = (int)availableSize.Height;
 #endif
-            /*
-             * Analysis Container need which size
-             * 在Android中,大小判断需要结合Parent的测量行为,在Windows和iOS中由于无法知晓Parent确切的行为,因此不能按照Android源码去分析Layout大小.
-             * 我们知道的是Parent会给值给Layout一个大小,在Windows中可以是无限值,在iOS中可以是0,在没有确定Parent的大小时,使用MatchParent是会测量出错的,
-             * 因为是以无限大或者0测量的,上面的代码屏蔽了无限值的matchParent,因为其也不符合布局逻辑
-             */
+            int horizontalDimension = availableWidth;
+            int verticalDimension = availableHeight;
+
+            int horizontalSpec = 0;
+            int verticalSpec = 0;
+
             switch (MLayoutWidget.HorizontalDimensionBehaviour)
             {
                 case ConstraintWidget.DimensionBehaviour.FIXED:
                     {
                         //已知是Fixed时说明默认没有赋值或者赋值了,赋值了的话原始的约束绝对有值,那么Widget.Width不用变,没有赋值的直接按available大小处理,因为
                         //父布局会指定值,而我们不指定则代表遵从父布局的指定
-                        if (mConstraintSet.Constraints[this.GetId()].layout.mWidth <= 0)//用原始的约束来判断是否为固定值
-                            MLayoutWidget.Width = availableWidth;
+                        if (mConstraintSet.Constraints[this.GetId()].layout.mWidth > 0)//用原始的约束来判断是否为固定值,如果是WrapContent,MatchParent,MatchContraint,则<=0
+                            horizontalDimension = MLayoutWidget.Width;
+                        horizontalSpec = MeasureSpec.MakeMeasureSpec(horizontalDimension, MeasureSpec.EXACTLY);
                     }
                     break;
-
                 case ConstraintWidget.DimensionBehaviour.WRAP_CONTENT:
-                case ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT:
+                    {
+                        horizontalSpec = MeasureSpec.MakeMeasureSpec(horizontalDimension, MeasureSpec.AT_MOST);
+                    }
+                    break;
                 case ConstraintWidget.DimensionBehaviour.MATCH_PARENT:
-                    //需要足够的空间,这个空间由Layout的父布局决定
-                    MLayoutWidget.Width = availableWidth;
+                    {
+                        horizontalSpec = MeasureSpec.MakeMeasureSpec(horizontalDimension, MeasureSpec.EXACTLY);
+                    }
+                    break;
+                case ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT:
+                    {
+                        horizontalSpec = MeasureSpec.MakeMeasureSpec(horizontalDimension, MeasureSpec.EXACTLY);
+                    }
                     break;
             }
 
@@ -360,24 +383,31 @@ namespace SharpConstraintLayout.Maui.Widget
             {
                 case ConstraintWidget.DimensionBehaviour.FIXED:
                     {
-                        if (mConstraintSet.Constraints[this.GetId()].layout.mHeight <= 0)//用原始的约束来判断是否为固定值
-                        {
-                            MLayoutWidget.Height = availableHeight;
-                        }
+                        // 已知是Fixed时说明默认没有赋值或者赋值了,赋值了的话原始的约束绝对有值,那么Widget.Width不用变,没有赋值的直接按available大小处理,因为
+                        //父布局会指定值,而我们不指定则代表遵从父布局的指定
+                        if (mConstraintSet.Constraints[this.GetId()].layout.mHeight > 0)//用原始的约束来判断是否为固定值,如果是WrapContent,MatchParent,MatchContraint,则<=0
+                            verticalDimension = MLayoutWidget.Height;
+                        verticalSpec = MeasureSpec.MakeMeasureSpec(verticalDimension, MeasureSpec.EXACTLY);
                     }
                     break;
-
                 case ConstraintWidget.DimensionBehaviour.WRAP_CONTENT:
-                case ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT:
+                    {
+                        verticalSpec = MeasureSpec.MakeMeasureSpec(verticalDimension, MeasureSpec.AT_MOST);
+                    }
+                    break;
                 case ConstraintWidget.DimensionBehaviour.MATCH_PARENT:
-                    //需要足够的空间,这个空间由Layout的父布局决定
-                    MLayoutWidget.Height = availableHeight;
+                    {
+                        verticalSpec = MeasureSpec.MakeMeasureSpec(verticalDimension, MeasureSpec.EXACTLY);
+                    }
+                    break;
+                case ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT:
+                    {
+                        verticalSpec = MeasureSpec.MakeMeasureSpec(verticalDimension, MeasureSpec.EXACTLY);
+                    }
                     break;
             }
-            int widthMeasureSpec = MeasureSpec.makeMeasureSpec();
-            int heightMeasureSpec = MeasureSpec.makeMeasureSpec();
 
-            OnMeasure(widthMeasureSpec, heightMeasureSpec);
+            OnMeasure(horizontalSpec, verticalSpec);
 
             /*#if WINDOWS
                         *//*
@@ -444,24 +474,18 @@ namespace SharpConstraintLayout.Maui.Widget
 
         private void OnMeasure(int widthMeasureSpec, int heightMeasureSpec)
         {
-            long time = 0;
-            if (DEBUG)
-            {
-                time = DateTimeHelperClass.CurrentUnixTimeMillis();
-            }
-
             MLayoutWidget.Rtl = isRtl();
 
             resolveSystem(MLayoutWidget, mOptimizationLevel, widthMeasureSpec, heightMeasureSpec);
             resolveMeasuredDimension(widthMeasureSpec, heightMeasureSpec, MLayoutWidget.Width, MLayoutWidget.Height,
                     MLayoutWidget.WidthMeasuredTooSmall, MLayoutWidget.HeightMeasuredTooSmall);
 
-            if (DEBUG)
+            if (MEASURE)
             {
-                time = DateTimeHelperClass.CurrentUnixTimeMillis() - time;
+                measureTime = DateTimeHelperClass.CurrentUnixTimeMillis() - measureTime;
                 Debug.WriteLine(MLayoutWidget.DebugName + " (" + ChildCount + ") DONE onMeasure width: " + MeasureSpec.ToString(widthMeasureSpec)
                         + " height: " + MeasureSpec.ToString(heightMeasureSpec) + " => " + mLastMeasureWidth + " x " + mLastMeasureHeight
-                        + " lasted " + time
+                        + " lasted " + measureTime
                 );
             }
         }
@@ -493,10 +517,10 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <param name="heightMeasureSpec"></param>
         protected void resolveSystem(ConstraintWidgetContainer layout, int optimizationLevel, int widthMeasureSpec, int heightMeasureSpec)
         {
-            int widthMode = MeasureSpec.getMode(widthMeasureSpec);
-            int widthSize = MeasureSpec.getSize(widthMeasureSpec);
-            int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-            int heightSize = MeasureSpec.getSize(heightMeasureSpec);
+            int widthMode = MeasureSpec.GetMode(widthMeasureSpec);
+            int widthSize = MeasureSpec.GetSize(widthMeasureSpec);
+            int heightMode = MeasureSpec.GetMode(heightMeasureSpec);
+            int heightSize = MeasureSpec.GetSize(heightMeasureSpec);
 
             int paddingY = Math.Max(0, PaddingTop);
             int paddingBottom = Math.Max(0, PaddingBottom);
@@ -762,8 +786,9 @@ namespace SharpConstraintLayout.Maui.Widget
                 else
                     outerInstance.innerMeasure(widget, measure);
 #elif WINDOWS || __IOS__
-                AndroidSourceCodeMeasureNoSpec(widget, measure);
+                //AndroidSourceCodeMeasureNoSpec(widget, measure);
                 //SimpleMeasure(widget, measure);
+                AndroidSourceCodeMeasureUseSpecForWindows(widget, measure);
 #endif
             }
 
@@ -1265,7 +1290,7 @@ namespace SharpConstraintLayout.Maui.Widget
             /// Spec是Android中根据parent和child的matchparent,wrapcontent的行为进行计算的一个中介.
             /// 我看到ConstraintWidget中也包含这个逻辑,考虑是否应该用Android中的判断逻辑.
             /// 
-            /// For Windows是因为Windows也有Measure,而iOS没有Measure
+            /// For Windows是因为Windows也有Measure,而iOS没有Measure,iOS应该能精简更多代码,因为无需传入Parent的参数就能测量自身,那么只需要靠ConstraintWidget自己去测量然后布局就够了.
             /// </summary>
             /// <param name="widget"></param>
             /// <param name="measure"></param>
@@ -1287,8 +1312,8 @@ namespace SharpConstraintLayout.Maui.Widget
                     return;
                 }
 
-                long startMeasure;
-                long endMeasure;
+                long startMeasure = 0;
+                long endMeasure = 0;
 
                 if (MEASURE)
                 {
@@ -1313,7 +1338,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 {
                     case ConstraintWidget.DimensionBehaviour.FIXED:
                         {
-                            horizontalSpec = MeasureSpec.makeMeasureSpec(horizontalDimension, MeasureSpec.EXACTLY);
+                            horizontalSpec = MeasureSpec.MakeMeasureSpec(horizontalDimension, MeasureSpec.EXACTLY);
                         }
                         break;
                     case ConstraintWidget.DimensionBehaviour.WRAP_CONTENT:
@@ -1337,12 +1362,12 @@ namespace SharpConstraintLayout.Maui.Widget
                                 // a wrap, it can be incorrect if the other side was also variable.
                                 // So in that case, we have to double-check the other side is stable (else we can't
                                 // just assume the wrap value will be correct).
-                                //bool otherDimensionStable = child.MeasuredHeight == widget.Height;//Windows中Measure后的高度应该是DesiredSize
-                                bool otherDimensionStable = child.DesiredSize.Height == widget.Height;
+                                //bool otherDimensionStable = child.MeasuredHeight == widget.Height;//Windows中当前还未Measure,先使用Defalut DesiredSize尝试
+                                bool otherDimensionStable = child.GetDefaultSize().Height == widget.Height;
                                 bool useCurrent = measure.measureStrategy == BasicMeasure.Measure.USE_GIVEN_DIMENSIONS || !shouldDoWrap || (shouldDoWrap && otherDimensionStable) || (child is Placeholder) || (widget.ResolvedHorizontally);
                                 if (useCurrent)
                                 {
-                                    horizontalSpec = MeasureSpec.makeMeasureSpec(widget.Width, MeasureSpec.EXACTLY);
+                                    horizontalSpec = MeasureSpec.MakeMeasureSpec(widget.Width, MeasureSpec.EXACTLY);
                                 }
                             }
                         }
@@ -1353,7 +1378,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 {
                     case ConstraintWidget.DimensionBehaviour.FIXED:
                         {
-                            verticalSpec = MeasureSpec.makeMeasureSpec(verticalDimension, MeasureSpec.EXACTLY);
+                            verticalSpec = MeasureSpec.MakeMeasureSpec(verticalDimension, MeasureSpec.EXACTLY);
                         }
                         break;
                     case ConstraintWidget.DimensionBehaviour.WRAP_CONTENT:
@@ -1378,11 +1403,11 @@ namespace SharpConstraintLayout.Maui.Widget
                                 // So in that case, we have to double-check the other side is stable (else we can't
                                 // just assume the wrap value will be correct).
                                 //bool otherDimensionStable = child.MeasuredWidth == widget.Width;//Windows中Measure后的高度应该是DesiredSize
-                                bool otherDimensionStable = child.DesiredSize.Width == widget.Width;
+                                bool otherDimensionStable = child.GetDefaultSize().Width == widget.Width;
                                 bool useCurrent = measure.measureStrategy == BasicMeasure.Measure.USE_GIVEN_DIMENSIONS || !shouldDoWrap || (shouldDoWrap && otherDimensionStable) || (child is Placeholder) || (widget.ResolvedVertically);
                                 if (useCurrent)
                                 {
-                                    verticalSpec = MeasureSpec.makeMeasureSpec(widget.Height, MeasureSpec.EXACTLY);
+                                    verticalSpec = MeasureSpec.MakeMeasureSpec(widget.Height, MeasureSpec.EXACTLY);
                                 }
                             }
                         }
@@ -1392,8 +1417,8 @@ namespace SharpConstraintLayout.Maui.Widget
                 ConstraintWidgetContainer container = (ConstraintWidgetContainer)widget.Parent;
                 if (container != null && Optimizer.enabled(outerInstance.mOptimizationLevel, Optimizer.OPTIMIZATION_CACHE_MEASURES))
                 {
-                    //if (child.MeasuredWidth == widget.Width && child.MeasuredWidth < container.Width && child.MeasuredHeight == widget.Height && child.MeasuredHeight < container.Height && child.Baseline == widget.BaselineDistance && !widget.MeasureRequested)////Windows中Measure后的高度应该是DesiredSize
-                    if (child.DesiredSize.Width == widget.Width && child.DesiredSize.Width < container.Width && child.DesiredSize.Height == widget.Height && child.DesiredSize.Height < container.Height && child.GetBaseline() == widget.BaselineDistance && !widget.MeasureRequested)
+                    //if (child.MeasuredWidth == widget.Width && child.MeasuredWidth < container.Width && child.MeasuredHeight == widget.Height && child.MeasuredHeight < container.Height && child.Baseline == widget.BaselineDistance && !widget.MeasureRequested)//Windows中当前还未Measure,先使用Defalut DesiredSize尝试
+                    if (child.GetDefaultSize().Width == widget.Width && child.GetDefaultSize().Width < container.Width && child.GetDefaultSize().Height == widget.Height && child.GetDefaultSize().Height < container.Height && child.GetBaseline() == widget.BaselineDistance && !widget.MeasureRequested)
                     // note: the container check replicates legacy behavior, but we might want
                     // to not enforce that in 3.0
                     {
@@ -1425,16 +1450,20 @@ namespace SharpConstraintLayout.Maui.Widget
                 {
                     return;
                 }
-                //LayoutParams @params = (LayoutParams)child.LayoutParams;//Windows中没有LayoutParams,使用Constraint存储
-                var @params = outerInstance.mConstraintSet.Constraints[child.GetId()];
+                //LayoutParams @params = (LayoutParams)child.LayoutParams;//Windows中没有LayoutParams,大多数布局数据使用Constraint.Layout存储
+                var @params = outerInstance.mConstraintSet.Constraints[child.GetId()].layout;
 
                 int width = 0;
                 int height = 0;
                 int baseline = 0;
 
-                if ((measure.measureStrategy == BasicMeasure.Measure.TRY_GIVEN_DIMENSIONS || measure.measureStrategy == BasicMeasure.Measure.USE_GIVEN_DIMENSIONS) || !(horizontalMatchConstraints && widget.mMatchConstraintDefaultWidth == MATCH_CONSTRAINT_SPREAD && verticalMatchConstraints && widget.mMatchConstraintDefaultHeight == MATCH_CONSTRAINT_SPREAD))
+                if ((measure.measureStrategy == BasicMeasure.Measure.TRY_GIVEN_DIMENSIONS
+                    || measure.measureStrategy == BasicMeasure.Measure.USE_GIVEN_DIMENSIONS)
+                    || !(horizontalMatchConstraints
+                    && widget.mMatchConstraintDefaultWidth == ConstraintSet.MatchConstraintSpread
+                    && verticalMatchConstraints
+                    && widget.mMatchConstraintDefaultHeight == ConstraintSet.MatchConstraintSpread))
                 {
-
                     if (child is VirtualLayout && widget is androidx.constraintlayout.core.widgets.VirtualLayout)
                     {
                         androidx.constraintlayout.core.widgets.VirtualLayout layout = (androidx.constraintlayout.core.widgets.VirtualLayout)widget;
@@ -1443,13 +1472,12 @@ namespace SharpConstraintLayout.Maui.Widget
                     else
                     {
                         //child.measure(horizontalSpec, verticalSpec);//Android中传入Spec给child去测量,windows中直接传大小即可
-                        child.Measure(new Size(MeasureSpec.getSize(horizontalSpec), MeasureSpec.getSize(verticalSpec)));
+                        child.MeasureSelf(MeasureSpec.GetSize(horizontalSpec), MeasureSpec.GetSize(verticalSpec));
                     }
                     widget.setLastMeasureSpec(horizontalSpec, verticalSpec);
 
-                    int w = child.MeasuredWidth;
-                    int h = child.MeasuredHeight;
-                    baseline = child.Baseline;
+                    (int w, int h) = child.GetMeasuredSize(widget);//Windows中Measure后的高度应该是DesiredSize
+                    baseline = (int)child.GetBaseline();
 
                     width = w;
                     height = h;
@@ -1496,18 +1524,17 @@ namespace SharpConstraintLayout.Maui.Widget
                     {
                         if (w != width)
                         {
-                            horizontalSpec = MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY);
+                            horizontalSpec = MeasureSpec.MakeMeasureSpec(width, MeasureSpec.EXACTLY);
                         }
                         if (h != height)
                         {
-                            verticalSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
+                            verticalSpec = MeasureSpec.MakeMeasureSpec(height, MeasureSpec.EXACTLY);
                         }
                         //child.measure(horizontalSpec, verticalSpec);//Android中传入Spec给child去测量,windows中直接传大小即可
-                        child.Measure(new Size(MeasureSpec.getSize(horizontalSpec), MeasureSpec.getSize(verticalSpec)));
+                        child.MeasureSelf(MeasureSpec.GetSize(horizontalSpec), MeasureSpec.GetSize(verticalSpec));
 
                         widget.setLastMeasureSpec(horizontalSpec, verticalSpec);
-                        width = child.MeasuredWidth;
-                        height = child.MeasuredHeight;
+                        (width, height) = child.GetMeasuredSize(widget);//Windows中Measure后的高度应该是DesiredSize
                         baseline = (int)child.GetBaseline();
                         if (DEBUG)
                         {
@@ -1515,7 +1542,6 @@ namespace SharpConstraintLayout.Maui.Widget
                             Console.WriteLine("measure (b) " + widget.DebugName + " : " + measurement2);
                         }
                     }
-
                 }
 
                 bool hasBaseline = baseline != -1;
@@ -1555,10 +1581,10 @@ namespace SharpConstraintLayout.Maui.Widget
                 {
                     return true;
                 }
-                int lastMode = MeasureSpec.getMode(lastMeasureSpec);
-                int lastSize = MeasureSpec.getSize(lastMeasureSpec);
-                int mode = MeasureSpec.getMode(spec);
-                int size = MeasureSpec.getSize(spec);
+                int lastMode = MeasureSpec.GetMode(lastMeasureSpec);
+                int lastSize = MeasureSpec.GetSize(lastMeasureSpec);
+                int mode = MeasureSpec.GetMode(spec);
+                int size = MeasureSpec.GetSize(spec);
                 if (mode == MeasureSpec.EXACTLY
                         && (lastMode == MeasureSpec.AT_MOST || lastMode == MeasureSpec.UNSPECIFIED)
                         && widgetSize == size)
@@ -1695,9 +1721,6 @@ namespace SharpConstraintLayout.Maui.Widget
             layoutParams.layout.helped = false;
 
             widget.Visibility = layoutParams.propertySet.visibility;//这里我设置为从constraints中取,涉及布局的都交给constraints
-
-            //这里我添加对View的可见性设置,因为不知道为什么widget在Windows上设置不了Invisible
-            ViewExtension.SetViewVisibility(child, widget.Visibility);
 
             if (layoutParams.layout.isInPlaceholder)
             {

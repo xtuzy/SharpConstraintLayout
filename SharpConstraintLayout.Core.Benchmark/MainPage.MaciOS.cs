@@ -10,9 +10,15 @@ using UIKit;
 
 namespace SharpConstraintLayout.Core.Benchmark
 {
-    public class MainPage
+    public partial class MainPage
     {
         public UIView Page;
+        private UIButton TestCsharpConstraintLayoutButton;
+        private UIButton TestJavaConstraintLayoutButton;
+        private UIButton TestSleepButton;
+        UITextView TestCSharpSummary;
+        UITextView TestJavaSummary;
+        UITextView TestSleepSummary;
         public MainPage(CGRect frame)
         {
             var label = new UILabel(new CGRect(100, 100, 100, 50))
@@ -21,24 +27,44 @@ namespace SharpConstraintLayout.Core.Benchmark
                 TextAlignment = UITextAlignment.Center,
                 Text = "Hello, iOS!!"
             };
-
-            var button = new UIButton(new CGRect(100, 200, 100, 50))
+            var ButtonContainer = new UIStackView(frame)
+            {
+                BackgroundColor = UIColor.SystemYellow,
+                Axis = UILayoutConstraintAxis.Horizontal,
+            };
+            TestCsharpConstraintLayoutButton = new UIButton(new CGRect(100, 200, 100, 50))
             {
             };
-            button.SetTitle("Click", UIControlState.Normal);
-            button.TouchUpInside += (sender, e) =>
+            TestCsharpConstraintLayoutButton.SetTitle("Start CSharp", UIControlState.Normal);
+            TestCsharpConstraintLayoutButton.TouchUpInside += (sender, e) =>
             {
-                button.BackgroundColor = UIColor.LightGray;
+                TestCsharpConstraintLayoutButton_Click(sender, e);
             };
 
+            TestSleepButton = new UIButton(new CGRect(100, 200, 100, 50))
+            {
+            };
+            TestSleepButton.SetTitle("Start Sleep", UIControlState.Normal);
+            TestSleepButton.TouchUpInside += (sender, e) =>
+            {
+                TestSleepButton_Clicked(sender, e);
+            };
+
+            ButtonContainer.Add(TestCsharpConstraintLayoutButton);
+            ButtonContainer.Add(TestSleepButton);
+
+            TestCSharpSummary = new UITextView() { };
+            TestSleepSummary = new UITextView() { };
             Page = new UIStackView(frame)
             {
                 BackgroundColor = UIColor.SystemYellow,
-                Axis = UILayoutConstraintAxis.Vertical
+                Axis = UILayoutConstraintAxis.Vertical,
             };
-            Page.AddSubview(label);
-            Page.AddSubview(button);
-            LoadMauiAsset();
+
+            Page.AddSubview(ButtonContainer);
+            Page.AddSubview(TestCSharpSummary);
+            Page.AddSubview(TestSleepSummary);
+
         }
 
         async Task LoadMauiAsset()

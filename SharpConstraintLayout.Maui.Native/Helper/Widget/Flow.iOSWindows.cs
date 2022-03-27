@@ -127,10 +127,10 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
 
         public override void OnMeasure(androidx.constraintlayout.core.widgets.VirtualLayout layout, int widthMeasureSpec, int heightMeasureSpec)
         {
-            int widthMode = MeasureSpec.getMode(widthMeasureSpec);
-            int widthSize = MeasureSpec.getSize(widthMeasureSpec);
-            int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-            int heightSize = MeasureSpec.getSize(heightMeasureSpec);
+            int widthMode = MeasureSpec.GetMode(widthMeasureSpec);
+            int widthSize = MeasureSpec.GetSize(widthMeasureSpec);
+            int heightMode = MeasureSpec.GetMode(heightMeasureSpec);
+            int heightSize = MeasureSpec.GetSize(heightMeasureSpec);
 
             #region Copy form FlowTest
             /*

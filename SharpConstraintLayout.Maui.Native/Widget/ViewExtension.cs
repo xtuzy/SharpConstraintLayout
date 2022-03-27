@@ -45,12 +45,13 @@ namespace SharpConstraintLayout.Maui.Widget
                 var fontMetrics = (view as UITextField)?.Font;
                 if (fontMetrics == null)
                     fontMetrics = (view as UITextView)?.Font;
-                if(fontMetrics == null)
-                    fontMetrics= (view as UIButton)?.TitleLabel?.Font;
-                if(fontMetrics == null)
-                    fontMetrics=(view as UILabel)?.Font;
-                return (float)(view.IntrinsicContentSize.Height/2 + (float)((fontMetrics.Descender - fontMetrics.Ascender) / 2 - fontMetrics.Descender));
-            }else
+                if (fontMetrics == null)
+                    fontMetrics = (view as UIButton)?.TitleLabel?.Font;
+                if (fontMetrics == null)
+                    fontMetrics = (view as UILabel)?.Font;
+                return (float)(view.IntrinsicContentSize.Height / 2 + (float)((fontMetrics.Descender - fontMetrics.Ascender) / 2 - fontMetrics.Descender));
+            }
+            else
                 return ConstraintSet.Unset;
 #endif
         }
@@ -64,7 +65,7 @@ namespace SharpConstraintLayout.Maui.Widget
         public static int GetId(this UIElement view)
         {
 #if __ANDROID__
-            if(view.Id == UIElement.NoId)
+            if (view.Id == UIElement.NoId)
                 view.Id = UIElement.GenerateViewId();
             return view.Id;
 #else
@@ -72,7 +73,7 @@ namespace SharpConstraintLayout.Maui.Widget
 #endif
         }
 
-        public static void SetViewVisibility(UIElement element, int ConstraintSetVisible)
+        public static void SetViewVisibility(this UIElement element, int ConstraintSetVisible)
         {
 #if WINDOWS
             if (ConstraintSetVisible == ConstraintSet.Invisible)
@@ -100,5 +101,42 @@ namespace SharpConstraintLayout.Maui.Widget
             }
 #endif
         }
+
+#if WINDOWS || __IOS__
+        public static (int Width, int Height) GetDefaultSize(this UIElement element)
+        {
+#if WINDOWS
+
+            return ((int)element.DesiredSize.Width, (int)element.DesiredSize.Height);
+#else
+            return ((int)element.IntrinsicContentSize.Width, (int)element.IntrinsicContentSize.Height);
+#endif
+        }
+#endif
+
+#if WINDOWS || __IOS__
+        public static (int Width, int Height) GetMeasuredSize(this UIElement element, androidx.constraintlayout.core.widgets.ConstraintWidget widget)
+        {
+            int w = 0;
+            int h = 0;
+#if WINDOWS
+            (w, h) = ((int)element.DesiredSize.Width, (int)element.DesiredSize.Height);
+#else
+            (w, h) = ((int)element.IntrinsicContentSize.Width, (int)element.IntrinsicContentSize.Height);
+#endif
+            if (w == 0) w = widget.Width;
+            if (h == 0) h = widget.Height;
+            return (w, h);
+        }
+#endif
+
+#if WINDOWS || __IOS__
+        public static void MeasureSelf(this UIElement element, int w, int h)
+        {
+#if WINDOWS
+            element.Measure(new Windows.Foundation.Size(w, h));
+#endif
+        }
+#endif
     }
 }

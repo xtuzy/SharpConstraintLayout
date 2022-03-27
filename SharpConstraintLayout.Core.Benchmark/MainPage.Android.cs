@@ -1,6 +1,7 @@
 ﻿using Android.Content;
 using Android.Views;
 using Android.Widget;
+
 using BenchmarkDotNet.Analysers;
 using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Exporters;
@@ -16,42 +17,109 @@ using System.Threading.Tasks;
 
 namespace SharpConstraintLayout.Core.Benchmark
 {
-    public class MainPage : LinearLayout
+    public partial class MainPage : LinearLayout
     {
-        private Button MainButton;
-        TextView Summary;
+        private Button TestCsharpConstraintLayoutButton;
+        private Button TestJavaConstraintLayoutButton;
+        private Button TestSleepButton;
+        TextView TestCSharpSummary;
+        TextView TestJavaSummary;
+        TextView TestSleepSummary;
 
         public MainPage(Context? context) : base(context)
         {
             this.Orientation = Orientation.Vertical;
-            this.LayoutParameters = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent);
 
+            this.LayoutParameters = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent);
             SetBackgroundColor(Android.Graphics.Color.White);
 
-            MainButton = new Button(context)
+            var ButtonContainer = new LinearLayout(context)
             {
-                Text = "Start",
+                Orientation = Orientation.Horizontal,
+                LayoutParameters = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent),
+            };
+
+            TestCsharpConstraintLayoutButton = new Button(context)
+            {
+                Text = "Start C#",
                 LayoutParameters = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.WrapContent)
             };
 
-            this.AddView(MainButton);
-            Summary = new TextView(context)
+            TestJavaConstraintLayoutButton = new Button(context)
             {
-                Text = "Text",
+                Text = "Start Java",
+                LayoutParameters = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.WrapContent)
+            };
+
+            TestSleepButton = new Button(context)
+            {
+                Text = "Start Sleep",
+                LayoutParameters = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.WrapContent)
+            };
+            ButtonContainer.AddView(TestCsharpConstraintLayoutButton);
+            ButtonContainer.AddView(TestJavaConstraintLayoutButton);
+            ButtonContainer.AddView(TestSleepButton);
+
+            TestCSharpSummary = new TextView(context)
+            {
                 LayoutParameters = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent)
             };
-            this.AddView(Summary);
+            TestCSharpSummary.SetBackgroundColor(Android.Graphics.Color.DarkBlue);
+            TestJavaSummary = new TextView(context)
+            {
+                LayoutParameters = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent)
+            };
+            TestJavaSummary.SetBackgroundColor(Android.Graphics.Color.DodgerBlue);
+            TestSleepSummary = new TextView(context)
+            {
+                LayoutParameters = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent)
+            };
+            TestSleepSummary.SetBackgroundColor(Android.Graphics.Color.DeepSkyBlue);
+
+            this.AddView(ButtonContainer);
+            this.AddView(TestCSharpSummary);
+            this.AddView(TestJavaSummary);
+            this.AddView(TestSleepSummary);
 
             //MainButton.Click += Button_Clicked;
-            MainButton.Click += SimpleClock_Button_Clicked;
+            TestCsharpConstraintLayoutButton.Click += TestCsharpConstraintLayoutButton_Click;
+            TestJavaConstraintLayoutButton.Click += TestJavaConstraintLayoutButton_Click;
+            TestSleepButton.Click += TestSleepButton_Clicked;
         }
 
-        async void SimpleClock_Button_Clicked(object sender, EventArgs e)
+        private void TestJavaConstraintLayoutButton_Click(object sender, EventArgs e)
         {
-            SimpleClock.BenchmarkTime(() =>
+            TestJavaSummary.Text = nameof(TestJavaSummary) + ":\n" + SimpleClock.BenchmarkTime(() =>
             {
-                void Sleep() => Thread.Sleep(10);
-            }, 20);
+                Java();
+            }, 50);
+            TestCSharpSummary.Invalidate();
+        }
+
+        void Java()
+        {
+            int viewCount = 100;
+            AndroidX.ConstraintLayout.Core.Widgets.ConstraintWidgetContainer root = new AndroidX.ConstraintLayout.Core.Widgets.ConstraintWidgetContainer(0, 0, 1000, 600);
+            AndroidX.ConstraintLayout.Core.Widgets.ConstraintWidget preview = new AndroidX.ConstraintLayout.Core.Widgets.ConstraintWidget(100, 40);
+            root.Add(preview);
+            preview.Connect(AndroidX.ConstraintLayout.Core.Widgets.ConstraintAnchor.Type.Left, root, AndroidX.ConstraintLayout.Core.Widgets.ConstraintAnchor.Type.Left);
+            preview.Connect(AndroidX.ConstraintLayout.Core.Widgets.ConstraintAnchor.Type.Bottom, root, AndroidX.ConstraintLayout.Core.Widgets.ConstraintAnchor.Type.Bottom);
+            preview.HorizontalDimensionBehaviour = AndroidX.ConstraintLayout.Core.Widgets.ConstraintWidget.DimensionBehaviour.MatchConstraint;
+            preview.VerticalDimensionBehaviour = AndroidX.ConstraintLayout.Core.Widgets.ConstraintWidget.DimensionBehaviour.MatchConstraint;
+            for (var i = 0; i < viewCount; i++)
+            {
+                var view = new AndroidX.ConstraintLayout.Core.Widgets.ConstraintWidget(100, 40);
+                root.Add(view);
+                view.Connect(AndroidX.ConstraintLayout.Core.Widgets.ConstraintAnchor.Type.Left, preview, AndroidX.ConstraintLayout.Core.Widgets.ConstraintAnchor.Type.Left, 1);
+                view.Connect(AndroidX.ConstraintLayout.Core.Widgets.ConstraintAnchor.Type.Right, preview, AndroidX.ConstraintLayout.Core.Widgets.ConstraintAnchor.Type.Right, -1);
+                view.Connect(AndroidX.ConstraintLayout.Core.Widgets.ConstraintAnchor.Type.Top, preview, AndroidX.ConstraintLayout.Core.Widgets.ConstraintAnchor.Type.Top, -1);
+                view.Connect(AndroidX.ConstraintLayout.Core.Widgets.ConstraintAnchor.Type.Bottom, preview, AndroidX.ConstraintLayout.Core.Widgets.ConstraintAnchor.Type.Bottom);
+                view.HorizontalDimensionBehaviour = AndroidX.ConstraintLayout.Core.Widgets.ConstraintWidget.DimensionBehaviour.MatchConstraint;
+                view.VerticalDimensionBehaviour = AndroidX.ConstraintLayout.Core.Widgets.ConstraintWidget.DimensionBehaviour.MatchConstraint;
+                preview = view;
+            }
+
+            root.Layout();
         }
 
         /// <summary>
@@ -100,7 +168,7 @@ namespace SharpConstraintLayout.Core.Benchmark
 
         void SetSummary(string text)
         {
-            Summary.Text = text;
+            TestCSharpSummary.Text = text;
             //var size = Summary.Measure(double.MaxValue, double.MaxValue).Request;
             //Summary.WidthRequest = size.Width;
             //Summary.HeightRequest = size.Height;

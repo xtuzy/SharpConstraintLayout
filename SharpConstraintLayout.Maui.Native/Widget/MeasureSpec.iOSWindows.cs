@@ -34,7 +34,7 @@ namespace SharpConstraintLayout.Maui.Widget
     /// MeasureSpecs are implemented as ints to reduce object allocation. This class
     /// is provided to pack and unpack the &lt;size, mode&gt; tuple into the int.
     /// </summary>
-    internal static class MeasureSpec
+    public static class MeasureSpec
     {
         private const int MODE_SHIFT = 30;
         private const int MODE_MASK = 0x3 << MODE_SHIFT;
@@ -51,7 +51,7 @@ namespace SharpConstraintLayout.Maui.Widget
         ///         {@link android.view.View.MeasureSpec#AT_MOST} or
         ///         {@link android.view.View.MeasureSpec#EXACTLY}
         /// </summary>
-        public static int getMode(int measureSpec)
+        public static int GetMode(int measureSpec)
         {
             //noinspection ResourceType
             return (measureSpec & MODE_MASK);
@@ -63,15 +63,15 @@ namespace SharpConstraintLayout.Maui.Widget
         /// @param measureSpec the measure specification to extract the size from
         /// @return the size in pixels defined in the supplied measure specification
         /// </summary>
-        public static int getSize(int measureSpec)
+        public static int GetSize(int measureSpec)
         {
             return (measureSpec & ~MODE_MASK);
         }
 
         public static string ToString(int measureSpec)
         {
-            int mode = getMode(measureSpec);
-            int size = getSize(measureSpec);
+            int mode = GetMode(measureSpec);
+            int size = GetSize(measureSpec);
 
             StringBuilder sb = new StringBuilder("MeasureSpec: ");
 
@@ -109,8 +109,8 @@ namespace SharpConstraintLayout.Maui.Widget
         /// </summary>
         public static int getChildMeasureSpec(int spec, int padding, int childDimension)
         {
-            int specMode = MeasureSpec.getMode(spec);
-            int specSize = MeasureSpec.getSize(spec);
+            int specMode = MeasureSpec.GetMode(spec);
+            int specSize = MeasureSpec.GetSize(spec);
 
             int size = Math.Max(0, specSize - padding);
 
@@ -186,7 +186,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 }
             }
             //noinspection ResourceType
-            return MeasureSpec.makeMeasureSpec(resultSize, resultMode);
+            return MeasureSpec.MakeMeasureSpec(resultSize, resultMode);
         }
 
         /// <summary>
@@ -220,7 +220,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// @param mode the mode of the measure specification
         /// @return the measure specification based on size and mode
         /// </summary>
-        public static int makeMeasureSpec(int size, int mode)
+        public static int MakeMeasureSpec(int size, int mode)
         {
             if (sUseBrokenMakeMeasureSpec)
             {
@@ -277,8 +277,8 @@ namespace SharpConstraintLayout.Maui.Widget
         /// </summary>
         public static int resolveSizeAndState(int size, int measureSpec, int childMeasuredState)
         {
-            int specMode = MeasureSpec.getMode(measureSpec);
-            int specSize = MeasureSpec.getSize(measureSpec);
+            int specMode = MeasureSpec.GetMode(measureSpec);
+            int specSize = MeasureSpec.GetSize(measureSpec);
             int result;
             if (specMode == MeasureSpec.AT_MOST)
                 if (specSize < size)

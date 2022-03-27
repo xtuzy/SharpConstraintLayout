@@ -13,23 +13,56 @@ using Windows.UI;
 
 namespace SharpConstraintLayout.Core.Benchmark
 {
-    public class MainPage : StackPanel
+    public partial class MainPage : StackPanel
     {
-        private Button MainButton;
 
+        private Button TestCsharpConstraintLayoutButton;
+        private Button TestJavaConstraintLayoutButton;
+        private Button TestSleepButton;
+        TextBlock TestCSharpSummary;
+        TextBlock TestJavaSummary;
+        TextBlock TestSleepSummary;
         public MainPage()
         {
-            this.Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.HotPink);
+            this.Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.White);
             Orientation = Orientation.Vertical;
             HorizontalAlignment = Microsoft.UI.Xaml.HorizontalAlignment.Center;
             VerticalAlignment = Microsoft.UI.Xaml.VerticalAlignment.Center;
-            MainButton = new Button()
+
+            var ButtonContainer = new StackPanel()
             {
-                Content = "Click it.",
+                Orientation = Orientation.Horizontal,
+                Height = 60,
+                Width = 200,
+                Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.Gray),
             };
-            MainButton.Click += MainButton_Click;
-            this.Children.Add(MainButton);
-            LoadMauiAsset();
+
+            TestCsharpConstraintLayoutButton = new Button()
+            {
+                Content = "Start Csharp",
+            };
+            TestCsharpConstraintLayoutButton.Click += (sender, e) =>
+                        {
+                            TestCsharpConstraintLayoutButton_Click(sender, null);
+                        };
+            TestSleepButton = new Button()
+            {
+                Content = "Start Sleep",
+            };
+            TestSleepButton.Click += (sender, e) =>
+                            {
+                                TestSleepButton_Clicked(sender, null);
+                            };
+            ButtonContainer.Children.Add(TestCsharpConstraintLayoutButton);
+            ButtonContainer.Children.Add(TestSleepButton);
+
+            TestCSharpSummary = new TextBlock()
+            {
+            };
+            TestSleepSummary = new TextBlock();
+            this.Children.Add(ButtonContainer);
+            this.Children.Add(TestCSharpSummary);
+            this.Children.Add(TestSleepSummary);
         }
 
         private void MainButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)

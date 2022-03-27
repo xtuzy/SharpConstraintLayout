@@ -109,12 +109,12 @@ namespace SharpConstraintLayout.Core.Benchmark
             }
         }
 
-        public static void BenchmarkTime(Action action, int iterations = 10000)
+        public static string BenchmarkTime(Action action, int iterations = 100)
         {
-            Benchmark<TimeWatch>(action, iterations);
+            return Benchmark<TimeWatch>(action, iterations);
         }
 
-        static void Benchmark<T>(Action action, int iterations) where T : IStopwatch, new()
+        static string Benchmark<T>(Action action, int iterations) where T : IStopwatch, new()
         {
             //clean Garbage
             GC.Collect();
@@ -137,13 +137,15 @@ namespace SharpConstraintLayout.Core.Benchmark
                 for (int j = 0; j < iterations; j++)
                     action();
                 stopwatch.Stop();
-                timings[i] = stopwatch.Elapsed.TotalMilliseconds;
-                Debug.WriteLine(timings[i]);
+                timings[i] = stopwatch.Elapsed.TotalMilliseconds / iterations;
+                Debug.WriteLine(timings[i] + " ms");
             }
-            Debug.WriteLine("normalized mean: " + timings.NormalizedMean().ToString());
+
+            return ("\tNormalized Mean: " + timings.NormalizedMean().ToString("0.000") + " ms\n")
+                  + "\tStandard    Dev: " + timings.StandardDeviation().ToString("0.000") + " ms";
         }
 
-        public static void BenchmarkCpu(Action action, int iterations = 10000)
+        public static void BenchmarkCpu(Action action, int iterations = 100)
         {
             Benchmark<CpuWatch>(action, iterations);
         }
@@ -170,6 +172,30 @@ namespace SharpConstraintLayout.Core.Benchmark
             var avg = values.Average();
             foreach (var d in values)
                 yield return Tuple.Create(d, avg - d);
+        }
+
+        /// <summary>
+        /// https://stackoverflow.com/questions/895929/how-do-i-determine-the-standard-deviation-stddev-of-a-set-of-values
+        /// </summary>
+        /// <param name="values"></param>
+        /// <returns></returns>
+        public static double StandardDeviation(this IEnumerable<double> values)
+        {
+            double standardDeviation = 0;
+
+            if (values.Any())
+            {
+                // Compute the average.     
+                double avg = values.Average();
+
+                // Perform the Sum of (value-avg)_2_2.      
+                double sum = values.Sum(d => Math.Pow(d - avg, 2));
+
+                // Put it all together.      
+                standardDeviation = Math.Sqrt((sum) / (values.Count() - 1));
+            }
+
+            return standardDeviation;
         }
     }
 }

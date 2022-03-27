@@ -27,17 +27,17 @@ namespace SharpConstraintLayout.Maui.Native.Example
 
         public MainPage()
         {
-            ConstraintLayout.DEBUG = true;
+            ConstraintLayout.MEASURE = true;
 
             createControls();
             this.Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.HotPink);
 
             //controlsTest(this);
-            //baselineTest(this);
+            baselineTest(this);
             //guidelineTest(this);
             //barrierTest(this);
             //visibilityTest(this);
-            flowTest(this);
+            //flowTest(this);
             //nestedLayoutTest(this);
 
         }

@@ -36,6 +36,11 @@ namespace SharpConstraintLayout.Maui.Native.Example
             //flowTest(this);
             //nestedLayoutTest(this);
             animationTest(this);
+
+            int widthMeasureSpec = MeasureSpec.MakeMeasureSpec(714, MeasureSpecMode.Exactly);
+            var widthMode = MeasureSpec.GetMode(widthMeasureSpec);
+            int widthSize = MeasureSpec.GetSize(widthMeasureSpec);
+            int heightMeasureSpec = MeasureSpec.MakeMeasureSpec(1424, MeasureSpecMode.Exactly);
         }
 
         private void createControls()

@@ -16,7 +16,7 @@ namespace SharpConstraintLayout.Maui.DebugTool
 
         public static void WriteLine(string message)
         {
-#if IOS
+#if __IOS__
             client.SendMessage(message + "~iOS" + $"~{DateTime.Now}" + "\n");//~ split Log,Platform,Time
 #elif ANDROID
             client.SendMessage(message + "~Android" + $"~{DateTime.Now}" + "\n");//~ split Log,Platform,Time

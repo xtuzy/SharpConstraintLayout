@@ -201,6 +201,7 @@ namespace SharpConstraintLayout.Maui.Widget
                     {
                         //view.Visibility = constraint.propertySet.visibility;
                         param.propertySet.visibility = constraint.propertySet.visibility;//这里我变成设置constraint
+                        ViewExtension.SetViewVisibility(view, constraint.propertySet.visibility);
                     }
                     /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1)
                     {
@@ -311,11 +312,16 @@ namespace SharpConstraintLayout.Maui.Widget
             }
 
             constraintLayout.mConstraintSet.IsChanged = true;
+
+            UIThread.Invoke(() =>
+            {
 #if WINDOWS
-            constraintLayout.InvalidateMeasure();
+                constraintLayout.InvalidateMeasure();
 #elif __IOS__
-            constraintLayout.SetNeedsLayout();
+                    constraintLayout.SetNeedsLayout();
 #endif
+            }, constraintLayout);
+
         }
 
         /// <summary>

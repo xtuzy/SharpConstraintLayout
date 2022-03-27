@@ -14,7 +14,7 @@
     <TargetPlatformMinVersion Condition="$(TargetFramework.Contains('-windows'))">10.0.17763.0</TargetPlatformMinVersion>
     <RootNamespace>SharpConstraintLayout.Maui</RootNamespace>
   </PropertyGroup>
-<!--only ios and maccatalyst have these-->
+  <!--only ios and maccatalyst have these-->
   <ItemGroup Condition="'$(TargetFramework)'!= 'net6.0-ios' and '$(TargetFramework)' != 'net6.0-maccatalyst'">
     <Compile Remove="**\*.iOS.cs" />
     <None Include="**\*.iOS.cs" />

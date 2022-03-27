@@ -35,6 +35,7 @@
     <PublishTrimmed>False</PublishTrimmed>
     <TrimMode>copyused</TrimMode>
   </PropertyGroup>
+
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU' and '$(TargetFramework)' == 'net6.0-android'">
     <EmbedAssembliesIntoApk>False</EmbedAssembliesIntoApk>
     <PublishTrimmed>False</PublishTrimmed>
@@ -127,5 +128,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Remove="bin\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SharpConstraintLayout.Core\SharpConstraintLayout.Core.csproj" />
   </ItemGroup>
 </Project>

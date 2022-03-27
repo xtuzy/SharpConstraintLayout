@@ -16,7 +16,7 @@ namespace SharpConstraintLayout.Core.Benchmark
     {
         public MainController()
         {
-            this.Content = new MainPage();
+            this.Content = new MainPage() { Width=this.Bounds.Width,Height=this.Bounds.Height};
 #if DEBUG
             HotReload.Instance.Reload += () =>
             {
