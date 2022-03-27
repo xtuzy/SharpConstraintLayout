@@ -787,14 +787,7 @@ namespace SharpConstraintLayout.Maui.Widget
 
             public virtual void measure(ConstraintWidget widget, BasicMeasure.Measure measure)
             {
-#if WPF
-                if (widget is VirtualLayout)
-                    outerInstance.measureFlow(widget, measure);
-                else
-                    outerInstance.innerMeasure(widget, measure);
-#elif WINDOWS || __IOS__
                 AndroidSourceCodeMeasureUseSpecForWindows(widget, measure);
-#endif
             }
 
             public virtual void didMeasures()
