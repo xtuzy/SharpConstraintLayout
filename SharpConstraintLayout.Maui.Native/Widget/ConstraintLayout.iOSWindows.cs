@@ -474,6 +474,7 @@ namespace SharpConstraintLayout.Maui.Widget
 
         private void OnMeasure(int widthMeasureSpec, int heightMeasureSpec)
         {
+            var temp = this;
             MLayoutWidget.Rtl = isRtl();
 
             resolveSystem(MLayoutWidget, mOptimizationLevel, widthMeasureSpec, heightMeasureSpec);
@@ -733,6 +734,12 @@ namespace SharpConstraintLayout.Maui.Widget
 
                 if (component != null)
                 {
+#if WINDOWS
+                    if (component is TextBox)
+                    {
+                        var temp = child.Width;
+                    }
+#endif
                     if (DEBUG) Debug.WriteLine($"{nameof(OnLayout)} {component} {new Rect(child.X, child.Y, child.Width, child.Height)}");
                     LayoutChild(component, child.X, child.Y, child.Width, child.Height);
                 }
