@@ -30,8 +30,13 @@ namespace SharpConstraintLayout.Maui.Native.Example.Tool
                     action.Invoke();
                 });
             }
-#else
-            MainThread.InvokeOnMainThreadAsync(() =>
+#elif __ANDROID__
+            constraintLayout.Post(() =>
+            {
+                action.Invoke();
+            });
+#elif __IOS__
+            CoreFoundation.DispatchQueue.MainQueue.DispatchAsync(() =>
             {
                 action.Invoke();
             });

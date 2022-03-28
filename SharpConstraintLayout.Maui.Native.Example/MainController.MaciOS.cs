@@ -24,7 +24,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
                     {
                         dynamic view = HotReload.Instance.ReloadClass<MainPage>(window!.Frame);
                         this.View = view.GetPage();
-                        SimpleDebug.WriteLine("HotReload:" + view);
+                        SimpleDebug.WriteLine($"HotReload:{this.View} " + this.View.GetHashCode());
                     });
                 }
                 catch (Exception ex)

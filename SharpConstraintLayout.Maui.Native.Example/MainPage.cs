@@ -155,7 +155,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             var flow = new Flow();
 #endif
             flow.SetOrientation(Flow.Horizontal);
-            flow.SetWrapMode(Flow.WrapChain);
+            flow.SetWrapMode(Flow.WrapAligned);
             flow.SetHorizontalStyle(Flow.ChainSpreadInside);
             layout = page;
             layout.AddView(ThirdCanvas, FirstButton, SecondButton, FouthTextBlock, FifthTextBox, SixthRichTextBlock, flow);
@@ -183,7 +183,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             Task.Run(async () =>
             {
                 int index = 0;
-                while (index < 5)//test 20 times,you can edit textbox
+                while (index < 1)//test 20 times,you can edit textbox
                 {
                     await Task.Delay(3000);//wait ui show
                     UIThread.Invoke(() =>
