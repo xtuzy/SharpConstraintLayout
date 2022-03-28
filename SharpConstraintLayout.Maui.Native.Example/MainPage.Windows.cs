@@ -27,8 +27,8 @@ namespace SharpConstraintLayout.Maui.Native.Example
 
         public MainPage()
         {
-            ConstraintLayout.DEBUG = true;
-            ConstraintLayout.MEASURE = true;
+            //ConstraintLayout.DEBUG = true;
+            //ConstraintLayout.MEASURE = true;
 
             createControls();
             this.Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.HotPink);
@@ -49,7 +49,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             {
                 Tag = nameof(FirstButton),
                 ClickMode = ClickMode.Press,
-                Content = "FirstButton At Center",
+                Content = "FirstButton",
                 Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.Red)
             };
 
@@ -57,7 +57,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             {
                 //Width = 100,Height = 100,
                 Tag = nameof(SecondButton),
-                Content = "Second At Bottom",
+                Content = "SecondBotton",
                 Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.Black)
             };
 
@@ -74,13 +74,13 @@ namespace SharpConstraintLayout.Maui.Native.Example
                 Tag = nameof(FouthTextBlock),
                 //Width = 100,
                 //Height = 100,
-                Text = "TextBlock"
+                Text = "FourthTextBlock"
             };
 
             FifthTextBox = new TextBox()
             {
                 Tag = nameof(FifthTextBox),
-                Text = "TextBox",
+                Text = "FifthTextBox",
                 AcceptsReturn = true
             };
 

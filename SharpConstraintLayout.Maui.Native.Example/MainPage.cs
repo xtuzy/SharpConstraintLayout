@@ -156,7 +156,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
 #endif
             flow.SetOrientation(Flow.Horizontal);
             flow.SetWrapMode(Flow.WrapChain);
-            flow.SetHorizontalStyle(Flow.ChainPacked);
+            flow.SetHorizontalStyle(Flow.ChainSpread);
             layout = page;
             layout.AddView(ThirdCanvas, FirstButton, SecondButton, FouthTextBlock, FifthTextBox, SixthRichTextBlock, flow);
             flow.AddView(FirstButton, SecondButton, FouthTextBlock, FifthTextBox, SixthRichTextBlock);
@@ -166,6 +166,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
                 layoutSet.Clone(layout);
                 layoutSet
                     .Select(flow)
+                    .EdgesXTo()
                     .CenterYTo()
                     .Width(SizeBehavier.MatchConstraint)
                     .Height(SizeBehavier.WrapContent)

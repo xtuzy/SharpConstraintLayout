@@ -1,4 +1,5 @@
 ﻿using Microsoft.Maui.Essentials;
+using SharpConstraintLayout.Maui.DebugTool;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,10 +13,17 @@ namespace SharpConstraintLayout.Maui.Widget
         internal static void Invoke(Action action, ConstraintLayout constraintLayout)
         {
 #if WINDOWS
-            constraintLayout.DispatcherQueue.TryEnqueue(() =>
+            if (constraintLayout.DispatcherQueue == null)
             {
-                action.Invoke();
-            });
+                SimpleDebug.WriteLine("UIThread.Invoke: ConstraintLayout.DispatcherQueue == null");
+            }
+            else
+            {
+                constraintLayout.DispatcherQueue.TryEnqueue(() =>
+                {
+                    action.Invoke();
+                });
+            }
 #else
             CoreFoundation.DispatchQueue.MainQueue.DispatchAsync(() =>
                      {

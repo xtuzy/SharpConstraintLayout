@@ -33,9 +33,9 @@ namespace SharpConstraintLayout.Maui.Native.Example
             //guidelineTest(this);
             //barrierTest(this);
             //visibilityTest(this);
-            //flowTest(this);
+            flowTest(this);
             //nestedLayoutTest(this);
-            animationTest(this);
+            //animationTest(this);
 
             int widthMeasureSpec = MeasureSpec.MakeMeasureSpec(714, MeasureSpecMode.Exactly);
             var widthMode = MeasureSpec.GetMode(widthMeasureSpec);
