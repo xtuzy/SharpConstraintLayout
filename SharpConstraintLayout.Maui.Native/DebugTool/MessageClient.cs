@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if DEBUG
+using System;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
@@ -198,3 +199,4 @@ namespace SharpConstraintLayout.Maui.DebugTool
         }
     }
 }
+#endif

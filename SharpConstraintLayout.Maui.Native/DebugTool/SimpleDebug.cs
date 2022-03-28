@@ -8,14 +8,18 @@ using System.Threading.Tasks;
 namespace SharpConstraintLayout.Maui.DebugTool
 {
     /// <summary>
-    /// Because VS17.2 have bug, can run net6-ios, so i add this for debug info to show at windows
+    /// Because VS17.2 have bug, can't run net6-ios, so i add this for debug info to show at windows.
+    /// When release, use Trace output log.
     /// </summary>
     public class SimpleDebug
     {
+#if DEBUG
         static MessageClient client = new MessageClient("192.168.0.144", 399);
+#endif
 
         public static void WriteLine(string message)
         {
+#if DEBUG
 #if __IOS__
             client.SendMessage(message + "~iOS" + $"~{DateTime.Now}" + "\n");//~ split Log,Platform,Time
 #elif ANDROID
@@ -24,6 +28,9 @@ namespace SharpConstraintLayout.Maui.DebugTool
             client.SendMessage(message + "~Windows" + $"~{DateTime.Now}" + "\n");//~ split Log,Platform,Time      
 #endif
             System.Diagnostics.Debug.WriteLine(message);
+#else
+            Trace.WriteLine(message, "SharpConstraintLayout");
+#endif
         }
 
         public static void WriteLine(string tag, string message)
