@@ -9,12 +9,16 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 #elif __IOS__
 using UIElement = UIKit.UIView;
+using Panel = UIKit.UIView;
 using UIKit;
 #elif __ANDROID__
 using UIElement = Android.Views.View;
 #endif
 namespace SharpConstraintLayout.Maui.Widget
 {
+    /// <summary>
+    /// For deal with platform difference
+    /// </summary>
     public static class ViewExtension
     {
 #if WINDOWS ||__IOS__
@@ -123,9 +127,15 @@ namespace SharpConstraintLayout.Maui.Widget
             (w, h) = ((int)element.DesiredSize.Width, (int)element.DesiredSize.Height);
 #else
             (w, h) = ((int)element.IntrinsicContentSize.Width, (int)element.IntrinsicContentSize.Height);
+
+            //@zhouyang add:for test why flow in iOS not correct
+            if (ConstraintLayout.DEBUG && widget is androidx.constraintlayout.core.widgets.VirtualLayout)
+            {
+                Debug.WriteLine($"iOS IntrinsicContentSize:({w},{h})");
+            }
 #endif
-            if (w == 0) w = widget.Width;
-            if (h == 0) h = widget.Height;
+            if (w <= 0) w = widget.Width;
+            if (h <= 0) h = widget.Height;
             return (w, h);
         }
 #endif

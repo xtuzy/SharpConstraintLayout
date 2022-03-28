@@ -27,6 +27,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
 
         public MainPage()
         {
+            ConstraintLayout.DEBUG = true;
             ConstraintLayout.MEASURE = true;
 
             createControls();
@@ -35,9 +36,9 @@ namespace SharpConstraintLayout.Maui.Native.Example
             //controlsTest(this);
             //baselineTest(this); 
             //guidelineTest(this);
-            barrierTest(this);
+            //barrierTest(this);
             //visibilityTest(this);
-            //flowTest(this);
+            flowTest(this);
             //nestedLayoutTest(this);
 
         }

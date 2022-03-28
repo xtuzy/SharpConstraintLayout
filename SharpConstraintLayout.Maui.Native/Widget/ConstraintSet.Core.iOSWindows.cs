@@ -51,11 +51,8 @@ namespace SharpConstraintLayout.Maui.Widget
             mConstraints.Clear();
             for (int i = 0; i < count; i++)
             {
-#if WINDOWS
                 View view = constraintLayout.Children[i];
-#elif __IOS__
-                View view = constraintLayout.Subviews[i];
-#endif
+
                 //ConstraintLayout.LayoutParams param = (ConstraintLayout.LayoutParams)view.LayoutParams;
                 int id = view.GetId();
                 var param = constraintLayout.mConstraintSet.Constraints[id];//获取旧的constraint
@@ -134,11 +131,8 @@ namespace SharpConstraintLayout.Maui.Widget
             if (count != used.Count) Debug.WriteLine("The count of ConstraintLayout children is not equal to temprary constraints list, maybe you not use clone.", TAG);
             for (int i = 0; i < count; i++)//查看layout的child
             {
-#if WINDOWS
                 View view = constraintLayout.Children[i];
-#elif __IOS__
-                View view = constraintLayout.Subviews[i];
-#endif
+
                 int id = view.GetId();
                 if (!mConstraints.ContainsKey(id))
                 {
@@ -299,11 +293,8 @@ namespace SharpConstraintLayout.Maui.Widget
             }
             for (int i = 0; i < count; i++)
             {
-#if WINDOWS
                 View view = constraintLayout.Children[i];
-#elif __IOS__
-                View view = constraintLayout.Subviews[i];
-#endif
+
                 if (view is ConstraintHelper)
                 {
                     ConstraintHelper constraintHelper = (ConstraintHelper)view;
@@ -318,7 +309,7 @@ namespace SharpConstraintLayout.Maui.Widget
 #if WINDOWS
                 constraintLayout.InvalidateMeasure();
 #elif __IOS__
-                    constraintLayout.SetNeedsLayout();
+                constraintLayout.SetNeedsLayout();
 #endif
             }, constraintLayout);
 

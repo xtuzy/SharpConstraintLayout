@@ -26,6 +26,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
         public MainPage(CGRect frame)
         {
             ConstraintLayout.DEBUG = true;
+            ConstraintLayout.MEASURE = true;
 
             Page = new ConstraintLayout()
             {

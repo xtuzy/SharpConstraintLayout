@@ -37,6 +37,8 @@ namespace SharpConstraintLayout.Maui.Native.Example
                     SimpleDebug.WriteLine(ex.ToString());
                 }
             };
+            SimpleDebug.WriteLine($"Window {window!.Frame}");
+            SimpleDebug.WriteLine("App Start");
             this.View = new MainPage(window!.Frame).Page;
         }
     }

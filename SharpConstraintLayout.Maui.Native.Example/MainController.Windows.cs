@@ -20,9 +20,13 @@ namespace SharpConstraintLayout.Maui.Native.Example
         public static Window Current;
         public MainController()
         {
-            Current = this;
+            //WinUI Set window special size
+            IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
+            Microsoft.UI.WindowId windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hWnd);
+            Microsoft.UI.Windowing.AppWindow appWindow = Microsoft.UI.Windowing.AppWindow.GetFromWindowId(windowId);
+            appWindow.Resize(new Windows.Graphics.SizeInt32(390, 844));
 
-            this.Content = new MainPage();
+            Current = this;//For load UIThread at other class
 #if DEBUG
             HotReload.Instance.Reload += () =>
             {
@@ -43,6 +47,9 @@ namespace SharpConstraintLayout.Maui.Native.Example
             };
             HotReload.Instance.Init("192.168.0.108", 100);
 #endif
+            this.Content = new MainPage();
+
+            SimpleDebug.WriteLine($"Window {this.Bounds}");
             SimpleDebug.WriteLine("App Start");
         }
     }

@@ -138,7 +138,7 @@ namespace SharpConstraintLayout.Maui.Widget
         public int ChildCount { get { return Children != null ? Children.Count : 0; } }
 #elif __IOS__
 
-        private UIElement[] Children => Subviews;
+        internal UIElement[] Children => Subviews;
 
         public override void AddSubview(UIElement view)
         {
@@ -994,7 +994,9 @@ namespace SharpConstraintLayout.Maui.Widget
                     if (child is VirtualLayout && widget is androidx.constraintlayout.core.widgets.VirtualLayout)
                     {
                         androidx.constraintlayout.core.widgets.VirtualLayout layout = (androidx.constraintlayout.core.widgets.VirtualLayout)widget;
+                        if (DEBUG) Debug.WriteLine(child + "before OnMeasure " + widget);
                         ((VirtualLayout)child).OnMeasure(layout, horizontalSpec, verticalSpec);
+                        if (DEBUG) Debug.WriteLine(child + "after OnMeasure " + widget);
                     }
                     else
                     {
@@ -1012,7 +1014,7 @@ namespace SharpConstraintLayout.Maui.Widget
                     if (DEBUG)
                     {
                         string measurement = MeasureSpec.ToString(horizontalSpec) + " x " + MeasureSpec.ToString(verticalSpec) + " => " + width + " x " + height;
-                        Debug.WriteLine("    (M) measure " + " (" + widget.DebugName + ") : " + measurement);
+                        Debug.WriteLine("    (M) measure " + " (" + widget.DebugName + ":" + child + ") : " + measurement);
                     }
 
                     if (widget.mMatchConstraintMinWidth > 0)
@@ -1066,7 +1068,7 @@ namespace SharpConstraintLayout.Maui.Widget
                         if (DEBUG)
                         {
                             string measurement2 = MeasureSpec.ToString(horizontalSpec) + " x " + MeasureSpec.ToString(verticalSpec) + " => " + width + " x " + height;
-                            Console.WriteLine("measure (b) " + widget.DebugName + " : " + measurement2);
+                            Debug.WriteLine("measure (b) " + widget.DebugName + " : " + measurement2);
                         }
                     }
                 }
