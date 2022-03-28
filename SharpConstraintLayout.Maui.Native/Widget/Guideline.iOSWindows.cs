@@ -66,7 +66,7 @@ namespace SharpConstraintLayout.Maui.Widget
     /// {@sample resources/examples/Guideline.xml Guideline}
     /// </para>
     /// </summary>
-    public class Guideline : View,IDisposable,IGuideline
+    public class Guideline : View, IDisposable, IGuideline
     {
 #if __ANDROID__
         public Guideline(Context context) : base(context)
@@ -74,13 +74,7 @@ namespace SharpConstraintLayout.Maui.Widget
         public Guideline() : base()
 #endif
         {
-#if WINDOWS
-            base.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
-#elif __IOS__
-            base.Hidden = true;
-#elif __ANDROID__
-            base.Visibility = Android.Views.ViewStates.Gone;
-#endif
+            ViewExtension.SetViewVisibility(this, ConstraintSet.Gone);
         }
 
         internal androidx.constraintlayout.core.widgets.Guideline mGuideline = new androidx.constraintlayout.core.widgets.Guideline();

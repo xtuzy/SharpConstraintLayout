@@ -140,13 +140,9 @@ namespace SharpConstraintLayout.Maui.Widget
                 //ConstraintLayout.LayoutParams layoutParamsContent = (ConstraintLayout.LayoutParams)mContent.LayoutParams;
                 //layoutParamsContent.isInPlaceholder = true;
                 container.mConstraintSet.Constraints[mContent.GetId()].layout.isInPlaceholder = true;
-#if WINDOWS
-                mContent.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
-                Visibility = Microsoft.UI.Xaml.Visibility.Visible;
-#elif __IOS__
-                mContent.Hidden = false;
-                this.Hidden = false;
-#endif
+
+                ViewExtension.SetViewVisibility(mContent, ConstraintSet.Visible);
+                ViewExtension.SetViewVisibility(this, ConstraintSet.Visible);
             }
         }
 
@@ -162,15 +158,11 @@ namespace SharpConstraintLayout.Maui.Widget
             }
             if (mContent != null)
             {
-#if WINDOWS
-                mContent.Visibility = Microsoft.UI.Xaml.Visibility.Visible; // ???
-                                                                            //ConstraintLayout.LayoutParams layoutParamsContent = (ConstraintLayout.LayoutParams)mContent.LayoutParams;
-                                                                            //layoutParamsContent.isInPlaceholder = false;
-                ((mContent.Parent) as ConstraintLayout).mConstraintSet.Constraints[mContent.GetId()].layout.isInPlaceholder = true;
-#elif __IOS__
-                mContent.Hidden = false; // ???
-                ((mContent.Superview) as ConstraintLayout).mConstraintSet.Constraints[mContent.GetHashCode()].layout.isInPlaceholder = true;
-#endif
+
+                //ConstraintLayout.LayoutParams layoutParamsContent = (ConstraintLayout.LayoutParams)mContent.LayoutParams;
+                //layoutParamsContent.isInPlaceholder = false;
+                ViewExtension.SetViewVisibility(mContent, ConstraintSet.Visible);
+                ((mContent.GetParent()) as ConstraintLayout).mConstraintSet.Constraints[mContent.GetId()].layout.isInPlaceholder = true;
 
                 mContent = null;
             }
@@ -178,21 +170,11 @@ namespace SharpConstraintLayout.Maui.Widget
             mContentId = value;
             if (value != ConstraintSet.Unset)
             {
-#if WINDOWS
-                //View v = ((View)Parent).findViewById(value);
-                UIElement v = ((ConstraintLayout)Parent).FindViewById(value);
+                UIElement v = ((ConstraintLayout)this.GetParent()).FindViewById(value);
                 if (v != null)
                 {
-                    v.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
+                    ViewExtension.SetViewVisibility(v, ConstraintSet.Gone);
                 }
-#elif __IOS__
-                UIElement v = ((ConstraintLayout)Superview).FindViewById(value);
-                if (v != null)
-                {
-                    //v.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
-                    throw new NotImplementedException("iOS没有默认的Visibility = ConstraintSet.Gone");
-                }
-#endif
             }
         }
 

@@ -139,11 +139,8 @@ namespace SharpConstraintLayout.Maui.Widget
             {
                 return;
             }
-#if WINDOWS||__ANDROID__
-            if (view.Parent == null)
-#elif __IOS__
-            if (view.Superview == null)
-#endif
+
+            if (view.GetParent() == null)
             {
                 Debug.WriteLine("Views added to a ConstraintHelper need to have a parent.", TAG);
                 //return;
@@ -335,11 +332,9 @@ namespace SharpConstraintLayout.Maui.Widget
 
         protected internal virtual void applyLayoutFeatures(ConstraintLayout container)
         {
-#if WINDOWS || __ANDROID__
-            var visibility = this.Visibility;
-#elif __IOS__
-            var visbility = this.Hidden;
-#endif
+            //var visibility = this.Visibility;//平台有差异,以Widget为准
+            var visibility = (this.mHelperWidget as ConstraintWidget).Visibility;
+
             float elevation = 0;
 #if __ANDROID__
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP)
@@ -353,12 +348,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 View view = (View)container.FindViewById(id);
                 if (view != null)
                 {
-#if WINDOWS || __ANDROID__
-                    view.Visibility = visibility;
-#elif __IOS__
-                    view.Hidden = visbility;
-#endif
-
+                    ViewExtension.SetViewVisibility(view, visibility);
 #if __ANDROID__
                     if (elevation > 0 && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP)
                     {
@@ -371,11 +361,7 @@ namespace SharpConstraintLayout.Maui.Widget
 
         protected internal virtual void applyLayoutFeatures()
         {
-#if WINDOWS || __ANDROID__
-            var parent = this.Parent;
-#elif __IOS__
-            var parent = this.Superview;
-#endif
+            var parent = this.GetParent();
             if (parent != null && parent is ConstraintLayout)
             {
                 applyLayoutFeatures((ConstraintLayout)parent);
@@ -566,13 +552,14 @@ namespace SharpConstraintLayout.Maui.Widget
         /// </summary>
         int visible;
         /// <summary>
-        /// 替代平台的Visibility和Hiden
+        /// 替代平台的Visibility和Hiden,不建议使用,没有更新到Constraint,不会被Clone,请使用ConstraintSet设置Visibility
         /// </summary>
         public virtual int Visible
         {
             set
             {
                 ViewExtension.SetViewVisibility(this, value);
+                (this.mHelperWidget as ConstraintWidget).Visibility = value;//更新到Widget
                 visible = value;
             }
             get { return visible; }

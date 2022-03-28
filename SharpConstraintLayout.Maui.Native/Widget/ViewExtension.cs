@@ -9,6 +9,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 #elif __IOS__
 using UIElement = UIKit.UIView;
+using FrameworkElement = UIKit.UIView;
 using Panel = UIKit.UIView;
 using UIKit;
 #elif __ANDROID__
@@ -145,6 +146,17 @@ namespace SharpConstraintLayout.Maui.Widget
         {
 #if WINDOWS
             element.Measure(new Windows.Foundation.Size(w, h));
+#endif
+        }
+#endif
+
+#if WINDOWS || __IOS__
+        public static UIElement GetParent(this FrameworkElement element)
+        {
+#if WINDOWS
+            return element.Parent as UIElement;
+#elif __IOS__
+            return element.Superview;
 #endif
         }
 #endif

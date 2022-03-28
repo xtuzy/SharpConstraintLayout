@@ -58,11 +58,7 @@ namespace SharpConstraintLayout.Maui.Widget
             base.OnAttachedToWindow();
             if (mApplyVisibilityOnAttach || mApplyElevationOnAttach)
             {
-#if WINDOWS
-                var parent = Parent;
-#elif __IOS__
-                var parent = Superview;
-#endif
+                var parent = this.GetParent();
                 if (parent == null) Debug.WriteLine(this.GetType().Name, "Parent is null, maybe something is false.");
 
                 if (parent is ConstraintLayout)
