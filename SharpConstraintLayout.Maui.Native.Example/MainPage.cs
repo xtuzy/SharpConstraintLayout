@@ -31,6 +31,10 @@ namespace SharpConstraintLayout.Maui.Native.Example
 {
     public partial class MainPage
     {
+        void stackPanelTest(ConstraintLayout page)
+        {
+
+        }
         void animationTest(ConstraintLayout page)
         {
 #if __ANDROID__
@@ -144,6 +148,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             };
 #endif
         }
+
         void flowTest(ConstraintLayout page)
         {
 #if __ANDROID__
@@ -154,8 +159,8 @@ namespace SharpConstraintLayout.Maui.Native.Example
 #else
             var flow = new Flow();
 #endif
-            flow.SetOrientation(Flow.Horizontal);
-            flow.SetWrapMode(Flow.WrapAligned);
+            flow.SetOrientation(Flow.Vertical);
+            flow.SetWrapMode(Flow.WrapChain);
             flow.SetHorizontalStyle(Flow.ChainSpreadInside);
             layout = page;
             layout.AddView(ThirdCanvas, FirstButton, SecondButton, FouthTextBlock, FifthTextBox, SixthRichTextBlock, flow);
@@ -293,7 +298,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             Task.Run(async () =>
             {
                 int index = 0;
-                while (index < 20)//test 20 times,you can edit textbox
+                while (index < 5)//test 20 times,you can edit textbox
                 {
                     await Task.Delay(3000);//wait ui show
                     UIThread.Invoke(() =>

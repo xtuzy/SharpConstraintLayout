@@ -25,8 +25,8 @@ namespace SharpConstraintLayout.Maui.Native.Example
 
         public MainPage(CGRect frame)
         {
-            ConstraintLayout.DEBUG = true;
-            ConstraintLayout.MEASURE = true;
+            //ConstraintLayout.DEBUG = true;
+            //ConstraintLayout.MEASURE = true;
 
             Page = new ConstraintLayout()
             {
@@ -42,7 +42,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             //barrierTest(Page);
             //visibilityTest(Page);
             flowTest(Page);
-            //nestedLayoutTest(Page);
+            // nestedLayoutTest(Page);
         }
 
         private void createControls()
@@ -78,6 +78,9 @@ namespace SharpConstraintLayout.Maui.Native.Example
 
             FifthTextBox = new UITextField()
             {
+                Enabled = true,
+                EnablesReturnKeyAutomatically = true,
+                ClearButtonMode = UITextFieldViewMode.Always,
                 Text = "FifthTextBox",
             };
             FifthTextBox.EditingChanged += (sender, e) =>
