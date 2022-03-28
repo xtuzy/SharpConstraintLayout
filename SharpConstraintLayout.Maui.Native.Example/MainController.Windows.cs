@@ -17,7 +17,6 @@ namespace SharpConstraintLayout.Maui.Native.Example
     /// </summary>
     public sealed partial class MainController : Window
     {
-        public static Window Current;
         public MainController()
         {
             //WinUI Set window special size
@@ -27,7 +26,6 @@ namespace SharpConstraintLayout.Maui.Native.Example
             //appWindow.Resize(new Windows.Graphics.SizeInt32(390, 844));
             appWindow.Resize(new Windows.Graphics.SizeInt32(844, 390));
 
-            Current = this;//For load UIThread at other class
 #if DEBUG
             HotReload.Instance.Reload += () =>
             {

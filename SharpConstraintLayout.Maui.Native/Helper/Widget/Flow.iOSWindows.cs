@@ -24,67 +24,77 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
 
     /// <summary>
     /// Flow VirtualLayout. <b>Added in 2.0</b>
-    ///
+    /// <br/>
     /// Allows positioning of referenced widgets horizontally or vertically, similar to a Chain.
-    ///
+    /// <br/>
     /// The elements referenced are indicated via constraint_referenced_ids, as with other
     /// ConstraintHelper implementations.
-    ///
+    /// <br/>
     /// Those referenced widgets are then laid out by the Flow virtual layout in three possible
-    /// ways: <ul><li><a href="#wrap_none">wrap none</a> : simply create a chain out of the
-    /// referenced elements</li><li><a href="#wrap_chain">wrap chain</a> : create multiple chains
-    /// (one after the other) if the referenced elements do not fit</li><li><a
-    /// href="#wrap_aligned">wrap aligned</a> : similar to wrap chain, but will align the elements
-    /// by creating rows and columns</li></ul>
+    /// ways: 
+    /// <br/>
+    /// <see cref="WrapNone"/> : simply create a chain out of the referenced elements<br/>
+    /// <see cref="WrapChain"/> : create multiple chains (one after the other) if the referenced elements do not fit<br/>
+    /// <see cref="WrapAligned"/> : similar to wrap chain, but will align the elements by creating rows and columns<br/>
     ///
     /// As VirtualLayouts are ConstraintHelpers, they are normal views; you can thus treat them as
     /// such, and setting up constraints on them (position, dimension) or some view attributes
     /// (background, padding) will work. The main difference between VirtualLayouts and ViewGroups
-    /// is that: <ul><li>VirtualLayout keep the hierarchy flat</li><li>Other views can thus
-    /// reference / constrain to not only the VirtualLayout, but also the views laid out by the
-    /// VirtualLayout</li><li>VirtualLayout allow on the fly behavior modifications (e.g. for Flow,
-    /// changing the orientation)</li></ul><h4 id="wrap_none">flow_wrapMode = "none"</h4>
-    ///
+    /// is that: <br/>
+    /// VirtualLayout keep the hierarchy flat<br/>
+    /// Other views can thus reference / constrain to not only the VirtualLayout, but also the views laid out by the VirtualLayout
+    /// VirtualLayout allow on the fly behavior modifications (e.g. for Flow, changing the orientation)
+    /// <br/>
+    /// <br/>
+    /// <see cref="SetWrapMode(int)"/>(<see cref="WrapNone"/>)
+    /// <br/>
     /// This will simply create an horizontal or vertical chain out of the referenced widgets. This
     /// is the default behavior of Flow.
-    ///
+    /// <br/>
     /// XML attributes that are allowed in this mode:
-    ///
-    /// <ul><li>flow_horizontalStyle = "spread|spread_inside|packed"</li><li>flow_verticalStyle =
-    /// "spread|spread_inside|packed"</li><li>flow_horizontalBias = "
-    /// <i>float</i>"</li><li>flow_verticalBias = " <i>float</i>"</li><li>flow_horizontalGap = "
-    /// <i>dimension</i>"</li><li>flow_verticalGap = "
-    /// <i>dimension</i>"</li><li>flow_horizontalAlign = "start|end"</li><li>flow_verticalAlign =
-    /// "top|bottom|center|baseline</li></ul>
-    ///
+    /// <br/>
+    /// <ul>
+    /// <li>flow_horizontalStyle = "spread|spread_inside|packed"</li><br/>
+    /// <li>flow_verticalStyle = "spread|spread_inside|packed"</li><br/>
+    /// <li>flow_horizontalBias = "<i>float</i>"</li><br/>
+    /// <li>flow_verticalBias = " <i>float</i>"</li><br/>
+    /// <li>flow_horizontalGap = "<i>dimension</i>"</li><br/>
+    /// <li>flow_verticalGap = "<i>dimension</i>"</li><br/>
+    /// <li>flow_horizontalAlign = "start|end"</li><br/>
+    /// <li>flow_verticalAlign = "top|bottom|center|baseline</li><br/>
+    /// </ul>
     /// While the elements are laid out as a chain in the orientation defined, the way they are laid
-    /// out in the other dimension is controlled by <i>flow_horizontalAlign</i> and
-    /// <i>flow_verticalAlign</i> attributes.
-    ///
-    /// <h4 id="wrap_chain">flow_wrapMode = "chain"</h4>
-    ///
+    /// out in the other dimension is controlled by <see cref="SetHorizontalAlign(int)"/> and
+    /// <see cref="SetVerticalAlign(int)"/>.
+    /// <br/>
+    /// <br/>
+    /// <see cref="SetWrapMode(int)"/>(<see cref="WrapChain"/>)
+    /// <br/>
     /// Similar to wrap none in terms of creating chains, but if the referenced widgets do not fit
     /// the horizontal or vertical dimension (depending on the orientation picked), they will wrap
     /// around to the next line / column.
-    ///
+    /// <br/>
     /// XML attributes are the same same as in wrap_none, with the addition of attributes specifying
     /// chain style and chain bias applied to the first chain. This way, it is possible to specify
     /// different chain behavior between the first chain and the rest of the chains eventually
     /// created.
-    ///
-    /// <ul><li>flow_firstHorizontalStyle =
-    /// "spread|spread_inside|packed"</li><li>flow_firstVerticalStyle =
-    /// "spread|spread_inside|packed"</li><li>flow_firstHorizontalBias = "
-    /// <i>float</i>"</li><li>flow_firstVerticalBias = " <i>float</i>"</li></ul>
-    ///
-    /// One last important attribute is <i>flow_maxElementsWrap</i>, which specify the number of
+    /// <br/>
+    /// <ul>
+    /// <li>flow_firstHorizontalStyle = "spread|spread_inside|packed"</li><br/>
+    /// <li>flow_firstVerticalStyle = "spread|spread_inside|packed"</li><br/>
+    /// <li>flow_firstHorizontalBias = "<i>float</i>"</li><br/>
+    /// <li>flow_firstVerticalBias = " <i>float</i>"</li><br/>
+    /// </ul>
+    /// One last important attribute is <see cref="SetMaxElementsWrap(int)"/>, which specify the number of
     /// elements before wrapping, regardless if they fit or not in the available space.
-    ///
-    /// <h4 id="wrap_aligned">flow_wrapMode = "aligned"</h4>
-    ///
+    /// <br/>
+    /// <br/>
+    /// <see cref="SetWrapMode(int)"/>(<see cref="WrapAligned"/>)
+    /// <br/>
     /// Same XML attributes as for WRAP_CHAIN, with the difference that the elements are going to be
     /// laid out in a set of rows and columns instead of chains. The attribute specifying chains
     /// style and bias are thus not going to be applied.
+    /// <br/>
     /// </summary>
     public class Flow : VirtualLayout, IFlow
     {

@@ -156,7 +156,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
 #endif
             flow.SetOrientation(Flow.Horizontal);
             flow.SetWrapMode(Flow.WrapChain);
-            flow.SetHorizontalStyle(Flow.ChainSpread);
+            flow.SetHorizontalStyle(Flow.ChainSpreadInside);
             layout = page;
             layout.AddView(ThirdCanvas, FirstButton, SecondButton, FouthTextBlock, FifthTextBox, SixthRichTextBlock, flow);
             flow.AddView(FirstButton, SecondButton, FouthTextBlock, FifthTextBox, SixthRichTextBlock);
@@ -192,7 +192,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
                         SimpleTest.AreEqual(flow.GetBounds().Right, ThirdCanvas.GetBounds().Right, nameof(flowTest), "Canvas Right position should equal to Flow");
                         SimpleTest.AreEqual(flow.GetBounds().Top, ThirdCanvas.GetBounds().Top, nameof(flowTest), "Canvas Top position should equal to Flow");
                         SimpleTest.AreEqual(flow.GetBounds().Bottom, ThirdCanvas.GetBounds().Bottom, nameof(flowTest), "Canvas Bottom position should equal to Flow");
-                    });
+                    }, page);
 
                     index++;
                 }
@@ -234,7 +234,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
                         UIThread.Invoke(() =>
                         {
                             SimpleTest.AreEqual(FirstButton.GetBounds().Right + SecondButton.GetBounds().Width, ThirdCanvas.GetBounds().Left, nameof(barrierTest), "When Center Button Visiable, Canvas position should equal to FirstButton+SecondButton");
-                        });
+                        }, page);
                     });
                 }
                 else if (index == 2)
@@ -247,7 +247,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
                         UIThread.Invoke(() =>
                         {
                             SimpleTest.AreEqual(FirstButton.GetBounds().Right + SecondButton.GetBounds().Width, ThirdCanvas.GetBounds().Left, nameof(barrierTest), "When Center Button Invisiable, Canvas position should equal to FirstButton+SecondButton");
-                        });
+                        }, page);
                     });
                 }
                 else if (index == 3)
@@ -260,7 +260,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
                         UIThread.Invoke(() =>
                         {
                             SimpleTest.AreEqual(FirstButton.GetBounds().Right, ThirdCanvas.GetBounds().Left, nameof(barrierTest), "When Center Button Gone, Canvas position should equal to FirstButton");
-                        });
+                        }, page);
                     });
                 }
                 layoutSet.ApplyTo(layout);
@@ -300,7 +300,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
                     {
                         SimpleTest.AreEqual(FifthTextBox.GetBounds().Right, barrier.GetBounds().Left, nameof(barrierTest), "Barrier position should equal to TextBox");
                         SimpleTest.AreEqual(ThirdCanvas.GetBounds().Left, barrier.GetBounds().Left, nameof(barrierTest), "Canvas position should equal to Barrier");
-                    });
+                    }, page);
 
                     index++;
                 }
@@ -348,7 +348,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
                 UIThread.Invoke(() =>
                 {
                     SimpleTest.AreEqual(page.GetSize().Width / 2, layout.GetBounds().X, nameof(guidelineTest), "Horiable guideline should at center");
-                });
+                }, page);
             });
         }
 
