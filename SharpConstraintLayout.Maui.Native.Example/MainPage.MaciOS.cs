@@ -36,7 +36,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
 
             createControls();
 
-            //controlsTest(Page);
+            baseAlignTest(Page);
             //baselineTest(Page);
             //guidelineTest(Page);//bug meause and arrange infinity loop
             //barrierTest(Page);

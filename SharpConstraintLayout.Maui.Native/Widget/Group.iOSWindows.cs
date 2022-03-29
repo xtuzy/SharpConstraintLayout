@@ -50,7 +50,7 @@ namespace SharpConstraintLayout.Maui.Widget
     ///         define the final visibility state (the group declared last will have the last word).
     /// </para>
     /// </summary>
-    public class Group : ConstraintHelper,IGroup
+    public class Group : ConstraintHelper, IGroup
     {
         public Group() : base()
         {
@@ -62,7 +62,7 @@ namespace SharpConstraintLayout.Maui.Widget
             mUseViewMeasure = false;
         }
 
-        public override void OnAttachedToWindow()
+        protected override void OnAttachedToWindow()
         {
             base.OnAttachedToWindow();
             applyLayoutFeatures();

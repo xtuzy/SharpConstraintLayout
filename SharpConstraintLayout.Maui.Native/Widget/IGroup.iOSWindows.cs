@@ -5,6 +5,6 @@ namespace SharpConstraintLayout.Maui.Widget
     {
         //JniPeerMembers JniPeerMembers { get; }
 
-        void OnAttachedToWindow();
+        //void OnAttachedToWindow();
     }
 }

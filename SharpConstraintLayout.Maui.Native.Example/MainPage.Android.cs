@@ -28,7 +28,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             createControls();
             this.SetBackgroundColor(Color.HotPink);
 
-            //controlsTest(this);
+            //baseAlignTest(this);
             //baselineTest(this);
             //guidelineTest(this);
             //barrierTest(this);

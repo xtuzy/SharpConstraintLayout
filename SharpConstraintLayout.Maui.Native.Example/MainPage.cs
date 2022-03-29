@@ -375,7 +375,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             layoutSet.ApplyTo(layout);
         }
 
-        private void controlsTest(ConstraintLayout page)
+        private void baseAlignTest(ConstraintLayout page)
         {
             layout = page;
 
@@ -385,14 +385,35 @@ namespace SharpConstraintLayout.Maui.Native.Example
             layoutSet.Clone(layout);
             layoutSet
                 .Select(FirstButton).CenterTo()
-                .Select(FirstButton, SecondButton, FouthTextBlock, FifthTextBox, SixthRichTextBlock).Width(SizeBehavier.WrapContent).Height(SizeBehavier.WrapContent)
+                .Select(FirstButton, SecondButton, FouthTextBlock, FifthTextBox, SixthRichTextBlock)
+                .Width(SizeBehavier.WrapContent)
+                .Height(SizeBehavier.WrapContent)
                 .Select(ThirdCanvas).Width(SizeBehavier.MatchConstraint).Height(SizeBehavier.MatchConstraint)
-                .Select(SecondButton).RightToRight(FirstButton).TopToBottom(FirstButton, 10)
-                .Select(ThirdCanvas).LeftToRight(FirstButton, 50).RightToRight(null, 50).EdgesYTo(null, 50)
-                .Select(FouthTextBlock).RightToRight(SecondButton).TopToBottom(SecondButton, 10)
-                .Select(FifthTextBox).BottomToTop(FirstButton, 50).LeftToLeft(FirstButton).RightToRight(FirstButton)
-                .Select(SixthRichTextBlock).RightToLeft(FouthTextBlock, 50).BaselineToBaseline(FouthTextBlock, 50);
+                .Select(SecondButton).RightToRight(FirstButton).TopToBottom(FirstButton)
+                .Select(ThirdCanvas).LeftToRight(FirstButton).RightToRight().EdgesYTo()
+                .Select(FouthTextBlock).RightToRight(SecondButton).TopToBottom(SecondButton)
+                .Select(FifthTextBox).BottomToTop(FirstButton).LeftToLeft(FirstButton).RightToRight(FirstButton)
+                .Select(SixthRichTextBlock).RightToLeft(FouthTextBlock).BaselineToBaseline(FouthTextBlock);
             layoutSet.ApplyTo(layout);
+
+            Task.Run(async () =>
+            {
+                await Task.Delay(3000);//wait UI change or show
+                UIThread.Invoke(() =>
+                {
+                    //FirstButton at page's Center
+                    SimpleTest.AreEqual(page.GetSize().Width / 2, FirstButton.GetBounds().X + FirstButton.GetSize().Width / 2, nameof(baseAlignTest), "FirstButton should at horizontal center");
+                    SimpleTest.AreEqual(page.GetSize().Height / 2, FirstButton.GetBounds().Y + FirstButton.GetSize().Height / 2, nameof(baseAlignTest), "FirstButton should at vertical center");
+                    //SecondButton's Right equal to FirstButton's Right. SecondButton's Top equal to FirstButton's Bottom
+                    SimpleTest.AreEqual(FirstButton.GetBounds().Right, SecondButton.GetBounds().Right, nameof(baseAlignTest), "SecondButton's Right should equal to FirstButton's Right");
+                    SimpleTest.AreEqual(FirstButton.GetBounds().Bottom, SecondButton.GetBounds().Top, nameof(baseAlignTest), "SecondButton's Top should equal to FirstButton's Bottom");
+                    //ThirdCanvas's Left equal to FirstButton's Right. ThirdCanvas's Right equal to page's Right. ThirdCanvas's Top equal to page's Top, ThirdCanvas's Bottom equal to page's Bottom
+                    SimpleTest.AreEqual(FirstButton.GetBounds().Right, ThirdCanvas.GetBounds().Left, nameof(baseAlignTest), "ThirdCanvas's Left should equal to FirstButton's Right");
+                    SimpleTest.AreEqual(page.GetBounds().Right, ThirdCanvas.GetBounds().Right, nameof(baseAlignTest), "ThirdCanvas's Right should equal to page's Right");
+                    SimpleTest.AreEqual(page.GetBounds().Top, ThirdCanvas.GetBounds().Top, nameof(baseAlignTest), "ThirdCanvas's Top should equal to page's Top");
+                    SimpleTest.AreEqual(page.GetBounds().Bottom, ThirdCanvas.GetBounds().Bottom, nameof(baseAlignTest), "ThirdCanvas's Bottom should equal to page's Bottom");
+                }, page);
+            });
         }
     }
 }
