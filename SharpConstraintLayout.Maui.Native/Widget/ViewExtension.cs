@@ -167,7 +167,7 @@ namespace SharpConstraintLayout.Maui.Widget
         }
 #endif
 #if WINDOWS || __IOS__ || __ANDROID__
-        public static void SetTransform(this FrameworkElement element, ConstraintSet.Transform transform)
+        public static void SetTransform(this UIElement element, ConstraintSet.Transform transform)
         {
             if (transform == null)
                 return;
@@ -241,6 +241,23 @@ namespace SharpConstraintLayout.Maui.Widget
             transformGroup.Scale(transform.scaleX, transform.scaleY);
             transformGroup.Translate(transform.translationX, transform.translationY);
             element.Transform = transformGroup;
+#endif
+        }
+#endif
+#if WINDOWS || __IOS__ || __ANDROID__
+        public static void SetAlphaProperty(this UIElement element, ConstraintSet.PropertySet propertySet)
+        {
+            if (propertySet == null)
+                return;
+#if ANDROID
+            //Copy from ConstraintSet
+            element.Alpha = propertySet.Alpha;
+#elif WINDOWS
+            //https://docs.microsoft.com/en-us/dotnet/api/system.windows.uielement.opacity?view=windowsdesktop-6.0
+            element.Opacity = propertySet.alpha;
+#elif __IOS__
+            //https://stackoverflow.com/questions/15381436/is-the-opacity-and-alpha-the-same-thing-for-uiview
+            element.Alpha = propertySet.alpha;
 #endif
         }
 #endif

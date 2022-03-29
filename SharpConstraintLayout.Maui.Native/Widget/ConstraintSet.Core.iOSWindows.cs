@@ -197,53 +197,9 @@ namespace SharpConstraintLayout.Maui.Widget
                         param.propertySet.visibility = constraint.propertySet.visibility;//这里我变成设置constraint
                         ViewExtension.SetViewVisibility(view, constraint.propertySet.visibility);
                     }
-                    /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1)
-                    {
-                        view.Alpha = constraint.propertySet.alpha;
-                        view.Rotation = constraint.transform.rotation;
-                        view.RotationX = constraint.transform.rotationX;
-                        view.RotationY = constraint.transform.rotationY;
-                        view.ScaleX = constraint.transform.scaleX;
-                        view.ScaleY = constraint.transform.scaleY;
-                        if (constraint.transform.transformPivotTarget != UNSET)
-                        {
-                            View layout = (View)view.Parent;
-                            View center = layout.findViewById(constraint.transform.transformPivotTarget);
-                            if (center != null)
-                            {
-                                float cy = (center.Top + center.Bottom) / 2.0f;
-                                float cx = (center.Left + center.Right) / 2.0f;
-                                if (view.Right - view.Left > 0 && view.Bottom - view.Top > 0)
-                                {
-                                    float px = (cx - view.Left);
-                                    float py = (cy - view.Top);
-                                    view.PivotX = px;
-                                    view.PivotY = py;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            if (!float.IsNaN(constraint.transform.transformPivotX))
-                            {
-                                view.PivotX = constraint.transform.transformPivotX;
-                            }
-                            if (!float.IsNaN(constraint.transform.transformPivotY))
-                            {
-                                view.PivotY = constraint.transform.transformPivotY;
-                            }
-                        }
-                        view.TranslationX = constraint.transform.translationX;
-                        view.TranslationY = constraint.transform.translationY;
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-                        {
-                            view.TranslationZ = constraint.transform.translationZ;
-                            if (constraint.transform.applyElevation)
-                            {
-                                view.Elevation = constraint.transform.elevation;
-                            }
-                        }
-                    }*/
+
+                    view.SetAlphaProperty(param.propertySet);
+                    view.SetTransform(param.transform);
                 }
                 else
                 {
