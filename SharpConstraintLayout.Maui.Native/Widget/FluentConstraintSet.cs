@@ -491,6 +491,28 @@ namespace SharpConstraintLayout.Maui.Widget
                     set?.Connect(id, (int)startSide, endView.GetId(), (int)endSide, margin);
                 return this;
             }
+            /// <summary>
+            /// Set views at centerView's Circle.
+            /// Notice:The angle is not same as ConstraintSet.ConstraintCirle.
+            /// </summary>
+            /// <param name="centerView"></param>
+            /// <param name="radius"></param>
+            /// <param name="angles">center of centerView is origin, the angle is positive value when rotate with a clockwise from x-axis. This is not same as ConstraintSet.ConstraintCirle</param>
+            /// <returns></returns>
+            /// <exception cref="ArgumentException">radius' and angles' count must be equal to View's count</exception>
+            public Element CircleTo(View centerView, int[] radius, float[] angles)
+            {
+                if (radius.Length != ids.Length)
+                    throw new ArgumentException($"{nameof(CircleTo)}:radius' count must be equal to View's count");
+                if (angles.Length != ids.Length)
+                    throw new ArgumentException($"{nameof(CircleTo)}:angles' count must be equal to View's count");
+                setReference.TryGetTarget(out var set);
+                for (var index = 0; index < ids.Length; index++)
+                {
+                    set?.ConstrainCircle(ids[index], centerView.GetId(), radius[index], angles[index]);
+                }
+                return this;
+            }
 
             public void Dispose()
             {

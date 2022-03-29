@@ -31,6 +31,38 @@ namespace SharpConstraintLayout.Maui.Native.Example
 {
     public partial class MainPage
     {
+        void circleConstraintTest(ConstraintLayout page)
+        {
+            layout = page;
+            layout.AddView(FirstButton, SecondButton, FouthTextBlock);
+            using (var layoutSet = new FluentConstraintSet())
+            {
+                layoutSet.Clone(layout);
+                layoutSet.Select(FirstButton).CenterTo()
+                    .Select(SecondButton).CircleTo(FirstButton, new[] { 50 }, new[] { 60f });
+                layoutSet.ConstrainCircle(FouthTextBlock.GetId(), FirstButton.GetId(), 50, 240);
+                layoutSet.ApplyTo(layout);
+            }
+
+            Task.Run(async () =>
+            {
+                int index = 0;
+                while (index < 1)
+                {
+                    await Task.Delay(3000);//wait UI show
+                    UIThread.Invoke(() =>
+                    {
+                        //The distence between SecondButton center and FirstButton center should equal to 50
+                        SimpleTest.AreEqual(Math.Abs(SecondButton.GetBounds().Center.Y - FirstButton.GetBounds().Center.Y) * 2, 50, nameof(circleConstraintTest), "The distence between SecondButton center and FirstButton center should equal to 50");
+                        //The distence between FouthTextBlock center and FirstButton center should equal to 50
+                        SimpleTest.AreEqual(Math.Abs(FouthTextBlock.GetBounds().Center.Y - FirstButton.GetBounds().Center.Y) * 2, 50, nameof(circleConstraintTest), "The distence between FouthTextBlock center and FirstButton center should equal to 50");
+                    }, page);
+
+                    index++;
+                }
+            });
+        }
+
         void stackPanelTest(ConstraintLayout page)
         {
 
@@ -82,7 +114,11 @@ namespace SharpConstraintLayout.Maui.Native.Example
 #elif IOS
 
 #elif WINDOWS
+            //TODO:WinUI value animation
+            Microsoft.UI.Xaml.Media.CompositionTarget.Rendering += (sender, e) =>
+            {
 
+            };
 #endif
         }
         /// <summary>

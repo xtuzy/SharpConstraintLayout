@@ -183,6 +183,8 @@ namespace SharpConstraintLayout.Maui.Widget
             //Add to three dictionary(Wighet,View,Constraints)
             ConstraintWidget widget = CreateOrGetWidgetAndAddToLayout(id);
             mConstraintSet.Constraints.Add(id, new ConstraintSet.Constraint());
+            mConstraintSet.GetConstraint(id).layout.mWidth = ConstraintSet.WrapContent;//@zhouyang Add:Default set WrapContent,it is more useful
+            mConstraintSet.GetConstraint(id).layout.mHeight = ConstraintSet.WrapContent;
             idToViews.Add(id, element as UIElement);
             // Do stuff with the added object
             if (element is Guideline)//Guideline have default widget

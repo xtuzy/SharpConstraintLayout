@@ -1419,7 +1419,8 @@ namespace SharpConstraintLayout.Maui.Widget
         }
 
         /// <summary>
-        /// Constrain the view on a circle constraint
+        /// Constrain the view on a circle constraint.
+        /// Notice the angle <see href="https://developer.android.com/reference/androidx/constraintlayout/widget/ConstraintLayout#CircularPositioning">ConstraintLayout.CircularPositioning</see>
         /// </summary>
         /// <param name="viewId">ID of the view we constrain</param>
         /// <param name="id">ID of the view we constrain relative to</param>
