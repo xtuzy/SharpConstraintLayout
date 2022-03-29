@@ -2323,14 +2323,5 @@ namespace SharpConstraintLayout.Maui.Widget
                     break;
             }
         }
-
-        public virtual Constraint GetConstraint(int id)
-        {
-            if (mConstraints.ContainsKey(id))
-            {
-                return mConstraints[id];
-            }
-            return null;
-        }
     }
 }

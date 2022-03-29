@@ -319,5 +319,26 @@ namespace SharpConstraintLayout.Maui.Widget
         /// 定义了全部约束,测量时从其中取出分析
         /// </summary>
         public Dictionary<int, Constraint> Constraints { get { return mConstraints; } }
+
+        public Constraint GetConstraint(int viewId)
+        {
+            if (mConstraints.ContainsKey(viewId))
+            {
+                return mConstraints[viewId];
+            }
+            return null;
+        }
+
+        public void SetConstraint(int viewId, Constraint constraint)
+        {
+            if (mConstraints.ContainsKey(viewId))
+            {
+                mConstraints[viewId] = constraint;
+            }
+            else
+            {
+                mConstraints.Add(viewId, constraint);
+            }
+        }
     }
 }

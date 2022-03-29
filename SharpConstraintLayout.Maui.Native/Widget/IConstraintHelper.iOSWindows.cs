@@ -10,8 +10,8 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Windows.Foundation;
 #elif __IOS__
-    using View = UIKit.UIView;
-    using UIElement = UIKit.UIView;
+using View = UIKit.UIView;
+using UIElement = UIKit.UIView;
 #elif __ANDROID__
     using Android.Content;
     using View = Android.Views.View;
@@ -42,7 +42,5 @@ namespace SharpConstraintLayout.Maui.Widget
         void UpdatePreLayout(ConstraintWidgetContainer container, Helper helper, Dictionary<int, ConstraintWidget> map);
         //void ValidateParams();
         void ValidateParams(Dictionary<int, ConstraintWidget> idsToConstraintWidgets = null);
-
-        void OnAttachedToWindow();
     }
 }

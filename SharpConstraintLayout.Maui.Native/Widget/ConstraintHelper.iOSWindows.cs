@@ -125,7 +125,7 @@ namespace SharpConstraintLayout.Maui.Widget
             base.OnAttachedToWindow();
         }
 #endif
-        public virtual void OnAttachedToWindow() { }
+        protected virtual void OnAttachedToWindow() { }
 
         /// <summary>
         /// Add a view to the helper. The referenced view need to be a child of the helper's parent.

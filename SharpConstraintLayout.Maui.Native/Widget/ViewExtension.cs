@@ -4,16 +4,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 #if WINDOWS
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 #elif __IOS__
 using UIElement = UIKit.UIView;
 using FrameworkElement = UIKit.UIView;
 using Panel = UIKit.UIView;
 using UIKit;
+using CoreGraphics;
 #elif __ANDROID__
 using UIElement = Android.Views.View;
+using FrameworkElement = Android.Views.View;
+using AndroidX.ConstraintLayout.Widget;
+using Android.Views;
 #endif
 namespace SharpConstraintLayout.Maui.Widget
 {
@@ -157,6 +163,84 @@ namespace SharpConstraintLayout.Maui.Widget
             return element.Parent as UIElement;
 #elif __IOS__
             return element.Superview;
+#endif
+        }
+#endif
+#if WINDOWS || __IOS__ || __ANDROID__
+        public static void SetTransform(this FrameworkElement element, ConstraintSet.Transform transform)
+        {
+            if (transform == null)
+                return;
+#if ANDROID
+            //Copy from ConstraintSet
+            var view = element;
+            view.Rotation = transform.Rotation;
+            view.RotationX = transform.RotationX;
+            view.RotationY = transform.RotationY;
+            view.ScaleX = transform.ScaleX;
+            view.ScaleY = transform.ScaleY;
+            if (transform.TransformPivotTarget != ConstraintSet.Unset)
+            {
+                View layout = (View)view.Parent;
+                View center = layout.FindViewById(transform.TransformPivotTarget);
+                if (center != null)
+                {
+                    float cy = (center.Top + center.Bottom) / 2.0f;
+                    float cx = (center.Left + center.Right) / 2.0f;
+                    if (view.Right - view.Left > 0 && view.Bottom - view.Top > 0)
+                    {
+                        float px = (cx - view.Left);
+                        float py = (cy - view.Top);
+                        view.PivotX = px;
+                        view.PivotY = py;
+                    }
+                }
+            }
+            else
+            {
+                if (!float.IsNaN(transform.TransformPivotX))
+                {
+                    view.PivotX = transform.TransformPivotX;
+                }
+                if (!float.IsNaN(transform.TransformPivotY))
+                {
+                    view.PivotY = transform.TransformPivotY;
+                }
+            }
+            view.TranslationX = transform.TranslationX;
+            view.TranslationY = transform.TranslationY;
+            //After Android5.0,have Z-index
+            view.TranslationZ = transform.TranslationZ;
+            if (transform.ApplyElevation)
+            {
+                view.Elevation = transform.Elevation;
+            }
+#elif WINDOWS
+            var transformGroup = new TransformGroup();
+            if (transform.rotation != 0)
+            {
+                var rotateTransform = new RotateTransform() { Angle = transform.rotation };
+                transformGroup.Children.Add(rotateTransform);
+            }
+            if (transform.scaleX != 1)
+            {
+                var scaleTransform = new ScaleTransform() { ScaleX = transform.scaleX, ScaleY = transform.scaleY };
+                transformGroup.Children.Add(scaleTransform);
+            }
+            if (transform.translationX != 0)
+            {
+                var translateTransform = new TranslateTransform() { X = transform.translationX, Y = transform.translationY };
+                transformGroup.Children.Add(translateTransform);
+            }
+            element.RenderTransform = transformGroup;
+#elif __IOS__
+
+            //https://stackoverflow.com/questions/6813899/how-to-programmatically-rotate-the-view-by-180-degrees-on-ios
+            var transformGroup = new CGAffineTransform();
+            transformGroup.Rotate(transform.rotation);
+            transformGroup.Scale(transform.scaleX, transform.scaleY);
+            transformGroup.Translate(transform.translationX, transform.translationY);
+            element.Transform = transformGroup;
 #endif
         }
 #endif

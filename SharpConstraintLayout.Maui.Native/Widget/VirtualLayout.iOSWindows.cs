@@ -53,7 +53,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <summary>
         /// @suppress
         /// </summary>
-        public override void OnAttachedToWindow()
+        protected override void OnAttachedToWindow()
         {
             base.OnAttachedToWindow();
             if (mApplyVisibilityOnAttach || mApplyElevationOnAttach)
