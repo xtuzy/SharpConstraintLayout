@@ -1,7 +1,6 @@
 ﻿
 using SharpConstraintLayout.Maui.Widget;
 using static SharpConstraintLayout.Maui.Widget.FluentConstraintSet;
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,11 +25,107 @@ using AndroidX.ConstraintLayout.Widget;
 using UIKit;
 #elif WINDOWS
 using Microsoft.UI;
+using Microsoft.UI.Xaml.Controls;
+using CommunityToolkit.WinUI.UI.Controls;
 #endif
 namespace SharpConstraintLayout.Maui.Native.Example
 {
     public partial class MainPage
     {
+        void performanceTest(ConstraintLayout page)
+        {
+            bool TestNative = false;
+            int buttonCount = 100;
+#if WINDOWS
+            if (!TestNative)
+            {
+                var flow = new Flow()
+                {
+                };
+                flow.SetOrientation(Flow.Horizontal);
+                flow.SetWrapMode(Flow.WrapNone);
+                flow.SetHorizontalStyle(Flow.ChainPacked);
+                page.AddView(flow);
+                //Generate 1000 Button,all add to page
+                var buttonList = new List<Button>();
+                for (int i = 0; i < buttonCount; i++)
+                {
+                    var button = new Button();
+                    button.Content = "Button" + i;
+                    buttonList.Add(button);
+                    page.AddView(button);
+                    flow.AddView(button);
+                }
+                using (var layoutSet = new FluentConstraintSet())
+                {
+                    layoutSet.Clone(page);
+                    layoutSet
+                        .Select(flow)
+                        .TopToTop().LeftToLeft()
+                        .Width(SizeBehavier.WrapContent)
+                        .Height(SizeBehavier.WrapContent);
+                    layoutSet.ApplyTo(page);
+                }
+
+                Task.Run(async () =>
+                {
+                    int index = 0;
+                    while (index < 1)//test times
+                    {
+                        await Task.Delay(5000);//wait UI show
+                        UIThread.Invoke(() =>
+                        {
+                            Debug.WriteLine("flow:" + flow.GetBounds());
+                        }, page);
+
+                        index++;
+                    }
+                });
+            }
+            else
+            {
+                var wrapPanel = new WrapPanel()
+                {
+                    Orientation = Microsoft.UI.Xaml.Controls.Orientation.Horizontal,
+                };
+                page.AddView(wrapPanel);
+                //Generate 1000 Button,all add to stackPanel
+                var buttonList = new List<Button>();
+                for (int i = 0; i < buttonCount; i++)
+                {
+                    var button = new Button();
+                    button.Content = "Button" + i;
+                    buttonList.Add(button);
+                    wrapPanel.Children.Add(button);
+                }
+                using (var layoutSet = new FluentConstraintSet())
+                {
+                    layoutSet.Clone(page);
+                    layoutSet.Select(wrapPanel)
+                        .Width(SizeBehavier.MatchParent)
+                        .Height(SizeBehavier.MatchParent);
+                    layoutSet.ApplyTo(page);
+                }
+
+                Task.Run(async () =>
+                {
+                    int index = 0;
+                    while (index < 1)//test times
+                    {
+                        await Task.Delay(5000);//wait UI show
+                        UIThread.Invoke(() =>
+                        {
+                            Debug.WriteLine("page:" + page.GetBounds());
+                            Debug.WriteLine("wrapPanel:" + wrapPanel.GetBounds());
+                        }, page);
+
+                        index++;
+                    }
+                });
+            }
+#endif
+        }
+
         void circleConstraintTest(ConstraintLayout page)
         {
             layout = page;
@@ -65,7 +160,27 @@ namespace SharpConstraintLayout.Maui.Native.Example
 
         void stackPanelTest(ConstraintLayout page)
         {
-
+#if WINDOWS
+            var stackPanel = new StackPanel()
+            {
+                Orientation = Microsoft.UI.Xaml.Controls.Orientation.Vertical,
+                Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.Coral),
+            };
+            page.AddView(stackPanel);
+            using (var layoutSet = new FluentConstraintSet())
+            {
+                layoutSet.Clone(page);
+                layoutSet.Select(stackPanel)
+                    .Width(SizeBehavier.MatchParent)
+                    .Height(SizeBehavier.MatchParent);
+                layoutSet.ApplyTo(page);
+            }
+            stackPanel.Children.Add(FirstButton);
+            stackPanel.Children.Add(SecondButton);
+            stackPanel.Children.Add(FouthTextBlock);
+#elif ANDROID
+#elif __IOS__
+#endif
         }
         void animationTest(ConstraintLayout page)
         {
@@ -377,7 +492,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
 
             var pageSet = new FluentConstraintSet();
             pageSet.Clone(page);
-            pageSet.Select(guide).GuidelineOrientation(Orientation.X).GuidelinePercent(0.5f)
+            pageSet.Select(guide).GuidelineOrientation(FluentConstraintSet.Orientation.X).GuidelinePercent(0.5f)
             .Select(layout).LeftToRight(guide).RightToRight(page).TopToTop(page).BottomToBottom(page)
             .Width(SizeBehavier.MatchConstraint)
             .Height(SizeBehavier.MatchConstraint);

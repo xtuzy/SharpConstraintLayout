@@ -105,7 +105,7 @@ namespace SharpConstraintLayout.Maui.DebugTool
             // Check we are connected
             if (m_sock == null || !m_sock.Connected)
             {
-                Console.WriteLine("Must be connected to Send a message");
+                //Console.WriteLine("Must be connected to Send a message");
                 return;
             }
 

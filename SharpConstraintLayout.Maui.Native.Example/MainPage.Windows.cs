@@ -27,8 +27,8 @@ namespace SharpConstraintLayout.Maui.Native.Example
 
         public MainPage()
         {
-            //ConstraintLayout.DEBUG = true;
-            //ConstraintLayout.MEASURE = true;
+            ConstraintLayout.DEBUG = true;
+            ConstraintLayout.MEASURE = true;
 
             createControls();
             this.Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.HotPink);
@@ -40,7 +40,9 @@ namespace SharpConstraintLayout.Maui.Native.Example
             //visibilityTest(this);
             //flowTest(this);
             //nestedLayoutTest(this);
-            circleConstraintTest(this);
+            //circleConstraintTest(this);
+            //stackPanelTest(this);
+            performanceTest(this);
         }
 
         private void createControls()

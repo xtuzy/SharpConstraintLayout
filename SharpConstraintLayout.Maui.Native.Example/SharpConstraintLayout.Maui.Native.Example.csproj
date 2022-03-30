@@ -13,9 +13,11 @@
 
     <!-- Display name -->
     <ApplicationTitle>SharpConstraintLayout.Maui.Native.Example</ApplicationTitle>
+    <ApplicationTitle Condition="$(TargetFramework.Contains('-windows'))">SharpConstraintLayout.Maui.Native.Example.WinUI</ApplicationTitle>
 
     <!-- App Identifier -->
     <ApplicationId>com.companyname.SharpConstraintLayout</ApplicationId>
+    <ApplicationId Condition="$(TargetFramework.Contains('-windows'))">com.companyname.SharpConstraintLayoutWinUI</ApplicationId>
 
     <!-- Versions -->
     <ApplicationVersion>1</ApplicationVersion>
@@ -67,6 +69,7 @@
 
   <ItemGroup>
     <!--use this you can "hotreload" when use Native code write ui-->
+    <PackageReference Condition="$(TargetFramework.Contains('-windows'))" Include="CommunityToolkit.WinUI.UI.Controls" Version="7.1.2" />
     <PackageReference Include="ReloadPreview" Version="3.0.5" />
   </ItemGroup>
   <!--only ios and maccatalyst have these-->

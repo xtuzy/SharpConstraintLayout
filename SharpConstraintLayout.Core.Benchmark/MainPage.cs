@@ -11,7 +11,7 @@ namespace SharpConstraintLayout.Core.Benchmark
     {
         void CSharp()
         {
-            int viewCount = 100;
+            int viewCount = 1000;
             ConstraintWidgetContainer root = new ConstraintWidgetContainer(0, 0, 1000, 600);
             ConstraintWidget preview = new ConstraintWidget(100, 40);
             root.add(preview);
@@ -33,6 +33,7 @@ namespace SharpConstraintLayout.Core.Benchmark
             }
 
             root.layout();
+            //root.measure();
         }
 
         void Sleep()
@@ -42,11 +43,12 @@ namespace SharpConstraintLayout.Core.Benchmark
 
         private void TestCsharpConstraintLayoutButton_Click(object sender, EventArgs e)
         {
-            TestCSharpSummary.Text = nameof(TestCSharpSummary) + ":\n" + SimpleClock.BenchmarkTime(() =>
+            /*TestCSharpSummary.Text = nameof(TestCSharpSummary) + ":\n" + SimpleClock.BenchmarkTime(() =>
             {
                 CSharp();
-            }, 50);
-            //TestCSharpSummary.Invalidate();
+            }, 50);*/
+
+            new FlowTest().testFlowWrapNone();
         }
         void TestSleepButton_Clicked(object sender, EventArgs e)
         {

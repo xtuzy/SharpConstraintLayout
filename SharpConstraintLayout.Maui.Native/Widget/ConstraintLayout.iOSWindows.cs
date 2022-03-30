@@ -235,6 +235,8 @@ namespace SharpConstraintLayout.Maui.Widget
                 {
                     ConstraintWidget widget = new ConstraintWidget();
                     idsToConstraintWidgets.Add(id, widget);
+                    //MLayoutWidget.add(widget);//@zhouyang Add 2022/3/29:Android like if not use ConstraintSet to set, widget not add to Container, i need a default for other layout just as child, ConstraintHelper we don't set,because use they need use CosntraintSet
+                    //widget.CompanionWidget = FindViewById(id);//@zhouyang Add 2022/3/29
                     return widget;
                 }
             }
@@ -287,12 +289,11 @@ namespace SharpConstraintLayout.Maui.Widget
         protected Size MeasureOverride(Size availableSize)
 #endif
         {
+            if (DEBUG) Debug.WriteLine($"{nameof(MeasureOverride)} {this} {availableSize}");
             if (MEASURE)
             {
                 measureTime = DateTimeHelperClass.CurrentUnixTimeMillis();
             }
-
-            if (DEBUG) Debug.WriteLine($"{nameof(MeasureOverride)} {this} {availableSize}");
 
             /*
                 * Update Constraints to  wigets

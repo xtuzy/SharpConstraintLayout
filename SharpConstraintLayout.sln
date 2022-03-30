@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpConstraintLayout.Maui.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpConstraintLayout.Maui.Native.Example", "SharpConstraintLayout.Maui.Native.Example\SharpConstraintLayout.Maui.Native.Example.csproj", "{4FA26200-D3B3-4E8C-8832-54D50CEBAEEA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpConstraintLayout.Core.Benchmark", "SharpConstraintLayout.Core.Benchmark\SharpConstraintLayout.Core.Benchmark.csproj", "{C3B8ED1C-2CD7-49BB-B2D1-EE0978F54243}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpConstraintLayout.Core.Benchmark", "SharpConstraintLayout.Core.Benchmark\SharpConstraintLayout.Core.Benchmark.csproj", "{C3B8ED1C-2CD7-49BB-B2D1-EE0978F54243}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpConstraintLayout.Core.Console", "SharpConstraintLayout.Core.Console\SharpConstraintLayout.Core.Console.csproj", "{D3ADEB5B-971E-4283-BD84-B7B799D9B5B1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,6 +45,10 @@ Global
 		{C3B8ED1C-2CD7-49BB-B2D1-EE0978F54243}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C3B8ED1C-2CD7-49BB-B2D1-EE0978F54243}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C3B8ED1C-2CD7-49BB-B2D1-EE0978F54243}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{D3ADEB5B-971E-4283-BD84-B7B799D9B5B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3ADEB5B-971E-4283-BD84-B7B799D9B5B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D3ADEB5B-971E-4283-BD84-B7B799D9B5B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D3ADEB5B-971E-4283-BD84-B7B799D9B5B1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
