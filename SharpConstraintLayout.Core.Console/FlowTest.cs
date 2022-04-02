@@ -237,7 +237,7 @@ namespace SharpConstraintLayout.Core.Benchmark
             }
         }
 
-        public virtual void measureFlowWrapChainMemoryAnalysis100x10Widget()
+        public virtual void measureFlowWrapChainMemoryAnalysis(int flowCount,int buttonCountInOneFlow)
         {
             int w = 0;
             int h = 0;
@@ -253,7 +253,8 @@ namespace SharpConstraintLayout.Core.Benchmark
                 Orientation = Flow.HORIZONTAL,
                 WrapMode = Flow.WRAP_CHAIN,
                 HorizontalStyle = Flow.CHAIN_SPREAD,
-                VerticalDimensionBehaviour = ConstraintWidget.DimensionBehaviour.WRAP_CONTENT,
+                VerticalDimensionBehaviour = ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT,
+                HorizontalDimensionBehaviour = ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT,
             };
             containerFlow.connect(ConstraintAnchor.Type.TOP, Container, ConstraintAnchor.Type.TOP);
             containerFlow.connect(ConstraintAnchor.Type.BOTTOM, Container, ConstraintAnchor.Type.BOTTOM);
@@ -262,34 +263,37 @@ namespace SharpConstraintLayout.Core.Benchmark
             Container.add(containerFlow);
             
             List<ConstraintWidgetContainer> constraintWidgetContainerList = new List<ConstraintWidgetContainer>();
-            for (var index = 0; index<10;index++)
+            List<Flow> flowList = new List<Flow>();
+            for (var index = 0; index<flowCount;index++)
             {
                 ConstraintWidgetContainer root;
                 List<ConstraintWidget> buttonList;
                 
-                root = new ConstraintWidgetContainer(0, 0, 100, 150)
+                root = new ConstraintWidgetContainer()
                 {
                     DebugName = "root"+index,
                     Measurer = sMeasurer
                 };
                 constraintWidgetContainerList.Add(root);
-                
+                root.HorizontalDimensionBehaviour = ConstraintWidget.DimensionBehaviour.WRAP_CONTENT;
+                root.VerticalDimensionBehaviour = ConstraintWidget.DimensionBehaviour.WRAP_CONTENT;
+
                 Flow flow = new Flow()
                 {
-                    DebugName = "Flow",
+                    DebugName = "flow" + index,
                     Orientation = Flow.HORIZONTAL,
                     WrapMode = Flow.WRAP_CHAIN,
                     HorizontalStyle = Flow.CHAIN_SPREAD,
+                    HorizontalDimensionBehaviour = ConstraintWidget.DimensionBehaviour.WRAP_CONTENT,
                     VerticalDimensionBehaviour = ConstraintWidget.DimensionBehaviour.WRAP_CONTENT
                 };
                 flow.connect(ConstraintAnchor.Type.TOP, root, ConstraintAnchor.Type.TOP);
                 flow.connect(ConstraintAnchor.Type.BOTTOM, root, ConstraintAnchor.Type.BOTTOM);
                 flow.connect(ConstraintAnchor.Type.LEFT, root, ConstraintAnchor.Type.LEFT);
                 root.add(flow);
-
-                var buttonCount = 100;
+                flowList.Add(flow);
                 buttonList = new List<ConstraintWidget>();
-                for (int i = 0; i < buttonCount; i++)
+                for (int i = 0; i < buttonCountInOneFlow; i++)
                 {
                     var button = new ConstraintWidget() { Width = 20, Height = 20 };
                     //button.DebugName = "Button" + i;
@@ -298,20 +302,26 @@ namespace SharpConstraintLayout.Core.Benchmark
                     flow.add(button);
                 }
                 
-                root.measure(Optimizer.OPTIMIZATION_NONE, 0, 0, 0, 0, 0, 0, 0, 0);
-                root.layout();
+                //root.measure(Optimizer.OPTIMIZATION_NONE, 0, 0, 0, 0, 0, 0, 0, 0);
+                //root.layout();
             }
             foreach (var item in constraintWidgetContainerList)
             {
                 Container.add(item);
                 containerFlow.add(item);
             }
+            Console.WriteLine("Flow Add Time: " + (DateTimeHelperClass.CurrentUnixTimeMillis() - measureTime));
+            measureTime = DateTimeHelperClass.CurrentUnixTimeMillis();
             Container.measure(Optimizer.OPTIMIZATION_NONE, 0, 0, 0, 0, 0, 0, 0, 0);
-            Container.layout();
-            Console.WriteLine("Flow Add And Measure Time: " + (DateTimeHelperClass.CurrentUnixTimeMillis() - measureTime));
+            //Container.layout();
+            Console.WriteLine("Flow First Measure Time: " + (DateTimeHelperClass.CurrentUnixTimeMillis() - measureTime));
             Console.WriteLine($"{Container.DebugName}: {Container}");
             Console.WriteLine($"{containerFlow.DebugName}: {containerFlow}");
             foreach (var item in constraintWidgetContainerList)
+            {
+                Console.WriteLine($"{item.DebugName}: {item}");
+            }
+            foreach (var item in flowList)
             {
                 Console.WriteLine($"{item.DebugName}: {item}");
             }
@@ -319,8 +329,9 @@ namespace SharpConstraintLayout.Core.Benchmark
             Container.Width = 2000;
             Container.Height = 2000;
             Container.measure(Optimizer.OPTIMIZATION_NONE, 0, 0, 0, 0, 0, 0, 0, 0);
-            Container.layout();
+            //Container.layout();
             Console.WriteLine("Flow Re Measure Time: " + (DateTimeHelperClass.CurrentUnixTimeMillis() - measureTime));
+            
         }
 
         public void Measure_Views_Benchmark()

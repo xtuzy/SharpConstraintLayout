@@ -14,8 +14,8 @@ for (int i = 0; i < 100; i++)
 //var summary = BenchmarkRunner.Run<FlowTest>();
 Console.ReadLine();
 //new FlowTest().measureFlowWrapNoneMemoryAnalysis1000Widget(1000, 1000);
-//new FlowTest().measureFlowWrapChainMemoryAnalysis100x10Widget();
-new FlowTest().Measure_Views_Benchmark();
+new FlowTest().measureFlowWrapChainMemoryAnalysis(1,100);
+//new FlowTest().Measure_Views_Benchmark();
 Console.ReadLine();
 GC.Collect();
 Console.ReadLine();

@@ -27,7 +27,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
 
         public MainPage()
         {
-            ConstraintLayout.DEBUG = true;
+            //ConstraintLayout.DEBUG = true;
             ConstraintLayout.MEASURE = true;
 
             createControls();
