@@ -36,15 +36,11 @@ namespace SharpConstraintLayout.Maui.Widget
     using Microsoft.UI.Xaml.Controls;
     using Windows.Foundation;
 #elif __IOS__
-
     using Panel = UIKit.UIView;
-
     using UIElement = UIKit.UIView;
-
     using CoreGraphics;
     using Size = CoreGraphics.CGSize;
     using Microsoft.Maui.Graphics;
-
 #elif __ANDROID__
 #endif
 
@@ -63,7 +59,7 @@ namespace SharpConstraintLayout.Maui.Widget
     /// such as StackPanel can have infinity height at WinUI, if you set ConstraintLayout is <see
     /// cref="ConstraintSet.MatchParent"/>, it will throw exception or get false size.
     /// </summary>
-    public class ConstraintLayout : Panel, IConstraintLayout
+    public partial class ConstraintLayout : Panel, IConstraintLayout
     {
         public const string VERSION = "ConstraintLayout-2.1.1";
         public const bool ISSUPPORTRTLPLATFORM = false;//现在完全不支持,需要对照原来的代码看删除了那些关于Rtl的
@@ -76,6 +72,8 @@ namespace SharpConstraintLayout.Maui.Widget
         /// if is true,will print time of measure+layout spend.
         /// </summary>
         public static bool MEASURE = false;
+
+        public static bool LOG = true;
 
         private readonly ConstraintWidgetContainer mLayout = new ConstraintWidgetContainer();//default widget
         private readonly Dictionary<int, UIElement> idToViews = new Dictionary<int, UIElement>();
@@ -112,64 +110,6 @@ namespace SharpConstraintLayout.Maui.Widget
         }
 
         #region Add And Remove
-
-#if WINDOWS
-        public void AddView(UIElement element)
-        {
-            Children?.Add(element);
-            OnAddedView(element);
-        }
-
-        public void RemoveView(UIElement element)
-        {
-            Children?.Remove(element);
-            OnRemovedView(element);
-        }
-
-        public void RemoveAllViews()
-        {
-            foreach (var element in this.Children)
-            {
-                Children?.Remove(element);
-                OnRemovedView(element);
-            }
-        }
-
-        public int ChildCount { get { return Children != null ? Children.Count : 0; } }
-#elif __IOS__
-
-        internal UIElement[] Children => Subviews;
-
-        public override void AddSubview(UIElement view)
-        {
-            base.AddSubview(view);
-            OnAddedView(view);
-        }
-
-        public void AddView(UIElement element)
-        {
-            base.AddSubview(element);
-            OnAddedView(element);
-        }
-
-        public void RemoveView(UIElement element)
-        {
-            element.RemoveFromSuperview();
-            OnRemovedView(element);
-        }
-
-        public void RemoveAllViews()
-        {
-            foreach (var element in this.Subviews)
-            {
-                element.RemoveFromSuperview();
-                OnRemovedView(element);
-            }
-        }
-
-        public int ChildCount => Subviews.Length;
-
-#endif
 
         protected void OnAddedView(UIElement element)
         {
@@ -280,24 +220,18 @@ namespace SharpConstraintLayout.Maui.Widget
         #endregion Get
 
         #region Measure
-
+        bool isInfinityAvailabelSize = false;
         long measureTime = 0;
-#if WINDOWS
-        protected override Size MeasureOverride(Size availableSize)
-#elif __IOS__
 
-        protected Size MeasureOverride(Size availableSize)
-#endif
+        protected Size Measure(Size availableSize)
         {
-            if (DEBUG) Debug.WriteLine($"{nameof(MeasureOverride)} {this} {availableSize}");
+            if (DEBUG) Debug.WriteLine($"{nameof(Measure)} {this} {availableSize}");
             if (MEASURE)
             {
                 measureTime = DateTimeHelperClass.CurrentUnixTimeMillis();
             }
 
-            /*
-                * Update Constraints to  wigets
-                */
+            //Update Constraints to wigets
             if (mConstraintSet.IsChanged)
             {
                 //update widget of child
@@ -312,42 +246,17 @@ namespace SharpConstraintLayout.Maui.Widget
 
                 mConstraintSet.IsChanged = false;
             }
-#if WINDOWS
-            /*
-             * Analysis available size
-             */
-            int availableWidth = 0;
-            int availableHeight = 0;
-            bool isInfinityAvailabelSize = false;
-            //sometimes no fixsize
-            if (double.IsPositiveInfinity(availableSize.Width))
-            {
-                availableWidth = int.MaxValue; isInfinityAvailabelSize = true;
-            }
-            else
-                availableWidth = (int)availableSize.Width;
-
-            if (double.IsPositiveInfinity(availableSize.Height))
-            {
-                availableHeight = int.MaxValue;
-                isInfinityAvailabelSize = true;
-            }
-            else
-            {
-                availableHeight = (int)availableSize.Height;
-            }
 
             //If a direction available value and we need MATCH_PARENT, that always generate mistake result, so we not accept it. please modify constraint.
             if (isInfinityAvailabelSize && (MLayoutWidget.HorizontalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.MATCH_PARENT || MLayoutWidget.VerticalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.MATCH_PARENT))
             {
-                var errorStr = $"ConstraintLayout's parent {this.Parent} gived ConstraintLayout a infinity size, you set ConstraintLayout have MATCH_PARENT size, ConstraintLayout can't generate correct result.";
+                var errorStr = $"ConstraintLayout's parent {this.GetParent()} gived ConstraintLayout a infinity size, you set ConstraintLayout have MATCH_PARENT size, ConstraintLayout can't generate correct result.";
                 throw new InvalidOperationException(errorStr);
             }
-#elif __IOS__
-            //iOS中,如果指定了Frame,那么能获得自身的值,如果没有,那么可以取Superview的Frame,因为布局child必须要layout的大小去参照,iOS开始会Measure两次,能拿到Superview的大小
+
             int availableWidth = (int)availableSize.Width;
             int availableHeight = (int)availableSize.Height;
-#endif
+
             int horizontalDimension = availableWidth;
             int verticalDimension = availableHeight;
 
@@ -412,25 +321,6 @@ namespace SharpConstraintLayout.Maui.Widget
 
             OnMeasure(horizontalSpec, verticalSpec);
 
-            /*#if WINDOWS
-                        *//*
-                         * First measure all WRAP_CONTENT child size,we need know some default size.
-                         *//*
-                        var layoutAvailableSize = new Size(MLayoutWidget.Width, MLayoutWidget.Height);
-                        foreach (UIElement child in Children)
-                        {
-                            var widget = GetViewWidget(child);
-                            //依赖自己大小的先测量
-                            if (widget.HorizontalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.WRAP_CONTENT
-                                && widget.VerticalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.WRAP_CONTENT)
-                                child.Measure(availableSize);
-                        }
-            #endif*/
-
-            /*
-             * Other MATCH_PARENT and MATCH_CONSTRAINT we let ConstraintLayout.Core analysis.
-             */
-
             //windows需要返回值
             return new Size(MLayoutWidget.Width, MLayoutWidget.Height);
         }
@@ -477,7 +367,6 @@ namespace SharpConstraintLayout.Maui.Widget
 
         private void OnMeasure(int widthMeasureSpec, int heightMeasureSpec)
         {
-            var temp = this;
             MLayoutWidget.Rtl = isRtl();
 
             resolveSystem(MLayoutWidget, mOptimizationLevel, widthMeasureSpec, heightMeasureSpec);
@@ -487,9 +376,9 @@ namespace SharpConstraintLayout.Maui.Widget
             if (MEASURE)
             {
                 measureTime = DateTimeHelperClass.CurrentUnixTimeMillis() - measureTime;
-                Debug.WriteLine(MLayoutWidget.DebugName + " (" + ChildCount + ") DONE onMeasure width: " + MeasureSpec.ToString(widthMeasureSpec)
+                Debug.WriteLine(MLayoutWidget.DebugName + " child (" + ChildCount + ") DONE onMeasure width: " + MeasureSpec.ToString(widthMeasureSpec)
                         + " height: " + MeasureSpec.ToString(heightMeasureSpec) + " => " + mLastMeasureWidth + " x " + mLastMeasureHeight
-                        + " lasted " + measureTime
+                        + " spend " + measureTime + "ms"
                 );
             }
         }
@@ -653,69 +542,6 @@ namespace SharpConstraintLayout.Maui.Widget
 
         #region Layout
 
-#if WINDOWS
-        protected override Size ArrangeOverride(Size finalSize)
-        {
-            if (DEBUG) Debug.WriteLine($"{nameof(ArrangeOverride)} {this} {finalSize}");
-
-            OnLayout();
-
-            return new Size(MLayoutWidget.Width, MLayoutWidget.Height);//这里必须返回Widget的大小,因为返回值决定了layout的绘制范围?
-        }
-
-        void LayoutChild(UIElement element, int x, int y, int w, int h)
-        {
-            element.Arrange(new Rect(x, y, w, h));
-        }
-#endif
-
-#if __IOS__
-        public override Size IntrinsicContentSize => this.Frame.Size;
-
-        /// <summary>
-        /// iOS don't have measure method, but at first show, it will load LayoutSubviews twice,
-        /// that means we can get child size at second time layout.
-        /// </summary>
-        public override void LayoutSubviews()
-        {
-            //base.LayoutSubviews();
-            if (DEBUG) Debug.WriteLine($"{nameof(LayoutSubviews)} {this} {this.Frame}");
-            if (DEBUG) Debug.WriteLine($"{nameof(LayoutSubviews)} {Superview} {this.Superview?.Frame}");
-
-            //得到自身或Superview的大小作为availableSize
-            //if (this.Frame.Size.Width > 0)
-            //{
-            //    MeasureOverride(this.Frame.Size);
-            //}
-            //else
-            {
-                if (Superview != null)
-                    MeasureOverride(this.Superview.Frame.Size);
-            }
-
-            if (DEBUG) Debug.WriteLine($"{nameof(LayoutSubviews)} RootWidget {this.MLayoutWidget.ToString()}");
-
-            //更新layout的大小
-            if (this.Frame.Size.Width > 0)
-            {
-                Frame = new CGRect(Frame.X, Frame.Y, MLayoutWidget.Width, MLayoutWidget.Height);
-            }
-            else
-            {
-                if (Superview != null)
-                    Frame = new CGRect(this.Superview.Frame.X, this.Superview.Frame.Y, MLayoutWidget.Width, MLayoutWidget.Height);
-            }
-
-            OnLayout();
-        }
-
-        private void LayoutChild(UIElement element, int x, int y, int w, int h)
-        {
-            element.Frame = new CoreGraphics.CGRect(x, y, w, h);
-        }
-
-#endif
-
         private void OnLayout()
         {
             //layout child
@@ -737,12 +563,6 @@ namespace SharpConstraintLayout.Maui.Widget
 
                 if (component != null)
                 {
-#if WINDOWS
-                    if (component is TextBox)
-                    {
-                        var temp = child.Width;
-                    }
-#endif
                     if (DEBUG) Debug.WriteLine($"{nameof(OnLayout)} {component} {new Rect(child.X, child.Y, child.Width, child.Height)}");
                     LayoutChild(component, child.X, child.Y, child.Width, child.Height);
                 }
@@ -981,7 +801,7 @@ namespace SharpConstraintLayout.Maui.Widget
                     return;
                 }
                 //LayoutParams @params = (LayoutParams)child.LayoutParams;//Windows中没有LayoutParams,大多数布局数据使用Constraint.Layout存储
-                var @params = outerInstance.mConstraintSet.Constraints[child.GetId()].layout;
+                var @params = outerInstance.mConstraintSet.GetConstraint(child.GetId()).layout;
 
                 int width = 0;
                 int height = 0;
@@ -997,14 +817,16 @@ namespace SharpConstraintLayout.Maui.Widget
                     if (child is VirtualLayout && widget is androidx.constraintlayout.core.widgets.VirtualLayout)
                     {
                         androidx.constraintlayout.core.widgets.VirtualLayout layout = (androidx.constraintlayout.core.widgets.VirtualLayout)widget;
-                        if (DEBUG) Debug.WriteLine(child + "before OnMeasure " + widget);
+                        if (DEBUG) Debug.WriteLine(child + " before OnMeasure ({MeasureSpec.GetSize(horizontalSpec)} {MeasureSpec.GetSize(verticalSpec)}) widget" + widget);
                         ((VirtualLayout)child).OnMeasure(layout, horizontalSpec, verticalSpec);
-                        if (DEBUG) Debug.WriteLine(child + "after OnMeasure " + widget);
+                        if (DEBUG) Debug.WriteLine(child + " after OnMeasure widget" + widget);
                     }
                     else
                     {
+                        if (DEBUG) Debug.WriteLine(child + $" before Measure ({MeasureSpec.GetSize(horizontalSpec)} {MeasureSpec.GetSize(verticalSpec)}) widget" + widget + $" control size {child.GetDefaultSize()}");
                         //child.measure(horizontalSpec, verticalSpec);//Android中传入Spec给child去测量,windows中直接传大小即可
                         child.MeasureSelf(MeasureSpec.GetSize(horizontalSpec), MeasureSpec.GetSize(verticalSpec));
+                        if (DEBUG) Debug.WriteLine(child + " after Measure widget" + widget + $" control size {child.GetDefaultSize()}");
                     }
                     widget.setLastMeasureSpec(horizontalSpec, verticalSpec);
 
@@ -1548,7 +1370,6 @@ namespace SharpConstraintLayout.Maui.Widget
                 widget.getAnchor(ConstraintAnchor.Type.BOTTOM).reset();
             }
         }
-
         #endregion Apply Contrants to Widget
     }
 }

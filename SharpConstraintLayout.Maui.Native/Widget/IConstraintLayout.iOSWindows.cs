@@ -6,6 +6,7 @@ using androidx.constraintlayout.core.widgets;
     using Microsoft.UI.Xaml.Controls;
     using Windows.Foundation;
 #elif __IOS__
+using CoreGraphics;
 using View = UIKit.UIView;
 #endif
 namespace SharpConstraintLayout.Maui.Widget

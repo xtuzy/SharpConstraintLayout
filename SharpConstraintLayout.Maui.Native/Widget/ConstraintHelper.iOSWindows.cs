@@ -142,7 +142,8 @@ namespace SharpConstraintLayout.Maui.Widget
 
             if (view.GetParent() == null)
             {
-                Debug.WriteLine("Views added to a ConstraintHelper need to have a parent.", TAG);
+                //@zhouyang 2022/4/2 Add:WinUI get Parent is null before show.
+                //Debug.WriteLine("Views added to a ConstraintHelper need to have a parent.", TAG);
                 //return;
             }
             mReferenceIds = null;

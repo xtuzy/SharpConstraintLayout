@@ -35,7 +35,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
         void performanceTest(ConstraintLayout page)
         {
             bool TestNative = false;
-            int buttonCount = 100;
+            int buttonCount = 10;
 #if WINDOWS
             if (!TestNative)
             {
