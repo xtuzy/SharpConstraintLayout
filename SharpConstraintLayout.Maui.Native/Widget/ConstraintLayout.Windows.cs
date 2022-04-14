@@ -20,7 +20,7 @@ namespace SharpConstraintLayout.Maui.Widget
     public partial class ConstraintLayout
     {
         #region Add And Remove
-        
+
         public void AddView(UIElement element)
         {
             Children?.Add(element);
@@ -53,7 +53,7 @@ namespace SharpConstraintLayout.Maui.Widget
              */
             int availableWidth = 0;
             int availableHeight = 0;
-            
+
             //sometimes no fixsize
             if (double.IsPositiveInfinity(availableSize.Width))
             {
@@ -71,25 +71,33 @@ namespace SharpConstraintLayout.Maui.Widget
             {
                 availableHeight = (int)availableSize.Height;
             }
+
             return Measure(new Size(availableWidth, availableHeight));
         }
 
         #region Layout
-        
+
         protected override Size ArrangeOverride(Size finalSize)
         {
             if (DEBUG) Debug.WriteLine($"{nameof(ArrangeOverride)} {this} {finalSize}");
 
+            if (finalSize.Width != MLayoutWidget.Width || finalSize.Height != MLayoutWidget.Height)
+            {
+                // We haven't received our desired size. We need to refresh the rows.
+                Measure(finalSize);
+            }
+
             OnLayout();
 
-            return new Size(MLayoutWidget.Width, MLayoutWidget.Height);//这里必须返回Widget的大小,因为返回值决定了layout的绘制范围?
+            //return new Size(MLayoutWidget.Width, MLayoutWidget.Height);//这里必须返回Widget的大小,因为返回值决定了layout的绘制范围?
+            return finalSize;
         }
 
         void LayoutChild(UIElement element, int x, int y, int w, int h)
         {
             element.Arrange(new Rect(x, y, w, h));
         }
-        
+
         #endregion
     }
 }

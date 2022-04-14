@@ -142,7 +142,6 @@ namespace SharpConstraintLayout.Maui.Widget
             }
         }
 
-
         private void updateType(ConstraintWidget widget, int type, bool isRtl)
         {
             mResolvedType = type;
@@ -225,7 +224,7 @@ namespace SharpConstraintLayout.Maui.Widget
         public virtual void SetDpMargin(int margin)
         {
             //float density = Resources.DisplayMetrics.density;
-            float density = (float)Microsoft.Maui.Essentials.DeviceDisplay.MainDisplayInfo.Density;
+            float density = (float)Microsoft.Maui.Devices.DeviceDisplay.MainDisplayInfo.Density;
             int px = (int)(0.5f + margin * density);
             mBarrier.Margin = px;
         }

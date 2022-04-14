@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpConstraintLayout.Maui.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpConstraintLayout.Core.Benchmark", "SharpConstraintLayout.Core.Benchmark\SharpConstraintLayout.Core.Benchmark.csproj", "{C3B8ED1C-2CD7-49BB-B2D1-EE0978F54243}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpConstraintLayout.Core.Console", "SharpConstraintLayout.Core.Console\SharpConstraintLayout.Core.Console.csproj", "{D3ADEB5B-971E-4283-BD84-B7B799D9B5B1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpConstraintLayout.Core.Console", "SharpConstraintLayout.Core.Console\SharpConstraintLayout.Core.Console.csproj", "{D3ADEB5B-971E-4283-BD84-B7B799D9B5B1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

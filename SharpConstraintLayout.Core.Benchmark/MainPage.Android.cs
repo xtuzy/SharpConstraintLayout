@@ -7,7 +7,6 @@ using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Exporters;
 using BenchmarkDotNet.Loggers;
 using BenchmarkDotNet.Running;
-using Microsoft.Maui.Essentials;
 using System;
 using System.Collections.Generic;
 using System.Linq;
