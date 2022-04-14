@@ -14,8 +14,8 @@ using UIElement = UIKit.UIView;
 using UIElement = Android.Views.View;
 using Android.Content;
 using View = Android.Views.View;
-using AndroidX.ConstraintLayout.Widget;
-using static Android.Views.ViewGroup;
+//using AndroidX.ConstraintLayout.Widget;
+//using static Android.Views.ViewGroup;
 #endif
 
 namespace SharpConstraintLayout.Maui.Widget
@@ -44,11 +44,7 @@ namespace SharpConstraintLayout.Maui.Widget
         public enum SizeBehavier
         {
             WrapContent = ConstraintSet.WrapContent,
-#if ANDROID
-            MatchParent = LayoutParams.MatchParent,
-#else
             MatchParent = ConstraintSet.MatchParent,
-#endif
             MatchConstraint = ConstraintSet.MatchConstraint,
         }
 

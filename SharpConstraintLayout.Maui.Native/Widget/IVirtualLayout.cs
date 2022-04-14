@@ -3,6 +3,6 @@
     public interface IVirtualLayout
     {
         //JniPeerMembers JniPeerMembers { get; }
-        void OnMeasure(androidx.constraintlayout.core.widgets.VirtualLayout layout, int widthMeasureSpec, int heightMeasureSpec);
+        void onMeasure(androidx.constraintlayout.core.widgets.VirtualLayout layout, int widthMeasureSpec, int heightMeasureSpec);
     }
 }

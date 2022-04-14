@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+#if __ANDROID__
+using Android.Content;
+#endif
 using androidx.constraintlayout.core.widgets;
 
 namespace SharpConstraintLayout.Maui.Widget
@@ -52,7 +54,11 @@ namespace SharpConstraintLayout.Maui.Widget
     /// </summary>
     public class Group : ConstraintHelper, IGroup
     {
+#if __ANDROID__
+        public Group(Context context) : base(context)
+#else
         public Group() : base()
+#endif
         {
         }
 
@@ -62,9 +68,9 @@ namespace SharpConstraintLayout.Maui.Widget
             mUseViewMeasure = false;
         }
 
-        protected override void OnAttachedToWindow()
+        protected override void WhenAttachedToWindow()
         {
-            base.OnAttachedToWindow();
+            base.WhenAttachedToWindow();
             applyLayoutFeatures();
         }
 
@@ -93,7 +99,7 @@ namespace SharpConstraintLayout.Maui.Widget
 
         public override void UpdatePostLayout(ConstraintLayout container)
         {
-            ConstraintWidget widget = container.GetViewWidget(this);
+            ConstraintWidget widget = container.GetWidgetByElement(this);
             widget.Width = 0;
             widget.Height = 0;
         }

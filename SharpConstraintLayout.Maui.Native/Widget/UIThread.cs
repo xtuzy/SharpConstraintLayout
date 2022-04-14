@@ -23,11 +23,16 @@ namespace SharpConstraintLayout.Maui.Widget
                     action.Invoke();
                 });
             }
-#else
+#elif __IOS__
             CoreFoundation.DispatchQueue.MainQueue.DispatchAsync(() =>
                      {
                          action.Invoke();
                      });
+#elif __ANDROID__
+            constraintLayout.Post(() =>
+            {
+                action.Invoke();
+            });
 #endif
         }
     }

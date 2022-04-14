@@ -79,13 +79,15 @@ namespace SharpConstraintLayout.Maui.Widget
 
         internal androidx.constraintlayout.core.widgets.Guideline mGuideline = new androidx.constraintlayout.core.widgets.Guideline();
 
-        /*/// <summary>
+#if __ANDROID__
+        /// <summary>
         /// @suppress
         /// </summary>
-        protected internal override void onMeasure(int widthMeasureSpec, int heightMeasureSpec)
+        protected override void OnMeasure(int widthMeasureSpec, int heightMeasureSpec)
         {
-            setMeasuredDimension(0, 0);
-        }*/
+            SetMeasuredDimension(0, 0);
+        }
+#endif
 
         /// <summary>
         /// Set the guideline's distance from the top or left edge.

@@ -86,46 +86,11 @@ namespace SharpConstraintLayout.Maui.Widget
 
         protected internal Dictionary<int?, string> mMap = new Dictionary<int?, string>();
 
-#if __ANDROID__
-        public ConstraintHelper(Context context) : base(context)
-#else
-        public ConstraintHelper() : base()
-#endif
-
-        {
-            init();
-        }
-
         protected internal virtual void init()
         {
-#if WINDOWS
-            this.Loaded += MovedToWindow;
-#elif __IOS__
-#endif
         }
-#if WINDOWS
-        public virtual void MovedToWindow(object sender, RoutedEventArgs e)
-        {
-            OnAttachedToWindow();
-        }
-#elif __IOS__
-        bool isOnAttachedToWindow = true;
-        public override void MovedToWindow()
-        {
-            base.MovedToWindow();
-            if (isOnAttachedToWindow)
-            {
-                OnAttachedToWindow();
-                isOnAttachedToWindow = false;
-            }
-        }
-#elif __ANDROID__
-        protected override void OnAttachedToWindow()
-        {
-            base.OnAttachedToWindow();
-        }
-#endif
-        protected virtual void OnAttachedToWindow() { }
+
+        protected virtual void WhenAttachedToWindow() { }
 
         /// <summary>
         /// Add a view to the helper. The referenced view need to be a child of the helper's parent.
@@ -227,21 +192,22 @@ namespace SharpConstraintLayout.Maui.Widget
         {
             // Nothing
         }*/
-
-        /*/// <summary>
+#if __ANDROID__
+        /// <summary>
         /// @suppress
         /// </summary>
-        protected internal override void onMeasure(int widthMeasureSpec, int heightMeasureSpec)
+        protected override void OnMeasure(int widthMeasureSpec, int heightMeasureSpec)
         {
             if (mUseViewMeasure)
             {
-                base.onMeasure(widthMeasureSpec, heightMeasureSpec);
+                base.OnMeasure(widthMeasureSpec, heightMeasureSpec);
             }
             else
             {
-                setMeasuredDimension(0, 0);
+                SetMeasuredDimension(0, 0);
             }
-        }*/
+        }
+#endif
 
         /// <summary>
         /// @suppress
@@ -336,26 +302,14 @@ namespace SharpConstraintLayout.Maui.Widget
             //var visibility = this.Visibility;//平台有差异,以Widget为准
             var visibility = (this.mHelperWidget as ConstraintWidget).Visibility;
 
-            float elevation = 0;
-#if __ANDROID__
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP)
-            {
-                elevation = Elevation;
-            }
-#endif
             for (int i = 0; i < mCount; i++)
             {
                 int id = mIds[i];
-                View view = (View)container.FindViewById(id);
+                View view = (View)container.FindElementById(id);
                 if (view != null)
                 {
                     ViewExtension.SetViewVisibility(view, visibility);
-#if __ANDROID__
-                    if (elevation > 0 && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP)
-                    {
-                        view.TranslationZ = view.TranslationZ + elevation;
-                    }
-#endif
+
                 }
             }
         }
@@ -392,7 +346,7 @@ namespace SharpConstraintLayout.Maui.Widget
             for (int i = 0; i < mCount; i++)
             {
                 int id = mIds[i];
-                View view = (View)container.FindViewById(id);
+                View view = (View)container.FindElementById(id);
                 /*if (view == null)
                 {
                     // hm -- we couldn't find the view.
@@ -408,7 +362,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 }*/
                 if (view != null)
                 {
-                    mHelperWidget.add(container.GetViewWidget(view));
+                    mHelperWidget.add(container.GetWidgetByElement(view));
                 }
             }
             mHelperWidget.updateConstraints(container.MLayoutWidget);
@@ -436,7 +390,7 @@ namespace SharpConstraintLayout.Maui.Widget
             for (int i = 0; i < mCount; i++)
             {
                 int id = mIds[i];
-                mViews[i] = (View)layout.FindViewById(id);
+                mViews[i] = (View)layout.FindElementById(id);
             }
             return mViews;
         }
@@ -585,6 +539,8 @@ namespace SharpConstraintLayout.Maui.Widget
             InvalidateMeasure();
 #elif __IOS__
             SetNeedsLayout();
+#elif __ANDROID__
+            RequestLayout();
 #endif
         }
     }

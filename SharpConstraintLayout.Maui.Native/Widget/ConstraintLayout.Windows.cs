@@ -19,7 +19,17 @@ namespace SharpConstraintLayout.Maui.Widget
 {
     public partial class ConstraintLayout
     {
+        public ConstraintLayout()
+        {
+            init();
+        }
+
         #region Add And Remove
+
+        public UIElement GetChildAt(int index)
+        {
+            return Children[index];
+        }
 
         public void AddView(UIElement element)
         {

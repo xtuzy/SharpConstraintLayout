@@ -24,6 +24,9 @@ namespace SharpConstraintLayout.Maui.Widget
 #elif __IOS__
     using FrameworkElement = UIKit.UIView;
     using UIElement = UIKit.UIView;
+#elif __ANDROID__
+    using FrameworkElement = Android.Views.View;
+    using UIElement = Android.Views.View;
 #endif
     using ConstraintWidget = androidx.constraintlayout.core.widgets.ConstraintWidget;
 
@@ -43,18 +46,13 @@ namespace SharpConstraintLayout.Maui.Widget
     /// </para>
     /// 
     /// </summary>
-    public class Placeholder : FrameworkElement, IPlaceholder
+    public partial class Placeholder : FrameworkElement, IPlaceholder
     {
         bool InEditMode = false;
 
         private int mContentId = -1;
         private FrameworkElement mContent = null;
         private int mEmptyVisibility = ConstraintSet.Invisible;
-
-        public Placeholder() : base()
-        {
-            init();
-        }
 
         private void init()
         {
@@ -64,7 +62,7 @@ namespace SharpConstraintLayout.Maui.Widget
 
         /// <summary>
         /// Sets the visibility of placeholder when not containing objects typically gone or invisible.
-        /// This can be important as it affects behaviour of surrounding components.
+        /// This can be important as it affects behavior of surrounding components.
         /// </summary>
         /// <param name="visibility"> Either View.VISIBLE, View.INVISIBLE, View.GONE </param>
         public virtual int EmptyVisibility
@@ -134,7 +132,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 }
             }
 
-            mContent = (FrameworkElement)container.FindViewById(mContentId);
+            mContent = (FrameworkElement)container.FindElementById(mContentId);
             if (mContent != null)
             {
                 //ConstraintLayout.LayoutParams layoutParamsContent = (ConstraintLayout.LayoutParams)mContent.LayoutParams;
@@ -170,7 +168,7 @@ namespace SharpConstraintLayout.Maui.Widget
             mContentId = value;
             if (value != ConstraintSet.Unset)
             {
-                UIElement v = ((ConstraintLayout)this.GetParent()).FindViewById(value);
+                UIElement v = ((ConstraintLayout)this.GetParent()).FindElementById(value);
                 if (v != null)
                 {
                     ViewExtension.SetViewVisibility(v, ConstraintSet.Gone);
@@ -185,8 +183,8 @@ namespace SharpConstraintLayout.Maui.Widget
                 return;
             }
 
-            var layoutParams = container.GetViewWidget(this);
-            var layoutParamsContent = container.GetViewWidget(mContent);
+            var layoutParams = container.GetWidgetByElement(this);
+            var layoutParamsContent = container.GetWidgetByElement(mContent);
 
             layoutParamsContent.Visibility = ConstraintSet.Visible;
 

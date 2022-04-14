@@ -21,6 +21,9 @@ using View = Microsoft.UI.Xaml.FrameworkElement;
 using System;
 using System.Diagnostics;
 using View = UIKit.UIView;
+#elif __ANDROID__
+using Android.Content;
+using View = Android.Views.View;
 #endif
 namespace SharpConstraintLayout.Maui.Widget
 {
@@ -36,7 +39,11 @@ namespace SharpConstraintLayout.Maui.Widget
         private bool mApplyVisibilityOnAttach;
         private bool mApplyElevationOnAttach;
 
-        public VirtualLayout() : base()
+#if __ANDROID__
+        protected VirtualLayout(Context context) : base(context)
+#else
+        protected VirtualLayout() : base()
+#endif
         {
         }
 
@@ -45,7 +52,7 @@ namespace SharpConstraintLayout.Maui.Widget
             base.init();
         }
 
-        public virtual void OnMeasure(androidx.constraintlayout.core.widgets.VirtualLayout layout, int widthMeasureSpec, int heightMeasureSpec)
+        public virtual void onMeasure(androidx.constraintlayout.core.widgets.VirtualLayout layout, int widthMeasureSpec, int heightMeasureSpec)
         {
             // nothing
         }
@@ -53,9 +60,9 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <summary>
         /// @suppress
         /// </summary>
-        protected override void OnAttachedToWindow()
+        protected override void WhenAttachedToWindow()
         {
-            base.OnAttachedToWindow();
+            base.WhenAttachedToWindow();
             if (mApplyVisibilityOnAttach || mApplyElevationOnAttach)
             {
                 var parent = this.GetParent();
@@ -66,31 +73,17 @@ namespace SharpConstraintLayout.Maui.Widget
                     ConstraintLayout container = (ConstraintLayout)parent;
                     int visibility = Visible;
                     float elevation = 0;
-#if __ANDROID__
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP)
-                    {
-                        elevation = Elevation;
-                    }
-#endif
+
                     for (int i = 0; i < mCount; i++)
                     {
                         int id = mIds[i];
-                        View view = (View)container.FindViewById(id);
+                        View view = (View)container.FindElementById(id);
                         if (view != null)
                         {
                             if (mApplyVisibilityOnAttach)
                             {
                                 Visible = visibility;
                             }
-#if __ANDROID__
-                            if (mApplyElevationOnAttach)
-                            {
-                                if (elevation > 0 && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP)
-                                {
-                                    view.TranslationZ = view.TranslationZ + elevation;
-                                }
-                            }
-#endif
                         }
                     }
                 }
@@ -117,27 +110,6 @@ namespace SharpConstraintLayout.Maui.Widget
                 return visible;
             }
         }
-
-#if __ANDROID__
-        float elevation;
-        /// <summary>
-        /// @suppress
-        /// </summary>
-        public float Elevation
-        {
-            set
-            {
-                //base.Elevation = value;
-                elevation = value;
-                applyLayoutFeatures();
-            }
-
-            get
-            {
-                return elevation;
-            }
-        }
-#endif
 
         /// <summary>
         /// @suppress </summary>

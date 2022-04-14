@@ -21,7 +21,7 @@
     <Compile Remove="**\*.MaciOS.cs" />
     <None Include="**\*.MaciOS.cs" />
   </ItemGroup>
-  <!--ony ios have these-->
+  <!--only ios have these-->
   <ItemGroup Condition="'$(TargetFramework)'!= 'net6.0-ios'">
     <Compile Remove="**\iOS\*.cs" />
     <None Include="**\iOS\*.cs" />
@@ -70,15 +70,10 @@
     <Folder Include="Platforms\MacCatalyst\" />
     <Folder Include="Platforms\Windows\" />
   </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)'!= 'net6.0-ios' and $(TargetFramework.Contains('-windows')) == false and '$(TargetFramework)' != 'net6.0-maccatalyst'">
-    <Compile Remove="**\*.iOSWindows.cs" />
-    <None Include="**\*.iOSWindows.cs" />
-    <Compile Remove="**\iOSWindows\*.cs" />
-    <None Include="**\iOSWindows\*.cs" />
-    <Compile Remove="**\iOSWindows\**\*.cs" />
-    <None Include="**\iOSWindows\**\*.cs" />
+  <ItemGroup>
+    <PackageReference Include="Walterlv.WeakEvents" Version="7.2.0" />
   </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)'!= 'net6.0-android'">
+  <ItemGroup>
     <ProjectReference Include="..\SharpConstraintLayout.Core\SharpConstraintLayout.Core.csproj" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net6.0-windows10.0.19041'">

@@ -16,12 +16,15 @@
 
 namespace SharpConstraintLayout.Maui.Helper.Widget
 {
+#if __ANDROID__
+    using Android.Content;
+#endif
     using androidx.constraintlayout.core.widgets.analyzer;
     using SharpConstraintLayout.Maui.Widget;
     using System.Collections.Generic;
     using ConstraintWidget = androidx.constraintlayout.core.widgets.ConstraintWidget;
     using HelperWidget = androidx.constraintlayout.core.widgets.HelperWidget;
-
+    using AndroidMeasureSpec = SharpConstraintLayout.Maui.Widget.MeasureSpec;
     /// <summary>
     /// Flow VirtualLayout. <b>Added in 2.0</b>
     /// <br/>
@@ -74,7 +77,7 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
     /// the horizontal or vertical dimension (depending on the orientation picked), they will wrap
     /// around to the next line / column.
     /// <br/>
-    /// XML attributes are the same same as in wrap_none, with the addition of attributes specifying
+    /// XML attributes are the same as in wrap_none, with the addition of attributes specifying
     /// chain style and chain bias applied to the first chain. This way, it is possible to specify
     /// different chain behavior between the first chain and the rest of the chains eventually
     /// created.
@@ -120,8 +123,11 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
         public const int VerticalAlignBottom = androidx.constraintlayout.core.widgets.Flow.VERTICAL_ALIGN_BOTTOM;
         public const int VerticalAlignCenter = androidx.constraintlayout.core.widgets.Flow.VERTICAL_ALIGN_CENTER;
         public const int VerticalAlignBaseline = androidx.constraintlayout.core.widgets.Flow.VERTICAL_ALIGN_BASELINE;
-
+#if __ANDROID__
+        public Flow(Context context) : base(context)
+#else
         public Flow() : base()
+#endif
         {
         }
 
@@ -130,17 +136,19 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
             mFlow.applyRtl(isRtl);
         }
 
-        protected internal void OnMeasure(int widthMeasureSpec, int heightMeasureSpec)
+#if __ANDROID__
+        protected override void OnMeasure(int widthMeasureSpec, int heightMeasureSpec)
         {
-            OnMeasure(mFlow, widthMeasureSpec, heightMeasureSpec);
+            onMeasure(mFlow, widthMeasureSpec, heightMeasureSpec);
         }
+#endif
 
-        public override void OnMeasure(androidx.constraintlayout.core.widgets.VirtualLayout layout, int widthMeasureSpec, int heightMeasureSpec)
+        public override void onMeasure(androidx.constraintlayout.core.widgets.VirtualLayout layout, int widthMeasureSpec, int heightMeasureSpec)
         {
-            int widthMode = MeasureSpec.GetMode(widthMeasureSpec);
-            int widthSize = MeasureSpec.GetSize(widthMeasureSpec);
-            int heightMode = MeasureSpec.GetMode(heightMeasureSpec);
-            int heightSize = MeasureSpec.GetSize(heightMeasureSpec);
+            int widthMode = AndroidMeasureSpec.GetMode(widthMeasureSpec);
+            int widthSize = AndroidMeasureSpec.GetSize(widthMeasureSpec);
+            int heightMode = AndroidMeasureSpec.GetMode(heightMeasureSpec);
+            int heightSize = AndroidMeasureSpec.GetSize(heightMeasureSpec);
 
             #region Copy form FlowTest
             /*
@@ -175,11 +183,15 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
             {
                 if (ConstraintLayout.DEBUG) Debug.WriteLine(TAG, $"widthMode {widthMode}, widthSize {widthSize}, heightMode {heightMode}, heightSize {heightSize}");
                 layout.measure(widthMode, widthSize, heightMode, heightSize);
-                //setMeasuredDimension(layout.MeasuredWidth, layout.MeasuredHeight);//Android中这个的作用应该是设置flow的大小,我注释掉
+#if __ANDROID__
+                SetMeasuredDimension(layout.MeasuredWidth, layout.MeasuredHeight);//Android中这个的作用应该是设置flow的大小
+#endif
             }
             else
             {
-                //setMeasuredDimension(0, 0);
+#if __ANDROID__
+                SetMeasuredDimension(0, 0);
+#endif
             }
         }
 

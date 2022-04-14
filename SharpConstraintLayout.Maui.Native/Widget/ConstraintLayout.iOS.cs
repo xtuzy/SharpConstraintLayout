@@ -19,9 +19,17 @@ namespace SharpConstraintLayout.Maui.Widget
 {
     public partial class ConstraintLayout
     {
+        public ConstraintLayout()
+        {
+            init();
+        }
+
         #region Add And Remove
-        
-        internal UIElement[] Children => Subviews;
+
+        public UIElement GetChildAt(int index)
+        {
+            return Subviews[index];
+        }
 
         public override void AddSubview(UIElement view)
         {
@@ -55,7 +63,7 @@ namespace SharpConstraintLayout.Maui.Widget
         #endregion
 
         #region Layout
-        
+
         public override Size IntrinsicContentSize => this.Frame.Size;
 
         /// <summary>

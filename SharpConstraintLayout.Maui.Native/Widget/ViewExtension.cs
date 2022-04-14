@@ -28,7 +28,7 @@ namespace SharpConstraintLayout.Maui.Widget
     /// </summary>
     public static class ViewExtension
     {
-#if WINDOWS ||__IOS__
+
         /// <summary>
         /// Baseline To Font Center Height
         /// </summary>
@@ -64,9 +64,10 @@ namespace SharpConstraintLayout.Maui.Widget
             }
             else
                 return ConstraintSet.Unset;
+#elif __ANDROID__
+            return view.Baseline;
 #endif
         }
-#endif
 
         /// <summary>
         /// 每个Element的ID从该方法获取
@@ -110,29 +111,35 @@ namespace SharpConstraintLayout.Maui.Widget
                 element.Hidden = true;
                 Debug.WriteLine("iOS没有默认的Visibility = ConstraintSet.Gone");
             }
+#elif __ANDROID__
+            if (ConstraintSetVisible == ConstraintSet.Invisible)
+                element.Visibility = ViewStates.Invisible;
+            else if (ConstraintSetVisible == ConstraintSet.Visible)
+                element.Visibility = ViewStates.Visible;
+            else//Gone
+                element.Visibility = ViewStates.Gone;
 #endif
         }
 
-#if WINDOWS || __IOS__
         public static (int Width, int Height) GetDefaultSize(this UIElement element)
         {
 #if WINDOWS
 
             return ((int)element.DesiredSize.Width, (int)element.DesiredSize.Height);
-#else
+#elif __IOS__
             return ((int)element.IntrinsicContentSize.Width, (int)element.IntrinsicContentSize.Height);
+#elif __ANDROID__
+            return (element.MeasuredWidth, element.MeasuredHeight);
 #endif
         }
-#endif
 
-#if WINDOWS || __IOS__
         public static (int Width, int Height) GetMeasuredSize(this UIElement element, androidx.constraintlayout.core.widgets.ConstraintWidget widget)
         {
             int w = 0;
             int h = 0;
 #if WINDOWS
             (w, h) = ((int)element.DesiredSize.Width, (int)element.DesiredSize.Height);
-#else
+#elif __IOS__
             (w, h) = ((int)element.IntrinsicContentSize.Width, (int)element.IntrinsicContentSize.Height);
 
             //@zhouyang add:for test why flow in iOS not correct
@@ -140,33 +147,37 @@ namespace SharpConstraintLayout.Maui.Widget
             {
                 Debug.WriteLine($"iOS IntrinsicContentSize:({w},{h})");
             }
+#elif __ANDROID__
+            (w, h) = (element.MeasuredWidth, element.MeasuredHeight);
 #endif
             if (w <= 0) w = widget.Width;
             if (h <= 0) h = widget.Height;
             return (w, h);
         }
-#endif
 
-#if WINDOWS || __IOS__
-        public static void MeasureSelf(this UIElement element, int w, int h)
+        public static void MeasureSelf(this UIElement element, int horizontalSpec, int verticalSpec)
         {
+
 #if WINDOWS
+            int w = MeasureSpec.GetSize(horizontalSpec);
+            int h = MeasureSpec.GetSize(verticalSpec);
             element.Measure(new Windows.Foundation.Size(w, h));
+#elif __ANDROID__
+            element.Measure(horizontalSpec, verticalSpec);
 #endif
         }
-#endif
 
-#if WINDOWS || __IOS__
         public static UIElement GetParent(this FrameworkElement element)
         {
 #if WINDOWS
             return element.Parent as UIElement;
 #elif __IOS__
             return element.Superview;
+#elif __ANDROID__
+            return element.Parent as UIElement;
 #endif
         }
-#endif
-#if WINDOWS || __IOS__ || __ANDROID__
+
         public static void SetTransform(this UIElement element, ConstraintSet.Transform transform)
         {
             if (transform == null)
@@ -174,15 +185,15 @@ namespace SharpConstraintLayout.Maui.Widget
 #if ANDROID
             //Copy from ConstraintSet
             var view = element;
-            view.Rotation = transform.Rotation;
-            view.RotationX = transform.RotationX;
-            view.RotationY = transform.RotationY;
-            view.ScaleX = transform.ScaleX;
-            view.ScaleY = transform.ScaleY;
-            if (transform.TransformPivotTarget != ConstraintSet.Unset)
+            view.Rotation = transform.rotation;
+            view.RotationX = transform.rotationX;
+            view.RotationY = transform.rotationY;
+            view.ScaleX = transform.scaleX;
+            view.ScaleY = transform.scaleY;
+            if (transform.transformPivotTarget != ConstraintSet.Unset)
             {
                 View layout = (View)view.Parent;
-                View center = layout.FindViewById(transform.TransformPivotTarget);
+                View center = layout.FindViewById(transform.transformPivotTarget);
                 if (center != null)
                 {
                     float cy = (center.Top + center.Bottom) / 2.0f;
@@ -198,22 +209,22 @@ namespace SharpConstraintLayout.Maui.Widget
             }
             else
             {
-                if (!float.IsNaN(transform.TransformPivotX))
+                if (!float.IsNaN(transform.transformPivotX))
                 {
-                    view.PivotX = transform.TransformPivotX;
+                    view.PivotX = transform.transformPivotX;
                 }
-                if (!float.IsNaN(transform.TransformPivotY))
+                if (!float.IsNaN(transform.transformPivotY))
                 {
-                    view.PivotY = transform.TransformPivotY;
+                    view.PivotY = transform.transformPivotY;
                 }
             }
-            view.TranslationX = transform.TranslationX;
-            view.TranslationY = transform.TranslationY;
+            view.TranslationX = transform.translationX;
+            view.TranslationY = transform.translationY;
             //After Android5.0,have Z-index
-            view.TranslationZ = transform.TranslationZ;
-            if (transform.ApplyElevation)
+            view.TranslationZ = transform.translationZ;
+            if (transform.applyElevation)
             {
-                view.Elevation = transform.Elevation;
+                view.Elevation = transform.elevation;
             }
 #elif WINDOWS
             var transformGroup = new TransformGroup();
@@ -243,15 +254,14 @@ namespace SharpConstraintLayout.Maui.Widget
             element.Transform = transformGroup;
 #endif
         }
-#endif
-#if WINDOWS || __IOS__ || __ANDROID__
+
         public static void SetAlphaProperty(this UIElement element, ConstraintSet.PropertySet propertySet)
         {
             if (propertySet == null)
                 return;
 #if ANDROID
             //Copy from ConstraintSet
-            element.Alpha = propertySet.Alpha;
+            element.Alpha = propertySet.alpha;
 #elif WINDOWS
             //https://docs.microsoft.com/en-us/dotnet/api/system.windows.uielement.opacity?view=windowsdesktop-6.0
             element.Opacity = propertySet.alpha;
@@ -260,6 +270,5 @@ namespace SharpConstraintLayout.Maui.Widget
             element.Alpha = propertySet.alpha;
 #endif
         }
-#endif
     }
 }

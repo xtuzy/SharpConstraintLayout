@@ -25,9 +25,9 @@ using System.Threading.Tasks;
 #if WINDOWS
 using View = Microsoft.UI.Xaml.UIElement;
 #elif __IOS__
-
 using View = UIKit.UIView;
-
+#elif __ANDROID__
+using View = Android.Views.View;
 #endif
 
 namespace SharpConstraintLayout.Maui.Widget
@@ -51,7 +51,7 @@ namespace SharpConstraintLayout.Maui.Widget
             mConstraints.Clear();
             for (int i = 0; i < count; i++)
             {
-                View view = constraintLayout.Children[i];
+                View view = constraintLayout.GetChildAt(i);
 
                 //ConstraintLayout.LayoutParams param = (ConstraintLayout.LayoutParams)view.LayoutParams;
                 int id = view.GetId();
@@ -131,7 +131,7 @@ namespace SharpConstraintLayout.Maui.Widget
             if (count != used.Count) Debug.WriteLine("The count of ConstraintLayout children is not equal to temprary constraints list, maybe you not use clone.", TAG);
             for (int i = 0; i < count; i++)//查看layout的child
             {
-                View view = constraintLayout.Children[i];
+                View view = constraintLayout.GetChildAt(i);
 
                 int id = view.GetId();
                 if (!mConstraints.ContainsKey(id))
@@ -249,7 +249,7 @@ namespace SharpConstraintLayout.Maui.Widget
             }
             for (int i = 0; i < count; i++)
             {
-                View view = constraintLayout.Children[i];
+                View view = constraintLayout.GetChildAt(i);
 
                 if (view is ConstraintHelper)
                 {

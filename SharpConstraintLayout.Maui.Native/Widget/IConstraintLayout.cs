@@ -8,6 +8,8 @@ using androidx.constraintlayout.core.widgets;
 #elif __IOS__
 using CoreGraphics;
 using View = UIKit.UIView;
+#elif __ANDROID__
+using View = Android.Views.View;
 #endif
 namespace SharpConstraintLayout.Maui.Widget
 {
@@ -22,8 +24,8 @@ namespace SharpConstraintLayout.Maui.Widget
 
         //void FillMetrics(Metrics metrics);
         //Object GetDesignInformation(int type, Object value);
-        View FindViewById(int id);
-        ConstraintWidget GetViewWidget(View view);
+        View FindElementById(int id);
+        ConstraintWidget GetWidgetByElement(View view);
         //void LoadLayoutDescription(int layoutDescription);
         //void SetConstraintSet(ConstraintSet set);
         //void SetDesignInformation(int type, Object value1, Object value2);

@@ -22,6 +22,9 @@ namespace SharpConstraintLayout.Maui.Widget
     using ConstraintWidget = androidx.constraintlayout.core.widgets.ConstraintWidget;
     using ConstraintWidgetContainer = androidx.constraintlayout.core.widgets.ConstraintWidgetContainer;
     using HelperWidget = androidx.constraintlayout.core.widgets.HelperWidget;
+#if __ANDROID__
+    using Android.Content;
+#endif
 
     /// <summary>
     /// <b>Added in 1.1</b>
@@ -119,8 +122,11 @@ namespace SharpConstraintLayout.Maui.Widget
         private int mIndicatedType;
         private int mResolvedType;
         private androidx.constraintlayout.core.widgets.Barrier mBarrier;
-
+#if __ANDROID__
+        public Barrier(Context context) : base(context)
+#else
         public Barrier() : base()
+#endif
         {
             Visible = ConstraintSet.Gone;
         }
