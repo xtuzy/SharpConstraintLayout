@@ -39,11 +39,6 @@ namespace SharpConstraintLayout.Maui.Native.Example
             //SetContentView(Resource.Layout.activity_main);
 
             SetContentView(new MainPage(this));
-            //AddContentView(new MainPage(this), new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent));
-            WindowMetrics windowMetrics = this.WindowManager.MaximumWindowMetrics;
-            var bounds = windowMetrics.Bounds;
-            SimpleDebug.WriteLine($"Window {bounds}");
-            SimpleDebug.WriteLine("App Start");
         }
     }
 }

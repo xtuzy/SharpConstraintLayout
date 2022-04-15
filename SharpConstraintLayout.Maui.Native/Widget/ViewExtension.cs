@@ -76,13 +76,13 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <returns></returns>
         public static int GetId(this UIElement view)
         {
-#if __ANDROID__
-            if (view.Id == UIElement.NoId)
-                view.Id = UIElement.GenerateViewId();
-            return view.Id;
-#else
+            //#if __ANDROID__
+            //            if (view.Id == UIElement.NoId)
+            //                view.Id = UIElement.GenerateViewId();
+            //            return view.Id;
+            //#else
             return view.GetHashCode();
-#endif
+            //#endif
         }
 
         public static void SetViewVisibility(this UIElement element, int ConstraintSetVisible)
@@ -268,6 +268,23 @@ namespace SharpConstraintLayout.Maui.Widget
 #elif __IOS__
             //https://stackoverflow.com/questions/15381436/is-the-opacity-and-alpha-the-same-thing-for-uiview
             element.Alpha = propertySet.alpha;
+#endif
+        }
+
+        /// <summary>
+        /// Call this when something has changed which has invalidated the layout of this view. This will schedule a layout pass of the view tree. This should not be called while the view hierarchy is currently in a layout pass (isInLayout(). If layout is happening, the request may be honored at the end of the current layout pass (and then layout will run again) or after the current frame is drawn and the next layout occurs.
+        /// Subclasses which override this method should call the superclass method to handle possible request-during-layout errors correctly.
+        /// </summary>
+        public static void requestLayout(this UIElement element)
+        {
+            //According to https://stackoverflow.com/questions/13856180/usage-of-forcelayout-requestlayout-and-invalidate
+            //At Android,this will let remeasure layout
+#if WINDOWS
+            element.InvalidateMeasure();
+#elif __IOS__
+            element.SetNeedsLayout();
+#elif __ANDROID__
+            element.RequestLayout();
 #endif
         }
     }

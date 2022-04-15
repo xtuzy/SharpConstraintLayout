@@ -230,7 +230,7 @@ namespace SharpConstraintLayout.Maui.Widget
 
         protected Size Measure(Size availableSize)
         {
-            if (DEBUG) SimpleDebug.WriteLine($"{nameof(Measure)} {this} {availableSize}");
+            if (DEBUG) SimpleDebug.WriteLine($"{nameof(Measure)} {this.GetType().FullName} {availableSize}");
             if (MEASURE)
             {
                 measureTime = DateTimeHelperClass.CurrentUnixTimeMillis();
@@ -332,10 +332,7 @@ namespace SharpConstraintLayout.Maui.Widget
             if (MEASURE)
             {
                 measureTime = DateTimeHelperClass.CurrentUnixTimeMillis() - measureTime;
-                SimpleDebug.WriteLine(MLayoutWidget.DebugName + " child (" + ChildCount + ") DONE onMeasure width: " + AndroidMeasureSpec.ToString(horizontalSpec)
-                        + " height: " + AndroidMeasureSpec.ToString(verticalSpec) + " => " + mLastMeasureWidth + " x " + mLastMeasureHeight
-                        + " spend " + measureTime + "ms"
-                );
+                SimpleDebug.WriteLine($"ConstraintLayout {MLayoutWidget.DebugName} child ({ChildCount}) DONE onMeasure: ({AndroidMeasureSpec.ToString(horizontalSpec)} x {AndroidMeasureSpec.ToString(verticalSpec)}) => ({mLastMeasureWidth} x {mLastMeasureHeight}) , spend {measureTime}ms");
             }
 
             //windows需要返回值
@@ -564,8 +561,8 @@ namespace SharpConstraintLayout.Maui.Widget
 
                 if (component != null)
                 {
-                    if (DEBUG) SimpleDebug.WriteLine($"{nameof(OnLayout)} {component} {new Rect(child.X, child.Y, child.Width, child.Height)}");
                     LayoutChild(component, child.X, child.Y, child.Width, child.Height);
+                    if (DEBUG) SimpleDebug.WriteLine($"{nameof(OnLayout)} {component.GetType().FullName}: position {new Rect(child.X, child.Y, child.Width, child.Height)}, control size {component.GetDefaultSize()}");
                 }
 
                 if (component is Placeholder)
@@ -765,11 +762,18 @@ namespace SharpConstraintLayout.Maui.Widget
                         break;
                 }
 
+                /*
+                 * @zhouyang add at 2022/4/15: i found EditText can't measure correctly, because at here will let it skip measure.
+                 * That because Android only get real size after measure, Windows can get real size before load measure. so we let android must remeasure.
+                 * AndroidX.ConstraintLayout use mDirtyHierarchy to mark need measure, but it like also measure all.
+                 * At Windows, WrapPanel also remeasure all, i feel it not good, so Windows i use these code still.
+                 * TODO:For Android mark dirty,other view that wrap content not remeasure.
+                */
+#if !__ANDROID__
                 ConstraintWidgetContainer container = (ConstraintWidgetContainer)widget.Parent;
                 if (container != null && Optimizer.enabled(outerInstance.mOptimizationLevel, Optimizer.OPTIMIZATION_CACHE_MEASURES))
                 {
-                    //if (child.MeasuredWidth == widget.Width && child.MeasuredWidth < container.Width && child.MeasuredHeight == widget.Height && child.MeasuredHeight < container.Height && child.Baseline == widget.BaselineDistance && !widget.MeasureRequested)//Windows中当前还未Measure,先使用Defalut DesiredSize尝试
-                    if (child.GetDefaultSize().Width == widget.Width && child.GetDefaultSize().Width < container.Width && child.GetDefaultSize().Height == widget.Height && child.GetDefaultSize().Height < container.Height && child.GetBaseline() == widget.BaselineDistance && !widget.MeasureRequested)
+                    if (child.GetDefaultSize().Width == widget.Width && child.GetDefaultSize().Width < container.Width && child.GetDefaultSize().Height == widget.Height && child.GetDefaultSize().Height < container.Height && (int)child.GetBaseline() == widget.BaselineDistance && !widget.MeasureRequested)
                     // note: the container check replicates legacy behavior, but we might want
                     // to not enforce that in 3.0
                     {
@@ -782,13 +786,13 @@ namespace SharpConstraintLayout.Maui.Widget
                             // if the dimensions of the solver widget are already the same as the real view, no need to remeasure.
                             if (DEBUG)
                             {
-                                SimpleDebug.WriteLine("SKIPPED " + widget);
+                                SimpleDebug.WriteLine("SKIPPED " + child.GetType().FullName + widget);
                             }
                             return;
                         }
                     }
                 }
-
+#endif
                 bool horizontalMatchConstraints = (horizontalBehavior == ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT);
                 bool verticalMatchConstraints = (verticalBehavior == ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT);
 
@@ -818,16 +822,15 @@ namespace SharpConstraintLayout.Maui.Widget
                     if (child is VirtualLayout && widget is androidx.constraintlayout.core.widgets.VirtualLayout)
                     {
                         androidx.constraintlayout.core.widgets.VirtualLayout layout = (androidx.constraintlayout.core.widgets.VirtualLayout)widget;
-                        if (DEBUG) SimpleDebug.WriteLine(child + " before OnMeasure ({MeasureSpec.GetSize(horizontalSpec)} {MeasureSpec.GetSize(verticalSpec)}) widget" + widget);
+                        if (DEBUG) SimpleDebug.WriteLine($"{child.GetType().FullName} before onMeasure: widget {widget},spec ({MeasureSpec.GetSize(horizontalSpec)} x {MeasureSpec.GetSize(verticalSpec)})");
                         ((VirtualLayout)child).onMeasure(layout, horizontalSpec, verticalSpec);
-                        if (DEBUG) SimpleDebug.WriteLine(child + " after OnMeasure widget" + widget);
+                        if (DEBUG) SimpleDebug.WriteLine($"{child.GetType().FullName}  after onMeasure: widget {widget}");
                     }
                     else
                     {
-                        if (DEBUG) SimpleDebug.WriteLine(child + $" before Measure ({AndroidMeasureSpec.GetSize(horizontalSpec)} {AndroidMeasureSpec.GetSize(verticalSpec)}) widget" + widget + $" control size {child.GetDefaultSize()}");
-                        //child.measure(horizontalSpec, verticalSpec);//Android中传入Spec给child去测量,windows中直接传大小即可
+                        if (DEBUG) SimpleDebug.WriteLine($"{child.GetType().FullName}  before onMeasure: widget {widget},control size {child.GetDefaultSize()},spec ({AndroidMeasureSpec.GetSize(horizontalSpec)} x {AndroidMeasureSpec.GetSize(verticalSpec)})");
                         child.MeasureSelf(horizontalSpec, verticalSpec);
-                        if (DEBUG) SimpleDebug.WriteLine(child + " after Measure widget" + widget + $" control size {child.GetDefaultSize()}");
+                        if (DEBUG) SimpleDebug.WriteLine($"{child.GetType().FullName}  after onMeasure: widget {widget},control size {child.GetDefaultSize()}");
                     }
                     widget.setLastMeasureSpec(horizontalSpec, verticalSpec);
 
@@ -839,8 +842,8 @@ namespace SharpConstraintLayout.Maui.Widget
 
                     if (DEBUG)
                     {
-                        string measurement = AndroidMeasureSpec.ToString(horizontalSpec) + " x " + AndroidMeasureSpec.ToString(verticalSpec) + " => " + width + " x " + height;
-                        SimpleDebug.WriteLine("    (M) measure " + " (" + widget.DebugName + ":" + child + ") : " + measurement);
+                        string measurement = $"spec ({AndroidMeasureSpec.ToString(horizontalSpec)} x {AndroidMeasureSpec.ToString(verticalSpec)}) => ({width} {height})";
+                        SimpleDebug.WriteLine($"{child.GetType().FullName} measure result: {measurement}");
                     }
 
                     if (widget.mMatchConstraintMinWidth > 0)

@@ -4,12 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
-#if ANDROID
-using AndroidX.ConstraintLayout.Widget;
-#else
 using SharpConstraintLayout.Maui.Widget;
-#endif
+
 namespace SharpConstraintLayout.Maui.Native.Example.Tool
 {
     internal class UIThread

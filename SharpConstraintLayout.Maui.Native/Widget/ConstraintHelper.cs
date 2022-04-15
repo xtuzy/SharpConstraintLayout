@@ -114,7 +114,7 @@ namespace SharpConstraintLayout.Maui.Widget
             mReferenceIds = null;
             addRscID(view.GetId());
 
-            requestLayout();
+            this.requestLayout();
         }
 
         /// <summary>
@@ -146,7 +146,7 @@ namespace SharpConstraintLayout.Maui.Widget
                     break;
                 }
             }
-            requestLayout();
+            this.requestLayout();
 
             return index;
         }
@@ -527,21 +527,5 @@ namespace SharpConstraintLayout.Maui.Widget
             get { return elevation; }
         }
 
-        /// <summary>
-        /// Call this when something has changed which has invalidated the layout of this view. This will schedule a layout pass of the view tree. This should not be called while the view hierarchy is currently in a layout pass (isInLayout(). If layout is happening, the request may be honored at the end of the current layout pass (and then layout will run again) or after the current frame is drawn and the next layout occurs.
-        /// Subclasses which override this method should call the superclass method to handle possible request-during-layout errors correctly.
-        /// </summary>
-        protected virtual void requestLayout()
-        {
-            //According to https://stackoverflow.com/questions/13856180/usage-of-forcelayout-requestlayout-and-invalidate
-            //At Android,this will let remeasure layout
-#if WINDOWS
-            InvalidateMeasure();
-#elif __IOS__
-            SetNeedsLayout();
-#elif __ANDROID__
-            RequestLayout();
-#endif
-        }
     }
 }

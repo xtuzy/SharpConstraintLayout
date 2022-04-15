@@ -91,6 +91,7 @@ namespace SharpConstraintLayout.Maui.Widget
         {
             if (DEBUG) Debug.WriteLine($"{nameof(ArrangeOverride)} {this} {finalSize}");
 
+            //参考:https://github.com/CommunityToolkit/WindowsCommunityToolkit/blob/main/Microsoft.Toolkit.Uwp.UI.Controls.Primitives/WrapPanel/WrapPanel.cs
             if (finalSize.Width != MLayoutWidget.Width || finalSize.Height != MLayoutWidget.Height)
             {
                 // We haven't received our desired size. We need to refresh the rows.

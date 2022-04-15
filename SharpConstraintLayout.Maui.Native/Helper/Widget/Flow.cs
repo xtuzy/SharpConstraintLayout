@@ -224,7 +224,7 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
         public virtual void SetOrientation(int orientation)
         {
             mFlow.Orientation = orientation;
-            requestLayout();
+            this.requestLayout();
         }
 
         /// <summary>
@@ -234,7 +234,7 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
         public virtual void SetPadding(int value)
         {
             mFlow.Padding = value;
-            requestLayout();
+            this.requestLayout();
         }
 
         /// <summary>
@@ -244,7 +244,7 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
         public virtual void SetPaddingLeft(int value)
         {
             mFlow.PaddingLeft = value;
-            requestLayout();
+            this.requestLayout();
         }
 
         /// <summary>
@@ -254,7 +254,7 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
         public virtual void SetPaddingTop(int value)
         {
             mFlow.PaddingTop = value;
-            requestLayout();
+            this.requestLayout();
         }
 
         /// <summary>
@@ -264,7 +264,7 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
         public virtual void SetPaddingRight(int value)
         {
             mFlow.PaddingRight = value;
-            requestLayout();
+            this.requestLayout();
         }
 
         /// <summary>
@@ -274,7 +274,7 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
         public virtual void SetPaddingBottom(int value)
         {
             mFlow.PaddingBottom = value;
-            requestLayout();
+            this.requestLayout();
         }
 
         /// <summary>
@@ -286,7 +286,7 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
         public virtual void SetLastHorizontalStyle(int style)
         {
             mFlow.LastHorizontalStyle = style;
-            requestLayout();
+            this.requestLayout();
         }
 
         /// <summary>
@@ -298,7 +298,7 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
         public virtual void SetLastVerticalStyle(int style)
         {
             mFlow.LastVerticalStyle = style;
-            requestLayout();
+            this.requestLayout();
         }
 
         /// <summary>
@@ -308,7 +308,7 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
         public virtual void SetLastHorizontalBias(float value)
         {
             mFlow.LastHorizontalBias = value;
-            requestLayout();
+            this.requestLayout();
         }
 
         /// <summary>
@@ -318,7 +318,7 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
         public virtual void SetLastVerticalBias(float value)
         {
             mFlow.LastVerticalBias = value;
-            requestLayout();
+            this.requestLayout();
         }
 
         /// <summary>
@@ -333,7 +333,7 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
         public virtual void SetWrapMode(int value)
         {
             mFlow.WrapMode = value;
-            requestLayout();
+            this.requestLayout();
         }
 
         /// <summary>
@@ -345,7 +345,7 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
         public virtual void SetHorizontalStyle(int value)
         {
             mFlow.HorizontalStyle = value;
-            requestLayout();
+            this.requestLayout();
         }
 
         /// <summary>
@@ -357,7 +357,7 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
         public virtual void SetVerticalStyle(int value)
         {
             mFlow.VerticalStyle = value;
-            requestLayout();
+            this.requestLayout();
         }
 
         /// <summary>
@@ -367,7 +367,7 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
         public virtual void SetHorizontalBias(float bias)
         {
             mFlow.HorizontalBias = bias;
-            requestLayout();
+            this.requestLayout();
         }
 
         /// <summary>
@@ -377,7 +377,7 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
         public virtual void SetVerticalBias(float bias)
         {
             mFlow.VerticalBias = bias;
-            requestLayout();
+            this.requestLayout();
         }
 
         /// <summary>
@@ -387,7 +387,7 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
         public virtual void SetFirstHorizontalStyle(int value)
         {
             mFlow.FirstHorizontalStyle = value;
-            requestLayout();
+            this.requestLayout();
         }
 
         /// <summary>
@@ -397,7 +397,7 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
         public virtual void SetFirstVerticalStyle(int value)
         {
             mFlow.FirstVerticalStyle = value;
-            requestLayout();
+            this.requestLayout();
         }
 
         /// <summary>
@@ -407,7 +407,7 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
         public virtual void SetFirstHorizontalBias(float value)
         {
             mFlow.FirstHorizontalBias = value;
-            requestLayout();
+            this.requestLayout();
         }
 
         /// <summary>
@@ -417,7 +417,7 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
         public virtual void SetFirstVerticalBias(float value)
         {
             mFlow.FirstVerticalBias = value;
-            requestLayout();
+            this.requestLayout();
         }
 
         /// <summary>
@@ -431,7 +431,7 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
         public virtual void SetHorizontalAlign(int value)
         {
             mFlow.HorizontalAlign = value;
-            requestLayout();
+            this.requestLayout();
         }
 
         /// <summary>
@@ -445,7 +445,7 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
         public virtual void SetVerticalAlign(int value)
         {
             mFlow.VerticalAlign = value;
-            requestLayout();
+            this.requestLayout();
         }
 
         /// <summary>
@@ -455,7 +455,7 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
         public virtual void SetHorizontalGap(int value)
         {
             mFlow.HorizontalGap = value;
-            requestLayout();
+            this.requestLayout();
         }
 
         /// <summary>
@@ -465,7 +465,7 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
         public virtual void SetVerticalGap(int value)
         {
             mFlow.VerticalGap = value;
-            requestLayout();
+            this.requestLayout();
         }
 
         /// <summary>
@@ -475,7 +475,7 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
         public virtual void SetMaxElementsWrap(int value)
         {
             mFlow.MaxElementsWrap = value;
-            requestLayout();
+            this.requestLayout();
         }
     }
 }

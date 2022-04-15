@@ -2,8 +2,8 @@
 using Android.Graphics;
 using Android.Views;
 using Android.Widget;
-using AndroidX.ConstraintLayout.Widget;
 using Microsoft.Maui.Storage;
+using SharpConstraintLayout.Maui.Widget;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +23,8 @@ namespace SharpConstraintLayout.Maui.Native.Example
 
         public MainPage(Context? context) : base(context)
         {
+            //ConstraintLayout.DEBUG = true;
+            ConstraintLayout.MEASURE = true;
             Id = View.GenerateViewId();
             this.LayoutParameters = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent);
             createControls();
@@ -30,13 +32,14 @@ namespace SharpConstraintLayout.Maui.Native.Example
 
             //baseAlignTest(this);
             //baselineTest(this);
-            //guidelineTest(this);
-            //barrierTest(this);
-            //visibilityTest(this);
+            //guidelineTest(this);//OK
+            //barrierTest(this);//bug:edittext can't auto relayout
+            //visibilityTest(this);//OK
             //flowTest(this);
             //nestedLayoutTest(this);
             //animationTest(this);
-            circleConstraintTest(this);
+            //circleConstraintTest(this);
+            performanceTest(this);
         }
 
         private void createControls()

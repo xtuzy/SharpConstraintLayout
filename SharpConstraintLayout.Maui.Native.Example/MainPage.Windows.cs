@@ -27,7 +27,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
 
         public MainPage()
         {
-            ConstraintLayout.DEBUG = true;
+            //ConstraintLayout.DEBUG = true;
             ConstraintLayout.MEASURE = true;
 
             createControls();
@@ -36,13 +36,13 @@ namespace SharpConstraintLayout.Maui.Native.Example
             //baseAlignTest(this);
             //baselineTest(this); 
             //guidelineTest(this);
-            barrierTest(this);
+            //barrierTest(this);//bug:text box have false length
             //visibilityTest(this);
             //flowTest(this);
             //nestedLayoutTest(this);
             //circleConstraintTest(this);
-            //stackPanelTest(this);
-            //performanceTest(this);
+            //stackPanelTest(this);//OK
+            performanceTest(this);
         }
 
         private void createControls()
@@ -74,9 +74,9 @@ namespace SharpConstraintLayout.Maui.Native.Example
             FouthTextBlock = new TextBlock()
             {
                 Tag = nameof(FouthTextBlock),
-                //Width = 100,
-                //Height = 100,
-                Text = "FourthTextBlock"
+                Text = "FourthTextBlock",
+                TextAlignment = TextAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
             };
 
             FifthTextBox = new TextBox()

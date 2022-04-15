@@ -262,11 +262,7 @@ namespace SharpConstraintLayout.Maui.Widget
 
             UIThread.Invoke(() =>
             {
-#if WINDOWS
-                constraintLayout.InvalidateMeasure();
-#elif __IOS__
-                constraintLayout.SetNeedsLayout();
-#endif
+                constraintLayout.requestLayout();
             }, constraintLayout);
 
         }
