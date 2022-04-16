@@ -26,6 +26,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
 {
     public partial class MainPage
     {
+#if !IOS
         void performanceTest(ConstraintLayout page)
         {
             int buttonCount = 50;
@@ -42,9 +43,9 @@ namespace SharpConstraintLayout.Maui.Native.Example
             page.AddView(FifthTextBox);
             flow.AddView(FifthTextBox);
             //Generate 1000 Button,all add to page
-#if __IOS__
+#if IOS
             var buttonList = new List<UIButton>();
-#else
+#elif WINDOWS || __ANDROID__
             var buttonList = new List<Button>();
 #endif
             for (int i = 0; i < buttonCount; i++)
@@ -55,7 +56,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
 #elif __ANDROID__
                 var button = new Button(page.Context);
                 button.Text = "Button" + i;
-#elif __IOS__
+#elif IOS
                 var button = new UIButton();
                 button.SetTitle("Button" + i, UIControlState.Normal);
 #endif
@@ -74,7 +75,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
                 layoutSet.ApplyTo(page);
             }
         }
-
+#endif
         void circleConstraintTest(ConstraintLayout page)
         {
             layout = page;

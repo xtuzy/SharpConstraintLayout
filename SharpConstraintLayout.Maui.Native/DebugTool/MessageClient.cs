@@ -1,5 +1,4 @@
-﻿#if DEBUG
-using System;
+﻿using System;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
@@ -186,7 +185,7 @@ namespace SharpConstraintLayout.Maui.DebugTool
         }
 
         /// <summary>
-        /// Close the Socket connection bofore going home
+        /// Close the Socket connection before going home
         /// </summary>
         public void Close()
         {
@@ -199,4 +198,3 @@ namespace SharpConstraintLayout.Maui.DebugTool
         }
     }
 }
-#endif

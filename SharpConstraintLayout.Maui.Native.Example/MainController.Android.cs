@@ -17,6 +17,8 @@ namespace SharpConstraintLayout.Maui.Native.Example
     {
         protected override void OnCreate(Bundle? savedInstanceState)
         {
+            SimpleDebug.WriteLine($"Window");
+            SimpleDebug.WriteLine("App Start");
             base.OnCreate(savedInstanceState);
 #if DEBUG
             HotReload.Instance.Reload += () =>

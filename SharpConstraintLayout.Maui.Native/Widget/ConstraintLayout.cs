@@ -562,7 +562,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 if (component != null)
                 {
                     LayoutChild(component, child.X, child.Y, child.Width, child.Height);
-                    if (DEBUG) SimpleDebug.WriteLine($"{nameof(OnLayout)} {component.GetType().FullName}: position {new Rect(child.X, child.Y, child.Width, child.Height)}, control size {component.GetDefaultSize()}");
+                    //if (DEBUG) SimpleDebug.WriteLine($"{nameof(OnLayout)} {component.GetType().FullName}: position {new Rect(child.X, child.Y, child.Width, child.Height)}, control size {component.GetDefaultSize()}");
                 }
 
                 if (component is Placeholder)
@@ -767,32 +767,36 @@ namespace SharpConstraintLayout.Maui.Widget
                  * That because Android only get real size after measure, Windows can get real size before load measure. so we let android must remeasure.
                  * AndroidX.ConstraintLayout use mDirtyHierarchy to mark need measure, but it like also measure all.
                  * At Windows, WrapPanel also remeasure all, i feel it not good, so Windows i use these code still.
-                 * TODO:For Android mark dirty,other view that wrap content not remeasure.
                 */
-#if !__ANDROID__
-                ConstraintWidgetContainer container = (ConstraintWidgetContainer)widget.Parent;
-                if (container != null && Optimizer.enabled(outerInstance.mOptimizationLevel, Optimizer.OPTIMIZATION_CACHE_MEASURES))
+#if __ANDROID__
+                //before measure,we don't know new size, we just know it is dirty,
+                //so all dirty need remeasure,other view that wrap content maybe not remeasure.
+                if (!child.IsLayoutRequested && widget.HorizontalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.WRAP_CONTENT && widget.VerticalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.WRAP_CONTENT)
+#endif
                 {
-                    if (child.GetDefaultSize().Width == widget.Width && child.GetDefaultSize().Width < container.Width && child.GetDefaultSize().Height == widget.Height && child.GetDefaultSize().Height < container.Height && (int)child.GetBaseline() == widget.BaselineDistance && !widget.MeasureRequested)
-                    // note: the container check replicates legacy behavior, but we might want
-                    // to not enforce that in 3.0
+                    ConstraintWidgetContainer container = (ConstraintWidgetContainer)widget.Parent;
+                    if (container != null && Optimizer.enabled(outerInstance.mOptimizationLevel, Optimizer.OPTIMIZATION_CACHE_MEASURES))
                     {
-                        bool similar = isSimilarSpec(widget.LastHorizontalMeasureSpec, horizontalSpec, widget.Width) && isSimilarSpec(widget.LastVerticalMeasureSpec, verticalSpec, widget.Height);
-                        if (similar)
+                        if (child.GetDefaultSize().Width == widget.Width && child.GetDefaultSize().Width < container.Width && child.GetDefaultSize().Height == widget.Height && child.GetDefaultSize().Height < container.Height && (int)child.GetBaseline() == widget.BaselineDistance && !widget.MeasureRequested)
+                        // note: the container check replicates legacy behavior, but we might want
+                        // to not enforce that in 3.0
                         {
-                            measure.measuredWidth = widget.Width;
-                            measure.measuredHeight = widget.Height;
-                            measure.measuredBaseline = widget.BaselineDistance;
-                            // if the dimensions of the solver widget are already the same as the real view, no need to remeasure.
-                            if (DEBUG)
+                            bool similar = isSimilarSpec(widget.LastHorizontalMeasureSpec, horizontalSpec, widget.Width) && isSimilarSpec(widget.LastVerticalMeasureSpec, verticalSpec, widget.Height);
+                            if (similar)
                             {
-                                SimpleDebug.WriteLine("SKIPPED " + child.GetType().FullName + widget);
+                                measure.measuredWidth = widget.Width;
+                                measure.measuredHeight = widget.Height;
+                                measure.measuredBaseline = widget.BaselineDistance;
+                                // if the dimensions of the solver widget are already the same as the real view, no need to remeasure.
+                                if (DEBUG)
+                                {
+                                    SimpleDebug.WriteLine("SKIPPED " + child.GetType().FullName + widget);
+                                }
+                                return;
                             }
-                            return;
                         }
                     }
                 }
-#endif
                 bool horizontalMatchConstraints = (horizontalBehavior == ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT);
                 bool verticalMatchConstraints = (verticalBehavior == ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT);
 
