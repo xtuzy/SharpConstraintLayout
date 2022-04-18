@@ -64,7 +64,7 @@ namespace SharpConstraintLayout.Maui.Widget
 
         #region Layout
 
-        public override Size IntrinsicContentSize => this.Frame.Size;
+        //public override Size IntrinsicContentSize => this.Frame.Size;
 
         /// <summary>
         /// iOS don't have measure method, but at first show, it will load LayoutSubviews twice,
@@ -72,7 +72,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// </summary>
         public override void LayoutSubviews()
         {
-            //base.LayoutSubviews();
+            base.LayoutSubviews();
             if (DEBUG) Debug.WriteLine($"{nameof(LayoutSubviews)} {this} {this.Frame}");
             if (DEBUG) Debug.WriteLine($"{nameof(LayoutSubviews)} {Superview} {this.Superview?.Frame}");
 

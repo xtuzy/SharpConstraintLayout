@@ -363,3 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 /cso.db
 *.stignore
+*.DS_Store
