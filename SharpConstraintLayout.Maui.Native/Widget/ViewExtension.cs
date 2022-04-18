@@ -245,13 +245,13 @@ namespace SharpConstraintLayout.Maui.Widget
             }
             element.RenderTransform = transformGroup;
 #elif __IOS__
-
+            //@zhouyang add at 2022/4/18:TODO:Use this ios will not show view, need leran how to use
             //https://stackoverflow.com/questions/6813899/how-to-programmatically-rotate-the-view-by-180-degrees-on-ios
-            var transformGroup = new CGAffineTransform();
+            /*var transformGroup = new CGAffineTransform();
             transformGroup.Rotate(transform.rotation);
             transformGroup.Scale(transform.scaleX, transform.scaleY);
             transformGroup.Translate(transform.translationX, transform.translationY);
-            element.Transform = transformGroup;
+            element.Transform = transformGroup;*/
 #endif
         }
 
@@ -286,6 +286,18 @@ namespace SharpConstraintLayout.Maui.Widget
 #elif __ANDROID__
             element.RequestLayout();
 #endif
+        }
+
+        public static string GetViewLayoutInfo(this UIElement element)
+        {
+#if WINDOWS
+            return $"{element.GetType().FullName} Visibility={element.Visibility} Position={element.ActualOffset} DesiredSize={element.DesiredSize} ActualSize={element.ActualSize}";
+#elif __IOS__
+            return $"{element.GetType().FullName} IsHiden={element.Hidden} Frame={element.Frame} Bounds={element.Bounds} IntrinsicContentSize={element.IntrinsicContentSize}";
+#elif __ANDROID__
+            return $"{element.GetType().FullName} Visibility={element.Visibility} Position={element.GetX()}x{element.GetY()} Size={element.Width}x{element.Height} MeasuredSize={element.MeasuredWidth}x{element.MeasuredHeight}";
+#endif
+
         }
     }
 }

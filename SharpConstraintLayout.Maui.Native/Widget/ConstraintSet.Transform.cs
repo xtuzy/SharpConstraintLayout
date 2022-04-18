@@ -23,7 +23,7 @@ namespace SharpConstraintLayout.Maui.Widget
 {
     public partial class ConstraintSet
     {
-        public class Transform:IDisposable
+        public class Transform : IDisposable
         {
             public bool mApply = false;
             public float rotation = 0;
@@ -60,7 +60,7 @@ namespace SharpConstraintLayout.Maui.Widget
 
             public void Dispose()
             {
-                
+
             }
 
             //internal static Dictionary<int,int> mapToConstant = new Dictionary<int, int>();

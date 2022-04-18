@@ -562,7 +562,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 if (component != null)
                 {
                     LayoutChild(component, child.X, child.Y, child.Width, child.Height);
-                    //if (DEBUG) SimpleDebug.WriteLine($"{nameof(OnLayout)} {component.GetType().FullName}: position {new Rect(child.X, child.Y, child.Width, child.Height)}, control size {component.GetDefaultSize()}");
+                    if (DEBUG) SimpleDebug.WriteLine($"{nameof(OnLayout)} {component.GetViewLayoutInfo()} Widget={new Rect(child.X, child.Y, child.Width, child.Height)}");
                 }
 
                 if (component is Placeholder)
@@ -826,15 +826,15 @@ namespace SharpConstraintLayout.Maui.Widget
                     if (child is VirtualLayout && widget is androidx.constraintlayout.core.widgets.VirtualLayout)
                     {
                         androidx.constraintlayout.core.widgets.VirtualLayout layout = (androidx.constraintlayout.core.widgets.VirtualLayout)widget;
-                        if (DEBUG) SimpleDebug.WriteLine($"{child.GetType().FullName} before onMeasure: widget {widget},spec ({MeasureSpec.GetSize(horizontalSpec)} x {MeasureSpec.GetSize(verticalSpec)})");
+                        if (DEBUG) SimpleDebug.WriteLine($"{child.GetType().FullName} before onMeasure: widget={widget},spec=({MeasureSpec.GetSize(horizontalSpec)} x {MeasureSpec.GetSize(verticalSpec)})");
                         ((VirtualLayout)child).onMeasure(layout, horizontalSpec, verticalSpec);
-                        if (DEBUG) SimpleDebug.WriteLine($"{child.GetType().FullName}  after onMeasure: widget {widget}");
+                        if (DEBUG) SimpleDebug.WriteLine($"{child.GetType().FullName}  after onMeasure: widget={widget}");
                     }
                     else
                     {
-                        if (DEBUG) SimpleDebug.WriteLine($"{child.GetType().FullName}  before onMeasure: widget {widget},control size {child.GetDefaultSize()},spec ({AndroidMeasureSpec.GetSize(horizontalSpec)} x {AndroidMeasureSpec.GetSize(verticalSpec)})");
+                        if (DEBUG) SimpleDebug.WriteLine($"{child.GetType().FullName}  before onMeasure: widget={widget},control={child.GetDefaultSize()},spec=({AndroidMeasureSpec.GetSize(horizontalSpec)} x {AndroidMeasureSpec.GetSize(verticalSpec)})");
                         child.MeasureSelf(horizontalSpec, verticalSpec);
-                        if (DEBUG) SimpleDebug.WriteLine($"{child.GetType().FullName}  after onMeasure: widget {widget},control size {child.GetDefaultSize()}");
+                        if (DEBUG) SimpleDebug.WriteLine($"{child.GetType().FullName}  after onMeasure: widget={widget},control={child.GetDefaultSize()}");
                     }
                     widget.setLastMeasureSpec(horizontalSpec, verticalSpec);
 
