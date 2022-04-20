@@ -58,7 +58,6 @@ namespace androidx.constraintlayout.core.widgets
 			base.copy(src, map);
 			HelperWidget srcHelper = (HelperWidget) src;
 			mWidgetsCount = 0;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int count = srcHelper.mWidgetsCount;
 			int count = srcHelper.mWidgetsCount;
 			for (int i = 0; i < count; i++)

@@ -821,7 +821,6 @@ using static androidx.constraintlayout.core.widgets.ConstraintWidget.DimensionBe
 
             mWidthMeasuredTooSmall = false;
             mHeightMeasuredTooSmall = false;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int count = mChildren.size();
             int count = mChildren.Count;
 
