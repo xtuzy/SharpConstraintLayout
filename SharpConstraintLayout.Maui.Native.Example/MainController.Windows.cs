@@ -48,7 +48,8 @@ namespace SharpConstraintLayout.Maui.Native.Example
             HotReload.Instance.Init("192.168.0.144", 100);
 #endif
             this.Content = new MainPage();
-
+            //this.Content = new Grid() { };
+            //(this.Content as Grid).Children.Add(new TextBox() { Text = "TextBox" });
             SimpleDebug.WriteLine($"Window {this.Bounds}");
             SimpleDebug.WriteLine("App Start");
         }

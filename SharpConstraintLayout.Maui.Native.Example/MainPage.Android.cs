@@ -39,7 +39,8 @@ namespace SharpConstraintLayout.Maui.Native.Example
             //nestedLayoutTest(this);
             //animationTest(this);
             //circleConstraintTest(this);
-            performanceTest(this);
+            //performanceTest(this);
+            performanceTest_WrapPanel(this);
         }
 
         private void createControls()

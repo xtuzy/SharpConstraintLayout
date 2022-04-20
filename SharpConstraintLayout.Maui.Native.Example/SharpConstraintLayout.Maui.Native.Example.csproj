@@ -5,7 +5,6 @@
     <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows')) and '$(MSBuildRuntimeType)' == 'Full'">$(TargetFrameworks);net6.0-windows10.0.19041</TargetFrameworks>
     <OutputType>Exe</OutputType>
     <UseMaui>true</UseMaui>
-    <UsingMauiEssentials>true</UsingMauiEssentials>
     <RootNamespace>SharpConstraintLayout.Maui.Native.Example</RootNamespace>
 
     <SingleProject>true</SingleProject>
@@ -111,6 +110,8 @@
   <ItemGroup Condition="$(TargetFramework.Contains('-windows')) == false">
     <Compile Remove="**\*.Windows.cs" />
     <None Include="**\*.Windows.cs" />
+    <Compile Remove="**\**\*.Windows.cs" />
+    <None Include="**\**\*.Windows.cs" />
     <Compile Remove="**\Windows\*.cs" />
     <None Include="**\Windows\*.cs" />
     <Compile Remove="**\Windows\**\*.cs" />
@@ -119,8 +120,8 @@
   <ItemGroup>
     <Folder Remove="bin\" />
   </ItemGroup>
-
   <ItemGroup>
+    <ProjectReference Include="..\MauiWrapPanel\MauiWrapPanel.csproj" />
     <ProjectReference Include="..\SharpConstraintLayout.Maui.Native\SharpConstraintLayout.Maui.Native.csproj" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net6.0-android'">

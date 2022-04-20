@@ -72,7 +72,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// </summary>
         public override void LayoutSubviews()
         {
-            base.LayoutSubviews();
+            //base.LayoutSubviews();
             if (DEBUG) Debug.WriteLine($"{nameof(LayoutSubviews)} {this} {this.Frame}");
             if (DEBUG) Debug.WriteLine($"{nameof(LayoutSubviews)} {Superview} {this.Superview?.Frame}");
 

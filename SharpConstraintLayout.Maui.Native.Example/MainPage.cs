@@ -6,21 +6,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
+using SharpConstraintLayout.Maui.Helper.Widget;
+using SharpConstraintLayout.Maui.Native.Example.Tool;
+using MauiWrapPanel.WrapPanel;
 #if __ANDROID__
 using Android.Views;
 using Android.Widget;
-#else
-using System.Diagnostics;
-#endif
-using SharpConstraintLayout.Maui.Helper.Widget;
-using SharpConstraintLayout.Maui.Native.Example.Tool;
-#if __ANDROID__
 #elif __IOS__
 using UIKit;
 #elif WINDOWS
 using Microsoft.UI;
 using Microsoft.UI.Xaml.Controls;
-using CommunityToolkit.WinUI.UI.Controls;
 #endif
 namespace SharpConstraintLayout.Maui.Native.Example
 {
@@ -42,44 +39,105 @@ namespace SharpConstraintLayout.Maui.Native.Example
             page.AddView(FifthTextBox);
             flow.AddView(FifthTextBox);
             //Generate 1000 Button,all add to page
-#if IOS
-            var buttonList = new List<UIButton>();
-#elif WINDOWS || __ANDROID__
+#if WINDOWS
             var buttonList = new List<Button>();
-#endif
             for (int i = 0; i < buttonCount; i++)
             {
-#if WINDOWS
+
                 var button = new Button();
                 button.Content = "Button" + i;
                 buttonList.Add(button);
                 page.AddView(button);
                 flow.AddView(button);
+            }
 #elif __ANDROID__
+            var buttonList = new List<Button>();
+            for (int i = 0; i < buttonCount; i++)
+            {
                 var button = new Button(page.Context);
                 button.Text = "Button" + i;
                 buttonList.Add(button);
                 page.AddView(button);
                 flow.AddView(button);
+            }
 #elif IOS
+            var buttonList = new List<UIButton>();
+            for (int i = 0; i < buttonCount; i++)
+            {
                 var button = new UIButton();
                 button.SetTitle("Button" + i, UIControlState.Normal);
                 buttonList.Add(button);
                 page.AddView(button);
                 flow.AddView(button);
-#endif
-
             }
+#endif
             using (var layoutSet = new FluentConstraintSet())
             {
                 layoutSet.Clone(page);
                 layoutSet
                     .Select(flow)
-                    .TopToTop().LeftToLeft()
+                    .TopToTop(page, 100).LeftToLeft()
                     .Width(SizeBehavier.WrapContent)
                     .Height(SizeBehavier.WrapContent);
                 layoutSet.ApplyTo(page);
             }
+        }
+
+        void performanceTest_WrapPanel(ConstraintLayout page)
+        {
+            //WrapPanel.DEBUG = true;
+            WrapPanel.MEASURE = true;
+            int buttonCount = 50;
+#if __ANDROID__
+            var wrapPanel = new WrapPanel(page.Context){ Orientation = WrapPanel.LayoutOrientation.X, Padding = new Microsoft.Maui.Graphics.Rect(10, 10, 10, 10), HorizontalSpacing = 10, VerticalSpacing = 10 };
+#else
+            var wrapPanel = new WrapPanel() { Orientation = WrapPanel.LayoutOrientation.X, Padding = new Microsoft.Maui.Graphics.Rect(10, 10, 10, 10), HorizontalSpacing = 10, VerticalSpacing = 10 };
+#endif
+            wrapPanel.AddElement(FifthTextBox);
+            page.AddView(wrapPanel);
+            using (var set = new FluentConstraintSet())
+            {
+                set.Clone(page);
+                set
+                    .Select(wrapPanel)
+                    .TopToTop(page, 100).LeftToLeft()
+                    .Width(SizeBehavier.MatchParent)
+                    .Height(SizeBehavier.WrapContent);
+                set.ApplyTo(page);
+            }
+#if WINDOWS
+            var buttonList = new List<Button>();
+            for (int i = 0; i < buttonCount; i++)
+            {
+
+                var button = new Button();
+                button.Content = "Button" + i;
+                buttonList.Add(button);
+                wrapPanel.AddElement(button);
+            }
+#elif __ANDROID__
+            var buttonList = new List<Button>();
+            for (int i = 0; i < buttonCount; i++)
+            {
+                var button = new Button(page.Context);
+                button.Text = "Button" + i;
+                buttonList.Add(button);
+                wrapPanel.AddView(button);
+            }
+#elif __IOS__
+            wrapPanel.UserInteractionEnabled = true;
+            wrapPanel.BackgroundColor = UIColor.Yellow;
+            FifthTextBox.Enabled = true;
+            FifthTextBox.UserInteractionEnabled = true;
+            var buttonList = new List<UIButton>();
+            for (int i = 0; i < buttonCount; i++)
+            {
+                var button = new UIButton();
+                button.SetTitle("Button" + i, UIControlState.Normal);
+                buttonList.Add(button);
+                wrapPanel.AddElement(button);
+            }
+#endif
         }
         void circleConstraintTest(ConstraintLayout page)
         {
@@ -128,8 +186,8 @@ namespace SharpConstraintLayout.Maui.Native.Example
             {
                 layoutSet.Clone(page);
                 layoutSet.Select(stackPanel)
-                    .CenterTo()
-                    .Width(SizeBehavier.WrapContent)
+                    .CenterYTo()
+                    .Width(SizeBehavier.MatchParent)
                     .Height(SizeBehavier.WrapContent);
                 layoutSet.ApplyTo(page);
             }
@@ -142,6 +200,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
 #elif __IOS__
 #endif
         }
+
         void animationTest(ConstraintLayout page)
         {
 #if __ANDROID__

@@ -25,7 +25,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
 
         public MainPage(CGRect frame)
         {
-            ConstraintLayout.DEBUG = true;
+            //ConstraintLayout.DEBUG = true;
             ConstraintLayout.MEASURE = true;
 
             Page = new ConstraintLayout()
@@ -43,7 +43,9 @@ namespace SharpConstraintLayout.Maui.Native.Example
             //visibilityTest(Page);
             //flowTest(Page);
             // nestedLayoutTest(Page);
-            circleConstraintTest(Page);
+            //circleConstraintTest(Page);
+            //performanceTest(Page);
+            performanceTest_WrapPanel(Page);
         }
 
         private void createControls()
