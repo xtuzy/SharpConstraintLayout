@@ -25,27 +25,27 @@ namespace SharpConstraintLayout.Maui.Native.Example
 
         public MainPage(CGRect frame)
         {
-            //ConstraintLayout.DEBUG = true;
+            ConstraintLayout.DEBUG = true;
             ConstraintLayout.MEASURE = true;
 
             Page = new ConstraintLayout()
             {
                 AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight,
-                BackgroundColor = UIColor.SystemPink
+                BackgroundColor = UIColor.SystemGray
             };
 
             createControls();
 
             //baseAlignTest(Page);
             //baselineTest(Page);
-            //guidelineTest(Page);//bug meause and arrange infinity loop
-            //barrierTest(Page);
-            //visibilityTest(Page);
+            //guidelineTest(Page);//OK
+            //barrierTest(Page);//OK
+            //visibilityTest(Page);//OK
             //flowTest(Page);
-            // nestedLayoutTest(Page);
+            //nativeLayoutInConstraintLayoutTest(Page);
             //circleConstraintTest(Page);
-            //performanceTest(Page);
-            performanceTest_WrapPanel(Page);
+            performanceTest(Page);
+            //performanceTest_WrapPanel(Page);
         }
 
         private void createControls()

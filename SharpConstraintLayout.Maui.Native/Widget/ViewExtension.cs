@@ -121,35 +121,40 @@ namespace SharpConstraintLayout.Maui.Widget
 #endif
         }
 
-        public static (int Width, int Height) GetDefaultSize(this UIElement element)
+        /// <summary>
+        /// 获取控件自身测量的大小,这个大小是控件的内容大小或者平台的原生布局赋予的大小,由平台自身去计算
+        /// </summary>
+        /// <param name="element"></param>
+        /// <returns></returns>
+        public static (int Width, int Height) GetWrapContentSize(this UIElement element)
         {
 #if WINDOWS
-
             return ((int)element.DesiredSize.Width, (int)element.DesiredSize.Height);
 #elif __IOS__
-            return ((int)element.IntrinsicContentSize.Width, (int)element.IntrinsicContentSize.Height);
+            var (w, h) = ((int)element.IntrinsicContentSize.Width, (int)element.IntrinsicContentSize.Height);
+            //iOS有些View的IntrinsicContentSize始终为-1,此时尝试使用SystemLayoutSizeFittingSize获得大小,但也可能获得0
+            if (w <= 0 || h <= 0)
+            {
+                var size = element.SystemLayoutSizeFittingSize(UIView.UILayoutFittingCompressedSize);
+                w = (int)size.Width;
+                h = (int)size.Height;
+                if (ConstraintLayout.DEBUG) Debug.WriteLine($"{element.GetType().FullName} SystemLayoutSizeFittingSize: {size}");
+            }
+            return (w, h);
 #elif __ANDROID__
             return (element.MeasuredWidth, element.MeasuredHeight);
 #endif
         }
 
+        /// <summary>
+        /// 获取控件测量的大小,这个大小结合了ConstraintWidget被设置的大小
+        /// </summary>
+        /// <param name="element"></param>
+        /// <param name="widget"></param>
+        /// <returns></returns>
         public static (int Width, int Height) GetMeasuredSize(this UIElement element, androidx.constraintlayout.core.widgets.ConstraintWidget widget)
         {
-            int w = 0;
-            int h = 0;
-#if WINDOWS
-            (w, h) = ((int)element.DesiredSize.Width, (int)element.DesiredSize.Height);
-#elif __IOS__
-            (w, h) = ((int)element.IntrinsicContentSize.Width, (int)element.IntrinsicContentSize.Height);
-
-            //@zhouyang add:for test why flow in iOS not correct
-            if (ConstraintLayout.DEBUG && widget is androidx.constraintlayout.core.widgets.VirtualLayout)
-            {
-                Debug.WriteLine($"iOS IntrinsicContentSize:({w},{h})");
-            }
-#elif __ANDROID__
-            (w, h) = (element.MeasuredWidth, element.MeasuredHeight);
-#endif
+            var (w, h) = GetWrapContentSize(element);
             if (w <= 0) w = widget.Width;
             if (h <= 0) h = widget.Height;
             return (w, h);

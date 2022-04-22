@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0-ios;net6.0-android</TargetFrameworks>
+    <TargetFrameworks>net6.0-ios;net6.0-android;net6.0-maccatalyst</TargetFrameworks>
     <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows')) and '$(MSBuildRuntimeType)' == 'Full'">$(TargetFrameworks);net6.0-windows10.0.19041</TargetFrameworks>
     <OutputType>Exe</OutputType>
     <UseMaui>true</UseMaui>
@@ -63,7 +63,7 @@
   <ItemGroup>
     <!--use this you can "hotreload" when use Native code write ui-->
     <PackageReference Condition="$(TargetFramework.Contains('-windows'))" Include="CommunityToolkit.WinUI.UI.Controls" Version="7.1.2" />
-    <PackageReference Include="ReloadPreview" Version="3.0.5" />
+    <PackageReference Include="ReloadPreview" Version="3.0.6" />
   </ItemGroup>
   <!--only ios and maccatalyst have these-->
   <ItemGroup Condition="'$(TargetFramework)'!= 'net6.0-ios' and '$(TargetFramework)' != 'net6.0-maccatalyst'">

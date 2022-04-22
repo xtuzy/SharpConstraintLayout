@@ -73,39 +73,53 @@ namespace SharpConstraintLayout.Maui.Widget
         public override void LayoutSubviews()
         {
             //base.LayoutSubviews();
-            if (DEBUG) Debug.WriteLine($"{nameof(LayoutSubviews)} {this} {this.Frame}");
-            if (DEBUG) Debug.WriteLine($"{nameof(LayoutSubviews)} {Superview} {this.Superview?.Frame}");
+            if (DEBUG) Debug.WriteLine($"{this} {nameof(LayoutSubviews)} Frame={this.Frame} Parent={Superview} Parents' Frame={this.Superview?.Frame}");
 
-            //得到自身或Superview的大小作为availableSize
-            //if (this.Frame.Size.Width > 0)
-            //{
-            //    MeasureOverride(this.Frame.Size);
-            //}
-            //else
+            /*
+             * layoutSubviews调用机制(链接：https://www.jianshu.com/p/915c7cc0e959)
+             * 1 直接调用setLayoutSubviews。
+             * 2 addSubview的时候触发layoutSubviews。
+             * 3 当view的frame发生改变的时候触发layoutSubviews。
+             * 4 第一次滑动UIScrollView的时候触发layoutSubviews。
+             * 5 旋转Screen会触发父UIView上的layoutSubviews事件。
+             * 6 改变一个UIView大小的时候也会触发父UIView上的layoutSubviews事件。
+            */
+
+            if (this.Frame.Size.Width > 0)//取自身的大小作为availableSize
             {
-                if (Superview != null)
-                    Measure(this.Superview.Frame.Size);
-            }
-
-            if (DEBUG) Debug.WriteLine($"{nameof(LayoutSubviews)} RootWidget {this.MLayoutWidget.ToString()}");
-
-            //更新layout的大小
-            if (this.Frame.Size.Width > 0)
-            {
-                Frame = new CGRect(Frame.X, Frame.Y, MLayoutWidget.Width, MLayoutWidget.Height);
+                //作为ConstraintLayout的子ConstraintLayout是肯定有大小的,而作为根布局也有大小
+                Measure(this.Frame.Size);
             }
             else
             {
-                if (Superview != null)
-                    Frame = new CGRect(this.Superview.Frame.X, this.Superview.Frame.Y, MLayoutWidget.Width, MLayoutWidget.Height);
+                //没有被父布局设置大小时,可能是使用了原生布局,也可能是使用了AutoLayout约束大小,如果都获取不到,那么取父布局的大小
+                (var w, var h) = this.GetWrapContentSize();
+                if (w <= 0 || h <= 0)
+                {
+                    if (Superview != null)
+                        Measure(this.Superview.Frame.Size);
+                }
+                else
+                {
+                    Measure(new Size(w, h));
+                }
             }
+
+            if (DEBUG) Debug.WriteLine($"{this} {nameof(LayoutSubviews)} Widget={this.MLayoutWidget.ToString()}");
+
+            //更新layout的大小, Layout不指定自身位置
+            if (this.Frame.Width != MLayoutWidget.Width || this.Frame.Height != MLayoutWidget.Height)
+                this.Bounds = new CGRect(this.Bounds.X, this.Bounds.Y, MLayoutWidget.Width, MLayoutWidget.Height);
 
             OnLayout();
         }
 
         private void LayoutChild(UIElement element, int x, int y, int w, int h)
         {
-            element.Frame = new CoreGraphics.CGRect(x, y, w, h);
+            //参考https://github.com/youngsoft/MyLinearLayout/blob/master/MyLayout/Lib/MyBaseLayout.m,设置Bounds
+            //element.Frame = new CoreGraphics.CGRect(x, y, w, h);
+            element.Bounds = new CoreGraphics.CGRect(element.Bounds.X, element.Bounds.Y, w, h);
+            element.Center = new CoreGraphics.CGPoint(x + w / 2, y + h / 2);
         }
 
         #endregion

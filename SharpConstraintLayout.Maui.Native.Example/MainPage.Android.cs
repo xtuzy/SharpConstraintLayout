@@ -36,11 +36,11 @@ namespace SharpConstraintLayout.Maui.Native.Example
             //barrierTest(this);//bug:edittext can't auto relayout
             //visibilityTest(this);//OK
             //flowTest(this);
-            //nestedLayoutTest(this);
+            nativeLayoutInConstraintLayoutTest(this);
             //animationTest(this);
             //circleConstraintTest(this);
             //performanceTest(this);
-            performanceTest_WrapPanel(this);
+            //performanceTest_WrapPanel(this);
         }
 
         private void createControls()

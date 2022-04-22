@@ -562,7 +562,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 if (component != null)
                 {
                     LayoutChild(component, child.X, child.Y, child.Width, child.Height);
-                    if (DEBUG) SimpleDebug.WriteLine($"{nameof(OnLayout)} {component.GetViewLayoutInfo()} Widget={new Rect(child.X, child.Y, child.Width, child.Height)}");
+                    if (DEBUG && ChildCount < 10) SimpleDebug.WriteLine($"{nameof(OnLayout)} {component.GetViewLayoutInfo()} Widget={new Rect(child.X, child.Y, child.Width, child.Height)}");
                 }
 
                 if (component is Placeholder)
@@ -711,7 +711,7 @@ namespace SharpConstraintLayout.Maui.Widget
                                 // So in that case, we have to double-check the other side is stable (else we can't
                                 // just assume the wrap value will be correct).
                                 // bool otherDimensionStable = child.MeasuredHeight == widget.Height;//Windows中当前还未Measure,先使用Defalut DesiredSize尝试
-                                bool otherDimensionStable = child.GetDefaultSize().Height == widget.Height;
+                                bool otherDimensionStable = child.GetWrapContentSize().Height == widget.Height;
                                 bool useCurrent = measure.measureStrategy == BasicMeasure.Measure.USE_GIVEN_DIMENSIONS || !shouldDoWrap || (shouldDoWrap && otherDimensionStable) || (child is Placeholder) || (widget.ResolvedHorizontally);
                                 if (useCurrent)
                                 {
@@ -751,7 +751,7 @@ namespace SharpConstraintLayout.Maui.Widget
                                 // So in that case, we have to double-check the other side is stable (else we can't
                                 // just assume the wrap value will be correct).
                                 //bool otherDimensionStable = child.MeasuredWidth == widget.Width;//Windows中Measure后的高度应该是DesiredSize
-                                bool otherDimensionStable = child.GetDefaultSize().Width == widget.Width;
+                                bool otherDimensionStable = child.GetWrapContentSize().Width == widget.Width;
                                 bool useCurrent = measure.measureStrategy == BasicMeasure.Measure.USE_GIVEN_DIMENSIONS || !shouldDoWrap || (shouldDoWrap && otherDimensionStable) || (child is Placeholder) || (widget.ResolvedVertically);
                                 if (useCurrent)
                                 {
@@ -777,7 +777,8 @@ namespace SharpConstraintLayout.Maui.Widget
                     ConstraintWidgetContainer container = (ConstraintWidgetContainer)widget.Parent;
                     if (container != null && Optimizer.enabled(outerInstance.mOptimizationLevel, Optimizer.OPTIMIZATION_CACHE_MEASURES))
                     {
-                        if (child.GetDefaultSize().Width == widget.Width && child.GetDefaultSize().Width < container.Width && child.GetDefaultSize().Height == widget.Height && child.GetDefaultSize().Height < container.Height && (int)child.GetBaseline() == widget.BaselineDistance && !widget.MeasureRequested)
+                        var currentSize = child.GetWrapContentSize();
+                        if (currentSize.Width == widget.Width && currentSize.Width < container.Width && currentSize.Height == widget.Height && currentSize.Height < container.Height && (int)child.GetBaseline() == widget.BaselineDistance && !widget.MeasureRequested)
                         // note: the container check replicates legacy behavior, but we might want
                         // to not enforce that in 3.0
                         {
@@ -832,9 +833,9 @@ namespace SharpConstraintLayout.Maui.Widget
                     }
                     else
                     {
-                        if (DEBUG) SimpleDebug.WriteLine($"{child.GetType().FullName}  before onMeasure: widget={widget},control={child.GetDefaultSize()},spec=({AndroidMeasureSpec.GetSize(horizontalSpec)} x {AndroidMeasureSpec.GetSize(verticalSpec)})");
+                        if (DEBUG) SimpleDebug.WriteLine($"{child.GetType().FullName}  before onMeasure: widget={widget},control={child.GetWrapContentSize()},spec=({AndroidMeasureSpec.GetSize(horizontalSpec)} x {AndroidMeasureSpec.GetSize(verticalSpec)})");
                         child.MeasureSelf(horizontalSpec, verticalSpec);
-                        if (DEBUG) SimpleDebug.WriteLine($"{child.GetType().FullName}  after onMeasure: widget={widget},control={child.GetDefaultSize()}");
+                        if (DEBUG) SimpleDebug.WriteLine($"{child.GetType().FullName}  after onMeasure: widget={widget},control={child.GetWrapContentSize()}");
                     }
                     widget.setLastMeasureSpec(horizontalSpec, verticalSpec);
 
@@ -917,8 +918,15 @@ namespace SharpConstraintLayout.Maui.Widget
                 {
                     measure.measuredNeedsSolverPass = true;
                 }
-                measure.measuredWidth = width;
-                measure.measuredHeight = height;
+                //在Windows中嵌套Stack Panel和具体数值时,发现设置StackPanel宽度为MatchParent不生效,依旧为WrapContent时的大小,我认为只有WrapContent的控件才需要自身Measure值,其他的ConstraintWidget会自己计算出
+                if (widget.HorizontalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.WRAP_CONTENT)
+                    measure.measuredWidth = width;
+                else
+                    measure.measuredWidth = widget.Width;
+                if (widget.VerticalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.WRAP_CONTENT)
+                    measure.measuredHeight = height;
+                else
+                    measure.measuredHeight = widget.Height;
                 measure.measuredHasBaseline = hasBaseline;
                 measure.measuredBaseline = baseline;
                 if (MEASURE)

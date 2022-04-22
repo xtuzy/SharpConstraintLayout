@@ -60,7 +60,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
                 page.AddView(button);
                 flow.AddView(button);
             }
-#elif IOS
+#elif __IOS__
             var buttonList = new List<UIButton>();
             for (int i = 0; i < buttonCount; i++)
             {
@@ -89,7 +89,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             WrapPanel.MEASURE = true;
             int buttonCount = 50;
 #if __ANDROID__
-            var wrapPanel = new WrapPanel(page.Context){ Orientation = WrapPanel.LayoutOrientation.X, Padding = new Microsoft.Maui.Graphics.Rect(10, 10, 10, 10), HorizontalSpacing = 10, VerticalSpacing = 10 };
+            var wrapPanel = new WrapPanel(page.Context) { Orientation = WrapPanel.LayoutOrientation.X, Padding = new Microsoft.Maui.Graphics.Rect(10, 10, 10, 10), HorizontalSpacing = 10, VerticalSpacing = 10 };
 #else
             var wrapPanel = new WrapPanel() { Orientation = WrapPanel.LayoutOrientation.X, Padding = new Microsoft.Maui.Graphics.Rect(10, 10, 10, 10), HorizontalSpacing = 10, VerticalSpacing = 10 };
 #endif
@@ -126,7 +126,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             }
 #elif __IOS__
             wrapPanel.UserInteractionEnabled = true;
-            wrapPanel.BackgroundColor = UIColor.Yellow;
+            wrapPanel.BackgroundColor = UIColor.Gray;
             FifthTextBox.Enabled = true;
             FifthTextBox.UserInteractionEnabled = true;
             var buttonList = new List<UIButton>();
@@ -171,7 +171,11 @@ namespace SharpConstraintLayout.Maui.Native.Example
             });
         }
 
-        void stackPanelTest(ConstraintLayout page)
+        void ConstraintLayoutInNativeLayoutTest(ConstraintLayout page)
+        {
+
+        }
+        void nativeLayoutInConstraintLayoutTest(ConstraintLayout page)
         {
 #if WINDOWS
             var stackPanel = new StackPanel()
@@ -179,25 +183,190 @@ namespace SharpConstraintLayout.Maui.Native.Example
                 Orientation = Microsoft.UI.Xaml.Controls.Orientation.Horizontal,
                 Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.Coral),
                 VerticalAlignment = Microsoft.UI.Xaml.VerticalAlignment.Center,
-                HorizontalAlignment = Microsoft.UI.Xaml.HorizontalAlignment.Center,
             };
             page.AddView(stackPanel);
+            stackPanel.Children.Add(new Button() { Content = "InStackPanel" });
+            stackPanel.Children.Add(new Button() { Content = "InStackPanel" });
+            stackPanel.Children.Add(new TextBlock() { Text = "InStackPanel" });
+            stackPanel.Children.Add(new TextBox() { Text = "InStackPanel" });
+
+            var grid = new Grid();
+            page.AddView(grid);
+            grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new Microsoft.UI.Xaml.GridLength(1, Microsoft.UI.Xaml.GridUnitType.Star) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new Microsoft.UI.Xaml.GridLength(1, Microsoft.UI.Xaml.GridUnitType.Star) });
+            var textblock = new TextBlock() { Text = "InGrid" };
+            var textbox = new TextBox() { Text = "InGrid" };
+            textblock.SetValue(Grid.ColumnProperty, 0);//https://stackoverflow.com/a/27756061/13254773
+            textbox.SetValue(Grid.ColumnProperty, 1);//https://stackoverflow.com/a/27756061/13254773
+            grid.Children.Add(textblock);
+            grid.Children.Add(textbox);
+
+            var scrollView = new ScrollViewer();
+            page.AddView(scrollView);
+            scrollView.Content = new StackPanel()
+            {
+                Orientation = Microsoft.UI.Xaml.Controls.Orientation.Vertical,
+                Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.Coral),
+            };
+            (scrollView.Content as StackPanel).Children.Add(new Button() { Content = "InScrollViewer" });
+            (scrollView.Content as StackPanel).Children.Add(new Button() { Content = "InScrollViewer" });
+            (scrollView.Content as StackPanel).Children.Add(new TextBlock() { Text = "InScrollViewer" });
+            (scrollView.Content as StackPanel).Children.Add(new TextBox() { Text = "InScrollViewer" });
+
             using (var layoutSet = new FluentConstraintSet())
             {
                 layoutSet.Clone(page);
                 layoutSet.Select(stackPanel)
-                    .CenterYTo()
-                    .Width(SizeBehavier.MatchParent)
-                    .Height(SizeBehavier.WrapContent);
+                    .CenterYTo().LeftToLeft()
+                    .Width(600)
+                    .Height(SizeBehavier.WrapContent)
+                    .Select(grid)
+                    .TopToBottom(stackPanel, 10).LeftToLeft()
+                    .Width(600)
+                    .Height(SizeBehavier.WrapContent)
+                    .Select(scrollView)
+                    .TopToBottom(grid, 10).BottomToBottom().LeftToLeft()
+                    .Width(600)
+                    .Height(SizeBehavier.MatchConstraint);
                 layoutSet.ApplyTo(page);
             }
-            stackPanel.Children.Add(FirstButton);
-            stackPanel.Children.Add(SecondButton);
-            stackPanel.Children.Add(FouthTextBlock);
-            stackPanel.Children.Add(FifthTextBox);
 #elif ANDROID
+            var stackPanel = new LinearLayout(page.Context)
+            {
+                Orientation = Android.Widget.Orientation.Horizontal,
+                Background = new Android.Graphics.Drawables.ColorDrawable(Android.Graphics.Color.Coral),
+            };
+            page.AddView(stackPanel);
+            stackPanel.AddView(new Button(page.Context) { Text = "InStackPanel" });
+            stackPanel.AddView(new Button(page.Context) { Text = "InStackPanel" });
+            stackPanel.AddView(new TextView(page.Context) { Text = "InStackPanel" });
+            stackPanel.AddView(new EditText(page.Context) { Text = "InStackPanel" });
+            var grid = new GridLayout(page.Context);
+            page.AddView(grid);
+            grid.ColumnCount = 2;
+            grid.AddView(new TextView(page.Context) { Text = "InGrid" });
+            grid.AddView(new EditText(page.Context) { Text = "InGrid" });
+            var scrollView = new ScrollView(page.Context);
+            page.AddView(scrollView);
+            scrollView.AddView(new LinearLayout(page.Context)
+            {
+                Orientation = Android.Widget.Orientation.Vertical,
+                Background = new Android.Graphics.Drawables.ColorDrawable(Android.Graphics.Color.Coral),
+            });
+            (scrollView.GetChildAt(0) as LinearLayout).AddView(new Button(page.Context) { Text = "InScrollViewer" });
+            (scrollView.GetChildAt(0) as LinearLayout).AddView(new Button(page.Context) { Text = "InScrollViewer" });
+            (scrollView.GetChildAt(0) as LinearLayout).AddView(new TextView(page.Context) { Text = "InScrollViewer" });
+            (scrollView.GetChildAt(0) as LinearLayout).AddView(new EditText(page.Context) { Text = "InScrollViewer" });
 
+            using (var layoutSet = new FluentConstraintSet())
+            {
+                layoutSet.Clone(page);
+                layoutSet.Select(stackPanel)
+                    .CenterYTo().LeftToLeft()
+                    .Width(600)
+                    .Height(SizeBehavier.WrapContent)
+                    .Select(grid)
+                    .TopToBottom(stackPanel, 10).LeftToLeft()
+                    .Width(600)
+                    .Height(SizeBehavier.WrapContent)
+                    .Select(scrollView)
+                    .TopToBottom(grid, 10).BottomToBottom().LeftToLeft()
+                    .Width(600)
+                    .Height(SizeBehavier.MatchConstraint);
+                layoutSet.ApplyTo(page);
+            }
 #elif __IOS__
+            var stackPanel = new UIStackView()
+            {
+                Axis = UILayoutConstraintAxis.Horizontal,
+                BackgroundColor = UIColor.SystemPink,
+                Spacing = 10,
+            };
+            page.AddSubview(stackPanel);
+            var firstButtonInStackPanel = new UIButton() { BackgroundColor = UIColor.Green };
+            firstButtonInStackPanel.SetTitle("InStackPanel", UIControlState.Normal);
+            stackPanel.AddArrangedSubview(firstButtonInStackPanel);
+            var secondButtonInStackPanel = new UIButton() { BackgroundColor = UIColor.Green };
+            secondButtonInStackPanel.SetTitle("InStackPanel", UIControlState.Normal);
+            stackPanel.AddArrangedSubview(secondButtonInStackPanel);
+            stackPanel.AddArrangedSubview(new UILabel() { Text = "InStackPanel" });
+            stackPanel.AddArrangedSubview(new UITextField() { Text = "InStackPanel" });
+
+            var grid = new UIView()
+            {
+                BackgroundColor = UIColor.SystemPink,
+                //TranslatesAutoresizingMaskIntoConstraints = false
+            };
+            page.AddSubview(grid);
+            var label = new UILabel() { Text = "InGrid" };
+            var textbox = new UITextField() { Text = "InGrid" };
+            grid.AddSubview(label);
+            grid.AddSubview(textbox);
+            label.TranslatesAutoresizingMaskIntoConstraints = false;
+            textbox.TranslatesAutoresizingMaskIntoConstraints = false;
+            label.TopAnchor.ConstraintEqualTo(grid.TopAnchor).Active = true;
+            label.LeftAnchor.ConstraintEqualTo(grid.LeftAnchor).Active = true;
+            textbox.TopAnchor.ConstraintEqualTo(label.BottomAnchor).Active = true;
+            textbox.LeftAnchor.ConstraintEqualTo(label.RightAnchor).Active = true;
+            textbox.RightAnchor.ConstraintEqualTo(grid.RightAnchor).Active = true;
+            textbox.BottomAnchor.ConstraintEqualTo(grid.BottomAnchor).Active = true;
+
+            var scrollView = new UIScrollView()
+            {
+                BackgroundColor = UIColor.SystemPink,
+            };
+            page.AddSubview(scrollView);
+            scrollView.AddSubview(new UIStackView()
+            {
+                Axis = UILayoutConstraintAxis.Vertical,
+                BackgroundColor = UIColor.LightGray,
+                Spacing = 20,
+                TranslatesAutoresizingMaskIntoConstraints = false,
+            });
+
+            scrollView.Subviews[0].LeftAnchor.ConstraintEqualTo(scrollView.LeftAnchor).Active = true;
+            scrollView.Subviews[0].RightAnchor.ConstraintEqualTo(scrollView.RightAnchor).Active = true;
+            scrollView.Subviews[0].TopAnchor.ConstraintEqualTo(scrollView.TopAnchor).Active = true;
+            scrollView.Subviews[0].BottomAnchor.ConstraintEqualTo(scrollView.BottomAnchor).Active = true;
+
+            var firstButtonInScrollView = new UIButton() { BackgroundColor = UIColor.Gray };
+            firstButtonInScrollView.SetTitle("InScrollViewer", UIControlState.Normal);
+            (scrollView.Subviews[0] as UIStackView).AddArrangedSubview(firstButtonInScrollView);
+            var secondButtonInScrollView = new UIButton() { BackgroundColor = UIColor.Gray };
+            secondButtonInScrollView.SetTitle("InScrollViewer", UIControlState.Normal);
+            (scrollView.Subviews[0] as UIStackView).AddArrangedSubview(secondButtonInScrollView);
+            (scrollView.Subviews[0] as UIStackView).AddArrangedSubview(new UILabel() { Text = "InScrollViewer" });
+            (scrollView.Subviews[0] as UIStackView).AddArrangedSubview(new UITextField() { Text = "InScrollViewer" });
+
+            scrollView.AddSubview(new UILabel() { Text = "InScrollViewer" });
+
+            using (var layoutSet = new FluentConstraintSet())
+            {
+                layoutSet.Clone(page);
+                layoutSet.Select(stackPanel)
+                    .CenterYTo().LeftToLeft()
+                    .Width(SizeBehavier.WrapContent)
+                    .Height(SizeBehavier.WrapContent)
+                    .Select(grid)
+                    .TopToBottom(stackPanel, 10).LeftToLeft()
+                    .Width(SizeBehavier.WrapContent)
+                    .Height(SizeBehavier.WrapContent)
+                    .Select(scrollView)
+                    .TopToBottom(grid, 10).BottomToBottom().LeftToLeft().RightToRight()
+                    .Width(SizeBehavier.MatchConstraint)
+                    .Height(SizeBehavier.MatchConstraint);
+                layoutSet.ApplyTo(page);
+            }
+
+            Task.Run(async () =>
+            {
+
+                await Task.Delay(3000);//wait ui show
+                UIThread.Invoke(() =>
+                {
+                    DebugTool.SimpleDebug.WriteLine("scrollView.ContentSize:" + scrollView.ContentSize);
+                }, page);
+            });
 #endif
         }
 
@@ -395,7 +564,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             int index = 2;
 #if WINDOWS || ANDROID
             FirstButton.Click += (sender, e) =>
-#elif IOS
+#elif __IOS__
             FirstButton.TouchUpInside += (sender, e) =>
 #endif
             {
@@ -486,19 +655,21 @@ namespace SharpConstraintLayout.Maui.Native.Example
         private void guidelineTest(ConstraintLayout page)
         {
 #if __ANDROID__
-            layout = new ConstraintLayout(page.Context)
+            var layout = new ConstraintLayout(page.Context)
             {
                 Id = View.GenerateViewId(),
             };
             layout.SetBackgroundColor(Android.Graphics.Color.Black);
-#else
-            layout = new ConstraintLayout()
+            
+#elif WINDOWS
+            var layout = new ConstraintLayout()
             {
-#if WINDOWS
                 Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.Black)
+            };
 #elif __IOS__
+            var layout = new UIView()
+            {
                 BackgroundColor = UIColor.Black
-#endif
             };
 #endif
 
