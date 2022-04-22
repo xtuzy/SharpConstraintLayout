@@ -782,18 +782,21 @@ namespace SharpConstraintLayout.Maui.Widget
                         // note: the container check replicates legacy behavior, but we might want
                         // to not enforce that in 3.0
                         {
-                            bool similar = isSimilarSpec(widget.LastHorizontalMeasureSpec, horizontalSpec, widget.Width) && isSimilarSpec(widget.LastVerticalMeasureSpec, verticalSpec, widget.Height);
-                            if (similar)
+                            if (!(child is VirtualLayout))//when VirtualLayout is similar,we still need measure it's child, so we need remeasure it
                             {
-                                measure.measuredWidth = widget.Width;
-                                measure.measuredHeight = widget.Height;
-                                measure.measuredBaseline = widget.BaselineDistance;
-                                // if the dimensions of the solver widget are already the same as the real view, no need to remeasure.
-                                if (DEBUG)
+                                bool similar = isSimilarSpec(widget.LastHorizontalMeasureSpec, horizontalSpec, widget.Width) && isSimilarSpec(widget.LastVerticalMeasureSpec, verticalSpec, widget.Height);
+                                if (similar)
                                 {
-                                    SimpleDebug.WriteLine("SKIPPED " + child.GetType().FullName + widget);
+                                    measure.measuredWidth = widget.Width;
+                                    measure.measuredHeight = widget.Height;
+                                    measure.measuredBaseline = widget.BaselineDistance;
+                                    // if the dimensions of the solver widget are already the same as the real view, no need to remeasure.
+                                    if (DEBUG)
+                                    {
+                                        SimpleDebug.WriteLine("SKIPPED " + child.GetType().FullName + widget);
+                                    }
+                                    return;
                                 }
-                                return;
                             }
                         }
                     }

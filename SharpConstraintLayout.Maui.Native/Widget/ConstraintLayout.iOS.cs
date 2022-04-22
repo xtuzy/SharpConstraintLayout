@@ -73,7 +73,7 @@ namespace SharpConstraintLayout.Maui.Widget
         public override void LayoutSubviews()
         {
             //base.LayoutSubviews();
-            if (DEBUG) Debug.WriteLine($"{this} {nameof(LayoutSubviews)} Frame={this.Frame} Parent={Superview} Parents' Frame={this.Superview?.Frame}");
+            if (DEBUG) Debug.WriteLine($"{this.GetType().FullName} {nameof(LayoutSubviews)} Frame={this.Frame} Parent={Superview.GetType().FullName} Parents' Frame={this.Superview?.Frame}");
 
             /*
              * layoutSubviews调用机制(链接：https://www.jianshu.com/p/915c7cc0e959)
@@ -105,7 +105,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 }
             }
 
-            if (DEBUG) Debug.WriteLine($"{this} {nameof(LayoutSubviews)} Widget={this.MLayoutWidget.ToString()}");
+            if (DEBUG) Debug.WriteLine($"{this.GetType().FullName} {nameof(LayoutSubviews)} Widget={this.MLayoutWidget.ToString()}");
 
             //更新layout的大小, Layout不指定自身位置
             if (this.Frame.Width != MLayoutWidget.Width || this.Frame.Height != MLayoutWidget.Height)
