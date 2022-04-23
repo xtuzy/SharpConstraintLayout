@@ -31,19 +31,19 @@ namespace SharpConstraintLayout.Maui.Widget
             return Children[index];
         }
 
-        public void AddView(UIElement element)
+        public void AddElement(UIElement element)
         {
             Children?.Add(element);
             OnAddedView(element);
         }
 
-        public void RemoveView(UIElement element)
+        public void RemoveElement(UIElement element)
         {
             Children?.Remove(element);
             OnRemovedView(element);
         }
 
-        public void RemoveAllViews()
+        public void RemoveAllElements()
         {
             foreach (var element in this.Children)
             {

@@ -25,6 +25,8 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
     using ConstraintWidget = androidx.constraintlayout.core.widgets.ConstraintWidget;
     using HelperWidget = androidx.constraintlayout.core.widgets.HelperWidget;
     using AndroidMeasureSpec = SharpConstraintLayout.Maui.Widget.MeasureSpec;
+    using SharpConstraintLayout.Maui.Helper.Widget.Interface;
+
     /// <summary>
     /// Flow VirtualLayout. <b>Added in 2.0</b>
     /// <br/>
@@ -211,7 +213,7 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
             }
         }
 
-        protected internal override void init()
+        protected override void init()
         {
             base.init();
             mFlow = new androidx.constraintlayout.core.widgets.Flow();

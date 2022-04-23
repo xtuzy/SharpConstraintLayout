@@ -15,15 +15,18 @@
  */
 #if WINDOWS
 using Microsoft.UI.Xaml;
+using SharpConstraintLayout.Maui.Widget.Interface;
 using System.Diagnostics;
-using View = Microsoft.UI.Xaml.FrameworkElement;
+using FrameworkElement = Microsoft.UI.Xaml.FrameworkElement;
 #elif __IOS__
+using SharpConstraintLayout.Maui.Widget.Interface;
 using System;
 using System.Diagnostics;
-using View = UIKit.UIView;
+using FrameworkElement = UIKit.UIView;
 #elif __ANDROID__
 using Android.Content;
-using View = Android.Views.View;
+using SharpConstraintLayout.Maui.Widget.Interface;
+using FrameworkElement = Android.Views.View;
 #endif
 namespace SharpConstraintLayout.Maui.Widget
 {
@@ -47,7 +50,7 @@ namespace SharpConstraintLayout.Maui.Widget
         {
         }
 
-        protected internal override void init()
+        protected override void init()
         {
             base.init();
         }
@@ -77,7 +80,7 @@ namespace SharpConstraintLayout.Maui.Widget
                     for (int i = 0; i < mCount; i++)
                     {
                         int id = mIds[i];
-                        View view = (View)container.FindElementById(id);
+                        FrameworkElement view = (FrameworkElement)container.FindElementById(id);
                         if (view != null)
                         {
                             if (mApplyVisibilityOnAttach)

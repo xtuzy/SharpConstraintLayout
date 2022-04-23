@@ -26,23 +26,23 @@ namespace SharpConstraintLayout.Maui.Widget
     /// <summary>
     /// For deal with platform difference
     /// </summary>
-    public static class ViewExtension
+    public static class UIElementExtension
     {
 
         /// <summary>
         /// Baseline To Font Center Height
         /// </summary>
-        /// <param name="view"></param>
+        /// <param name="element"></param>
         /// <returns></returns>
-        public static float GetBaseline(this UIElement view)
+        public static float GetBaseline(this UIElement element)
         {
 #if WINDOWS
             double? baselineOffset = 0;
-            if (view is TextBlock || view is RichTextBlock)
+            if (element is TextBlock || element is RichTextBlock)
             {
-                baselineOffset = (view as TextBlock)?.BaselineOffset;
+                baselineOffset = (element as TextBlock)?.BaselineOffset;
                 if (baselineOffset == null)
-                    baselineOffset = (view as RichTextBlock)?.BaselineOffset;
+                    baselineOffset = (element as RichTextBlock)?.BaselineOffset;
                 return (float)baselineOffset;
             }
             else
@@ -51,37 +51,37 @@ namespace SharpConstraintLayout.Maui.Widget
             }
 #elif __IOS__
             //https://stackoverflow.com/questions/35922215/how-to-calculate-uitextview-first-baseline-position-relatively-to-the-origin
-            if (view is UITextField || view is UITextView || view is UILabel || view is UIButton)
+            if (element is UITextField || element is UITextView || element is UILabel || element is UIButton)
             {
-                var fontMetrics = (view as UITextField)?.Font;
+                var fontMetrics = (element as UITextField)?.Font;
                 if (fontMetrics == null)
-                    fontMetrics = (view as UITextView)?.Font;
+                    fontMetrics = (element as UITextView)?.Font;
                 if (fontMetrics == null)
-                    fontMetrics = (view as UIButton)?.TitleLabel?.Font;
+                    fontMetrics = (element as UIButton)?.TitleLabel?.Font;
                 if (fontMetrics == null)
-                    fontMetrics = (view as UILabel)?.Font;
-                return (float)(view.IntrinsicContentSize.Height / 2 + (float)((fontMetrics.Descender - fontMetrics.Ascender) / 2 - fontMetrics.Descender));
+                    fontMetrics = (element as UILabel)?.Font;
+                return (float)(element.IntrinsicContentSize.Height / 2 + (float)((fontMetrics.Descender - fontMetrics.Ascender) / 2 - fontMetrics.Descender));
             }
             else
                 return ConstraintSet.Unset;
 #elif __ANDROID__
-            return view.Baseline;
+            return element.Baseline;
 #endif
         }
 
         /// <summary>
         /// 每个Element的ID从该方法获取
         /// </summary>
-        /// <param name="view"></param>
+        /// <param name="element"></param>
         /// <returns></returns>
-        public static int GetId(this UIElement view)
+        public static int GetId(this UIElement element)
         {
             //#if __ANDROID__
             //            if (view.Id == UIElement.NoId)
             //                view.Id = UIElement.GenerateViewId();
             //            return view.Id;
             //#else
-            return view.GetHashCode();
+            return element.GetHashCode();
             //#endif
         }
 

@@ -1,17 +1,21 @@
 ﻿
 using androidx.constraintlayout.core.widgets;
 #if WINDOWS
-    using View = Microsoft.UI.Xaml.UIElement;
-    using Microsoft.UI.Xaml;
-    using Microsoft.UI.Xaml.Controls;
-    using Windows.Foundation;
+using View = Microsoft.UI.Xaml.UIElement;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Windows.Foundation;
 #elif __IOS__
 using CoreGraphics;
+using SharpConstraintLayout;
+using SharpConstraintLayout.Maui;
+using SharpConstraintLayout.Maui.Widget;
+using SharpConstraintLayout.Maui.Widget.Interface;
 using View = UIKit.UIView;
 #elif __ANDROID__
 using View = Android.Views.View;
 #endif
-namespace SharpConstraintLayout.Maui.Widget
+namespace SharpConstraintLayout.Maui.Widget.Interface
 {
     public interface IConstraintLayout
     {

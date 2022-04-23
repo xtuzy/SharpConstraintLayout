@@ -1,7 +1,6 @@
-﻿
-using System;
+﻿using System;
 
-namespace SharpConstraintLayout.Maui.Widget
+namespace SharpConstraintLayout.Maui.Widget.Interface
 {
     public interface IBarrier
     {

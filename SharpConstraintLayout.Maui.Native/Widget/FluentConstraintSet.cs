@@ -2,37 +2,32 @@
 using static SharpConstraintLayout.Maui.Widget.FluentConstraintSet.Element;
 
 #if WINDOWS
-using View = Microsoft.UI.Xaml.UIElement;
 using UIElement = Microsoft.UI.Xaml.UIElement;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Windows.Foundation;
 #elif __IOS__
-using View = UIKit.UIView;
 using UIElement = UIKit.UIView;
 #elif __ANDROID__
 using UIElement = Android.Views.View;
 using Android.Content;
-using View = Android.Views.View;
-//using AndroidX.ConstraintLayout.Widget;
-//using static Android.Views.ViewGroup;
 #endif
 
 namespace SharpConstraintLayout.Maui.Widget
 {
     public class FluentConstraintSet : ConstraintSet
     {
-        public Element Select(params View[] views)
+        public Element Select(params UIElement[] views)
         {
             ElementType type;
             return new Element(this, views);
         }
 
-        public void ApiDesign()
+        private void ApiDesign()
         {
             using (var c = new FluentConstraintSet())
             {
-                //c.Clone(null);
+                c.Clone(null);
                 c.Select(null).LeftToLeft(null).LeftToRight(null)
                 .Select(null).RightToLeft(null).RightToRight(null)
                 .Select(null).TopToTop(null).TopToBottom(null)
@@ -86,6 +81,34 @@ namespace SharpConstraintLayout.Maui.Widget
             Gone = ConstraintSet.Gone,
         }
 
+        public enum ChainStyle
+        {
+            Spread = ConstraintSet.ChainSpread,
+            SpreadInside = ConstraintSet.ChainSpreadInside,
+            Packed = ConstraintSet.ChainPacked,
+        }
+
+        public FluentConstraintSet CreateXChain(UIElement leftView, Edge leftSide, UIElement rightView, Edge rightSide, UIElement[] chainViews, float[] weights, ChainStyle style)
+        {
+            int[] chainIds = new int[chainViews.Length];
+            for (var index = 0; index < chainViews.Length; index++)
+            {
+                chainIds[index] = chainViews[index].GetId();
+            }
+            this.CreateHorizontalChain(leftView.GetId(), (int)leftSide, rightView.GetId(), (int)rightSide, chainIds, weights, (int)style);
+            return this;
+        }
+        public FluentConstraintSet CreateYChain(UIElement topView, Edge topSide, UIElement bottomView, Edge bottomSide, UIElement[] chainViews, float[] weights, ChainStyle style)
+        {
+            int[] chainIds = new int[chainViews.Length];
+            for (var index = 0; index < chainViews.Length; index++)
+            {
+                chainIds[index] = chainViews[index].GetId();
+            }
+            this.CreateVerticalChain(topView.GetId(), (int)topSide, bottomView.GetId(), (int)bottomSide, chainIds, weights, (int)style);
+            return this;
+        }
+
         public class Element : IDisposable//,IElement
         {
             internal enum ElementType
@@ -118,18 +141,18 @@ namespace SharpConstraintLayout.Maui.Widget
             private int[] ids;
             private ElementType type;
 
-            internal Element(ConstraintSet set, params View[] views)
+            internal Element(ConstraintSet set, params UIElement[] views)
             {
                 setReference = new WeakReference<ConstraintSet>(set);
                 Select(views);
             }
 
             /// <summary>
-            /// It mean reselect, same as <see cref="FluentConstraintSet.Select(View)"/>, only for not recreate element object waste memory and more fluent api.
+            /// It mean reselect, same as <see cref="FluentConstraintSet.Select(UIElement)"/>, only for not recreate element object waste memory and more fluent api.
             /// </summary>
             /// <param name="views"></param>
             /// <returns></returns>
-            public Element Select(params View[] views)
+            public Element Select(params UIElement[] views)
             {
                 int[] ids = new int[views.Length];
                 for (var index = 0; index < views.Length; index++)
@@ -139,7 +162,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 this.ids = ids;
 
                 //For validate Guideline,Barrier,ConstraintHepler 
-                View view = views[0];
+                UIElement view = views[0];
                 if (view is Guideline)
                 {
                     type = ElementType.Guideline;
@@ -160,6 +183,8 @@ namespace SharpConstraintLayout.Maui.Widget
                 return this;
             }
 
+            #region Position
+
             protected Element LeftToLeft(int secondView, int margin = 0)
             {
                 setReference.TryGetTarget(out var set);
@@ -168,7 +193,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 return this;
             }
 
-            public Element LeftToLeft(View secondView = null, int margin = 0)
+            public Element LeftToLeft(UIElement secondView = null, int margin = 0)
             {
                 if (secondView == null)
                 {
@@ -185,7 +210,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 return this;
             }
 
-            public Element LeftToRight(View secondView = null, int margin = 0)
+            public Element LeftToRight(UIElement secondView = null, int margin = 0)
             {
                 if (secondView == null)
                 {
@@ -202,7 +227,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 return this;
             }
 
-            public Element TopToTop(View secondView = null, int margin = 0)
+            public Element TopToTop(UIElement secondView = null, int margin = 0)
             {
                 if (secondView == null)
                 {
@@ -219,7 +244,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 return this;
             }
 
-            public Element TopToBottom(View secondView = null, int margin = 0)
+            public Element TopToBottom(UIElement secondView = null, int margin = 0)
             {
                 if (secondView == null)
                 {
@@ -236,7 +261,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 return this;
             }
 
-            public Element RightToLeft(View secondView = null, int margin = 0)
+            public Element RightToLeft(UIElement secondView = null, int margin = 0)
             {
                 if (secondView == null)
                 {
@@ -253,7 +278,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 return this;
             }
 
-            public Element RightToRight(View secondView = null, int margin = 0)
+            public Element RightToRight(UIElement secondView = null, int margin = 0)
             {
                 if (secondView == null)
                 {
@@ -270,7 +295,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 return this;
             }
 
-            public Element BottomToTop(View secondView = null, int margin = 0)
+            public Element BottomToTop(UIElement secondView = null, int margin = 0)
             {
                 if (secondView == null)
                 {
@@ -287,7 +312,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 return this;
             }
 
-            public Element BottomToBottom(View secondView = null, int margin = 0)
+            public Element BottomToBottom(UIElement secondView = null, int margin = 0)
             {
                 if (secondView == null)
                 {
@@ -304,7 +329,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 return this;
             }
 
-            public Element BaselineToBaseline(View secondView = null, int margin = 0)
+            public Element BaselineToBaseline(UIElement secondView = null, int margin = 0)
             {
                 if (secondView == null)
                 {
@@ -313,7 +338,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 return this.BaselineToBaseline(secondView.GetId(), margin);
             }
 
-            public Element CenterTo(View secondView = null)
+            public Element CenterTo(UIElement secondView = null)
             {
                 if (secondView == null)
                 {
@@ -325,7 +350,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 return this.CenterXTo(secondView).CenterYTo(secondView);
             }
 
-            public Element CenterXTo(View secondView = null)
+            public Element CenterXTo(UIElement secondView = null)
             {
                 if (secondView == null)
                 {
@@ -334,7 +359,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 return this.LeftToLeft(secondView).RightToRight(secondView);
             }
 
-            public Element CenterYTo(View secondView = null)
+            public Element CenterYTo(UIElement secondView = null)
             {
                 if (secondView == null)
                 {
@@ -343,98 +368,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 return this.TopToTop(secondView).BottomToBottom(secondView);
             }
 
-            public Element Height(int height)
-            {
-                setReference.TryGetTarget(out var set);
-                foreach (var id in ids)
-                    set?.ConstrainHeight(id, height);
-                return this;
-            }
-
-            public Element Height(SizeBehavier behavier)
-            {
-                return this.Height((int)behavier);
-            }
-
-            public Element Width(int width)
-            {
-                setReference.TryGetTarget(out var set);
-                foreach (var id in ids)
-                    set?.ConstrainWidth(id, width);
-                return this;
-            }
-
-            public Element Width(SizeBehavier behavier)
-            {
-                return this.Width((int)behavier);
-            }
-
-            public Element GuidelineOrientation(Orientation orientation)
-            {
-                ValidateGuideline();
-
-                setReference.TryGetTarget(out var set);
-                foreach (var id in ids)
-                    set?.Create(id, (int)orientation);
-                return this;
-            }
-
-            public Element GuidelinePercent(float percent)
-            {
-                ValidateGuideline();
-
-                setReference.TryGetTarget(out var set);
-                foreach (var id in ids)
-                    set?.SetGuidelinePercent(id, percent);
-                return this;
-            }
-
-            public Element GuidelineBegin(int value)
-            {
-                ValidateGuideline();
-
-                setReference.TryGetTarget(out var set);
-                foreach (var id in ids)
-                    set?.SetGuidelineBegin(id, value);
-                return this;
-            }
-
-            public Element GuidelineEnd(int value)
-            {
-                ValidateGuideline();
-
-                setReference.TryGetTarget(out var set);
-                foreach (var id in ids)
-                    set?.SetGuidelineEnd(id, value);
-                return this;
-            }
-
-            public Element Barrier(Direction direction, int margin, params int[] referenced)
-            {
-                ValidateBarrier();
-
-                setReference.TryGetTarget(out var set);
-                foreach (var id in ids)
-                    set?.CreateBarrier(id, (int)direction, margin, referenced);
-                return this;
-            }
-
-            public Element Barrier(Direction direction, int margin, params View[] referenced)
-            {
-                ValidateBarrier();
-
-                setReference.TryGetTarget(out var set);
-                int[] referencedIds = new int[referenced.Length];
-                for (var index = 0; index < referenced.Length; index++)
-                {
-                    referencedIds[index] = referenced[index].GetId();
-                }
-                foreach (var id in ids)
-                    set?.CreateBarrier(id, (int)direction, margin, referencedIds);
-                return this;
-            }
-
-            public Element EdgesTo(View secondView = null, int xmargin = 0, int ymargin = 0)
+            public Element EdgesTo(UIElement secondView = null, int xmargin = 0, int ymargin = 0)
             {
                 if (secondView == null)
                 {
@@ -446,7 +380,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 return this.EdgesXTo(secondView, xmargin).EdgesYTo(secondView, ymargin);
             }
 
-            public Element EdgesXTo(View secondView = null, int xmargin = 0)
+            public Element EdgesXTo(UIElement secondView = null, int xmargin = 0)
             {
                 if (secondView == null)
                 {
@@ -455,7 +389,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 return this.LeftToLeft(secondView, xmargin).RightToRight(secondView, xmargin);
             }
 
-            public Element EdgesYTo(View secondView = null, int ymargin = 0)
+            public Element EdgesYTo(UIElement secondView = null, int ymargin = 0)
             {
                 if (secondView == null)
                 {
@@ -464,6 +398,11 @@ namespace SharpConstraintLayout.Maui.Widget
                 return this.TopToTop(secondView, ymargin).BottomToBottom(secondView, ymargin);
             }
 
+            /// <summary>
+            /// Same as <see cref="ConstraintSet.SetVisibility(int, int)"></see>
+            /// </summary>
+            /// <param name="visibility"></param>
+            /// <returns></returns>
             public Element Visibility(Visibility visibility)
             {
                 setReference.TryGetTarget(out var set);
@@ -480,23 +419,24 @@ namespace SharpConstraintLayout.Maui.Widget
             /// <param name="endSide"></param>
             /// <param name="margin"></param>
             /// <returns></returns>
-            public Element EdgeTo(Edge startSide, View endView, Edge endSide, int margin = 0)
+            public Element EdgeTo(Edge startSide, UIElement endView, Edge endSide, int margin = 0)
             {
                 setReference.TryGetTarget(out var set);
                 foreach (var id in ids)
                     set?.Connect(id, (int)startSide, endView.GetId(), (int)endSide, margin);
                 return this;
             }
+
             /// <summary>
             /// Set views at centerView's Circle.
-            /// Notice:The angle is not same as ConstraintSet.ConstraintCirle.
+            /// Notice:The angle is not same as <see cref="ConstraintSet.ConstrainCircle(int, int, int, float)"/>.
             /// </summary>
             /// <param name="centerView"></param>
             /// <param name="radius"></param>
             /// <param name="angles">center of centerView is origin, the angle is positive value when rotate with a clockwise from x-axis. This is not same as ConstraintSet.ConstraintCirle</param>
             /// <returns></returns>
             /// <exception cref="ArgumentException">radius' and angles' count must be equal to View's count</exception>
-            public Element CircleTo(View centerView, int[] radius, float[] angles)
+            public Element CircleTo(UIElement centerView, int[] radius, float[] angles)
             {
                 if (radius.Length != ids.Length)
                     throw new ArgumentException($"{nameof(CircleTo)}:radius' count must be equal to View's count");
@@ -510,6 +450,294 @@ namespace SharpConstraintLayout.Maui.Widget
                 return this;
             }
 
+            public Element XBias(float bias)
+            {
+                setReference.TryGetTarget(out var set);
+                foreach (var id in ids)
+                    set?.SetHorizontalBias(id, bias);
+                return this;
+            }
+
+            public Element YBias(float bias)
+            {
+                setReference.TryGetTarget(out var set);
+                foreach (var id in ids)
+                    set?.SetVerticalBias(id, bias);
+                return this;
+            }
+
+            #endregion Position
+
+            #region Size
+
+            /// <summary>
+            /// Same as <see cref="ConstraintSet.ConstrainHeight(int, int)(int, int)"/>
+            /// </summary>
+            /// <param name="height"></param>
+            /// <returns></returns>
+            public Element Height(int height)
+            {
+                setReference.TryGetTarget(out var set);
+                foreach (var id in ids)
+                    set?.ConstrainHeight(id, height);
+                return this;
+            }
+
+            /// <summary>
+            /// Same as <see cref="ConstraintSet.ConstrainHeight(int, int)(int, int)"/>
+            /// </summary>
+            /// <param name="behavier"></param>
+            /// <returns></returns>
+            public Element Height(SizeBehavier behavier)
+            {
+                return this.Height((int)behavier);
+            }
+
+            public Element MaxHeight(int height)
+            {
+                setReference.TryGetTarget(out var set);
+                foreach (var id in ids)
+                    set?.ConstrainMaxHeight(id, height);
+                return this;
+            }
+
+            public Element MinHeight(int height)
+            {
+                setReference.TryGetTarget(out var set);
+                foreach (var id in ids)
+                    set?.ConstrainMinHeight(id, height);
+                return this;
+            }
+
+            /// <summary>
+            /// Same as <see cref="ConstraintSet.ConstrainPercentHeight(int, float)"/>
+            /// </summary>
+            /// <param name="percent">view = percent * parent</param>
+            /// <returns></returns>
+            public Element PercentHeight(float percent)
+            {
+                setReference.TryGetTarget(out var set);
+                foreach (var id in ids)
+                    set?.ConstrainPercentHeight(id, percent);
+                return this;
+            }
+
+            /// <summary>
+            /// Same as <see cref="ConstraintSet.SetHorizontalWeight(int, float)"/>
+            /// </summary>
+            /// <param name="weight">in chain</param>
+            /// <returns></returns>
+            public Element XWeight(float weight)
+            {
+                setReference.TryGetTarget(out var set);
+                foreach (var id in ids)
+                    set?.SetHorizontalWeight(id, weight);
+                return this;
+            }
+
+            /// <summary>
+            /// Same as <see cref="ConstraintSet.ConstrainWidth(int, int)"/>
+            /// </summary>
+            /// <param name="width"></param>
+            /// <returns></returns>
+            public Element Width(int width)
+            {
+                setReference.TryGetTarget(out var set);
+                foreach (var id in ids)
+                    set?.ConstrainWidth(id, width);
+                return this;
+            }
+
+            /// <summary>
+            /// Same as <see cref="ConstraintSet.ConstrainWidth(int, int)"/>
+            /// </summary>
+            /// <param name="behavier"></param>
+            /// <returns></returns>
+            public Element Width(SizeBehavier behavier)
+            {
+                return this.Width((int)behavier);
+            }
+
+            public Element MaxWidth(int width)
+            {
+                setReference.TryGetTarget(out var set);
+                foreach (var id in ids)
+                    set?.ConstrainMaxWidth(id, width);
+                return this;
+            }
+
+            public Element MinWidth(int width)
+            {
+                setReference.TryGetTarget(out var set);
+                foreach (var id in ids)
+                    set?.ConstrainMinWidth(id, width);
+                return this;
+            }
+
+            /// <summary>
+            /// Same as <see cref="ConstraintSet.ConstrainPercentWidth(int, float)"/>
+            /// </summary>
+            /// <param name="percent">view = percent * parent</param>
+            /// <returns></returns>
+            public Element PercentWidth(float percent)
+            {
+                setReference.TryGetTarget(out var set);
+                foreach (var id in ids)
+                    set?.ConstrainPercentWidth(id, percent);
+                return this;
+            }
+
+            /// <summary>
+            /// Same as <see cref="ConstraintSet.SetVerticalWeight(int, float)(int, float)"/>
+            /// </summary>
+            /// <param name="weight">in chain</param>
+            /// <returns></returns>
+            public Element YWeight(float weight)
+            {
+                setReference.TryGetTarget(out var set);
+                foreach (var id in ids)
+                    set?.SetVerticalWeight(id, weight);
+                return this;
+            }
+
+            /// <summary>
+            /// TODO
+            /// </summary>
+            /// <param name="ratio"></param>
+            /// <returns></returns>
+            public Element WHRatio(string ratio)
+            {
+                throw new NotImplementedException();
+            }
+
+            #endregion Size
+
+            #region ConstraintHelper
+            public Element GuidelineOrientation(Orientation orientation)
+            {
+                ValidateGuideline();
+
+                setReference.TryGetTarget(out var set);
+                foreach (var id in ids)
+                    set?.Create(id, (int)orientation);
+                return this;
+            }
+
+            /// <summary>
+            /// Same as <see cref="ConstraintSet.SetGuidelinePercent(int, float)"
+            /// </summary>
+            /// <param name="percent"></param>
+            /// <returns></returns>
+            public Element GuidelinePercent(float percent)
+            {
+                ValidateGuideline();
+
+                setReference.TryGetTarget(out var set);
+                foreach (var id in ids)
+                    set?.SetGuidelinePercent(id, percent);
+                return this;
+            }
+
+            /// <summary>
+            /// Same as <see cref="ConstraintSet.SetGuidelineBegin(int, int)"></see>
+            /// </summary>
+            /// <param name="value"></param>
+            /// <returns></returns>
+            public Element GuidelineBegin(int value)
+            {
+                ValidateGuideline();
+
+                setReference.TryGetTarget(out var set);
+                foreach (var id in ids)
+                    set?.SetGuidelineBegin(id, value);
+                return this;
+            }
+
+            /// <summary>
+            /// Same as <see cref="ConstraintSet.SetGuidelineEnd(int, int)"/>
+            /// </summary>
+            /// <param name="value"></param>
+            /// <returns></returns>
+            public Element GuidelineEnd(int value)
+            {
+                ValidateGuideline();
+
+                setReference.TryGetTarget(out var set);
+                foreach (var id in ids)
+                    set?.SetGuidelineEnd(id, value);
+                return this;
+            }
+
+            /// <summary>
+            /// Same as <see cref="ConstraintSet.CreateBarrier(int, int, int, int[])"/>
+            /// </summary>
+            /// <param name="direction"></param>
+            /// <param name="margin"></param>
+            /// <param name="referenced"></param>
+            /// <returns></returns>
+            public Element Barrier(Direction direction, int margin, params int[] referenced)
+            {
+                ValidateBarrier();
+
+                setReference.TryGetTarget(out var set);
+                foreach (var id in ids)
+                    set?.CreateBarrier(id, (int)direction, margin, referenced);
+                return this;
+            }
+
+            /// <summary>
+            /// Same as <see cref="ConstraintSet.CreateBarrier(int, int, int, int[])"/>
+            /// </summary>
+            /// <param name="direction"></param>
+            /// <param name="margin"></param>
+            /// <param name="referenced"></param>
+            /// <returns></returns>
+            public Element Barrier(Direction direction, int margin, params UIElement[] referenced)
+            {
+                ValidateBarrier();
+
+                setReference.TryGetTarget(out var set);
+                int[] referencedIds = new int[referenced.Length];
+                for (var index = 0; index < referenced.Length; index++)
+                {
+                    referencedIds[index] = referenced[index].GetId();
+                }
+                foreach (var id in ids)
+                    set?.CreateBarrier(id, (int)direction, margin, referencedIds);
+                return this;
+            }
+
+            #endregion ConstraintHelper
+
+            #region Chain
+            public Element AddToXChain(int leftId, int rightId)
+            {
+                setReference.TryGetTarget(out var set);
+                foreach (var id in ids)
+                    set?.AddToHorizontalChain(id, leftId, rightId);
+                return this;
+            }
+
+            public Element AddToXChain(UIElement leftView, UIElement rightView)
+            {
+                return AddToXChain(leftView.GetId(), rightView.GetId());
+            }
+
+            public Element AddToYChain(int topId, int bottomId)
+            {
+                setReference.TryGetTarget(out var set);
+                foreach (var id in ids)
+                    set?.AddToHorizontalChain(id, topId, bottomId);
+                return this;
+            }
+
+            public Element AddToYChain(UIElement topView, UIElement bottomView)
+            {
+                return AddToYChain(topView.GetId(), bottomView.GetId());
+            }
+
+            #endregion Chain
+
             public void Dispose()
             {
                 setReference = null;
@@ -520,11 +748,11 @@ namespace SharpConstraintLayout.Maui.Widget
 
     public static class FluentConstraintLayoutExtension
     {
-        public static void AddView(this ConstraintLayout layout, params View[] views)
+        public static void AddElement(this ConstraintLayout layout, params UIElement[] views)
         {
             foreach (var view in views)
             {
-                layout.AddView(view);
+                layout.AddElement(view);
             }
         }
     }
@@ -532,14 +760,14 @@ namespace SharpConstraintLayout.Maui.Widget
     public static class FluentConstraintHelperExtension
     {
 #if WINDOWS
-        public static void AddView(this ConstraintHelper helper, params FrameworkElement[] views)
+        public static void AddElement(this ConstraintHelper helper, params FrameworkElement[] views)
 #else
-        public static void AddView(this ConstraintHelper helper, params View[] views)
+        public static void AddElement(this ConstraintHelper helper, params UIElement[] views)
 #endif
         {
             foreach (var view in views)
             {
-                helper.AddView(view);
+                helper.AddElement(view);
             }
         }
     }

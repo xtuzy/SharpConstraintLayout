@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Xml;
 
-namespace SharpConstraintLayout.Maui.Widget
+namespace SharpConstraintLayout.Maui.Widget.Interface
 {
     public interface IConstraintSet
     {

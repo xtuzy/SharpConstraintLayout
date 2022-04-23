@@ -22,11 +22,28 @@ namespace SharpConstraintLayout.Maui.Widget
             base.AddView(element);
             OnAddedView(element);
         }
+        /// <summary>
+        /// Same as <see cref="AddView(UIElement)"/>
+        /// </summary>
+        /// <param name="element"></param>
+        public void AddElement(UIElement element)
+        {
+            this.AddView(element);
+        }
 
         public override void RemoveView(UIElement element)
         {
             base.RemoveView(element);
             OnRemovedView(element);
+        }
+
+        /// <summary>
+        /// Same as <see cref="RemoveView(UIElement)"/>
+        /// </summary>
+        /// <param name="element"></param>
+        public void RemoveElement(UIElement element)
+        {
+            this.RemoveView(element);
         }
 
         public override void RemoveAllViews()
@@ -40,7 +57,17 @@ namespace SharpConstraintLayout.Maui.Widget
             }
         }
 
+        /// <summary>
+        /// Same as <see cref="RemoveAllViews()"/>
+        /// </summary>
+        public void RemoveAllElements()
+        {
+            this.RemoveAllViews();
+        }
+
         #endregion
+
+        #region Measure And Layout
         protected override void OnMeasure(int widthMeasureSpec, int heightMeasureSpec)
         {
             //base.OnMeasure(widthMeasureSpec, heightMeasureSpec);
@@ -56,5 +83,7 @@ namespace SharpConstraintLayout.Maui.Widget
         {
             element.Layout(x, y, x + w, y + h);
         }
+
+        #endregion
     }
 }

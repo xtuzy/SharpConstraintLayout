@@ -4,14 +4,26 @@ using UIElement = Microsoft.UI.Xaml.UIElement;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Windows.Foundation;
+using SharpConstraintLayout;
+using SharpConstraintLayout.Maui;
+using SharpConstraintLayout.Maui.Widget;
+using SharpConstraintLayout.Maui.Widget.Interface;
 #elif __IOS__
 using View = UIKit.UIView;
 using UIElement = UIKit.UIView;
+using SharpConstraintLayout;
+using SharpConstraintLayout.Maui;
+using SharpConstraintLayout.Maui.Widget;
+using SharpConstraintLayout.Maui.Widget.Interface;
 #elif __ANDROID__
-    using Android.Content;
-    using View = Android.Views.View;
+using Android.Content;
+using SharpConstraintLayout;
+using SharpConstraintLayout.Maui;
+using SharpConstraintLayout.Maui.Widget;
+using SharpConstraintLayout.Maui.Widget.Interface;
+using View = Android.Views.View;
 #endif
-namespace SharpConstraintLayout.Maui.Widget
+namespace SharpConstraintLayout.Maui.Widget.Interface
 {
     public interface IPlaceholder
     {

@@ -1,4 +1,5 @@
 ﻿
+using SharpConstraintLayout.Maui.Widget.Interface;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -27,18 +28,20 @@ namespace SharpConstraintLayout.Maui.Widget
     using HelperWidget = androidx.constraintlayout.core.widgets.HelperWidget;
 
 #if WINDOWS
-    using View = Microsoft.UI.Xaml.FrameworkElement;
+    using FrameworkElement = Microsoft.UI.Xaml.FrameworkElement;
     using UIElement = Microsoft.UI.Xaml.UIElement;
 
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
     using Windows.Foundation;
+    using SharpConstraintLayout.Maui.Widget.Interface;
 #elif __IOS__
-    using View = UIKit.UIView;
+    using FrameworkElement = UIKit.UIView;
     using UIElement = UIKit.UIView;
 #elif __ANDROID__
     using Android.Content;
-    using View = Android.Views.View;
+    using FrameworkElement = Android.Views.View;
+    using SharpConstraintLayout.Maui.Widget.Interface;
 #endif
     /// <summary>
     /// @suppress
@@ -62,7 +65,7 @@ namespace SharpConstraintLayout.Maui.Widget
     ///     </pre>
     /// </para>
     /// </summary>
-    public abstract partial class ConstraintHelper : View, IConstraintHelper
+    public abstract partial class ConstraintHelper : FrameworkElement, IConstraintHelper
     {
         private const string TAG = "ConstraintHelper";
 
@@ -82,11 +85,11 @@ namespace SharpConstraintLayout.Maui.Widget
 
         protected internal string mReferenceTags;
 
-        private View[] mViews = null;
+        private FrameworkElement[] mViews = null;
 
         protected internal Dictionary<int?, string> mMap = new Dictionary<int?, string>();
 
-        protected internal virtual void init()
+        protected virtual void init()
         {
         }
 
@@ -97,7 +100,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// The view also need to have its id set in order to be added.
         /// </summary>
         /// <param name="view"> </param>
-        public virtual void AddView(View view)
+        public virtual void AddElement(FrameworkElement view)
         {
 
             if (view == this)
@@ -122,7 +125,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// </summary>
         /// <param name="view"> </param>
         /// <returns> index of view removed </returns>
-        public virtual int RemoveView(View view)
+        public virtual int RemoveElement(FrameworkElement view)
         {
             int index = -1;
             //int id = view.Id;
@@ -305,10 +308,10 @@ namespace SharpConstraintLayout.Maui.Widget
             for (int i = 0; i < mCount; i++)
             {
                 int id = mIds[i];
-                View view = (View)container.FindElementById(id);
+                FrameworkElement view = (FrameworkElement)container.FindElementById(id);
                 if (view != null)
                 {
-                    ViewExtension.SetViewVisibility(view, visibility);
+                    UIElementExtension.SetViewVisibility(view, visibility);
 
                 }
             }
@@ -346,7 +349,7 @@ namespace SharpConstraintLayout.Maui.Widget
             for (int i = 0; i < mCount; i++)
             {
                 int id = mIds[i];
-                View view = (View)container.FindElementById(id);
+                FrameworkElement view = (FrameworkElement)container.FindElementById(id);
                 /*if (view == null)
                 {
                     // hm -- we couldn't find the view.
@@ -379,18 +382,18 @@ namespace SharpConstraintLayout.Maui.Widget
             }
         }
 
-        protected internal virtual View[] getViews(ConstraintLayout layout)
+        protected internal virtual FrameworkElement[] getViews(ConstraintLayout layout)
         {
 
             if (mViews == null || mViews.Length != mCount)
             {
-                mViews = new View[mCount];
+                mViews = new FrameworkElement[mCount];
             }
 
             for (int i = 0; i < mCount; i++)
             {
                 int id = mIds[i];
-                mViews[i] = (View)layout.FindElementById(id);
+                mViews[i] = (FrameworkElement)layout.FindElementById(id);
             }
             return mViews;
         }
@@ -513,7 +516,7 @@ namespace SharpConstraintLayout.Maui.Widget
         {
             set
             {
-                ViewExtension.SetViewVisibility(this, value);
+                UIElementExtension.SetViewVisibility(this, value);
                 (this.mHelperWidget as ConstraintWidget).Visibility = value;//更新到Widget
                 visible = value;
             }

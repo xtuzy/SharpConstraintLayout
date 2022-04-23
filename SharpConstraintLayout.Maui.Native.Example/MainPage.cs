@@ -34,10 +34,10 @@ namespace SharpConstraintLayout.Maui.Native.Example
             flow.SetOrientation(Flow.Horizontal);
             flow.SetWrapMode(Flow.WrapChain);
             flow.SetHorizontalStyle(Flow.ChainPacked);
-            page.AddView(flow);
+            page.AddElement(flow);
 
-            page.AddView(FifthTextBox);
-            flow.AddView(FifthTextBox);
+            page.AddElement(FifthTextBox);
+            flow.AddElement(FifthTextBox);
             //Generate 1000 Button,all add to page
 #if WINDOWS
             var buttonList = new List<Button>();
@@ -47,8 +47,8 @@ namespace SharpConstraintLayout.Maui.Native.Example
                 var button = new Button();
                 button.Content = "Button" + i;
                 buttonList.Add(button);
-                page.AddView(button);
-                flow.AddView(button);
+                page.AddElement(button);
+                flow.AddElement(button);
             }
 #elif __ANDROID__
             var buttonList = new List<Button>();
@@ -57,8 +57,8 @@ namespace SharpConstraintLayout.Maui.Native.Example
                 var button = new Button(page.Context);
                 button.Text = "Button" + i;
                 buttonList.Add(button);
-                page.AddView(button);
-                flow.AddView(button);
+                page.AddElement(button);
+                flow.AddElement(button);
             }
 #elif __IOS__
             var buttonList = new List<UIButton>();
@@ -67,8 +67,8 @@ namespace SharpConstraintLayout.Maui.Native.Example
                 var button = new UIButton();
                 button.SetTitle("Button" + i, UIControlState.Normal);
                 buttonList.Add(button);
-                page.AddView(button);
-                flow.AddView(button);
+                page.AddElement(button);
+                flow.AddElement(button);
             }
 #endif
             using (var layoutSet = new FluentConstraintSet())
@@ -95,7 +95,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             var wrapPanel = new WrapPanel() { Orientation = WrapPanel.LayoutOrientation.X, Padding = new Microsoft.Maui.Graphics.Rect(10, 10, 10, 10), HorizontalSpacing = 10, VerticalSpacing = 10 };
 #endif
             wrapPanel.AddElement(FifthTextBox);
-            page.AddView(wrapPanel);
+            page.AddElement(wrapPanel);
             using (var set = new FluentConstraintSet())
             {
                 set.Clone(page);
@@ -143,7 +143,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
         void CircleConstraintTest(ConstraintLayout page)
         {
             layout = page;
-            layout.AddView(FirstButton, SecondButton, FouthTextBlock);
+            layout.AddElement(FirstButton, SecondButton, FouthTextBlock);
             using (var layoutSet = new FluentConstraintSet())
             {
                 layoutSet.Clone(layout);
@@ -185,14 +185,14 @@ namespace SharpConstraintLayout.Maui.Native.Example
                 Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.Coral),
                 VerticalAlignment = Microsoft.UI.Xaml.VerticalAlignment.Center,
             };
-            page.AddView(stackPanel);
+            page.AddElement(stackPanel);
             stackPanel.Children.Add(new Button() { Content = "InStackPanel" });
             stackPanel.Children.Add(new Button() { Content = "InStackPanel" });
             stackPanel.Children.Add(new TextBlock() { Text = "InStackPanel" });
             stackPanel.Children.Add(new TextBox() { Text = "InStackPanel" });
 
             var grid = new Grid();
-            page.AddView(grid);
+            page.AddElement(grid);
             grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new Microsoft.UI.Xaml.GridLength(1, Microsoft.UI.Xaml.GridUnitType.Star) });
             grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new Microsoft.UI.Xaml.GridLength(1, Microsoft.UI.Xaml.GridUnitType.Star) });
             var textblock = new TextBlock() { Text = "InGrid" };
@@ -203,7 +203,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             grid.Children.Add(textbox);
 
             var scrollView = new ScrollViewer();
-            page.AddView(scrollView);
+            page.AddElement(scrollView);
             scrollView.Content = new StackPanel()
             {
                 Orientation = Microsoft.UI.Xaml.Controls.Orientation.Vertical,
@@ -237,18 +237,18 @@ namespace SharpConstraintLayout.Maui.Native.Example
                 Orientation = Android.Widget.Orientation.Horizontal,
                 Background = new Android.Graphics.Drawables.ColorDrawable(Android.Graphics.Color.Coral),
             };
-            page.AddView(stackPanel);
+            page.AddElement(stackPanel);
             stackPanel.AddView(new Button(page.Context) { Text = "InStackPanel" });
             stackPanel.AddView(new Button(page.Context) { Text = "InStackPanel" });
             stackPanel.AddView(new TextView(page.Context) { Text = "InStackPanel" });
             stackPanel.AddView(new EditText(page.Context) { Text = "InStackPanel" });
             var grid = new GridLayout(page.Context);
-            page.AddView(grid);
+            page.AddElement(grid);
             grid.ColumnCount = 2;
             grid.AddView(new TextView(page.Context) { Text = "InGrid" });
             grid.AddView(new EditText(page.Context) { Text = "InGrid" });
             var scrollView = new ScrollView(page.Context);
-            page.AddView(scrollView);
+            page.AddElement(scrollView);
             scrollView.AddView(new LinearLayout(page.Context)
             {
                 Orientation = Android.Widget.Orientation.Vertical,
@@ -283,7 +283,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
                 BackgroundColor = UIColor.SystemPink,
                 Spacing = 10,
             };
-            page.AddSubview(stackPanel);
+            page.AddElement(stackPanel);
             var firstButtonInStackPanel = new UIButton() { BackgroundColor = UIColor.Green };
             firstButtonInStackPanel.SetTitle("InStackPanel", UIControlState.Normal);
             stackPanel.AddArrangedSubview(firstButtonInStackPanel);
@@ -396,7 +396,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             var guide = new Guideline();
 #endif
 
-            page.AddView(layout, guide);
+            page.AddElement(layout, guide);
 
             var pageSet = new FluentConstraintSet();
             pageSet.Clone(page);
@@ -450,15 +450,15 @@ namespace SharpConstraintLayout.Maui.Native.Example
 
             using (var pageSet = new FluentConstraintSet())
             {
-                page.AddView(layout);
+                page.AddElement(layout);
                 pageSet.Clone(page);
                 pageSet.Select(layout)
                     .CenterYTo(page)
                     .Width(ConstraintSet.WrapContent)
                     .Height(ConstraintSet.WrapContent);
                 pageSet.ApplyTo(page);
-                layout.AddView(ThirdCanvas);
-                layout.AddView(FirstButton);
+                layout.AddElement(ThirdCanvas);
+                layout.AddElement(FirstButton);
                 using (var layoutSet = new FluentConstraintSet())
                 {
                     layoutSet.Clone(layout);
@@ -503,8 +503,8 @@ namespace SharpConstraintLayout.Maui.Native.Example
             flow.SetWrapMode(Flow.WrapChain);
             flow.SetHorizontalStyle(Flow.ChainSpreadInside);
             layout = page;
-            layout.AddView(ThirdCanvas, FirstButton, SecondButton, FouthTextBlock, FifthTextBox, SixthRichTextBlock, flow);
-            flow.AddView(FirstButton, SecondButton, FouthTextBlock, FifthTextBox, SixthRichTextBlock);
+            layout.AddElement(ThirdCanvas, FirstButton, SecondButton, FouthTextBlock, FifthTextBox, SixthRichTextBlock, flow);
+            flow.AddElement(FirstButton, SecondButton, FouthTextBlock, FifthTextBox, SixthRichTextBlock);
 
             using (var layoutSet = new FluentConstraintSet())
             {
@@ -548,7 +548,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
         {
             layout = page;
 
-            layout.AddView(FirstButton, SecondButton, ThirdCanvas);
+            layout.AddElement(FirstButton, SecondButton, ThirdCanvas);
 
             var layoutSet = new FluentConstraintSet();
             layoutSet.Clone(layout);
@@ -624,7 +624,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
 #else
             var barrier = new Barrier();
 #endif
-            layout.AddView(FifthTextBox, ThirdCanvas, barrier);
+            layout.AddElement(FifthTextBox, ThirdCanvas, barrier);
 
             var layoutSet = new FluentConstraintSet();
             layoutSet.Clone(layout);
@@ -661,7 +661,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
                 Id = View.GenerateViewId(),
             };
             layout.SetBackgroundColor(Android.Graphics.Color.Black);
-            
+
 #elif WINDOWS
             var layout = new ConstraintLayout()
             {
@@ -680,7 +680,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             var guide = new Guideline();
 #endif
 
-            page.AddView(layout, guide);
+            page.AddElement(layout, guide);
 
             var pageSet = new FluentConstraintSet();
             pageSet.Clone(page);
@@ -704,7 +704,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
         {
             layout = page;
 
-            layout.AddView(FouthTextBlock, SixthRichTextBlock);
+            layout.AddElement(FouthTextBlock, SixthRichTextBlock);
 
             var layoutSet = new FluentConstraintSet();
             layoutSet.Clone(layout);
@@ -722,7 +722,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
         {
             layout = page;
 
-            layout.AddView(FirstButton, SecondButton, ThirdCanvas, FouthTextBlock, FifthTextBox, SixthRichTextBlock);
+            layout.AddElement(FirstButton, SecondButton, ThirdCanvas, FouthTextBlock, FifthTextBox, SixthRichTextBlock);
 
             var layoutSet = new FluentConstraintSet();
             layoutSet.Clone(layout);

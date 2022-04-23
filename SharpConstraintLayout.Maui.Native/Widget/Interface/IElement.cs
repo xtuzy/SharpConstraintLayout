@@ -18,7 +18,7 @@ using Android.Content;
 using View = Android.Views.View;
 using AndroidX.ConstraintLayout.Widget;
 #endif
-namespace SharpConstraintLayout.Maui.Widget
+namespace SharpConstraintLayout.Maui.Widget.Interface
 {
     public interface IElement
     {
@@ -26,18 +26,18 @@ namespace SharpConstraintLayout.Maui.Widget
         Element AddToXChainRTL(View leftId, View rightId);
         Element AddToYChain(View topId, View bottomId);
 
-        Element CenterTo( View firstID, int firstSide, int firstMargin, View secondId, int secondSide, int secondMargin, float bias);
+        Element CenterTo(View firstID, int firstSide, int firstMargin, View secondId, int secondSide, int secondMargin, float bias);
         Element CenterXTo(View toView);
-        Element CenterXTo( View leftId, int leftSide, int leftMargin, View rightId, int rightSide, int rightMargin, float bias);
+        Element CenterXTo(View leftId, int leftSide, int leftMargin, View rightId, int rightSide, int rightMargin, float bias);
         Element CenterXRtlTo(View toView);
-        Element CenterXRtlTO( View startId, int startSide, int startMargin, View endId, int endSide, int endMargin, float bias);
+        Element CenterXRtlTO(View startId, int startSide, int startMargin, View endId, int endSide, int endMargin, float bias);
         Element CenterYTo(View toView);
-        Element CenterYTo( View topId, int topSide, int topMargin, View bottomId, int bottomSide, int bottomMargin, float bias);
+        Element CenterYTo(View topId, int topSide, int topMargin, View bottomId, int bottomSide, int bottomMargin, float bias);
         FluentConstraintSet Clear();
         FluentConstraintSet Clear(int anchor);
 
-        Element Connect( int startSide, View endID, int endSide);
-        Element Connect( int startSide, View endID, int endSide, int margin);
+        Element Connect(int startSide, View endID, int endSide);
+        Element Connect(int startSide, View endID, int endSide, int margin);
         Element ConstrainCircle(View id, int radius, float angle);
         Element DefaultHeight(int height);
         Element DefaultWidth(int width);

@@ -14,16 +14,19 @@
  * limitations under the License.
  */
 
+using SharpConstraintLayout.Maui.Widget.Interface;
 using System;
 #if WINDOWS
-using View = Microsoft.UI.Xaml.FrameworkElement;
+using FrameworkElement = Microsoft.UI.Xaml.FrameworkElement;
 #elif __IOS__
 using CoreGraphics;
-using View = UIKit.UIView;
+using SharpConstraintLayout.Maui.Widget.Interface;
+using FrameworkElement = UIKit.UIView;
 #elif __ANDROID__
 using Android.Content;
 using Android.Graphics;
-using View = Android.Views.View;
+using SharpConstraintLayout.Maui.Widget.Interface;
+using FrameworkElement = Android.Views.View;
 #endif
 namespace SharpConstraintLayout.Maui.Widget
 {
@@ -66,7 +69,7 @@ namespace SharpConstraintLayout.Maui.Widget
     /// {@sample resources/examples/Guideline.xml Guideline}
     /// </para>
     /// </summary>
-    public class Guideline : View, IDisposable, IGuideline
+    public class Guideline : FrameworkElement, IDisposable, IGuideline
     {
 #if __ANDROID__
         public Guideline(Context context) : base(context)
@@ -74,7 +77,7 @@ namespace SharpConstraintLayout.Maui.Widget
         public Guideline() : base()
 #endif
         {
-            ViewExtension.SetViewVisibility(this, ConstraintSet.Gone);
+            UIElementExtension.SetViewVisibility(this, ConstraintSet.Gone);
         }
 
         internal androidx.constraintlayout.core.widgets.Guideline mGuideline = new androidx.constraintlayout.core.widgets.Guideline();

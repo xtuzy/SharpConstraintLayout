@@ -37,7 +37,11 @@ namespace SharpConstraintLayout.Maui.Widget
             OnAddedView(view);
         }
 
-        public void AddView(UIElement element)
+        /// <summary>
+        /// Same as <see cref="AddSubview(UIElement)"/>
+        /// </summary>
+        /// <param name="element"></param>
+        public void AddElement(UIElement element)
         {
             base.AddSubview(element);
             OnAddedView(element);
@@ -49,6 +53,15 @@ namespace SharpConstraintLayout.Maui.Widget
             OnRemovedView(element);
         }
 
+        /// <summary>
+        /// Same as <see cref="RemoveView(UIElement)"/>
+        /// </summary>
+        /// <param name="element"></param>
+        public void RemoveElement(UIElement element)
+        {
+            this.RemoveView(element);
+        }
+
         public void RemoveAllViews()
         {
             foreach (var element in this.Subviews)
@@ -58,11 +71,19 @@ namespace SharpConstraintLayout.Maui.Widget
             }
         }
 
+        /// <summary>
+        /// Same as <see cref="RemoveAllViews"/>
+        /// </summary>
+        public void RemoveAllElements()
+        {
+            this.RemoveAllViews();
+        }
+
         public int ChildCount => Subviews.Length;
 
         #endregion
 
-        #region Layout
+        #region Measure And Layout
 
         //public override Size IntrinsicContentSize => this.Frame.Size;
 

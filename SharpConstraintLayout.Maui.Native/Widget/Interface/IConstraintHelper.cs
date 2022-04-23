@@ -1,6 +1,5 @@
 ﻿
 using androidx.constraintlayout.core.widgets;
-using SharpConstraintLayout.Maui.Widget;
 using System;
 using System.Collections.Generic;
 #if WINDOWS
@@ -13,24 +12,24 @@ using Windows.Foundation;
 using View = UIKit.UIView;
 using UIElement = UIKit.UIView;
 #elif __ANDROID__
-    using Android.Content;
-    using View = Android.Views.View;
+using Android.Content;
+using View = Android.Views.View;
 #endif
-namespace SharpConstraintLayout.Maui.Widget
+namespace SharpConstraintLayout.Maui.Widget.Interface
 {
     using Helper = androidx.constraintlayout.core.widgets.Helper;
     public interface IConstraintHelper
     {
         //JniPeerMembers JniPeerMembers { get; }
 
-        void AddView(View view);
+        void AddElement(View view);
         bool ContainsId(int id);
         //int[] GetReferencedIds();
         int IndexFromId(int id);
         //void LoadParameters(ConstraintSet.Constraint constraint, HelperWidget child, ConstraintLayout.LayoutParams layoutParams ,Dictionary<int,ConstraintWidget> mapIdToWidget);
         void LoadParameters(ConstraintSet.Constraint constraint, HelperWidget child, Dictionary<int, ConstraintWidget> mapIdToWidget);
         //void OnDraw(Canvas canvas);
-        int RemoveView(View view);
+        int RemoveElement(View view);
         void ResolveRtl(ConstraintWidget widget, bool isRtl);
         //void SetReferencedIds(int[] ids);
         int[] ReferencedIds { set; get; }

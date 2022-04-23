@@ -1,5 +1,4 @@
-﻿
-namespace SharpConstraintLayout.Maui.Helper.Widget
+﻿namespace SharpConstraintLayout.Maui.Helper.Widget.Interface
 {
     public interface IFlow
     {

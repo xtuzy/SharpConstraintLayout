@@ -17,6 +17,7 @@
 using Android.Content;
 #endif
 using androidx.constraintlayout.core.widgets;
+using SharpConstraintLayout.Maui.Widget.Interface;
 
 namespace SharpConstraintLayout.Maui.Widget
 {
@@ -62,7 +63,7 @@ namespace SharpConstraintLayout.Maui.Widget
         {
         }
 
-        protected internal override void init()
+        protected override void init()
         {
             base.init();
             mUseViewMeasure = false;

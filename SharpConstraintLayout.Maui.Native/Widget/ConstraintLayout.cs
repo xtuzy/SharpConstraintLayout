@@ -48,6 +48,7 @@ namespace SharpConstraintLayout.Maui.Widget
 #endif
     using AndroidMeasureSpec = SharpConstraintLayout.Maui.Widget.MeasureSpec;
     using SharpConstraintLayout.Maui.DebugTool;
+    using SharpConstraintLayout.Maui.Widget.Interface;
 
     /// <summary>
     /// ConstraintLayout is a AndroidX layout for <see
@@ -571,7 +572,7 @@ namespace SharpConstraintLayout.Maui.Widget
                     UIElement content = holder.Content;
                     if (content != null)
                     {
-                        ViewExtension.SetViewVisibility(content, ConstraintSet.Visible);
+                        UIElementExtension.SetViewVisibility(content, ConstraintSet.Visible);
                         LayoutChild(content, child.X, child.Y, child.Width, child.Height);
                     }
                 }

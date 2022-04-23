@@ -15,6 +15,7 @@
 */
 
 using androidx.constraintlayout.core.widgets;
+using SharpConstraintLayout.Maui.Widget.Interface;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -195,7 +196,7 @@ namespace SharpConstraintLayout.Maui.Widget
                     {
                         //view.Visibility = constraint.propertySet.visibility;
                         param.propertySet.visibility = constraint.propertySet.visibility;//这里我变成设置constraint
-                        ViewExtension.SetViewVisibility(view, constraint.propertySet.visibility);
+                        UIElementExtension.SetViewVisibility(view, constraint.propertySet.visibility);
                     }
 
                     view.SetAlphaProperty(param.propertySet);
@@ -1404,7 +1405,7 @@ namespace SharpConstraintLayout.Maui.Widget
         }
 
         /// <summary>
-        /// Sets the width of the view. It can be a dimension, <seealso cref="#WRAP_CONTENT"/> or
+        /// Sets the width of the view. It can be a dimension, <seealso cref="MatchParent"/> or
         /// <seealso cref="WrapContent"/> or <see cref="MatchConstraint"/>
         /// </summary>
         /// <param name="viewId">ID of view to adjust its width</param>
