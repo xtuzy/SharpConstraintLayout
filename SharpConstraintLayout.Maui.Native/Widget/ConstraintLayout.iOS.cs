@@ -117,9 +117,13 @@ namespace SharpConstraintLayout.Maui.Widget
         private void LayoutChild(UIElement element, int x, int y, int w, int h)
         {
             //参考https://github.com/youngsoft/MyLinearLayout/blob/master/MyLayout/Lib/MyBaseLayout.m,设置Bounds
-            //element.Frame = new CoreGraphics.CGRect(x, y, w, h);
-            element.Bounds = new CoreGraphics.CGRect(element.Bounds.X, element.Bounds.Y, w, h);
-            element.Center = new CoreGraphics.CGPoint(x + w / 2, y + h / 2);
+            //element.Bounds = new CoreGraphics.CGRect(element.Bounds.X, element.Bounds.Y, w, h);
+            //element.Center = new CoreGraphics.CGPoint((x + w / 2) + 0.5, y + h / 2);
+
+            //探讨设置Frame还是Bounds
+            //Frame和Bounds在旋转View时是不同的大小,我们使用IntrinsicContentSize得到控件大小,那么IntrinsicContentSize是谁的大小呢?
+            //参考https://zhangbuhuai.com/post/auto-layout-part-1.html,这里好像暗示使用Frame去布局
+            element.Frame = new CoreGraphics.CGRect(x, y, w, h);
         }
 
         #endregion

@@ -131,7 +131,8 @@ namespace SharpConstraintLayout.Maui.Widget
 #if WINDOWS
             return ((int)element.DesiredSize.Width, (int)element.DesiredSize.Height);
 #elif __IOS__
-            var (w, h) = ((int)element.IntrinsicContentSize.Width, (int)element.IntrinsicContentSize.Height);
+            //此处有各种Size的对比:https://zhangbuhuai.com/post/auto-layout-part-1.html
+            var (w, h) = ((int)element.IntrinsicContentSize.Width, (int)element.IntrinsicContentSize.Height);//有固有大小的控件
             //iOS有些View的IntrinsicContentSize始终为-1,此时尝试使用SystemLayoutSizeFittingSize获得大小,但也可能获得0
             if (w <= 0 || h <= 0)
             {

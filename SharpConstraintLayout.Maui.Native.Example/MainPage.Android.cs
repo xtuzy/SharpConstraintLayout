@@ -36,7 +36,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             //barrierTest(this);//bug:edittext can't auto relayout
             //visibilityTest(this);//OK
             //flowTest(this);
-            nativeLayoutInConstraintLayoutTest(this);
+            PlatformLayoutInConstraintLayoutTest(this);
             //animationTest(this);
             //circleConstraintTest(this);
             //performanceTest(this);

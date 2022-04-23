@@ -43,9 +43,10 @@ namespace SharpConstraintLayout.Maui.Native.Example
             //visibilityTest(Page);//OK
             //flowTest(Page);
             //nativeLayoutInConstraintLayoutTest(Page);
+            ConstraintLayoutInPlatformLayoutTest(Page);
             //circleConstraintTest(Page);
             //performanceTest(Page);
-            performanceTest_WrapPanel(Page);
+            //performanceTest_WrapPanel(Page);
         }
 
         private void createControls()
