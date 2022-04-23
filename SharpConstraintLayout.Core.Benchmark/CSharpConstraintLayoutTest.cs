@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 using androidx.constraintlayout.core.widgets;
 namespace SharpConstraintLayout.Core.Benchmark
 {
-    public partial class MainPage
+    public class CSharpConstraintLayoutTest
     {
-        void CSharp()
+        public void CSharpBasisConstraintTest(int childCount = 100)
         {
-            int viewCount = 1000;
+            int viewCount = childCount;
             ConstraintWidgetContainer root = new ConstraintWidgetContainer(0, 0, 1000, 600);
             ConstraintWidget preview = new ConstraintWidget(100, 40);
             root.add(preview);
@@ -31,31 +31,12 @@ namespace SharpConstraintLayout.Core.Benchmark
                 view.VerticalDimensionBehaviour = ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT;
                 preview = view;
             }
-
             root.layout();
-            //root.measure();
         }
 
-        void Sleep()
+        public void CSharpFlowConstraintTest(int childCount = 100)
         {
-            Thread.Sleep(10);
-        }
-
-        private void TestCsharpConstraintLayoutButton_Click(object sender, EventArgs e)
-        {
-            /*TestCSharpSummary.Text = nameof(TestCSharpSummary) + ":\n" + SimpleClock.BenchmarkTime(() =>
-            {
-                CSharp();
-            }, 50);*/
-
-            new FlowTest().testFlowWrapNone();
-        }
-        void TestSleepButton_Clicked(object sender, EventArgs e)
-        {
-            TestSleepSummary.Text = nameof(TestSleepSummary) + ":\n" + SimpleClock.BenchmarkTime(() =>
-            {
-                Sleep();
-            }, 50);
+            new CSharpFlowTest().TestFlowWrapNone(childCount);
         }
     }
 }

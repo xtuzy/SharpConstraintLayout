@@ -129,7 +129,7 @@ namespace SharpConstraintLayout.Core.Benchmark
             action();
 
             var stopwatch = new T();
-            var timings = new double[5];
+            var timings = new double[1];
             for (int i = 0; i < timings.Length; i++)
             {
                 stopwatch.Reset();

@@ -37,7 +37,7 @@ namespace SharpConstraintLayout.Core.Benchmark
     using static androidx.constraintlayout.core.widgets.analyzer.BasicMeasure;
     //JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to C#:
     //	import static org.junit.Assert.Assert.AreEqual;
-    public class FlowTest
+    public class CSharpFlowTest
     {
         internal static BasicMeasure.Measurer sMeasurer = new MeasurerAnonymousInnerClass();
 
@@ -104,7 +104,7 @@ namespace SharpConstraintLayout.Core.Benchmark
             }
         }
 
-        public virtual void testFlowWrapNone()
+        public virtual void TestFlowWrapNone(int childCount = 100)
         {
             ConstraintWidgetContainer root = new ConstraintWidgetContainer(0, 0, 1080, 1500)
             {
@@ -117,7 +117,7 @@ namespace SharpConstraintLayout.Core.Benchmark
 
             root.add(flow);
 
-            var buttonCount = 1000;
+            var buttonCount = childCount;
             var buttonList = new List<ConstraintWidget>();
             for (int i = 0; i < buttonCount; i++)
             {
@@ -144,59 +144,6 @@ namespace SharpConstraintLayout.Core.Benchmark
             var measureTime = DateTimeHelperClass.CurrentUnixTimeMillis();
             root.measure(Optimizer.OPTIMIZATION_NONE, 0, 0, 0, 0, 0, 0, 0, 0);
             root.layout();
-            Console.WriteLine("Flow Measure Time: " + (DateTimeHelperClass.CurrentUnixTimeMillis() - measureTime));
-
-            //Console.WriteLine("a) root: " + root);
-            //Console.WriteLine("flow: " + flow);
-            //Console.WriteLine("buttonList[0]: " + buttonList[0]);
-            //Console.WriteLine("buttonList[lasted]: " + buttonList[buttonCount - 1]);
-            SimpleTest.AreEqual(buttonList[buttonCount - 1].Left - 1080, -buttonList[0].Right, 2, nameof(testFlowWrapNone));//水平居中
-
-            Console.WriteLine("Flow MATCH_PARENT 水平居中");
-            flow.HorizontalDimensionBehaviour = ConstraintWidget.DimensionBehaviour.MATCH_PARENT;
-
-            measureTime = DateTimeHelperClass.CurrentUnixTimeMillis();
-            root.measure(Optimizer.OPTIMIZATION_NONE, 0, 0, 0, 0, 0, 0, 0, 0);
-            root.layout();
-            Console.WriteLine("Flow Measure Time: " + (DateTimeHelperClass.CurrentUnixTimeMillis() - measureTime));
-
-            Console.WriteLine("a) root: " + root);
-            Console.WriteLine("flow: " + flow);
-            Console.WriteLine("buttonList[0]: " + buttonList[0]);
-            Console.WriteLine("buttonList[lasted]: " + buttonList[buttonCount - 1]);
-            SimpleTest.AreEqual(buttonList[buttonCount - 1].Left - 1080, -buttonList[0].Right, 2, nameof(testFlowWrapNone));//水平居中
-
-            Console.WriteLine("Flow MATCH_CONSTRAINT 水平居中");
-            flow.HorizontalDimensionBehaviour = ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT;
-
-            measureTime = DateTimeHelperClass.CurrentUnixTimeMillis();
-            root.measure(Optimizer.OPTIMIZATION_NONE, 0, 0, 0, 0, 0, 0, 0, 0);
-            root.layout();
-            Console.WriteLine("Flow Measure Time: " + (DateTimeHelperClass.CurrentUnixTimeMillis() - measureTime));
-
-            Console.WriteLine("a) root: " + root);
-            Console.WriteLine("flow: " + flow);
-            Console.WriteLine("buttonList[0]: " + buttonList[0]);
-            Console.WriteLine("buttonList[lasted]: " + buttonList[buttonCount - 1]);
-            SimpleTest.AreEqual(buttonList[buttonCount - 1].Left - 1080, -buttonList[0].Right, 2, nameof(testFlowWrapNone));//水平居中
-
-            Console.WriteLine("Flow WRAP_CONTENT 靠Parent左");
-
-            measureTime = DateTimeHelperClass.CurrentUnixTimeMillis();
-            flow.HorizontalDimensionBehaviour = ConstraintWidget.DimensionBehaviour.WRAP_CONTENT;
-            flow.resetAnchor(flow.getAnchor(ConstraintAnchor.Type.RIGHT));
-            Console.WriteLine("Flow Change Anchor Time: " + (DateTimeHelperClass.CurrentUnixTimeMillis() - measureTime));
-
-            measureTime = DateTimeHelperClass.CurrentUnixTimeMillis();
-            root.measure(Optimizer.OPTIMIZATION_NONE, 0, 0, 0, 0, 0, 0, 0, 0);
-            root.layout();
-            Console.WriteLine("Flow Measure Time: " + (DateTimeHelperClass.CurrentUnixTimeMillis() - measureTime));
-
-            Console.WriteLine("a) root: " + root);
-            Console.WriteLine("flow: " + flow);
-            Console.WriteLine("buttonList[0]: " + buttonList[0]);
-            Console.WriteLine("buttonList[lasted]: " + buttonList[buttonCount - 1]);
-            SimpleTest.AreEqual(buttonList[0].Left, 0, nameof(testFlowWrapNone));
         }
 
     }

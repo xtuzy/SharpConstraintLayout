@@ -1,6 +1,6 @@
-﻿<winui:Application
+﻿<maui:MauiWinUIApplication
     x:Class="SharpConstraintLayout.Core.Benchmark.WinUI.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:SharpConstraintLayout.Core.Benchmark.WinUI"
-    xmlns:winui="using:Microsoft.UI.Xaml" />
+    xmlns:maui="using:Microsoft.Maui" />
