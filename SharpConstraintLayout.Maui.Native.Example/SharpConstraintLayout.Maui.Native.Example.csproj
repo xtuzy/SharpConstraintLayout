@@ -16,7 +16,7 @@
     <ApplicationTitle Condition="$(TargetFramework.Contains('-windows'))">SharpConstraintLayout.Maui.Native.Example.WinUI</ApplicationTitle>
 
     <!-- App Identifier -->
-    <ApplicationId>com.companyname.SharpConstraintLayout</ApplicationId>
+    <ApplicationId>com.companyname.SharpConstraintLayoutMauiNativeExample</ApplicationId>
     <ApplicationId Condition="$(TargetFramework.Contains('-windows'))">com.companyname.SharpConstraintLayoutWinUI</ApplicationId>
 
     <!-- Versions -->

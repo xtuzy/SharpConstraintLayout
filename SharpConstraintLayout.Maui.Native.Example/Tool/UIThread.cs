@@ -13,7 +13,6 @@ namespace SharpConstraintLayout.Maui.Native.Example.Tool
         internal static void Invoke(Action action, ConstraintLayout constraintLayout)
         {
 #if WINDOWS
-
             if (constraintLayout.DispatcherQueue == null)
             {
                 SimpleDebug.WriteLine("UIThread.Invoke: ConstraintLayout.DispatcherQueue == null");
