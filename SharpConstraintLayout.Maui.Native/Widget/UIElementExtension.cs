@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 #if WINDOWS
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -20,13 +19,16 @@ using UIElement = Android.Views.View;
 using FrameworkElement = Android.Views.View;
 using AndroidX.ConstraintLayout.Widget;
 using Android.Views;
+#elif __MAUI__
+using UIElement = Microsoft.Maui.Controls.View;
+using FrameworkElement = Microsoft.Maui.Controls.View;
 #endif
 namespace SharpConstraintLayout.Maui.Widget
 {
     /// <summary>
     /// For deal with platform difference
     /// </summary>
-    public static class UIElementExtension
+    internal static class UIElementExtension
     {
 
         /// <summary>
@@ -66,6 +68,9 @@ namespace SharpConstraintLayout.Maui.Widget
                 return ConstraintSet.Unset;
 #elif __ANDROID__
             return element.Baseline;
+#elif __MAUI__
+            //TODO
+            return ConstraintSet.Unset;
 #endif
         }
 
@@ -118,6 +123,17 @@ namespace SharpConstraintLayout.Maui.Widget
                 element.Visibility = ViewStates.Visible;
             else//Gone
                 element.Visibility = ViewStates.Gone;
+#elif __MAUI__
+            if (ConstraintSetVisible == ConstraintSet.Invisible)
+                (element as VisualElement).IsVisible = false;
+            else if (ConstraintSetVisible == ConstraintSet.Visible)
+                (element as VisualElement).IsVisible = true;
+            else//Gone
+            {
+                //throw new NotImplementedException("Maui没有默认的Visibility = ConstraintSet.Gone");
+                (element as VisualElement).IsVisible = false;
+                Debug.WriteLine("Maui没有默认的Visibility = ConstraintSet.Gone");
+            }
 #endif
         }
 
@@ -144,6 +160,8 @@ namespace SharpConstraintLayout.Maui.Widget
             return (w, h);
 #elif __ANDROID__
             return (element.MeasuredWidth, element.MeasuredHeight);
+#elif __MAUI__
+            return ((int)element.DesiredSize.Width, (int)element.DesiredSize.Height);
 #endif
         }
 
@@ -170,6 +188,10 @@ namespace SharpConstraintLayout.Maui.Widget
             element.Measure(new Windows.Foundation.Size(w, h));
 #elif __ANDROID__
             element.Measure(horizontalSpec, verticalSpec);
+#elif __MAUI__
+            int w = MeasureSpec.GetSize(horizontalSpec);
+            int h = MeasureSpec.GetSize(verticalSpec);
+            element.Measure(w, h);
 #endif
         }
 
@@ -180,6 +202,8 @@ namespace SharpConstraintLayout.Maui.Widget
 #elif __IOS__
             return element.Superview;
 #elif __ANDROID__
+            return element.Parent as UIElement;
+#elif __MAUI__
             return element.Parent as UIElement;
 #endif
         }
@@ -258,6 +282,8 @@ namespace SharpConstraintLayout.Maui.Widget
             transformGroup.Scale(transform.scaleX, transform.scaleY);
             transformGroup.Translate(transform.translationX, transform.translationY);
             element.Transform = transformGroup;*/
+#elif __MAUI__
+            //TODO
 #endif
         }
 
@@ -265,7 +291,7 @@ namespace SharpConstraintLayout.Maui.Widget
         {
             if (propertySet == null)
                 return;
-#if ANDROID
+#if __ANDROID__
             //Copy from ConstraintSet
             element.Alpha = propertySet.alpha;
 #elif WINDOWS
@@ -274,23 +300,8 @@ namespace SharpConstraintLayout.Maui.Widget
 #elif __IOS__
             //https://stackoverflow.com/questions/15381436/is-the-opacity-and-alpha-the-same-thing-for-uiview
             element.Alpha = propertySet.alpha;
-#endif
-        }
-
-        /// <summary>
-        /// Call this when something has changed which has invalidated the layout of this view. This will schedule a layout pass of the view tree. This should not be called while the view hierarchy is currently in a layout pass (isInLayout(). If layout is happening, the request may be honored at the end of the current layout pass (and then layout will run again) or after the current frame is drawn and the next layout occurs.
-        /// Subclasses which override this method should call the superclass method to handle possible request-during-layout errors correctly.
-        /// </summary>
-        public static void requestLayout(this UIElement element)
-        {
-            //According to https://stackoverflow.com/questions/13856180/usage-of-forcelayout-requestlayout-and-invalidate
-            //At Android,this will let remeasure layout
-#if WINDOWS
-            element.InvalidateMeasure();
-#elif __IOS__
-            element.SetNeedsLayout();
-#elif __ANDROID__
-            element.RequestLayout();
+#elif __MAUI__
+            (element as VisualElement).Opacity = propertySet.alpha;
 #endif
         }
 
@@ -302,8 +313,9 @@ namespace SharpConstraintLayout.Maui.Widget
             return $"{element.GetType().FullName} IsHiden={element.Hidden} Frame={element.Frame} Bounds={element.Bounds} IntrinsicContentSize={element.IntrinsicContentSize}";
 #elif __ANDROID__
             return $"{element.GetType().FullName} Visibility={element.Visibility} Position={element.GetX()}x{element.GetY()} Size={element.Width}x{element.Height} MeasuredSize={element.MeasuredWidth}x{element.MeasuredHeight}";
+#elif __MAUI__
+            return $"{element.GetType().FullName} Visibility={element.IsVisible} Position={element.X},{element.Y} DesiredSize={element.DesiredSize}";
 #endif
-
         }
     }
 }

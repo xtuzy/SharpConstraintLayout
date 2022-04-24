@@ -120,6 +120,7 @@
   <ItemGroup>
     <Folder Remove="bin\" />
   </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\MauiWrapPanel\MauiWrapPanel.csproj" />
     <ProjectReference Include="..\SharpConstraintLayout.Maui.Native\SharpConstraintLayout.Maui.Native.csproj" />

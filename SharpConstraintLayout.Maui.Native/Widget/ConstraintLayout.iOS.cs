@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if __IOS__
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,7 +25,7 @@ namespace SharpConstraintLayout.Maui.Widget
             init();
         }
 
-        #region Add And Remove
+#region Add And Remove
 
         public UIElement GetChildAt(int index)
         {
@@ -81,9 +82,9 @@ namespace SharpConstraintLayout.Maui.Widget
 
         public int ChildCount => Subviews.Length;
 
-        #endregion
+#endregion
 
-        #region Measure And Layout
+#region Measure And Layout
 
         //public override Size IntrinsicContentSize => this.Frame.Size;
 
@@ -147,6 +148,7 @@ namespace SharpConstraintLayout.Maui.Widget
             element.Frame = new CoreGraphics.CGRect(x, y, w, h);
         }
 
-        #endregion
+#endregion
     }
 }
+#endif

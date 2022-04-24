@@ -11,6 +11,8 @@ using UIElement = UIKit.UIView;
 #elif __ANDROID__
 using UIElement = Android.Views.View;
 using Android.Content;
+#elif __MAUI__
+using UIElement = Microsoft.Maui.Controls.View;
 #endif
 
 namespace SharpConstraintLayout.Maui.Widget

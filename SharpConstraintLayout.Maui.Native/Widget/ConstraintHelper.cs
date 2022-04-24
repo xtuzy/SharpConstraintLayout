@@ -42,6 +42,9 @@ namespace SharpConstraintLayout.Maui.Widget
     using Android.Content;
     using FrameworkElement = Android.Views.View;
     using SharpConstraintLayout.Maui.Widget.Interface;
+#elif __MAUI__
+    using FrameworkElement = Microsoft.Maui.Controls.View;
+    using UIElement = Microsoft.Maui.Controls.View;
 #endif
     /// <summary>
     /// @suppress
@@ -117,7 +120,7 @@ namespace SharpConstraintLayout.Maui.Widget
             mReferenceIds = null;
             addRscID(view.GetId());
 
-            this.requestLayout();
+            this.RequestReLayout();
         }
 
         /// <summary>
@@ -149,7 +152,7 @@ namespace SharpConstraintLayout.Maui.Widget
                     break;
                 }
             }
-            this.requestLayout();
+            this.RequestReLayout();
 
             return index;
         }
@@ -528,6 +531,25 @@ namespace SharpConstraintLayout.Maui.Widget
         {
             set { elevation = value; }
             get { return elevation; }
+        }
+
+        /// <summary>
+        /// Call this when something has changed which has invalidated the layout of this view. This will schedule a layout pass of the view tree. This should not be called while the view hierarchy is currently in a layout pass (isInLayout(). If layout is happening, the request may be honored at the end of the current layout pass (and then layout will run again) or after the current frame is drawn and the next layout occurs.
+        /// Subclasses which override this method should call the superclass method to handle possible request-during-layout errors correctly.
+        /// </summary>
+        public void RequestReLayout()
+        {
+            //According to https://stackoverflow.com/questions/13856180/usage-of-forcelayout-requestlayout-and-invalidate
+            //At Android,this will let remeasure layout
+#if WINDOWS
+            this.InvalidateMeasure();
+#elif __IOS__
+            this.SetNeedsLayout();
+#elif __ANDROID__
+            this.RequestLayout();
+#elif __MAUI__
+            this.InvalidateMeasure();
+#endif
         }
 
     }

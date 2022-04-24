@@ -27,6 +27,10 @@ using FrameworkElement = UIKit.UIView;
 using Android.Content;
 using SharpConstraintLayout.Maui.Widget.Interface;
 using FrameworkElement = Android.Views.View;
+#elif __MAUI__
+using SharpConstraintLayout.Maui.Widget.Interface;
+using FrameworkElement = Microsoft.Maui.Controls.View;
+using UIElement = Microsoft.Maui.Controls.View;
 #endif
 namespace SharpConstraintLayout.Maui.Widget
 {

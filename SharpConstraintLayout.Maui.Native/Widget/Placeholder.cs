@@ -29,8 +29,12 @@ namespace SharpConstraintLayout.Maui.Widget
     using Android.Content;
     using FrameworkElement = Android.Views.View;
     using UIElement = Android.Views.View;
+#elif __MAUI__
+    using FrameworkElement = Microsoft.Maui.Controls.View;
+    using UIElement = Microsoft.Maui.Controls.View;
 #endif
     using ConstraintWidget = androidx.constraintlayout.core.widgets.ConstraintWidget;
+    using IPlaceholder = Interface.IPlaceholder;
 
     /// <summary>
     /// <b>Added in 1.1</b>

@@ -1,4 +1,5 @@
-﻿using Android.Content;
+﻿#if __ANDROID__
+using Android.Content;
 using Android.Views;
 using Microsoft.Maui.Graphics;
 using System;
@@ -16,7 +17,7 @@ namespace SharpConstraintLayout.Maui.Widget
             init();
         }
 
-        #region Add And Remove
+#region Add And Remove
         public override void AddView(UIElement element)
         {
             base.AddView(element);
@@ -65,9 +66,9 @@ namespace SharpConstraintLayout.Maui.Widget
             this.RemoveAllViews();
         }
 
-        #endregion
+#endregion
 
-        #region Measure And Layout
+#region Measure And Layout
         protected override void OnMeasure(int widthMeasureSpec, int heightMeasureSpec)
         {
             //base.OnMeasure(widthMeasureSpec, heightMeasureSpec);
@@ -84,6 +85,7 @@ namespace SharpConstraintLayout.Maui.Widget
             element.Layout(x, y, x + w, y + h);
         }
 
-        #endregion
+#endregion
     }
 }
+#endif

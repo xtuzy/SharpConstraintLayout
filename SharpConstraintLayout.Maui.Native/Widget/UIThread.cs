@@ -33,6 +33,11 @@ namespace SharpConstraintLayout.Maui.Widget
             {
                 action.Invoke();
             });
+#elif __MAUI__
+            constraintLayout.Dispatcher.Dispatch(() =>
+            {
+                action.Invoke();
+            });
 #endif
         }
     }

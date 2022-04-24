@@ -18,6 +18,7 @@ using Android.Content;
 using View = Android.Views.View;
 using AndroidX.ConstraintLayout.Widget;
 #endif
+using Element = SharpConstraintLayout.Maui.Widget.FluentConstraintSet.Element;
 namespace SharpConstraintLayout.Maui.Widget.Interface
 {
     public interface IElement

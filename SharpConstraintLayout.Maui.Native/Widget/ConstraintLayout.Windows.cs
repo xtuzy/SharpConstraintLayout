@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if WINDOWS
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,7 +25,7 @@ namespace SharpConstraintLayout.Maui.Widget
             init();
         }
 
-        #region Add And Remove
+#region Add And Remove
 
         public UIElement GetChildAt(int index)
         {
@@ -54,7 +55,7 @@ namespace SharpConstraintLayout.Maui.Widget
 
         public int ChildCount { get { return Children != null ? Children.Count : 0; } }
 
-        #endregion
+#endregion
 
         protected override Size MeasureOverride(Size availableSize)
         {
@@ -85,7 +86,7 @@ namespace SharpConstraintLayout.Maui.Widget
             return Measure(new Size(availableWidth, availableHeight));
         }
 
-        #region Layout
+#region Layout
 
         protected override Size ArrangeOverride(Size finalSize)
         {
@@ -109,6 +110,7 @@ namespace SharpConstraintLayout.Maui.Widget
             element.Arrange(new Rect(x, y, w, h));
         }
 
-        #endregion
+#endregion
     }
 }
+#endif

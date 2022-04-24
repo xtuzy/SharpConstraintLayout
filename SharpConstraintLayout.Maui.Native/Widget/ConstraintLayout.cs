@@ -44,7 +44,10 @@ namespace SharpConstraintLayout.Maui.Widget
     using Panel = Android.Views.ViewGroup;
     using UIElement = Android.Views.View;
     using Microsoft.Maui.Graphics;
-
+#elif __MAUI__
+    using Panel = Microsoft.Maui.Controls.Layout;
+    using UIElement = Microsoft.Maui.Controls.View;
+    using Microsoft.Maui.Graphics;
 #endif
     using AndroidMeasureSpec = SharpConstraintLayout.Maui.Widget.MeasureSpec;
     using SharpConstraintLayout.Maui.DebugTool;
@@ -229,7 +232,7 @@ namespace SharpConstraintLayout.Maui.Widget
         bool isInfinityAvailabelSize = false;
         long measureTime = 0;
 
-        protected Size Measure(Size availableSize)
+        internal Size Measure(Size availableSize)
         {
             if (DEBUG) SimpleDebug.WriteLine($"{nameof(Measure)} {this.GetType().FullName} {availableSize}");
             if (MEASURE)
@@ -541,7 +544,7 @@ namespace SharpConstraintLayout.Maui.Widget
 
         #region Layout
 
-        private void OnLayout()
+        internal void OnLayout()
         {
             //layout child
             foreach (ConstraintWidget child in mLayout.Children)
@@ -1390,5 +1393,24 @@ namespace SharpConstraintLayout.Maui.Widget
             }
         }
         #endregion Apply Contrants to Widget
+
+        /// <summary>
+        /// Call this when something has changed which has invalidated the layout of this view. This will schedule a layout pass of the view tree. This should not be called while the view hierarchy is currently in a layout pass (isInLayout(). If layout is happening, the request may be honored at the end of the current layout pass (and then layout will run again) or after the current frame is drawn and the next layout occurs.
+        /// Subclasses which override this method should call the superclass method to handle possible request-during-layout errors correctly.
+        /// </summary>
+        public void RequestReLayout()
+        {
+            //According to https://stackoverflow.com/questions/13856180/usage-of-forcelayout-requestlayout-and-invalidate
+            //At Android,this will let remeasure layout
+#if WINDOWS
+            this.InvalidateMeasure();
+#elif __IOS__
+            this.SetNeedsLayout();
+#elif __ANDROID__
+            this.RequestLayout();
+#elif __MAUI__
+            this.InvalidateMeasure();
+#endif
+        }
     }
 }

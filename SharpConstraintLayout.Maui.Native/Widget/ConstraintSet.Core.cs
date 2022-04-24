@@ -29,6 +29,8 @@ using View = Microsoft.UI.Xaml.UIElement;
 using View = UIKit.UIView;
 #elif __ANDROID__
 using View = Android.Views.View;
+#elif __MAUI__
+using View = Microsoft.Maui.Controls.View;
 #endif
 
 namespace SharpConstraintLayout.Maui.Widget
@@ -263,7 +265,7 @@ namespace SharpConstraintLayout.Maui.Widget
 
             UIThread.Invoke(() =>
             {
-                constraintLayout.requestLayout();
+                constraintLayout.RequestReLayout();
             }, constraintLayout);
 
         }
