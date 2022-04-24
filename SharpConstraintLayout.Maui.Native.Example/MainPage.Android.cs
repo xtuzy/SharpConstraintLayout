@@ -23,24 +23,24 @@ namespace SharpConstraintLayout.Maui.Native.Example
 
         public MainPage(Context? context) : base(context)
         {
-            //ConstraintLayout.DEBUG = true;
+            ConstraintLayout.DEBUG = false;
             ConstraintLayout.MEASURE = true;
             Id = View.GenerateViewId();
             this.LayoutParameters = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent);
             createControls();
             this.SetBackgroundColor(Color.HotPink);
 
-            //baseAlignTest(this);
-            //baselineTest(this);
-            //guidelineTest(this);//OK
-            //barrierTest(this);//bug:edittext can't auto relayout
-            //visibilityTest(this);//OK
+            //BaseAlignTest(this);
+            //BaselineTest(this);
+            //GuidelineTest(this);//OK
+            //BarrierTest(this);//OK
+            //VisibilityTest(this);//OK
             //flowTest(this);
-            PlatformLayoutInConstraintLayoutTest(this);
+            //PlatformLayoutInConstraintLayoutTest(this);//OK
             //animationTest(this);
-            //circleConstraintTest(this);
-            //performanceTest(this);
-            //performanceTest_WrapPanel(this);
+            //CircleConstraintTest(this);
+            //FlowPerformanceTest(this);
+            WrapPanelPerformanceTest(this);
         }
 
         private void createControls()

@@ -72,7 +72,8 @@ namespace SharpConstraintLayout.Maui.Native.Example
             FouthTextBlock = new UITextView()
             {
                 ScrollEnabled = false,
-                Text = "FouthTextBlock"
+                Text = "FouthTextBlock",
+                BackgroundColor = UIColor.Green,
             };
             FouthTextBlock.Changed += (sender, e) =>
             {

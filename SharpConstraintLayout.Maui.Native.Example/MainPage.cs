@@ -148,8 +148,8 @@ namespace SharpConstraintLayout.Maui.Native.Example
             {
                 layoutSet.Clone(layout);
                 layoutSet.Select(FirstButton).CenterTo()
-                    .Select(SecondButton).CircleTo(FirstButton, new[] { 50 }, new[] { 60f });
-                layoutSet.ConstrainCircle(FouthTextBlock.GetId(), FirstButton.GetId(), 50, 240);
+                    .Select(SecondButton, FouthTextBlock)
+                .CircleTo(FirstButton, new[] { 50, 100 }, new[] { 60f, 240 });
                 layoutSet.ApplyTo(layout);
             }
 
@@ -242,11 +242,14 @@ namespace SharpConstraintLayout.Maui.Native.Example
             stackPanel.AddView(new Button(page.Context) { Text = "InStackPanel" });
             stackPanel.AddView(new TextView(page.Context) { Text = "InStackPanel" });
             stackPanel.AddView(new EditText(page.Context) { Text = "InStackPanel" });
-            var grid = new GridLayout(page.Context);
+            var grid = new GridLayout(page.Context) {  };
             page.AddElement(grid);
             grid.ColumnCount = 2;
-            grid.AddView(new TextView(page.Context) { Text = "InGrid" });
-            grid.AddView(new EditText(page.Context) { Text = "InGrid" });
+            grid.RowCount = 2;
+            grid.AddView(new TextView(page.Context) { Text = "InGrid", LayoutParameters = new GridLayout.LayoutParams(GridLayout.InvokeSpec(0, 1, 1), GridLayout.InvokeSpec(0, 1, 1)) });
+            grid.AddView(new TextView(page.Context) { Text = "InGrid", LayoutParameters = new GridLayout.LayoutParams(GridLayout.InvokeSpec(0, 1, 1), GridLayout.InvokeSpec(1, 1, 1)) });
+            grid.AddView(new TextView(page.Context) { Text = "InGrid", LayoutParameters = new GridLayout.LayoutParams(GridLayout.InvokeSpec(1, 1, 1), GridLayout.InvokeSpec(0, 1, 1)) });
+            grid.AddView(new EditText(page.Context) { Text = "InGrid" , LayoutParameters = new GridLayout.LayoutParams(GridLayout.InvokeSpec(1, 1, 1), GridLayout.InvokeSpec(1, 1, 1)) });
             var scrollView = new ScrollView(page.Context);
             page.AddElement(scrollView);
             scrollView.AddView(new LinearLayout(page.Context)
@@ -263,12 +266,12 @@ namespace SharpConstraintLayout.Maui.Native.Example
             {
                 layoutSet.Clone(page);
                 layoutSet.Select(stackPanel)
-                    .CenterYTo().LeftToLeft()
-                    .Width(600)
+                    .CenterTo()
+                    .Width(SizeBehavier.WrapContent)
                     .Height(SizeBehavier.WrapContent)
                     .Select(grid)
                     .TopToBottom(stackPanel, 10).LeftToLeft()
-                    .Width(600)
+                    .Width(SizeBehavier.WrapContent)
                     .Height(SizeBehavier.WrapContent)
                     .Select(scrollView)
                     .TopToBottom(grid, 10).BottomToBottom().LeftToLeft()

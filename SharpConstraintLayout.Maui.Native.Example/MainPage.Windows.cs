@@ -40,8 +40,8 @@ namespace SharpConstraintLayout.Maui.Native.Example
             //visibilityTest(this);
             //flowTest(this);
             //nestedLayoutTest(this);
-            //circleConstraintTest(this);
-            PlatformLayoutInConstraintLayoutTest(this);//OK
+            CircleConstraintTest(this);
+            //PlatformLayoutInConstraintLayoutTest(this);//OK
             //FlowPerformanceTest(this);
             //WrapPanelPerformanceTest(this);
 
