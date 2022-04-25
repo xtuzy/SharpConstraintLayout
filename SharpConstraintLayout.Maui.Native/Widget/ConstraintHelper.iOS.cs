@@ -1,4 +1,4 @@
-﻿#if __IOS__
+﻿#if __IOS__ && !__MAUI__
 using System;
 using System.Collections.Generic;
 using System.Linq;

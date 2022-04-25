@@ -1,21 +1,13 @@
-﻿#if WINDOWS
+﻿#if WINDOWS && !__MAUI__
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-#if WINDOWS
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Windows.Foundation;
-#elif __IOS__
-using Panel = UIKit.UIView;
-using UIElement = UIKit.UIView;
-using CoreGraphics;
-using Size = CoreGraphics.CGSize;
-using Microsoft.Maui.Graphics;
-#elif __ANDROID__
-#endif
+
 namespace SharpConstraintLayout.Maui.Widget
 {
     public partial class ConstraintLayout

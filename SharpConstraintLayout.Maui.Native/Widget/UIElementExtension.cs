@@ -4,7 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-#if WINDOWS
+#if __MAUI__
+using UIElement = Microsoft.Maui.Controls.View;
+using FrameworkElement = Microsoft.Maui.Controls.View;
+
+#elif WINDOWS
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
@@ -19,9 +23,6 @@ using UIElement = Android.Views.View;
 using FrameworkElement = Android.Views.View;
 using AndroidX.ConstraintLayout.Widget;
 using Android.Views;
-#elif __MAUI__
-using UIElement = Microsoft.Maui.Controls.View;
-using FrameworkElement = Microsoft.Maui.Controls.View;
 #endif
 namespace SharpConstraintLayout.Maui.Widget
 {
@@ -38,7 +39,10 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <returns></returns>
         public static float GetBaseline(this UIElement element)
         {
-#if WINDOWS
+#if __MAUI__
+            //TODO
+            return ConstraintSet.Unset;
+#elif WINDOWS
             double? baselineOffset = 0;
             if (element is TextBlock || element is RichTextBlock)
             {
@@ -68,9 +72,6 @@ namespace SharpConstraintLayout.Maui.Widget
                 return ConstraintSet.Unset;
 #elif __ANDROID__
             return element.Baseline;
-#elif __MAUI__
-            //TODO
-            return ConstraintSet.Unset;
 #endif
         }
 
@@ -92,7 +93,19 @@ namespace SharpConstraintLayout.Maui.Widget
 
         public static void SetViewVisibility(this UIElement element, int ConstraintSetVisible)
         {
-#if WINDOWS
+#if __MAUI__
+            if (ConstraintSetVisible == ConstraintSet.Invisible)
+                (element as VisualElement).IsVisible = false;
+            else if (ConstraintSetVisible == ConstraintSet.Visible)
+                (element as VisualElement).IsVisible = true;
+            else//Gone
+            {
+                //throw new NotImplementedException("Maui没有默认的Visibility = ConstraintSet.Gone");
+                (element as VisualElement).IsVisible = false;
+                Debug.WriteLine("Maui没有默认的Visibility = ConstraintSet.Gone");
+            }
+
+#elif WINDOWS
             if (ConstraintSetVisible == ConstraintSet.Invisible)
                 element.Opacity = 0;//https://stackoverflow.com/questions/28097153/workaround-for-visibilty-hidden-state-windows-phone-8-1-app-development
             else if (ConstraintSetVisible == ConstraintSet.Visible)
@@ -123,17 +136,6 @@ namespace SharpConstraintLayout.Maui.Widget
                 element.Visibility = ViewStates.Visible;
             else//Gone
                 element.Visibility = ViewStates.Gone;
-#elif __MAUI__
-            if (ConstraintSetVisible == ConstraintSet.Invisible)
-                (element as VisualElement).IsVisible = false;
-            else if (ConstraintSetVisible == ConstraintSet.Visible)
-                (element as VisualElement).IsVisible = true;
-            else//Gone
-            {
-                //throw new NotImplementedException("Maui没有默认的Visibility = ConstraintSet.Gone");
-                (element as VisualElement).IsVisible = false;
-                Debug.WriteLine("Maui没有默认的Visibility = ConstraintSet.Gone");
-            }
 #endif
         }
 
@@ -144,7 +146,9 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <returns></returns>
         public static (int Width, int Height) GetWrapContentSize(this UIElement element)
         {
-#if WINDOWS
+#if __MAUI__
+            return ((int)element.DesiredSize.Width, (int)element.DesiredSize.Height);
+#elif WINDOWS
             return ((int)element.DesiredSize.Width, (int)element.DesiredSize.Height);
 #elif __IOS__
             //此处有各种Size的对比:https://zhangbuhuai.com/post/auto-layout-part-1.html
@@ -160,8 +164,6 @@ namespace SharpConstraintLayout.Maui.Widget
             return (w, h);
 #elif __ANDROID__
             return (element.MeasuredWidth, element.MeasuredHeight);
-#elif __MAUI__
-            return ((int)element.DesiredSize.Width, (int)element.DesiredSize.Height);
 #endif
         }
 
@@ -182,28 +184,28 @@ namespace SharpConstraintLayout.Maui.Widget
         public static void MeasureSelf(this UIElement element, int horizontalSpec, int verticalSpec)
         {
 
-#if WINDOWS
+#if __MAUI__
+            int w = MeasureSpec.GetSize(horizontalSpec);
+            int h = MeasureSpec.GetSize(verticalSpec);
+            element.Measure(w, h);
+#elif WINDOWS
             int w = MeasureSpec.GetSize(horizontalSpec);
             int h = MeasureSpec.GetSize(verticalSpec);
             element.Measure(new Windows.Foundation.Size(w, h));
 #elif __ANDROID__
             element.Measure(horizontalSpec, verticalSpec);
-#elif __MAUI__
-            int w = MeasureSpec.GetSize(horizontalSpec);
-            int h = MeasureSpec.GetSize(verticalSpec);
-            element.Measure(w, h);
 #endif
         }
 
         public static UIElement GetParent(this FrameworkElement element)
         {
-#if WINDOWS
+#if __MAUI__
+            return element.Parent as UIElement;
+#elif WINDOWS
             return element.Parent as UIElement;
 #elif __IOS__
             return element.Superview;
 #elif __ANDROID__
-            return element.Parent as UIElement;
-#elif __MAUI__
             return element.Parent as UIElement;
 #endif
         }
@@ -212,7 +214,9 @@ namespace SharpConstraintLayout.Maui.Widget
         {
             if (transform == null)
                 return;
-#if ANDROID
+#if __MAUI__
+            //TODO
+#elif ANDROID
             //Copy from ConstraintSet
             var view = element;
             view.Rotation = transform.rotation;
@@ -282,8 +286,6 @@ namespace SharpConstraintLayout.Maui.Widget
             transformGroup.Scale(transform.scaleX, transform.scaleY);
             transformGroup.Translate(transform.translationX, transform.translationY);
             element.Transform = transformGroup;*/
-#elif __MAUI__
-            //TODO
 #endif
         }
 
@@ -291,7 +293,9 @@ namespace SharpConstraintLayout.Maui.Widget
         {
             if (propertySet == null)
                 return;
-#if __ANDROID__
+#if __MAUI__
+            (element as VisualElement).Opacity = propertySet.alpha;
+#elif __ANDROID__
             //Copy from ConstraintSet
             element.Alpha = propertySet.alpha;
 #elif WINDOWS
@@ -300,21 +304,20 @@ namespace SharpConstraintLayout.Maui.Widget
 #elif __IOS__
             //https://stackoverflow.com/questions/15381436/is-the-opacity-and-alpha-the-same-thing-for-uiview
             element.Alpha = propertySet.alpha;
-#elif __MAUI__
-            (element as VisualElement).Opacity = propertySet.alpha;
 #endif
         }
 
         public static string GetViewLayoutInfo(this UIElement element)
         {
-#if WINDOWS
+#if __MAUI__
+            return $"{element.GetType().FullName} IsVisible={element.IsVisible} Position=({element.X},{element.Y}) DesiredSize={element.DesiredSize} WidthxHeight=({element.Width}x{element.Height})";
+
+#elif WINDOWS
             return $"{element.GetType().FullName} Visibility={element.Visibility} Position={element.ActualOffset} DesiredSize={element.DesiredSize} ActualSize={element.ActualSize}";
 #elif __IOS__
             return $"{element.GetType().FullName} IsHiden={element.Hidden} Frame={element.Frame} Bounds={element.Bounds} IntrinsicContentSize={element.IntrinsicContentSize}";
 #elif __ANDROID__
             return $"{element.GetType().FullName} Visibility={element.Visibility} Position={element.GetX()}x{element.GetY()} Size={element.Width}x{element.Height} MeasuredSize={element.MeasuredWidth}x{element.MeasuredHeight}";
-#elif __MAUI__
-            return $"{element.GetType().FullName} Visibility={element.IsVisible} Position={element.X},{element.Y} DesiredSize={element.DesiredSize}";
 #endif
         }
     }

@@ -16,7 +16,10 @@
 
 using SharpConstraintLayout.Maui.Widget.Interface;
 using System;
-#if WINDOWS
+#if __MAUI__
+using FrameworkElement = Microsoft.Maui.Controls.View;
+
+#elif WINDOWS
 using FrameworkElement = Microsoft.UI.Xaml.FrameworkElement;
 #elif __IOS__
 using CoreGraphics;
@@ -27,8 +30,6 @@ using Android.Content;
 using Android.Graphics;
 using SharpConstraintLayout.Maui.Widget.Interface;
 using FrameworkElement = Android.Views.View;
-#elif __MAUI__
-using FrameworkElement = Microsoft.Maui.Controls.View;
 #endif
 namespace SharpConstraintLayout.Maui.Widget
 {
@@ -73,7 +74,7 @@ namespace SharpConstraintLayout.Maui.Widget
     /// </summary>
     public class Guideline : FrameworkElement, IDisposable, IGuideline
     {
-#if __ANDROID__
+#if __ANDROID__ && !__MAUI__
         public Guideline(Context context) : base(context)
 #else
         public Guideline() : base()
@@ -84,7 +85,7 @@ namespace SharpConstraintLayout.Maui.Widget
 
         internal androidx.constraintlayout.core.widgets.Guideline mGuideline = new androidx.constraintlayout.core.widgets.Guideline();
 
-#if __ANDROID__
+#if __ANDROID__ && !__MAUI__
         /// <summary>
         /// @suppress
         /// </summary>

@@ -18,7 +18,7 @@ public partial class MainPage : ContentPage
     {
         InitializeComponent();
 
-        ConstraintLayout.DEBUG = false;
+        ConstraintLayout.DEBUG = true;
         ConstraintLayout.MEASURE = true;
 
         var content = new ConstraintLayout();
@@ -26,11 +26,21 @@ public partial class MainPage : ContentPage
         createControls();
         this.Background = new SolidColorBrush(Colors.HotPink);
 
-        BaseAlignTest(content);
+        content.AddElement(FirstButton);
+        FirstButton.WidthRequest = 100;
+        FirstButton.HeightRequest = 100;
+        using (var set = new FluentConstraintSet())
+        {
+            set.Clone(content);
+            set.Select(FirstButton).Width(100).Height(100).CenterTo();
+            set.ApplyTo(content);
+        }
+
+        //BaseAlignTest(content);
         //baselineTest(content); 
-        //guidelineTest(content);
+        //GuidelineTest(content);
         //BarrierTest(content);
-        //visibilityTest(content);
+        //VisibilityTest(content);
         //flowTest(content);
         //nestedLayoutTest(content);
         //CircleConstraintTest(content);

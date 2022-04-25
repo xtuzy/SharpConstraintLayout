@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Xml;
 using static SharpConstraintLayout.Maui.Widget.FluentConstraintSet;
-#if WINDOWS
+#if __MAUI__
+#elif WINDOWS
 using View = Microsoft.UI.Xaml.FrameworkElement;
 using UIElement = Microsoft.UI.Xaml.UIElement;
 

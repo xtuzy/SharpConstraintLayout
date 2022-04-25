@@ -30,7 +30,11 @@ namespace SharpConstraintLayout.Maui.Widget
     using Optimizer = androidx.constraintlayout.core.widgets.Optimizer;
     using BasicMeasure = androidx.constraintlayout.core.widgets.analyzer.BasicMeasure;
 
-#if WINDOWS
+#if __MAUI__
+    using Panel = Microsoft.Maui.Controls.Layout;
+    using UIElement = Microsoft.Maui.Controls.View;
+    using Microsoft.Maui.Graphics;
+#elif WINDOWS
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
     using Windows.Foundation;
@@ -43,10 +47,6 @@ namespace SharpConstraintLayout.Maui.Widget
 #elif __ANDROID__
     using Panel = Android.Views.ViewGroup;
     using UIElement = Android.Views.View;
-    using Microsoft.Maui.Graphics;
-#elif __MAUI__
-    using Panel = Microsoft.Maui.Controls.Layout;
-    using UIElement = Microsoft.Maui.Controls.View;
     using Microsoft.Maui.Graphics;
 #endif
     using AndroidMeasureSpec = SharpConstraintLayout.Maui.Widget.MeasureSpec;
@@ -378,7 +378,7 @@ namespace SharpConstraintLayout.Maui.Widget
             {
                 resolvedHeightSize |= AndroidMeasureSpec.MEASURED_STATE_TOO_SMALL;
             }
-#if __ANDROID__
+#if __ANDROID__ && !__MAUI__
             SetMeasuredDimension(resolvedWidthSize, resolvedHeightSize);
 #endif
             mLastMeasureWidth = resolvedWidthSize;
@@ -772,7 +772,7 @@ namespace SharpConstraintLayout.Maui.Widget
                  * AndroidX.ConstraintLayout use mDirtyHierarchy to mark need measure, but it like also measure all.
                  * At Windows, WrapPanel also remeasure all, i feel it not good, so Windows i use these code still.
                 */
-#if __ANDROID__
+#if __ANDROID__ && !__MAUI__
                 //before measure,we don't know new size, we just know it is dirty,
                 //so all dirty need remeasure,other view that wrap content maybe not remeasure.
                 if (!child.IsLayoutRequested && widget.HorizontalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.WRAP_CONTENT && widget.VerticalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.WRAP_CONTENT)
@@ -1402,14 +1402,14 @@ namespace SharpConstraintLayout.Maui.Widget
         {
             //According to https://stackoverflow.com/questions/13856180/usage-of-forcelayout-requestlayout-and-invalidate
             //At Android,this will let remeasure layout
-#if WINDOWS
+#if __MAUI__
+            this.InvalidateMeasure();
+#elif WINDOWS
             this.InvalidateMeasure();
 #elif __IOS__
             this.SetNeedsLayout();
 #elif __ANDROID__
             this.RequestLayout();
-#elif __MAUI__
-            this.InvalidateMeasure();
 #endif
         }
     }

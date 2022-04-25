@@ -1,7 +1,9 @@
 ﻿using System;
 using static SharpConstraintLayout.Maui.Widget.FluentConstraintSet.Element;
 
-#if WINDOWS
+#if __MAUI__
+using UIElement = Microsoft.Maui.Controls.View;
+#elif WINDOWS
 using UIElement = Microsoft.UI.Xaml.UIElement;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -11,8 +13,6 @@ using UIElement = UIKit.UIView;
 #elif __ANDROID__
 using UIElement = Android.Views.View;
 using Android.Content;
-#elif __MAUI__
-using UIElement = Microsoft.Maui.Controls.View;
 #endif
 
 namespace SharpConstraintLayout.Maui.Widget
@@ -761,7 +761,7 @@ namespace SharpConstraintLayout.Maui.Widget
 
     public static class FluentConstraintHelperExtension
     {
-#if WINDOWS
+#if WINDOWS && !__MAUI__
         public static void AddElement(this ConstraintHelper helper, params FrameworkElement[] views)
 #else
         public static void AddElement(this ConstraintHelper helper, params UIElement[] views)

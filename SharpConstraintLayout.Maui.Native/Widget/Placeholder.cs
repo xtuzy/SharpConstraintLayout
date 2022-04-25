@@ -19,7 +19,10 @@ using System.Diagnostics;
 
 namespace SharpConstraintLayout.Maui.Widget
 {
-#if WINDOWS
+#if __MAUI__
+    using FrameworkElement = Microsoft.Maui.Controls.View;
+    using UIElement = Microsoft.Maui.Controls.View;
+#elif WINDOWS
     using FrameworkElement = Microsoft.UI.Xaml.FrameworkElement;
     using UIElement = Microsoft.UI.Xaml.UIElement;
 #elif __IOS__
@@ -29,9 +32,6 @@ namespace SharpConstraintLayout.Maui.Widget
     using Android.Content;
     using FrameworkElement = Android.Views.View;
     using UIElement = Android.Views.View;
-#elif __MAUI__
-    using FrameworkElement = Microsoft.Maui.Controls.View;
-    using UIElement = Microsoft.Maui.Controls.View;
 #endif
     using ConstraintWidget = androidx.constraintlayout.core.widgets.ConstraintWidget;
     using IPlaceholder = Interface.IPlaceholder;
@@ -59,7 +59,7 @@ namespace SharpConstraintLayout.Maui.Widget
         private int mContentId = -1;
         private FrameworkElement mContent = null;
         private int mEmptyVisibility = ConstraintSet.Invisible;
-#if __ANDROID__
+#if __ANDROID__ && !__MAUI__
         public Placeholder(Context context) : base(context)
 #else
         public Placeholder()

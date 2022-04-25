@@ -16,9 +16,6 @@
 
 namespace SharpConstraintLayout.Maui.Helper.Widget
 {
-#if __ANDROID__
-    using Android.Content;
-#endif
     using androidx.constraintlayout.core.widgets.analyzer;
     using SharpConstraintLayout.Maui.Widget;
     using System.Collections.Generic;
@@ -125,8 +122,8 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
         public const int VerticalAlignBottom = androidx.constraintlayout.core.widgets.Flow.VERTICAL_ALIGN_BOTTOM;
         public const int VerticalAlignCenter = androidx.constraintlayout.core.widgets.Flow.VERTICAL_ALIGN_CENTER;
         public const int VerticalAlignBaseline = androidx.constraintlayout.core.widgets.Flow.VERTICAL_ALIGN_BASELINE;
-#if __ANDROID__
-        public Flow(Context context) : base(context)
+#if __ANDROID__ && !__MAUI__
+        public Flow(Android.Content.Context context) : base(context)
 #else
         public Flow() : base()
 #endif
@@ -138,7 +135,7 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
             mFlow.applyRtl(isRtl);
         }
 
-#if __ANDROID__
+#if __ANDROID__ && !__MAUI__
         protected override void OnMeasure(int widthMeasureSpec, int heightMeasureSpec)
         {
             onMeasure(mFlow, widthMeasureSpec, heightMeasureSpec);
@@ -185,16 +182,15 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
             {
                 if (ConstraintLayout.DEBUG) Debug.WriteLine(TAG, $"widthMode {widthMode}, widthSize {widthSize}, heightMode {heightMode}, heightSize {heightSize}");
                 layout.measure(widthMode, widthSize, heightMode, heightSize);
-#if __ANDROID__
+#if __ANDROID__ && !__MAUI__
                 SetMeasuredDimension(layout.MeasuredWidth, layout.MeasuredHeight);//Android中这个的作用应该是设置flow的大小
-#endif
-#if __IOS__
+#elif __IOS__ && !__MAUI__
                 this.Bounds = new CoreGraphics.CGRect(this.Bounds.X, this.Bounds.Y, layout.MeasuredWidth, layout.MeasuredHeight);
 #endif
             }
             else
             {
-#if __ANDROID__
+#if __ANDROID__ && !__MAUI__
                 SetMeasuredDimension(0, 0);
 #endif
             }

@@ -13,9 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#if __ANDROID__
-using Android.Content;
-#endif
 using androidx.constraintlayout.core.widgets;
 using SharpConstraintLayout.Maui.Widget.Interface;
 
@@ -55,8 +52,8 @@ namespace SharpConstraintLayout.Maui.Widget
     /// </summary>
     public class Group : ConstraintHelper, IGroup
     {
-#if __ANDROID__
-        public Group(Context context) : base(context)
+#if __ANDROID__  && !__MAUI__
+        public Group(Android.Content.Context context) : base(context)
 #else
         public Group() : base()
 #endif

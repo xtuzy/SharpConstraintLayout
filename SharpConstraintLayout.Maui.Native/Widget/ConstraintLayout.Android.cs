@@ -1,4 +1,4 @@
-﻿#if __ANDROID__
+﻿#if __ANDROID__ && !__MAUI__
 using Android.Content;
 using Android.Views;
 using Microsoft.Maui.Graphics;

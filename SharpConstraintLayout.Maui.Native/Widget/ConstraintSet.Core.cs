@@ -23,14 +23,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-#if WINDOWS
+#if __MAUI__
+using View = Microsoft.Maui.Controls.View;
+#elif WINDOWS
 using View = Microsoft.UI.Xaml.UIElement;
 #elif __IOS__
 using View = UIKit.UIView;
 #elif __ANDROID__
 using View = Android.Views.View;
-#elif __MAUI__
-using View = Microsoft.Maui.Controls.View;
 #endif
 
 namespace SharpConstraintLayout.Maui.Widget

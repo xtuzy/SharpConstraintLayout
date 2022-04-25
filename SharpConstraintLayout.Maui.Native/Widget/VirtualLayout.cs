@@ -13,7 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#if WINDOWS
+#if __MAUI__
+using SharpConstraintLayout.Maui.Widget.Interface;
+using FrameworkElement = Microsoft.Maui.Controls.View;
+using UIElement = Microsoft.Maui.Controls.View;
+
+#elif WINDOWS
 using Microsoft.UI.Xaml;
 using SharpConstraintLayout.Maui.Widget.Interface;
 using System.Diagnostics;
@@ -27,10 +32,6 @@ using FrameworkElement = UIKit.UIView;
 using Android.Content;
 using SharpConstraintLayout.Maui.Widget.Interface;
 using FrameworkElement = Android.Views.View;
-#elif __MAUI__
-using SharpConstraintLayout.Maui.Widget.Interface;
-using FrameworkElement = Microsoft.Maui.Controls.View;
-using UIElement = Microsoft.Maui.Controls.View;
 #endif
 namespace SharpConstraintLayout.Maui.Widget
 {
@@ -46,7 +47,7 @@ namespace SharpConstraintLayout.Maui.Widget
         private bool mApplyVisibilityOnAttach;
         private bool mApplyElevationOnAttach;
 
-#if __ANDROID__
+#if __ANDROID__ && !__MAUI__
         protected VirtualLayout(Context context) : base(context)
 #else
         protected VirtualLayout() : base()

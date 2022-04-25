@@ -27,7 +27,10 @@ namespace SharpConstraintLayout.Maui.Widget
     using Helper = androidx.constraintlayout.core.widgets.Helper;
     using HelperWidget = androidx.constraintlayout.core.widgets.HelperWidget;
 
-#if WINDOWS
+#if __MAUI__
+    using FrameworkElement = Microsoft.Maui.Controls.View;
+    using UIElement = Microsoft.Maui.Controls.View;
+#elif WINDOWS
     using FrameworkElement = Microsoft.UI.Xaml.FrameworkElement;
     using UIElement = Microsoft.UI.Xaml.UIElement;
 
@@ -42,9 +45,6 @@ namespace SharpConstraintLayout.Maui.Widget
     using Android.Content;
     using FrameworkElement = Android.Views.View;
     using SharpConstraintLayout.Maui.Widget.Interface;
-#elif __MAUI__
-    using FrameworkElement = Microsoft.Maui.Controls.View;
-    using UIElement = Microsoft.Maui.Controls.View;
 #endif
     /// <summary>
     /// @suppress
@@ -198,7 +198,7 @@ namespace SharpConstraintLayout.Maui.Widget
         {
             // Nothing
         }*/
-#if __ANDROID__
+#if __ANDROID__ && !__MAUI__
         /// <summary>
         /// @suppress
         /// </summary>
@@ -541,14 +541,14 @@ namespace SharpConstraintLayout.Maui.Widget
         {
             //According to https://stackoverflow.com/questions/13856180/usage-of-forcelayout-requestlayout-and-invalidate
             //At Android,this will let remeasure layout
-#if WINDOWS
+#if __MAUI__
+            this.InvalidateMeasure();
+#elif WINDOWS
             this.InvalidateMeasure();
 #elif __IOS__
             this.SetNeedsLayout();
 #elif __ANDROID__
             this.RequestLayout();
-#elif __MAUI__
-            this.InvalidateMeasure();
 #endif
         }
 

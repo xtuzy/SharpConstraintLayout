@@ -1,6 +1,8 @@
 ﻿
 using androidx.constraintlayout.core.widgets;
-#if WINDOWS
+#if __MAUI__
+using View = Microsoft.Maui.Controls.View;
+#elif WINDOWS 
 using View = Microsoft.UI.Xaml.UIElement;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -14,8 +16,6 @@ using SharpConstraintLayout.Maui.Widget.Interface;
 using View = UIKit.UIView;
 #elif __ANDROID__
 using View = Android.Views.View;
-#elif __MAUI__
-using View = Microsoft.Maui.Controls.View;
 #endif
 namespace SharpConstraintLayout.Maui.Widget.Interface
 {

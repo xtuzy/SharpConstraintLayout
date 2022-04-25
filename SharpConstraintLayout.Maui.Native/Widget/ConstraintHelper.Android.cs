@@ -1,4 +1,4 @@
-﻿#if __ANDROID__
+﻿#if __ANDROID__ && !__MAUI__
 using Android.Content;
 using System;
 using System.Collections.Generic;

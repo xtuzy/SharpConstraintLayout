@@ -12,6 +12,101 @@ namespace SharpConstraintLayout.Maui.Example
 {
     public partial class MainPage
     {
+        private void VisibilityTest(ConstraintLayout page)
+        {
+            layout = page;
+
+            layout.AddElement(FirstButton, SecondButton, ThirdCanvas);
+
+            var layoutSet = new FluentConstraintSet();
+            layoutSet.Clone(layout);
+            layoutSet
+                .Select(FirstButton).CenterTo()
+                .Width(SizeBehavier.WrapContent).Height(SizeBehavier.WrapContent)
+                .Select(SecondButton).LeftToRight(FirstButton).CenterYTo(FirstButton)
+                .Width(SizeBehavier.WrapContent).Height(SizeBehavier.WrapContent)
+                .Select(ThirdCanvas).LeftToRight(SecondButton).RightToRight().EdgesYTo()
+                .Width(SizeBehavier.MatchConstraint)
+                .Height(SizeBehavier.MatchConstraint);
+            layoutSet.ApplyTo(layout);
+
+            int index = 2;
+
+            FirstButton.Clicked += (sender, e) =>
+            {
+                if (index == 1)
+                {
+                    layoutSet.Select(SecondButton).Visibility(FluentConstraintSet.Visibility.Visible);
+                    index++;
+                    Task.Run(async () =>
+                    {
+                        await Task.Delay(300);//wait ui show
+                        UIThread.Invoke(() =>
+                        {
+                            SimpleTest.AreEqual(FirstButton.GetBounds().Right + SecondButton.GetBounds().Width, ThirdCanvas.GetBounds().Left, nameof(VisibilityTest), "When Center Button Visiable, Canvas position should equal to FirstButton+SecondButton");
+                        }, page);
+                    });
+                }
+                else if (index == 2)
+                {
+                    layoutSet.Select(SecondButton).Visibility(FluentConstraintSet.Visibility.Invisible);
+                    index++;
+                    Task.Run(async () =>
+                    {
+                        await Task.Delay(300);//wait ui show
+                        UIThread.Invoke(() =>
+                        {
+                            SimpleTest.AreEqual(FirstButton.GetBounds().Right + SecondButton.GetBounds().Width, ThirdCanvas.GetBounds().Left, nameof(VisibilityTest), "When Center Button Invisiable, Canvas position should equal to FirstButton+SecondButton");
+                        }, page);
+                    });
+                }
+                else if (index == 3)
+                {
+                    layoutSet.Select(SecondButton).Visibility(FluentConstraintSet.Visibility.Gone);
+                    index = 1;
+                    Task.Run(async () =>
+                    {
+                        await Task.Delay(300);//wait ui show
+                        UIThread.Invoke(() =>
+                        {
+                            SimpleTest.AreEqual(FirstButton.GetBounds().Right, ThirdCanvas.GetBounds().Left, nameof(VisibilityTest), "When Center Button Gone, Canvas position should equal to FirstButton");
+                        }, page);
+                    });
+                }
+                layoutSet.ApplyTo(layout);
+            };
+        }
+
+        private void GuidelineTest(ConstraintLayout page)
+        {
+
+            var layout = new ConstraintLayout()
+            {
+                Background = new SolidColorBrush(Colors.Black)
+            };
+
+            var guide = new Guideline();
+
+            page.AddElement(layout, guide);
+
+            var pageSet = new FluentConstraintSet();
+            pageSet.Clone(page);
+            pageSet.Select(guide).GuidelineOrientation(FluentConstraintSet.Orientation.X).GuidelinePercent(0.5f)
+            .Select(layout).LeftToRight(guide).RightToRight(page).TopToTop(page).BottomToBottom(page)
+            .Width(SizeBehavier.MatchConstraint)
+            .Height(SizeBehavier.MatchConstraint);
+            pageSet.ApplyTo(page);
+
+            Task.Run(async () =>
+            {
+                await Task.Delay(3000);//wait ui show
+                UIThread.Invoke(() =>
+                {
+                    SimpleTest.AreEqual(page.GetSize().Width / 2, layout.GetBounds().X, nameof(GuidelineTest), "Horiable guideline should at center");
+                }, page);
+            });
+        }
+
         private void BaseAlignTest(ConstraintLayout page)
         {
             layout = page;
