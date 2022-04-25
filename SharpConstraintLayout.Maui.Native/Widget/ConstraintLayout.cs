@@ -30,7 +30,11 @@ namespace SharpConstraintLayout.Maui.Widget
     using Optimizer = androidx.constraintlayout.core.widgets.Optimizer;
     using BasicMeasure = androidx.constraintlayout.core.widgets.analyzer.BasicMeasure;
 
-#if WINDOWS
+#if __MAUI__
+    using Panel = Microsoft.Maui.Controls.AbsoluteLayout;
+    using UIElement = Microsoft.Maui.Controls.View;
+    using Microsoft.Maui.Graphics;
+#elif WINDOWS
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
     using Windows.Foundation;
@@ -44,10 +48,10 @@ namespace SharpConstraintLayout.Maui.Widget
     using Panel = Android.Views.ViewGroup;
     using UIElement = Android.Views.View;
     using Microsoft.Maui.Graphics;
-
 #endif
     using AndroidMeasureSpec = SharpConstraintLayout.Maui.Widget.MeasureSpec;
     using SharpConstraintLayout.Maui.DebugTool;
+    using SharpConstraintLayout.Maui.Widget.Interface;
 
     /// <summary>
     /// ConstraintLayout is a AndroidX layout for <see
@@ -228,9 +232,9 @@ namespace SharpConstraintLayout.Maui.Widget
         bool isInfinityAvailabelSize = false;
         long measureTime = 0;
 
-        protected Size Measure(Size availableSize)
+        internal Size MeasureLayout(Size availableSize)
         {
-            if (DEBUG) SimpleDebug.WriteLine($"{nameof(Measure)} {this.GetType().FullName} {availableSize}");
+            if (DEBUG) SimpleDebug.WriteLine($"{nameof(MeasureLayout)} {this.GetType().FullName} {availableSize}");
             if (MEASURE)
             {
                 measureTime = DateTimeHelperClass.CurrentUnixTimeMillis();
@@ -374,7 +378,7 @@ namespace SharpConstraintLayout.Maui.Widget
             {
                 resolvedHeightSize |= AndroidMeasureSpec.MEASURED_STATE_TOO_SMALL;
             }
-#if __ANDROID__
+#if __ANDROID__ && !__MAUI__
             SetMeasuredDimension(resolvedWidthSize, resolvedHeightSize);
 #endif
             mLastMeasureWidth = resolvedWidthSize;
@@ -540,7 +544,7 @@ namespace SharpConstraintLayout.Maui.Widget
 
         #region Layout
 
-        private void OnLayout()
+        internal void ArrangeLayout()
         {
             //layout child
             foreach (ConstraintWidget child in mLayout.Children)
@@ -562,7 +566,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 if (component != null)
                 {
                     LayoutChild(component, child.X, child.Y, child.Width, child.Height);
-                    if (DEBUG) SimpleDebug.WriteLine($"{nameof(OnLayout)} {component.GetViewLayoutInfo()} Widget={new Rect(child.X, child.Y, child.Width, child.Height)}");
+                    if (DEBUG && ChildCount < 10) SimpleDebug.WriteLine($"{nameof(ArrangeLayout)} {component.GetViewLayoutInfo()} Widget={new Rect(child.X, child.Y, child.Width, child.Height)}");
                 }
 
                 if (component is Placeholder)
@@ -571,7 +575,7 @@ namespace SharpConstraintLayout.Maui.Widget
                     UIElement content = holder.Content;
                     if (content != null)
                     {
-                        ViewExtension.SetViewVisibility(content, ConstraintSet.Visible);
+                        UIElementExtension.SetViewVisibility(content, ConstraintSet.Visible);
                         LayoutChild(content, child.X, child.Y, child.Width, child.Height);
                     }
                 }
@@ -711,7 +715,7 @@ namespace SharpConstraintLayout.Maui.Widget
                                 // So in that case, we have to double-check the other side is stable (else we can't
                                 // just assume the wrap value will be correct).
                                 // bool otherDimensionStable = child.MeasuredHeight == widget.Height;//Windows中当前还未Measure,先使用Defalut DesiredSize尝试
-                                bool otherDimensionStable = child.GetDefaultSize().Height == widget.Height;
+                                bool otherDimensionStable = child.GetWrapContentSize().Height == widget.Height;
                                 bool useCurrent = measure.measureStrategy == BasicMeasure.Measure.USE_GIVEN_DIMENSIONS || !shouldDoWrap || (shouldDoWrap && otherDimensionStable) || (child is Placeholder) || (widget.ResolvedHorizontally);
                                 if (useCurrent)
                                 {
@@ -751,7 +755,7 @@ namespace SharpConstraintLayout.Maui.Widget
                                 // So in that case, we have to double-check the other side is stable (else we can't
                                 // just assume the wrap value will be correct).
                                 //bool otherDimensionStable = child.MeasuredWidth == widget.Width;//Windows中Measure后的高度应该是DesiredSize
-                                bool otherDimensionStable = child.GetDefaultSize().Width == widget.Width;
+                                bool otherDimensionStable = child.GetWrapContentSize().Width == widget.Width;
                                 bool useCurrent = measure.measureStrategy == BasicMeasure.Measure.USE_GIVEN_DIMENSIONS || !shouldDoWrap || (shouldDoWrap && otherDimensionStable) || (child is Placeholder) || (widget.ResolvedVertically);
                                 if (useCurrent)
                                 {
@@ -768,7 +772,7 @@ namespace SharpConstraintLayout.Maui.Widget
                  * AndroidX.ConstraintLayout use mDirtyHierarchy to mark need measure, but it like also measure all.
                  * At Windows, WrapPanel also remeasure all, i feel it not good, so Windows i use these code still.
                 */
-#if __ANDROID__
+#if __ANDROID__ && !__MAUI__
                 //before measure,we don't know new size, we just know it is dirty,
                 //so all dirty need remeasure,other view that wrap content maybe not remeasure.
                 if (!child.IsLayoutRequested && widget.HorizontalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.WRAP_CONTENT && widget.VerticalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.WRAP_CONTENT)
@@ -777,22 +781,26 @@ namespace SharpConstraintLayout.Maui.Widget
                     ConstraintWidgetContainer container = (ConstraintWidgetContainer)widget.Parent;
                     if (container != null && Optimizer.enabled(outerInstance.mOptimizationLevel, Optimizer.OPTIMIZATION_CACHE_MEASURES))
                     {
-                        if (child.GetDefaultSize().Width == widget.Width && child.GetDefaultSize().Width < container.Width && child.GetDefaultSize().Height == widget.Height && child.GetDefaultSize().Height < container.Height && (int)child.GetBaseline() == widget.BaselineDistance && !widget.MeasureRequested)
+                        var currentSize = child.GetWrapContentSize();
+                        if (currentSize.Width == widget.Width && currentSize.Width < container.Width && currentSize.Height == widget.Height && currentSize.Height < container.Height && (int)child.GetBaseline() == widget.BaselineDistance && !widget.MeasureRequested)
                         // note: the container check replicates legacy behavior, but we might want
                         // to not enforce that in 3.0
                         {
-                            bool similar = isSimilarSpec(widget.LastHorizontalMeasureSpec, horizontalSpec, widget.Width) && isSimilarSpec(widget.LastVerticalMeasureSpec, verticalSpec, widget.Height);
-                            if (similar)
+                            if (!(child is VirtualLayout))//when VirtualLayout is similar,we still need measure it's child, so we need remeasure it
                             {
-                                measure.measuredWidth = widget.Width;
-                                measure.measuredHeight = widget.Height;
-                                measure.measuredBaseline = widget.BaselineDistance;
-                                // if the dimensions of the solver widget are already the same as the real view, no need to remeasure.
-                                if (DEBUG)
+                                bool similar = isSimilarSpec(widget.LastHorizontalMeasureSpec, horizontalSpec, widget.Width) && isSimilarSpec(widget.LastVerticalMeasureSpec, verticalSpec, widget.Height);
+                                if (similar)
                                 {
-                                    SimpleDebug.WriteLine("SKIPPED " + child.GetType().FullName + widget);
+                                    measure.measuredWidth = widget.Width;
+                                    measure.measuredHeight = widget.Height;
+                                    measure.measuredBaseline = widget.BaselineDistance;
+                                    // if the dimensions of the solver widget are already the same as the real view, no need to remeasure.
+                                    if (DEBUG)
+                                    {
+                                        SimpleDebug.WriteLine("SKIPPED " + child.GetType().FullName + widget);
+                                    }
+                                    return;
                                 }
-                                return;
                             }
                         }
                     }
@@ -832,9 +840,9 @@ namespace SharpConstraintLayout.Maui.Widget
                     }
                     else
                     {
-                        if (DEBUG) SimpleDebug.WriteLine($"{child.GetType().FullName}  before onMeasure: widget={widget},control={child.GetDefaultSize()},spec=({AndroidMeasureSpec.GetSize(horizontalSpec)} x {AndroidMeasureSpec.GetSize(verticalSpec)})");
+                        if (DEBUG) SimpleDebug.WriteLine($"{child.GetType().FullName}  before onMeasure: widget={widget},control={child.GetWrapContentSize()},spec=({AndroidMeasureSpec.GetSize(horizontalSpec)} x {AndroidMeasureSpec.GetSize(verticalSpec)})");
                         child.MeasureSelf(horizontalSpec, verticalSpec);
-                        if (DEBUG) SimpleDebug.WriteLine($"{child.GetType().FullName}  after onMeasure: widget={widget},control={child.GetDefaultSize()}");
+                        if (DEBUG) SimpleDebug.WriteLine($"{child.GetType().FullName}  after onMeasure: widget={widget},control={child.GetWrapContentSize()}");
                     }
                     widget.setLastMeasureSpec(horizontalSpec, verticalSpec);
 
@@ -917,8 +925,15 @@ namespace SharpConstraintLayout.Maui.Widget
                 {
                     measure.measuredNeedsSolverPass = true;
                 }
-                measure.measuredWidth = width;
-                measure.measuredHeight = height;
+                //在Windows中嵌套Stack Panel和具体数值时,发现设置StackPanel宽度为MatchParent不生效,依旧为WrapContent时的大小,我认为只有WrapContent的控件才需要自身Measure值,其他的ConstraintWidget会自己计算出
+                if (widget.HorizontalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.WRAP_CONTENT)
+                    measure.measuredWidth = width;
+                else
+                    measure.measuredWidth = widget.Width;
+                if (widget.VerticalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.WRAP_CONTENT)
+                    measure.measuredHeight = height;
+                else
+                    measure.measuredHeight = widget.Height;
                 measure.measuredHasBaseline = hasBaseline;
                 measure.measuredBaseline = baseline;
                 if (MEASURE)
@@ -1378,5 +1393,24 @@ namespace SharpConstraintLayout.Maui.Widget
             }
         }
         #endregion Apply Contrants to Widget
+
+        /// <summary>
+        /// Call this when something has changed which has invalidated the layout of this view. This will schedule a layout pass of the view tree. This should not be called while the view hierarchy is currently in a layout pass (isInLayout(). If layout is happening, the request may be honored at the end of the current layout pass (and then layout will run again) or after the current frame is drawn and the next layout occurs.
+        /// Subclasses which override this method should call the superclass method to handle possible request-during-layout errors correctly.
+        /// </summary>
+        public void RequestReLayout()
+        {
+            //According to https://stackoverflow.com/questions/13856180/usage-of-forcelayout-requestlayout-and-invalidate
+            //At Android,this will let remeasure layout
+#if __MAUI__
+            this.InvalidateMeasure();
+#elif WINDOWS
+            this.InvalidateMeasure();
+#elif __IOS__
+            this.SetNeedsLayout();
+#elif __ANDROID__
+            this.RequestLayout();
+#endif
+        }
     }
 }

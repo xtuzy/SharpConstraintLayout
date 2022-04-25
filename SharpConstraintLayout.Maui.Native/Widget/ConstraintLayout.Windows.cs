@@ -1,20 +1,13 @@
-﻿using System;
+﻿#if WINDOWS && !__MAUI__
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-#if WINDOWS
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Windows.Foundation;
-#elif __IOS__
-using Panel = UIKit.UIView;
-using UIElement = UIKit.UIView;
-using CoreGraphics;
-using Size = CoreGraphics.CGSize;
-using Microsoft.Maui.Graphics;
-#elif __ANDROID__
-#endif
+
 namespace SharpConstraintLayout.Maui.Widget
 {
     public partial class ConstraintLayout
@@ -24,26 +17,26 @@ namespace SharpConstraintLayout.Maui.Widget
             init();
         }
 
-        #region Add And Remove
+#region Add And Remove
 
         public UIElement GetChildAt(int index)
         {
             return Children[index];
         }
 
-        public void AddView(UIElement element)
+        public void AddElement(UIElement element)
         {
             Children?.Add(element);
             OnAddedView(element);
         }
 
-        public void RemoveView(UIElement element)
+        public void RemoveElement(UIElement element)
         {
             Children?.Remove(element);
             OnRemovedView(element);
         }
 
-        public void RemoveAllViews()
+        public void RemoveAllElements()
         {
             foreach (var element in this.Children)
             {
@@ -54,7 +47,7 @@ namespace SharpConstraintLayout.Maui.Widget
 
         public int ChildCount { get { return Children != null ? Children.Count : 0; } }
 
-        #endregion
+#endregion
 
         protected override Size MeasureOverride(Size availableSize)
         {
@@ -82,10 +75,10 @@ namespace SharpConstraintLayout.Maui.Widget
                 availableHeight = (int)availableSize.Height;
             }
 
-            return Measure(new Size(availableWidth, availableHeight));
+            return MeasureLayout(new Size(availableWidth, availableHeight));
         }
 
-        #region Layout
+#region Layout
 
         protected override Size ArrangeOverride(Size finalSize)
         {
@@ -95,10 +88,10 @@ namespace SharpConstraintLayout.Maui.Widget
             if (finalSize.Width != MLayoutWidget.Width || finalSize.Height != MLayoutWidget.Height)
             {
                 // We haven't received our desired size. We need to refresh the rows.
-                Measure(finalSize);
+                MeasureLayout(finalSize);
             }
 
-            OnLayout();
+            ArrangeLayout();
 
             //return new Size(MLayoutWidget.Width, MLayoutWidget.Height);//这里必须返回Widget的大小,因为返回值决定了layout的绘制范围?
             return finalSize;
@@ -109,6 +102,7 @@ namespace SharpConstraintLayout.Maui.Widget
             element.Arrange(new Rect(x, y, w, h));
         }
 
-        #endregion
+#endregion
     }
 }
+#endif

@@ -1,4 +1,5 @@
 ﻿
+using SharpConstraintLayout.Maui.Widget.Interface;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -26,19 +27,28 @@ namespace SharpConstraintLayout.Maui.Widget
     using Helper = androidx.constraintlayout.core.widgets.Helper;
     using HelperWidget = androidx.constraintlayout.core.widgets.HelperWidget;
 
-#if WINDOWS
-    using View = Microsoft.UI.Xaml.FrameworkElement;
+#if __MAUI__
+    using Panel = Microsoft.Maui.Controls.ContentView;
+    using FrameworkElement = Microsoft.Maui.Controls.View;
+    using UIElement = Microsoft.Maui.Controls.View;
+#elif WINDOWS
+     using Panel = Microsoft.UI.Xaml.FrameworkElement;
+    using FrameworkElement = Microsoft.UI.Xaml.FrameworkElement;
     using UIElement = Microsoft.UI.Xaml.UIElement;
 
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
     using Windows.Foundation;
+    using SharpConstraintLayout.Maui.Widget.Interface;
 #elif __IOS__
-    using View = UIKit.UIView;
+     using Panel= UIKit.UIView;
+    using FrameworkElement = UIKit.UIView;
     using UIElement = UIKit.UIView;
 #elif __ANDROID__
     using Android.Content;
-    using View = Android.Views.View;
+    using Panel = Android.Views.View;
+    using FrameworkElement = Android.Views.View;
+    using SharpConstraintLayout.Maui.Widget.Interface;
 #endif
     /// <summary>
     /// @suppress
@@ -62,7 +72,7 @@ namespace SharpConstraintLayout.Maui.Widget
     ///     </pre>
     /// </para>
     /// </summary>
-    public abstract partial class ConstraintHelper : View, IConstraintHelper
+    public abstract partial class ConstraintHelper : Panel, IConstraintHelper
     {
         private const string TAG = "ConstraintHelper";
 
@@ -82,11 +92,11 @@ namespace SharpConstraintLayout.Maui.Widget
 
         protected internal string mReferenceTags;
 
-        private View[] mViews = null;
+        private FrameworkElement[] mViews = null;
 
         protected internal Dictionary<int?, string> mMap = new Dictionary<int?, string>();
 
-        protected internal virtual void init()
+        protected virtual void init()
         {
         }
 
@@ -97,7 +107,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// The view also need to have its id set in order to be added.
         /// </summary>
         /// <param name="view"> </param>
-        public virtual void AddView(View view)
+        public virtual void AddElement(FrameworkElement view)
         {
 
             if (view == this)
@@ -114,7 +124,7 @@ namespace SharpConstraintLayout.Maui.Widget
             mReferenceIds = null;
             addRscID(view.GetId());
 
-            this.requestLayout();
+            this.RequestReLayout();
         }
 
         /// <summary>
@@ -122,7 +132,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// </summary>
         /// <param name="view"> </param>
         /// <returns> index of view removed </returns>
-        public virtual int RemoveView(View view)
+        public virtual int RemoveElement(FrameworkElement view)
         {
             int index = -1;
             //int id = view.Id;
@@ -146,7 +156,7 @@ namespace SharpConstraintLayout.Maui.Widget
                     break;
                 }
             }
-            this.requestLayout();
+            this.RequestReLayout();
 
             return index;
         }
@@ -192,7 +202,7 @@ namespace SharpConstraintLayout.Maui.Widget
         {
             // Nothing
         }*/
-#if __ANDROID__
+#if __ANDROID__ && !__MAUI__
         /// <summary>
         /// @suppress
         /// </summary>
@@ -305,10 +315,10 @@ namespace SharpConstraintLayout.Maui.Widget
             for (int i = 0; i < mCount; i++)
             {
                 int id = mIds[i];
-                View view = (View)container.FindElementById(id);
+                FrameworkElement view = (FrameworkElement)container.FindElementById(id);
                 if (view != null)
                 {
-                    ViewExtension.SetViewVisibility(view, visibility);
+                    UIElementExtension.SetViewVisibility(view, visibility);
 
                 }
             }
@@ -346,7 +356,7 @@ namespace SharpConstraintLayout.Maui.Widget
             for (int i = 0; i < mCount; i++)
             {
                 int id = mIds[i];
-                View view = (View)container.FindElementById(id);
+                FrameworkElement view = (FrameworkElement)container.FindElementById(id);
                 /*if (view == null)
                 {
                     // hm -- we couldn't find the view.
@@ -379,18 +389,18 @@ namespace SharpConstraintLayout.Maui.Widget
             }
         }
 
-        protected internal virtual View[] getViews(ConstraintLayout layout)
+        protected internal virtual FrameworkElement[] getViews(ConstraintLayout layout)
         {
 
             if (mViews == null || mViews.Length != mCount)
             {
-                mViews = new View[mCount];
+                mViews = new FrameworkElement[mCount];
             }
 
             for (int i = 0; i < mCount; i++)
             {
                 int id = mIds[i];
-                mViews[i] = (View)layout.FindElementById(id);
+                mViews[i] = (FrameworkElement)layout.FindElementById(id);
             }
             return mViews;
         }
@@ -513,7 +523,7 @@ namespace SharpConstraintLayout.Maui.Widget
         {
             set
             {
-                ViewExtension.SetViewVisibility(this, value);
+                UIElementExtension.SetViewVisibility(this, value);
                 (this.mHelperWidget as ConstraintWidget).Visibility = value;//更新到Widget
                 visible = value;
             }
@@ -525,6 +535,25 @@ namespace SharpConstraintLayout.Maui.Widget
         {
             set { elevation = value; }
             get { return elevation; }
+        }
+
+        /// <summary>
+        /// Call this when something has changed which has invalidated the layout of this view. This will schedule a layout pass of the view tree. This should not be called while the view hierarchy is currently in a layout pass (isInLayout(). If layout is happening, the request may be honored at the end of the current layout pass (and then layout will run again) or after the current frame is drawn and the next layout occurs.
+        /// Subclasses which override this method should call the superclass method to handle possible request-during-layout errors correctly.
+        /// </summary>
+        public void RequestReLayout()
+        {
+            //According to https://stackoverflow.com/questions/13856180/usage-of-forcelayout-requestlayout-and-invalidate
+            //At Android,this will let remeasure layout
+#if __MAUI__
+            this.InvalidateMeasure();
+#elif WINDOWS
+            this.InvalidateMeasure();
+#elif __IOS__
+            this.SetNeedsLayout();
+#elif __ANDROID__
+            this.RequestLayout();
+#endif
         }
 
     }

@@ -1,19 +1,18 @@
 ﻿using Android.App;
 using Android.Runtime;
+using Microsoft.Maui;
+using Microsoft.Maui.Hosting;
 using System;
 
 namespace SharpConstraintLayout.Core.Benchmark
 {
     [Application]
-    public class MainApplication : Application
+    public class MainApplication : MauiApplication
     {
         protected MainApplication(IntPtr javaReference, JniHandleOwnership transfer) : base(javaReference, transfer)
         {
         }
 
-        public override void OnCreate()
-        {
-            base.OnCreate();
-        }
+        protected override MauiApp CreateMauiApp() => MauiProgram.CreateMauiApp();
     }
 }

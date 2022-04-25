@@ -23,7 +23,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
 {
     public partial class MainPage
     {
-        void performanceTest(ConstraintLayout page)
+        void FlowPerformanceTest(ConstraintLayout page)
         {
             int buttonCount = 50;
 #if __ANDROID__
@@ -34,10 +34,10 @@ namespace SharpConstraintLayout.Maui.Native.Example
             flow.SetOrientation(Flow.Horizontal);
             flow.SetWrapMode(Flow.WrapChain);
             flow.SetHorizontalStyle(Flow.ChainPacked);
-            page.AddView(flow);
+            page.AddElement(flow);
 
-            page.AddView(FifthTextBox);
-            flow.AddView(FifthTextBox);
+            page.AddElement(FifthTextBox);
+            flow.AddElement(FifthTextBox);
             //Generate 1000 Button,all add to page
 #if WINDOWS
             var buttonList = new List<Button>();
@@ -47,8 +47,8 @@ namespace SharpConstraintLayout.Maui.Native.Example
                 var button = new Button();
                 button.Content = "Button" + i;
                 buttonList.Add(button);
-                page.AddView(button);
-                flow.AddView(button);
+                page.AddElement(button);
+                flow.AddElement(button);
             }
 #elif __ANDROID__
             var buttonList = new List<Button>();
@@ -57,18 +57,18 @@ namespace SharpConstraintLayout.Maui.Native.Example
                 var button = new Button(page.Context);
                 button.Text = "Button" + i;
                 buttonList.Add(button);
-                page.AddView(button);
-                flow.AddView(button);
+                page.AddElement(button);
+                flow.AddElement(button);
             }
-#elif IOS
+#elif __IOS__
             var buttonList = new List<UIButton>();
             for (int i = 0; i < buttonCount; i++)
             {
                 var button = new UIButton();
                 button.SetTitle("Button" + i, UIControlState.Normal);
                 buttonList.Add(button);
-                page.AddView(button);
-                flow.AddView(button);
+                page.AddElement(button);
+                flow.AddElement(button);
             }
 #endif
             using (var layoutSet = new FluentConstraintSet())
@@ -76,31 +76,32 @@ namespace SharpConstraintLayout.Maui.Native.Example
                 layoutSet.Clone(page);
                 layoutSet
                     .Select(flow)
-                    .TopToTop(page, 100).LeftToLeft()
+                    .TopToTop().BottomToBottom().LeftToLeft()
                     .Width(SizeBehavier.WrapContent)
                     .Height(SizeBehavier.WrapContent);
                 layoutSet.ApplyTo(page);
             }
         }
 
-        void performanceTest_WrapPanel(ConstraintLayout page)
+        void WrapPanelPerformanceTest(ConstraintLayout page)
         {
+            ConstraintLayout.MEASURE = false;
             //WrapPanel.DEBUG = true;
             WrapPanel.MEASURE = true;
             int buttonCount = 50;
 #if __ANDROID__
-            var wrapPanel = new WrapPanel(page.Context){ Orientation = WrapPanel.LayoutOrientation.X, Padding = new Microsoft.Maui.Graphics.Rect(10, 10, 10, 10), HorizontalSpacing = 10, VerticalSpacing = 10 };
+            var wrapPanel = new WrapPanel(page.Context) { Orientation = WrapPanel.LayoutOrientation.X, Padding = new Microsoft.Maui.Graphics.Rect(10, 10, 10, 10), HorizontalSpacing = 10, VerticalSpacing = 10 };
 #else
             var wrapPanel = new WrapPanel() { Orientation = WrapPanel.LayoutOrientation.X, Padding = new Microsoft.Maui.Graphics.Rect(10, 10, 10, 10), HorizontalSpacing = 10, VerticalSpacing = 10 };
 #endif
             wrapPanel.AddElement(FifthTextBox);
-            page.AddView(wrapPanel);
+            page.AddElement(wrapPanel);
             using (var set = new FluentConstraintSet())
             {
                 set.Clone(page);
                 set
                     .Select(wrapPanel)
-                    .TopToTop(page, 100).LeftToLeft()
+                    .TopToTop(page).BottomToBottom().LeftToLeft()
                     .Width(SizeBehavier.MatchParent)
                     .Height(SizeBehavier.WrapContent);
                 set.ApplyTo(page);
@@ -126,7 +127,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             }
 #elif __IOS__
             wrapPanel.UserInteractionEnabled = true;
-            wrapPanel.BackgroundColor = UIColor.Yellow;
+            wrapPanel.BackgroundColor = UIColor.Gray;
             FifthTextBox.Enabled = true;
             FifthTextBox.UserInteractionEnabled = true;
             var buttonList = new List<UIButton>();
@@ -139,16 +140,16 @@ namespace SharpConstraintLayout.Maui.Native.Example
             }
 #endif
         }
-        void circleConstraintTest(ConstraintLayout page)
+        void CircleConstraintTest(ConstraintLayout page)
         {
             layout = page;
-            layout.AddView(FirstButton, SecondButton, FouthTextBlock);
+            layout.AddElement(FirstButton, SecondButton, FouthTextBlock);
             using (var layoutSet = new FluentConstraintSet())
             {
                 layoutSet.Clone(layout);
                 layoutSet.Select(FirstButton).CenterTo()
-                    .Select(SecondButton).CircleTo(FirstButton, new[] { 50 }, new[] { 60f });
-                layoutSet.ConstrainCircle(FouthTextBlock.GetId(), FirstButton.GetId(), 50, 240);
+                    .Select(SecondButton, FouthTextBlock)
+                .CircleTo(FirstButton, new[] { 50, 100 }, new[] { 60f, 240 });
                 layoutSet.ApplyTo(layout);
             }
 
@@ -161,9 +162,9 @@ namespace SharpConstraintLayout.Maui.Native.Example
                     UIThread.Invoke(() =>
                     {
                         //The distance between SecondButton center and FirstButton center should equal to 50
-                        SimpleTest.AreEqual(Math.Abs(SecondButton.GetBounds().Center.Y - FirstButton.GetBounds().Center.Y) * 2, 50, nameof(circleConstraintTest), "The distence between SecondButton center and FirstButton center should equal to 50");
+                        SimpleTest.AreEqual(Math.Abs(SecondButton.GetBounds().Center.Y - FirstButton.GetBounds().Center.Y) * 2, 50, nameof(CircleConstraintTest), "The distence between SecondButton center and FirstButton center should equal to 50");
                         //The distance between FouthTextBlock center and FirstButton center should equal to 50
-                        SimpleTest.AreEqual(Math.Abs(FouthTextBlock.GetBounds().Center.Y - FirstButton.GetBounds().Center.Y) * 2, 50, nameof(circleConstraintTest), "The distence between FouthTextBlock center and FirstButton center should equal to 50");
+                        SimpleTest.AreEqual(Math.Abs(FouthTextBlock.GetBounds().Center.Y - FirstButton.GetBounds().Center.Y) * 2, 50, nameof(CircleConstraintTest), "The distence between FouthTextBlock center and FirstButton center should equal to 50");
                     }, page);
 
                     index++;
@@ -171,7 +172,11 @@ namespace SharpConstraintLayout.Maui.Native.Example
             });
         }
 
-        void stackPanelTest(ConstraintLayout page)
+        void ConstraintLayoutInPlatformLayoutTest(ConstraintLayout page)
+        {
+
+        }
+        void PlatformLayoutInConstraintLayoutTest(ConstraintLayout page)
         {
 #if WINDOWS
             var stackPanel = new StackPanel()
@@ -179,29 +184,197 @@ namespace SharpConstraintLayout.Maui.Native.Example
                 Orientation = Microsoft.UI.Xaml.Controls.Orientation.Horizontal,
                 Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.Coral),
                 VerticalAlignment = Microsoft.UI.Xaml.VerticalAlignment.Center,
-                HorizontalAlignment = Microsoft.UI.Xaml.HorizontalAlignment.Center,
             };
-            page.AddView(stackPanel);
+            page.AddElement(stackPanel);
+            stackPanel.Children.Add(new Button() { Content = "InStackPanel" });
+            stackPanel.Children.Add(new Button() { Content = "InStackPanel" });
+            stackPanel.Children.Add(new TextBlock() { Text = "InStackPanel" });
+            stackPanel.Children.Add(new TextBox() { Text = "InStackPanel" });
+
+            var grid = new Grid();
+            page.AddElement(grid);
+            grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new Microsoft.UI.Xaml.GridLength(1, Microsoft.UI.Xaml.GridUnitType.Star) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new Microsoft.UI.Xaml.GridLength(1, Microsoft.UI.Xaml.GridUnitType.Star) });
+            var textblock = new TextBlock() { Text = "InGrid" };
+            var textbox = new TextBox() { Text = "InGrid" };
+            textblock.SetValue(Grid.ColumnProperty, 0);//https://stackoverflow.com/a/27756061/13254773
+            textbox.SetValue(Grid.ColumnProperty, 1);//https://stackoverflow.com/a/27756061/13254773
+            grid.Children.Add(textblock);
+            grid.Children.Add(textbox);
+
+            var scrollView = new ScrollViewer();
+            page.AddElement(scrollView);
+            scrollView.Content = new StackPanel()
+            {
+                Orientation = Microsoft.UI.Xaml.Controls.Orientation.Vertical,
+                Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.Coral),
+            };
+            (scrollView.Content as StackPanel).Children.Add(new Button() { Content = "InScrollViewer" });
+            (scrollView.Content as StackPanel).Children.Add(new Button() { Content = "InScrollViewer" });
+            (scrollView.Content as StackPanel).Children.Add(new TextBlock() { Text = "InScrollViewer" });
+            (scrollView.Content as StackPanel).Children.Add(new TextBox() { Text = "InScrollViewer" });
+
             using (var layoutSet = new FluentConstraintSet())
             {
                 layoutSet.Clone(page);
                 layoutSet.Select(stackPanel)
-                    .CenterYTo()
-                    .Width(SizeBehavier.MatchParent)
-                    .Height(SizeBehavier.WrapContent);
+                    .CenterYTo().LeftToLeft()
+                    .Width(SizeBehavier.WrapContent)
+                    .Height(SizeBehavier.WrapContent)
+                    .Select(grid)
+                    .TopToBottom(stackPanel, 10).LeftToLeft()
+                    .Width(SizeBehavier.WrapContent)
+                    .Height(SizeBehavier.WrapContent)
+                    .Select(scrollView)
+                    .TopToBottom(grid, 10).BottomToBottom().LeftToLeft()
+                    .Width(SizeBehavier.WrapContent)
+                    .Height(SizeBehavier.MatchConstraint);
                 layoutSet.ApplyTo(page);
             }
-            stackPanel.Children.Add(FirstButton);
-            stackPanel.Children.Add(SecondButton);
-            stackPanel.Children.Add(FouthTextBlock);
-            stackPanel.Children.Add(FifthTextBox);
 #elif ANDROID
+            var stackPanel = new LinearLayout(page.Context)
+            {
+                Orientation = Android.Widget.Orientation.Horizontal,
+                Background = new Android.Graphics.Drawables.ColorDrawable(Android.Graphics.Color.Coral),
+            };
+            page.AddElement(stackPanel);
+            stackPanel.AddView(new Button(page.Context) { Text = "InStackPanel" });
+            stackPanel.AddView(new Button(page.Context) { Text = "InStackPanel" });
+            stackPanel.AddView(new TextView(page.Context) { Text = "InStackPanel" });
+            stackPanel.AddView(new EditText(page.Context) { Text = "InStackPanel" });
+            var grid = new GridLayout(page.Context) {  };
+            page.AddElement(grid);
+            grid.ColumnCount = 2;
+            grid.RowCount = 2;
+            grid.AddView(new TextView(page.Context) { Text = "InGrid", LayoutParameters = new GridLayout.LayoutParams(GridLayout.InvokeSpec(0, 1, 1), GridLayout.InvokeSpec(0, 1, 1)) });
+            grid.AddView(new TextView(page.Context) { Text = "InGrid", LayoutParameters = new GridLayout.LayoutParams(GridLayout.InvokeSpec(0, 1, 1), GridLayout.InvokeSpec(1, 1, 1)) });
+            grid.AddView(new TextView(page.Context) { Text = "InGrid", LayoutParameters = new GridLayout.LayoutParams(GridLayout.InvokeSpec(1, 1, 1), GridLayout.InvokeSpec(0, 1, 1)) });
+            grid.AddView(new EditText(page.Context) { Text = "InGrid" , LayoutParameters = new GridLayout.LayoutParams(GridLayout.InvokeSpec(1, 1, 1), GridLayout.InvokeSpec(1, 1, 1)) });
+            var scrollView = new ScrollView(page.Context);
+            page.AddElement(scrollView);
+            scrollView.AddView(new LinearLayout(page.Context)
+            {
+                Orientation = Android.Widget.Orientation.Vertical,
+                Background = new Android.Graphics.Drawables.ColorDrawable(Android.Graphics.Color.Coral),
+            });
+            (scrollView.GetChildAt(0) as LinearLayout).AddView(new Button(page.Context) { Text = "InScrollViewer" });
+            (scrollView.GetChildAt(0) as LinearLayout).AddView(new Button(page.Context) { Text = "InScrollViewer" });
+            (scrollView.GetChildAt(0) as LinearLayout).AddView(new TextView(page.Context) { Text = "InScrollViewer" });
+            (scrollView.GetChildAt(0) as LinearLayout).AddView(new EditText(page.Context) { Text = "InScrollViewer" });
 
+            using (var layoutSet = new FluentConstraintSet())
+            {
+                layoutSet.Clone(page);
+                layoutSet.Select(stackPanel)
+                    .CenterTo()
+                    .Width(SizeBehavier.WrapContent)
+                    .Height(SizeBehavier.WrapContent)
+                    .Select(grid)
+                    .TopToBottom(stackPanel, 10).LeftToLeft()
+                    .Width(SizeBehavier.WrapContent)
+                    .Height(SizeBehavier.WrapContent)
+                    .Select(scrollView)
+                    .TopToBottom(grid, 10).BottomToBottom().LeftToLeft()
+                    .Width(600)
+                    .Height(SizeBehavier.MatchConstraint);
+                layoutSet.ApplyTo(page);
+            }
 #elif __IOS__
+            var stackPanel = new UIStackView()
+            {
+                Axis = UILayoutConstraintAxis.Horizontal,
+                BackgroundColor = UIColor.SystemPink,
+                Spacing = 10,
+            };
+            page.AddElement(stackPanel);
+            var firstButtonInStackPanel = new UIButton() { BackgroundColor = UIColor.Green };
+            firstButtonInStackPanel.SetTitle("InStackPanel", UIControlState.Normal);
+            stackPanel.AddArrangedSubview(firstButtonInStackPanel);
+            var secondButtonInStackPanel = new UIButton() { BackgroundColor = UIColor.Green };
+            secondButtonInStackPanel.SetTitle("InStackPanel", UIControlState.Normal);
+            stackPanel.AddArrangedSubview(secondButtonInStackPanel);
+            stackPanel.AddArrangedSubview(new UILabel() { Text = "InStackPanel" });
+            stackPanel.AddArrangedSubview(new UITextField() { Text = "InStackPanel" });
+
+            var grid = new UIView()
+            {
+                BackgroundColor = UIColor.SystemPink,
+                //TranslatesAutoresizingMaskIntoConstraints = false
+            };
+            page.AddSubview(grid);
+            var label = new UILabel() { Text = "InGrid" };
+            var textbox = new UITextField() { Text = "InGrid" };
+            grid.AddSubview(label);
+            grid.AddSubview(textbox);
+            label.TranslatesAutoresizingMaskIntoConstraints = false;
+            textbox.TranslatesAutoresizingMaskIntoConstraints = false;
+            label.TopAnchor.ConstraintEqualTo(grid.TopAnchor).Active = true;
+            label.LeftAnchor.ConstraintEqualTo(grid.LeftAnchor).Active = true;
+            textbox.TopAnchor.ConstraintEqualTo(label.BottomAnchor).Active = true;
+            textbox.LeftAnchor.ConstraintEqualTo(label.RightAnchor).Active = true;
+            textbox.RightAnchor.ConstraintEqualTo(grid.RightAnchor).Active = true;
+            textbox.BottomAnchor.ConstraintEqualTo(grid.BottomAnchor).Active = true;
+
+            var scrollView = new UIScrollView()
+            {
+                BackgroundColor = UIColor.SystemPink,
+            };
+            page.AddSubview(scrollView);
+            scrollView.AddSubview(new UIStackView()
+            {
+                Axis = UILayoutConstraintAxis.Vertical,
+                BackgroundColor = UIColor.LightGray,
+                Spacing = 20,
+                TranslatesAutoresizingMaskIntoConstraints = false,
+            });
+
+            scrollView.Subviews[0].LeftAnchor.ConstraintEqualTo(scrollView.LeftAnchor).Active = true;
+            scrollView.Subviews[0].RightAnchor.ConstraintEqualTo(scrollView.RightAnchor).Active = true;
+            scrollView.Subviews[0].TopAnchor.ConstraintEqualTo(scrollView.TopAnchor).Active = true;
+            scrollView.Subviews[0].BottomAnchor.ConstraintEqualTo(scrollView.BottomAnchor).Active = true;
+
+            var firstButtonInScrollView = new UIButton() { BackgroundColor = UIColor.Gray };
+            firstButtonInScrollView.SetTitle("InScrollViewer", UIControlState.Normal);
+            (scrollView.Subviews[0] as UIStackView).AddArrangedSubview(firstButtonInScrollView);
+            var secondButtonInScrollView = new UIButton() { BackgroundColor = UIColor.Gray };
+            secondButtonInScrollView.SetTitle("InScrollViewer", UIControlState.Normal);
+            (scrollView.Subviews[0] as UIStackView).AddArrangedSubview(secondButtonInScrollView);
+            (scrollView.Subviews[0] as UIStackView).AddArrangedSubview(new UILabel() { Text = "InScrollViewer" });
+            (scrollView.Subviews[0] as UIStackView).AddArrangedSubview(new UITextField() { Text = "InScrollViewer" });
+
+            scrollView.AddSubview(new UILabel() { Text = "InScrollViewer" });
+
+            using (var layoutSet = new FluentConstraintSet())
+            {
+                layoutSet.Clone(page);
+                layoutSet.Select(stackPanel)
+                    .CenterYTo().LeftToLeft()
+                    .Width(SizeBehavier.WrapContent)
+                    .Height(SizeBehavier.WrapContent)
+                    .Select(grid)
+                    .TopToBottom(stackPanel, 10).LeftToLeft()
+                    .Width(SizeBehavier.WrapContent)
+                    .Height(SizeBehavier.WrapContent)
+                    .Select(scrollView)
+                    .TopToBottom(grid, 10).BottomToBottom().LeftToLeft().RightToRight()
+                    .Width(SizeBehavier.MatchConstraint)
+                    .Height(SizeBehavier.MatchConstraint);
+                layoutSet.ApplyTo(page);
+            }
+
+            Task.Run(async () =>
+            {
+
+                await Task.Delay(3000);//wait ui show
+                UIThread.Invoke(() =>
+                {
+                    DebugTool.SimpleDebug.WriteLine("scrollView.ContentSize:" + scrollView.ContentSize);
+                }, page);
+            });
 #endif
         }
 
-        void animationTest(ConstraintLayout page)
+        void AnimationTest(ConstraintLayout page)
         {
 #if __ANDROID__
             layout = new ConstraintLayout(page.Context)
@@ -226,7 +399,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             var guide = new Guideline();
 #endif
 
-            page.AddView(layout, guide);
+            page.AddElement(layout, guide);
 
             var pageSet = new FluentConstraintSet();
             pageSet.Clone(page);
@@ -259,7 +432,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
         /// test nested layout warp content and it's child match parent
         /// </summary>
         /// <param name="page"></param>
-        void nestedLayoutTest(ConstraintLayout page)
+        void NestedConstraintLayoutTest(ConstraintLayout page)
         {
 #if __ANDROID__
             layout = new ConstraintLayout(page.Context)
@@ -280,15 +453,15 @@ namespace SharpConstraintLayout.Maui.Native.Example
 
             using (var pageSet = new FluentConstraintSet())
             {
-                page.AddView(layout);
+                page.AddElement(layout);
                 pageSet.Clone(page);
                 pageSet.Select(layout)
                     .CenterYTo(page)
                     .Width(ConstraintSet.WrapContent)
                     .Height(ConstraintSet.WrapContent);
                 pageSet.ApplyTo(page);
-                layout.AddView(ThirdCanvas);
-                layout.AddView(FirstButton);
+                layout.AddElement(ThirdCanvas);
+                layout.AddElement(FirstButton);
                 using (var layoutSet = new FluentConstraintSet())
                 {
                     layoutSet.Clone(layout);
@@ -319,7 +492,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
 #endif
         }
 
-        void flowTest(ConstraintLayout page)
+        void FlowTest(ConstraintLayout page)
         {
 #if __ANDROID__
             var flow = new Flow(page.Context)
@@ -333,8 +506,8 @@ namespace SharpConstraintLayout.Maui.Native.Example
             flow.SetWrapMode(Flow.WrapChain);
             flow.SetHorizontalStyle(Flow.ChainSpreadInside);
             layout = page;
-            layout.AddView(ThirdCanvas, FirstButton, SecondButton, FouthTextBlock, FifthTextBox, SixthRichTextBlock, flow);
-            flow.AddView(FirstButton, SecondButton, FouthTextBlock, FifthTextBox, SixthRichTextBlock);
+            layout.AddElement(ThirdCanvas, FirstButton, SecondButton, FouthTextBlock, FifthTextBox, SixthRichTextBlock, flow);
+            flow.AddElement(FirstButton, SecondButton, FouthTextBlock, FifthTextBox, SixthRichTextBlock);
 
             using (var layoutSet = new FluentConstraintSet())
             {
@@ -363,10 +536,10 @@ namespace SharpConstraintLayout.Maui.Native.Example
                     await Task.Delay(3000);//wait ui show
                     UIThread.Invoke(() =>
                     {
-                        SimpleTest.AreEqual(flow.GetBounds().Left, ThirdCanvas.GetBounds().Left, nameof(flowTest), "Canvas Left position should equal to Flow");
-                        SimpleTest.AreEqual(flow.GetBounds().Right, ThirdCanvas.GetBounds().Right, nameof(flowTest), "Canvas Right position should equal to Flow");
-                        SimpleTest.AreEqual(flow.GetBounds().Top, ThirdCanvas.GetBounds().Top, nameof(flowTest), "Canvas Top position should equal to Flow");
-                        SimpleTest.AreEqual(flow.GetBounds().Bottom, ThirdCanvas.GetBounds().Bottom, nameof(flowTest), "Canvas Bottom position should equal to Flow");
+                        SimpleTest.AreEqual(flow.GetBounds().Left, ThirdCanvas.GetBounds().Left, nameof(FlowTest), "Canvas Left position should equal to Flow");
+                        SimpleTest.AreEqual(flow.GetBounds().Right, ThirdCanvas.GetBounds().Right, nameof(FlowTest), "Canvas Right position should equal to Flow");
+                        SimpleTest.AreEqual(flow.GetBounds().Top, ThirdCanvas.GetBounds().Top, nameof(FlowTest), "Canvas Top position should equal to Flow");
+                        SimpleTest.AreEqual(flow.GetBounds().Bottom, ThirdCanvas.GetBounds().Bottom, nameof(FlowTest), "Canvas Bottom position should equal to Flow");
                     }, page);
 
                     index++;
@@ -374,11 +547,11 @@ namespace SharpConstraintLayout.Maui.Native.Example
             });
         }
 
-        private void visibilityTest(ConstraintLayout page)
+        private void VisibilityTest(ConstraintLayout page)
         {
             layout = page;
 
-            layout.AddView(FirstButton, SecondButton, ThirdCanvas);
+            layout.AddElement(FirstButton, SecondButton, ThirdCanvas);
 
             var layoutSet = new FluentConstraintSet();
             layoutSet.Clone(layout);
@@ -395,7 +568,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             int index = 2;
 #if WINDOWS || ANDROID
             FirstButton.Click += (sender, e) =>
-#elif IOS
+#elif __IOS__
             FirstButton.TouchUpInside += (sender, e) =>
 #endif
             {
@@ -408,7 +581,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
                         await Task.Delay(300);//wait ui show
                         UIThread.Invoke(() =>
                         {
-                            SimpleTest.AreEqual(FirstButton.GetBounds().Right + SecondButton.GetBounds().Width, ThirdCanvas.GetBounds().Left, nameof(barrierTest), "When Center Button Visiable, Canvas position should equal to FirstButton+SecondButton");
+                            SimpleTest.AreEqual(FirstButton.GetBounds().Right + SecondButton.GetBounds().Width, ThirdCanvas.GetBounds().Left, nameof(BarrierTest), "When Center Button Visiable, Canvas position should equal to FirstButton+SecondButton");
                         }, page);
                     });
                 }
@@ -421,7 +594,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
                         await Task.Delay(300);//wait ui show
                         UIThread.Invoke(() =>
                         {
-                            SimpleTest.AreEqual(FirstButton.GetBounds().Right + SecondButton.GetBounds().Width, ThirdCanvas.GetBounds().Left, nameof(barrierTest), "When Center Button Invisiable, Canvas position should equal to FirstButton+SecondButton");
+                            SimpleTest.AreEqual(FirstButton.GetBounds().Right + SecondButton.GetBounds().Width, ThirdCanvas.GetBounds().Left, nameof(BarrierTest), "When Center Button Invisiable, Canvas position should equal to FirstButton+SecondButton");
                         }, page);
                     });
                 }
@@ -434,7 +607,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
                         await Task.Delay(300);//wait ui show
                         UIThread.Invoke(() =>
                         {
-                            SimpleTest.AreEqual(FirstButton.GetBounds().Right, ThirdCanvas.GetBounds().Left, nameof(barrierTest), "When Center Button Gone, Canvas position should equal to FirstButton");
+                            SimpleTest.AreEqual(FirstButton.GetBounds().Right, ThirdCanvas.GetBounds().Left, nameof(BarrierTest), "When Center Button Gone, Canvas position should equal to FirstButton");
                         }, page);
                     });
                 }
@@ -442,7 +615,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             };
         }
 
-        private void barrierTest(ConstraintLayout page)
+        private void BarrierTest(ConstraintLayout page)
         {
             layout = page;
 #if __ANDROID__
@@ -454,7 +627,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
 #else
             var barrier = new Barrier();
 #endif
-            layout.AddView(FifthTextBox, ThirdCanvas, barrier);
+            layout.AddElement(FifthTextBox, ThirdCanvas, barrier);
 
             var layoutSet = new FluentConstraintSet();
             layoutSet.Clone(layout);
@@ -474,8 +647,8 @@ namespace SharpConstraintLayout.Maui.Native.Example
                     await Task.Delay(3000);//wait ui show
                     UIThread.Invoke(() =>
                     {
-                        SimpleTest.AreEqual(FifthTextBox.GetBounds().Right, barrier.GetBounds().Left, nameof(barrierTest), "Barrier position should equal to TextBox");
-                        SimpleTest.AreEqual(ThirdCanvas.GetBounds().Left, barrier.GetBounds().Left, nameof(barrierTest), "Canvas position should equal to Barrier");
+                        SimpleTest.AreEqual(FifthTextBox.GetBounds().Right, barrier.GetBounds().Left, nameof(BarrierTest), "Barrier position should equal to TextBox");
+                        SimpleTest.AreEqual(ThirdCanvas.GetBounds().Left, barrier.GetBounds().Left, nameof(BarrierTest), "Canvas position should equal to Barrier");
                     }, page);
 
                     index++;
@@ -483,22 +656,24 @@ namespace SharpConstraintLayout.Maui.Native.Example
             });
         }
 
-        private void guidelineTest(ConstraintLayout page)
+        private void GuidelineTest(ConstraintLayout page)
         {
 #if __ANDROID__
-            layout = new ConstraintLayout(page.Context)
+            var layout = new ConstraintLayout(page.Context)
             {
                 Id = View.GenerateViewId(),
             };
             layout.SetBackgroundColor(Android.Graphics.Color.Black);
-#else
-            layout = new ConstraintLayout()
+
+#elif WINDOWS
+            var layout = new ConstraintLayout()
             {
-#if WINDOWS
                 Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.Black)
+            };
 #elif __IOS__
+            var layout = new UIView()
+            {
                 BackgroundColor = UIColor.Black
-#endif
             };
 #endif
 
@@ -508,7 +683,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             var guide = new Guideline();
 #endif
 
-            page.AddView(layout, guide);
+            page.AddElement(layout, guide);
 
             var pageSet = new FluentConstraintSet();
             pageSet.Clone(page);
@@ -523,16 +698,16 @@ namespace SharpConstraintLayout.Maui.Native.Example
                 await Task.Delay(3000);//wait ui show
                 UIThread.Invoke(() =>
                 {
-                    SimpleTest.AreEqual(page.GetSize().Width / 2, layout.GetBounds().X, nameof(guidelineTest), "Horiable guideline should at center");
+                    SimpleTest.AreEqual(page.GetSize().Width / 2, layout.GetBounds().X, nameof(GuidelineTest), "Horiable guideline should at center");
                 }, page);
             });
         }
 
-        private void baselineTest(ConstraintLayout page)
+        private void BaselineTest(ConstraintLayout page)
         {
             layout = page;
 
-            layout.AddView(FouthTextBlock, SixthRichTextBlock);
+            layout.AddElement(FouthTextBlock, SixthRichTextBlock);
 
             var layoutSet = new FluentConstraintSet();
             layoutSet.Clone(layout);
@@ -546,11 +721,11 @@ namespace SharpConstraintLayout.Maui.Native.Example
             layoutSet.ApplyTo(layout);
         }
 
-        private void baseAlignTest(ConstraintLayout page)
+        private void BaseAlignTest(ConstraintLayout page)
         {
             layout = page;
 
-            layout.AddView(FirstButton, SecondButton, ThirdCanvas, FouthTextBlock, FifthTextBox, SixthRichTextBlock);
+            layout.AddElement(FirstButton, SecondButton, ThirdCanvas, FouthTextBlock, FifthTextBox, SixthRichTextBlock);
 
             var layoutSet = new FluentConstraintSet();
             layoutSet.Clone(layout);
@@ -573,16 +748,16 @@ namespace SharpConstraintLayout.Maui.Native.Example
                 UIThread.Invoke(() =>
                 {
                     //FirstButton at page's Center
-                    SimpleTest.AreEqual(page.GetSize().Width / 2, FirstButton.GetBounds().X + FirstButton.GetSize().Width / 2, nameof(baseAlignTest), "FirstButton should at horizontal center");
-                    SimpleTest.AreEqual(page.GetSize().Height / 2, FirstButton.GetBounds().Y + FirstButton.GetSize().Height / 2, nameof(baseAlignTest), "FirstButton should at vertical center");
+                    SimpleTest.AreEqual(page.GetSize().Width / 2, FirstButton.GetBounds().X + FirstButton.GetSize().Width / 2, nameof(BaseAlignTest), "FirstButton should at horizontal center");
+                    SimpleTest.AreEqual(page.GetSize().Height / 2, FirstButton.GetBounds().Y + FirstButton.GetSize().Height / 2, nameof(BaseAlignTest), "FirstButton should at vertical center");
                     //SecondButton's Right equal to FirstButton's Right. SecondButton's Top equal to FirstButton's Bottom
-                    SimpleTest.AreEqual(FirstButton.GetBounds().Right, SecondButton.GetBounds().Right, nameof(baseAlignTest), "SecondButton's Right should equal to FirstButton's Right");
-                    SimpleTest.AreEqual(FirstButton.GetBounds().Bottom, SecondButton.GetBounds().Top, nameof(baseAlignTest), "SecondButton's Top should equal to FirstButton's Bottom");
+                    SimpleTest.AreEqual(FirstButton.GetBounds().Right, SecondButton.GetBounds().Right, nameof(BaseAlignTest), "SecondButton's Right should equal to FirstButton's Right");
+                    SimpleTest.AreEqual(FirstButton.GetBounds().Bottom, SecondButton.GetBounds().Top, nameof(BaseAlignTest), "SecondButton's Top should equal to FirstButton's Bottom");
                     //ThirdCanvas's Left equal to FirstButton's Right. ThirdCanvas's Right equal to page's Right. ThirdCanvas's Top equal to page's Top, ThirdCanvas's Bottom equal to page's Bottom
-                    SimpleTest.AreEqual(FirstButton.GetBounds().Right, ThirdCanvas.GetBounds().Left, nameof(baseAlignTest), "ThirdCanvas's Left should equal to FirstButton's Right");
-                    SimpleTest.AreEqual(page.GetBounds().Right, ThirdCanvas.GetBounds().Right, nameof(baseAlignTest), "ThirdCanvas's Right should equal to page's Right");
-                    SimpleTest.AreEqual(page.GetBounds().Top, ThirdCanvas.GetBounds().Top, nameof(baseAlignTest), "ThirdCanvas's Top should equal to page's Top");
-                    SimpleTest.AreEqual(page.GetBounds().Bottom, ThirdCanvas.GetBounds().Bottom, nameof(baseAlignTest), "ThirdCanvas's Bottom should equal to page's Bottom");
+                    SimpleTest.AreEqual(FirstButton.GetBounds().Right, ThirdCanvas.GetBounds().Left, nameof(BaseAlignTest), "ThirdCanvas's Left should equal to FirstButton's Right");
+                    SimpleTest.AreEqual(page.GetBounds().Right, ThirdCanvas.GetBounds().Right, nameof(BaseAlignTest), "ThirdCanvas's Right should equal to page's Right");
+                    SimpleTest.AreEqual(page.GetBounds().Top, ThirdCanvas.GetBounds().Top, nameof(BaseAlignTest), "ThirdCanvas's Top should equal to page's Top");
+                    SimpleTest.AreEqual(page.GetBounds().Bottom, ThirdCanvas.GetBounds().Bottom, nameof(BaseAlignTest), "ThirdCanvas's Bottom should equal to page's Bottom");
                 }, page);
             });
         }

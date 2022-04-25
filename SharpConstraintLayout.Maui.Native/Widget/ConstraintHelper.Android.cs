@@ -1,4 +1,5 @@
-﻿using Android.Content;
+﻿#if __ANDROID__ && !__MAUI__
+using Android.Content;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,3 +22,4 @@ namespace SharpConstraintLayout.Maui.Widget
         }
     }
 }
+#endif

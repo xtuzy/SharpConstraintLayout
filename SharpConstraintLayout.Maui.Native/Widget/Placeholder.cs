@@ -13,22 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using SharpConstraintLayout.Maui.Widget.Interface;
 using System;
 using System.Diagnostics;
 
 namespace SharpConstraintLayout.Maui.Widget
 {
-#if WINDOWS
+#if __MAUI__
+    using Panel = Microsoft.Maui.Controls.ContentView;
+    using FrameworkElement = Microsoft.Maui.Controls.View;
+    using UIElement = Microsoft.Maui.Controls.View;
+#elif WINDOWS
+    using Panel= Microsoft.UI.Xaml.FrameworkElement;
     using FrameworkElement = Microsoft.UI.Xaml.FrameworkElement;
     using UIElement = Microsoft.UI.Xaml.UIElement;
 #elif __IOS__
+    using Panel = UIKit.UIView;
     using FrameworkElement = UIKit.UIView;
     using UIElement = UIKit.UIView;
 #elif __ANDROID__
+    using Android.Content;
+    using Panel = Android.Views.View;
     using FrameworkElement = Android.Views.View;
     using UIElement = Android.Views.View;
 #endif
     using ConstraintWidget = androidx.constraintlayout.core.widgets.ConstraintWidget;
+    using IPlaceholder = Interface.IPlaceholder;
 
     /// <summary>
     /// <b>Added in 1.1</b>
@@ -46,17 +56,25 @@ namespace SharpConstraintLayout.Maui.Widget
     /// </para>
     /// 
     /// </summary>
-    public partial class Placeholder : FrameworkElement, IPlaceholder
+    public partial class Placeholder : Panel, IPlaceholder
     {
         bool InEditMode = false;
 
         private int mContentId = -1;
         private FrameworkElement mContent = null;
         private int mEmptyVisibility = ConstraintSet.Invisible;
+#if __ANDROID__ && !__MAUI__
+        public Placeholder(Context context) : base(context)
+#else
+        public Placeholder()
+#endif
+        {
+            init();
+        }
 
         private void init()
         {
-            ViewExtension.SetViewVisibility(this, mEmptyVisibility);
+            UIElementExtension.SetViewVisibility(this, mEmptyVisibility);
             mContentId = -1;
         }
 
@@ -128,7 +146,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 if (!InEditMode)
                 {
                     //Visibility = (Microsoft.UI.Xaml.Visibility)mEmptyVisibility;
-                    ViewExtension.SetViewVisibility(this, mEmptyVisibility);
+                    UIElementExtension.SetViewVisibility(this, mEmptyVisibility);
                 }
             }
 
@@ -139,8 +157,8 @@ namespace SharpConstraintLayout.Maui.Widget
                 //layoutParamsContent.isInPlaceholder = true;
                 container.mConstraintSet.Constraints[mContent.GetId()].layout.isInPlaceholder = true;
 
-                ViewExtension.SetViewVisibility(mContent, ConstraintSet.Visible);
-                ViewExtension.SetViewVisibility(this, ConstraintSet.Visible);
+                UIElementExtension.SetViewVisibility(mContent, ConstraintSet.Visible);
+                UIElementExtension.SetViewVisibility(this, ConstraintSet.Visible);
             }
         }
 
@@ -159,7 +177,7 @@ namespace SharpConstraintLayout.Maui.Widget
 
                 //ConstraintLayout.LayoutParams layoutParamsContent = (ConstraintLayout.LayoutParams)mContent.LayoutParams;
                 //layoutParamsContent.isInPlaceholder = false;
-                ViewExtension.SetViewVisibility(mContent, ConstraintSet.Visible);
+                UIElementExtension.SetViewVisibility(mContent, ConstraintSet.Visible);
                 ((mContent.GetParent()) as ConstraintLayout).mConstraintSet.Constraints[mContent.GetId()].layout.isInPlaceholder = true;
 
                 mContent = null;
@@ -171,7 +189,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 UIElement v = ((ConstraintLayout)this.GetParent()).FindElementById(value);
                 if (v != null)
                 {
-                    ViewExtension.SetViewVisibility(v, ConstraintSet.Gone);
+                    UIElementExtension.SetViewVisibility(v, ConstraintSet.Gone);
                 }
             }
         }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SharpConstraintLayout.Maui.Widget.Interface;
+using System;
 using System.Collections.Generic;
 
 /*
@@ -22,8 +23,9 @@ namespace SharpConstraintLayout.Maui.Widget
     using ConstraintWidget = androidx.constraintlayout.core.widgets.ConstraintWidget;
     using ConstraintWidgetContainer = androidx.constraintlayout.core.widgets.ConstraintWidgetContainer;
     using HelperWidget = androidx.constraintlayout.core.widgets.HelperWidget;
-#if __ANDROID__
+#if __ANDROID__ && !__MAUI__
     using Android.Content;
+    using SharpConstraintLayout.Maui.Widget.Interface;
 #endif
 
     /// <summary>
@@ -122,7 +124,7 @@ namespace SharpConstraintLayout.Maui.Widget
         private int mIndicatedType;
         private int mResolvedType;
         private androidx.constraintlayout.core.widgets.Barrier mBarrier;
-#if __ANDROID__
+#if __ANDROID__&& !__MAUI__
         public Barrier(Context context) : base(context)
 #else
         public Barrier() : base()
@@ -202,7 +204,7 @@ namespace SharpConstraintLayout.Maui.Widget
             updateType(widget, mIndicatedType, isRtl);
         }
 
-        protected internal override void init()
+        protected override void init()
         {
             base.init();
             mBarrier = new androidx.constraintlayout.core.widgets.Barrier();

@@ -11,7 +11,12 @@ namespace SharpConstraintLayout.Maui.Widget
     {
         internal static void Invoke(Action action, ConstraintLayout constraintLayout)
         {
-#if WINDOWS
+#if __MAUI__
+            constraintLayout.Dispatcher.Dispatch(() =>
+            {
+                action.Invoke();
+            });
+#elif WINDOWS
             if (constraintLayout.DispatcherQueue == null)
             {
                 SimpleDebug.WriteLine("UIThread.Invoke: ConstraintLayout.DispatcherQueue == null");

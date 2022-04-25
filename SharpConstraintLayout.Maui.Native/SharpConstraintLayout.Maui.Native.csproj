@@ -13,6 +13,15 @@
     <SupportedOSPlatformVersion Condition="$(TargetFramework.Contains('-windows'))">10.0.17763.0</SupportedOSPlatformVersion>
     <TargetPlatformMinVersion Condition="$(TargetFramework.Contains('-windows'))">10.0.17763.0</TargetPlatformMinVersion>
     <RootNamespace>SharpConstraintLayout.Maui</RootNamespace>
+    <Version>2.1.1.1</Version>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Authors>zhouyang</Authors>
+    <Description>crossplatform constraintlayout at dotnet(android,ios ,windows)</Description>
+    <Copyright></Copyright>
+    <PackageProjectUrl>https://github.com/xtuzy/SharpConstraintLayout</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/xtuzy/SharpConstraintLayout</RepositoryUrl>
+    <PackageTags>constraintlayout;MAUI;android;ios;WinUI3</PackageTags>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
   </PropertyGroup>
   <!--only ios and maccatalyst have these-->
   <ItemGroup Condition="'$(TargetFramework)'!= 'net6.0-ios' and '$(TargetFramework)' != 'net6.0-maccatalyst'">
@@ -76,9 +85,5 @@
   <ItemGroup>
     <ProjectReference Include="..\SharpConstraintLayout.Core\SharpConstraintLayout.Core.csproj" />
   </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'net6.0-windows10.0.19041'">
-    <PackageReference Include="CommunityToolkit.WinUI">
-      <Version>7.1.2</Version>
-    </PackageReference>
-  </ItemGroup>
+
 </Project>

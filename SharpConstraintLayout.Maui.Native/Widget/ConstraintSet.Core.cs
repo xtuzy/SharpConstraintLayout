@@ -15,6 +15,7 @@
 */
 
 using androidx.constraintlayout.core.widgets;
+using SharpConstraintLayout.Maui.Widget.Interface;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -22,7 +23,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-#if WINDOWS
+#if __MAUI__
+using View = Microsoft.Maui.Controls.View;
+#elif WINDOWS
 using View = Microsoft.UI.Xaml.UIElement;
 #elif __IOS__
 using View = UIKit.UIView;
@@ -195,7 +198,7 @@ namespace SharpConstraintLayout.Maui.Widget
                     {
                         //view.Visibility = constraint.propertySet.visibility;
                         param.propertySet.visibility = constraint.propertySet.visibility;//这里我变成设置constraint
-                        ViewExtension.SetViewVisibility(view, constraint.propertySet.visibility);
+                        UIElementExtension.SetViewVisibility(view, constraint.propertySet.visibility);
                     }
 
                     view.SetAlphaProperty(param.propertySet);
@@ -262,7 +265,7 @@ namespace SharpConstraintLayout.Maui.Widget
 
             UIThread.Invoke(() =>
             {
-                constraintLayout.requestLayout();
+                constraintLayout.RequestReLayout();
             }, constraintLayout);
 
         }
@@ -1404,7 +1407,7 @@ namespace SharpConstraintLayout.Maui.Widget
         }
 
         /// <summary>
-        /// Sets the width of the view. It can be a dimension, <seealso cref="#WRAP_CONTENT"/> or
+        /// Sets the width of the view. It can be a dimension, <seealso cref="MatchParent"/> or
         /// <seealso cref="WrapContent"/> or <see cref="MatchConstraint"/>
         /// </summary>
         /// <param name="viewId">ID of view to adjust its width</param>
