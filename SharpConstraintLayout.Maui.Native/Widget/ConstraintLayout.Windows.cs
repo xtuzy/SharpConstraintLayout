@@ -75,7 +75,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 availableHeight = (int)availableSize.Height;
             }
 
-            return Measure(new Size(availableWidth, availableHeight));
+            return MeasureLayout(new Size(availableWidth, availableHeight));
         }
 
 #region Layout
@@ -88,10 +88,10 @@ namespace SharpConstraintLayout.Maui.Widget
             if (finalSize.Width != MLayoutWidget.Width || finalSize.Height != MLayoutWidget.Height)
             {
                 // We haven't received our desired size. We need to refresh the rows.
-                Measure(finalSize);
+                MeasureLayout(finalSize);
             }
 
-            OnLayout();
+            ArrangeLayout();
 
             //return new Size(MLayoutWidget.Width, MLayoutWidget.Height);//这里必须返回Widget的大小,因为返回值决定了layout的绘制范围?
             return finalSize;

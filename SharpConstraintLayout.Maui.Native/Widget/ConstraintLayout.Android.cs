@@ -72,12 +72,12 @@ namespace SharpConstraintLayout.Maui.Widget
         protected override void OnMeasure(int widthMeasureSpec, int heightMeasureSpec)
         {
             //base.OnMeasure(widthMeasureSpec, heightMeasureSpec);
-            Measure(new Size(SharpConstraintLayout.Maui.Widget.MeasureSpec.GetSize(widthMeasureSpec), SharpConstraintLayout.Maui.Widget.MeasureSpec.GetSize(heightMeasureSpec)));
+            MeasureLayout(new Size(SharpConstraintLayout.Maui.Widget.MeasureSpec.GetSize(widthMeasureSpec), SharpConstraintLayout.Maui.Widget.MeasureSpec.GetSize(heightMeasureSpec)));
         }
 
         protected override void OnLayout(bool changed, int l, int t, int r, int b)
         {
-            OnLayout();
+            ArrangeLayout();
         }
 
         void LayoutChild(UIElement element, int x, int y, int w, int h)

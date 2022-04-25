@@ -18,35 +18,23 @@ public partial class MainPage : ContentPage
     {
         InitializeComponent();
 
-        ConstraintLayout.DEBUG = true;
+        ConstraintLayout.DEBUG = false;
         ConstraintLayout.MEASURE = true;
-
         var content = new ConstraintLayout();
         Page.Content = content;
         createControls();
         this.Background = new SolidColorBrush(Colors.HotPink);
 
-        content.AddElement(FirstButton);
-        FirstButton.WidthRequest = 100;
-        FirstButton.HeightRequest = 100;
-        using (var set = new FluentConstraintSet())
-        {
-            set.Clone(content);
-            set.Select(FirstButton).Width(100).Height(100).CenterTo();
-            set.ApplyTo(content);
-        }
-
         //BaseAlignTest(content);
-        //baselineTest(content); 
+        //BaselineTest(content); 
         //GuidelineTest(content);
         //BarrierTest(content);
         //VisibilityTest(content);
-        //flowTest(content);
-        //nestedLayoutTest(content);
+        //FlowTest(content);
+        //NestedConstraintLayoutTest(content);
         //CircleConstraintTest(content);
-        //PlatformLayoutInConstraintLayoutTest(content);
+        PlatformLayoutInConstraintLayoutTest(content);
         //FlowPerformanceTest(content);
-        //WrapPanelPerformanceTest(content);
 
     }
 
@@ -64,10 +52,8 @@ public partial class MainPage : ContentPage
             Background = new SolidColorBrush(Colors.Black)
         };
 
-        ThirdCanvas = new Rectangle()
+        ThirdCanvas = new ContentView()
         {
-            //Width = 100,
-            //Height = 100,
             Background = new SolidColorBrush(Colors.LightGreen)
         };
 

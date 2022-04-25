@@ -17,7 +17,7 @@
 using SharpConstraintLayout.Maui.Widget.Interface;
 using System;
 #if __MAUI__
-using FrameworkElement = Microsoft.Maui.Controls.View;
+using FrameworkElement = Microsoft.Maui.Controls.ContentView;
 
 #elif WINDOWS
 using FrameworkElement = Microsoft.UI.Xaml.FrameworkElement;

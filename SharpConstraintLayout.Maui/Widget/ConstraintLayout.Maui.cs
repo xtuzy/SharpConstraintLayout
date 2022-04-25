@@ -24,13 +24,13 @@ namespace SharpConstraintLayout.Maui.Widget
 
         public void AddElement(UIElement element)
         {
-            Children?.Add(element);
+            this.Add(element);
             OnAddedView(element);
         }
 
         public void RemoveElement(UIElement element)
         {
-            Children?.Remove(element);
+            this.Remove(element);
             OnRemovedView(element);
         }
 
@@ -38,7 +38,7 @@ namespace SharpConstraintLayout.Maui.Widget
         {
             foreach (var element in this.Children)
             {
-                Children?.Remove(element);
+                this.Remove(element);
                 OnRemovedView(element as UIElement);
             }
         }
@@ -56,24 +56,29 @@ namespace SharpConstraintLayout.Maui.Widget
 
         void LayoutChild(UIElement element, int x, int y, int w, int h)
         {
-            element.Arrange(new Rect(x, y, w, h));
+            //element.Arrange(new Rect(x, y, w, h));
+            AbsoluteLayout.SetLayoutBounds(element, new Rect(x, y, w, h));
         }
 
         #endregion
     }
 
-    internal class ConstraintLayoutManager : LayoutManager
+    internal class ConstraintLayoutManager : AbsoluteLayoutManager
     {
         WeakReference<ConstraintLayout> Layout;
-        public ConstraintLayoutManager(Microsoft.Maui.ILayout layout) : base(layout)
+
+        public ConstraintLayoutManager(IAbsoluteLayout absoluteLayout) : base(absoluteLayout)
         {
-            Layout = new WeakReference<ConstraintLayout>(layout as ConstraintLayout);
+            Layout = new WeakReference<ConstraintLayout>(absoluteLayout as ConstraintLayout);
         }
 
         public override Size Measure(double widthConstraint, double heightConstraint)
         {
+            base.Measure(widthConstraint, heightConstraint);
             Layout.TryGetTarget(out var layout);
-            return layout.Measure(new Size(widthConstraint, heightConstraint));
+            var size = layout.MeasureLayout(new Size(widthConstraint, heightConstraint));
+
+            return size;
         }
 
         public override Size ArrangeChildren(Rect bounds)
@@ -82,10 +87,11 @@ namespace SharpConstraintLayout.Maui.Widget
             if (bounds.Width != layout.MLayoutWidget.Width || bounds.Height != layout.MLayoutWidget.Height)
             {
                 // We haven't received our desired size. We need to refresh the rows.
-                layout.Measure(bounds.Size);
+                layout.MeasureLayout(bounds.Size);
             }
 
-            layout.OnLayout();
+            layout.ArrangeLayout();
+            base.ArrangeChildren(bounds);
             return bounds.Size;
         }
     }

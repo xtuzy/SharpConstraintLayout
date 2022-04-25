@@ -20,16 +20,20 @@ using System.Diagnostics;
 namespace SharpConstraintLayout.Maui.Widget
 {
 #if __MAUI__
+    using Panel = Microsoft.Maui.Controls.ContentView;
     using FrameworkElement = Microsoft.Maui.Controls.View;
     using UIElement = Microsoft.Maui.Controls.View;
 #elif WINDOWS
+    using Panel= Microsoft.UI.Xaml.FrameworkElement;
     using FrameworkElement = Microsoft.UI.Xaml.FrameworkElement;
     using UIElement = Microsoft.UI.Xaml.UIElement;
 #elif __IOS__
+    using Panel = UIKit.UIView;
     using FrameworkElement = UIKit.UIView;
     using UIElement = UIKit.UIView;
 #elif __ANDROID__
     using Android.Content;
+    using Panel = Android.Views.View;
     using FrameworkElement = Android.Views.View;
     using UIElement = Android.Views.View;
 #endif
@@ -52,7 +56,7 @@ namespace SharpConstraintLayout.Maui.Widget
     /// </para>
     /// 
     /// </summary>
-    public partial class Placeholder : FrameworkElement, IPlaceholder
+    public partial class Placeholder : Panel, IPlaceholder
     {
         bool InEditMode = false;
 

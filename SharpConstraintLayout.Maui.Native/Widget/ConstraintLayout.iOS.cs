@@ -105,7 +105,7 @@ namespace SharpConstraintLayout.Maui.Widget
             if (this.Frame.Size.Width > 0)//取自身的大小作为availableSize
             {
                 //作为ConstraintLayout的子ConstraintLayout是肯定有大小的,而作为根布局也有大小
-                Measure(this.Frame.Size);
+                MeasureLayout(this.Frame.Size);
             }
             else
             {
@@ -114,11 +114,11 @@ namespace SharpConstraintLayout.Maui.Widget
                 if (w <= 0 || h <= 0)
                 {
                     if (Superview != null)
-                        Measure(this.Superview.Frame.Size);
+                        MeasureLayout(this.Superview.Frame.Size);
                 }
                 else
                 {
-                    Measure(new Size(w, h));
+                    MeasureLayout(new Size(w, h));
                 }
             }
 
@@ -128,7 +128,7 @@ namespace SharpConstraintLayout.Maui.Widget
             if (this.Frame.Width != MLayoutWidget.Width || this.Frame.Height != MLayoutWidget.Height)
                 this.Bounds = new CGRect(this.Bounds.X, this.Bounds.Y, MLayoutWidget.Width, MLayoutWidget.Height);
 
-            OnLayout();
+            ArrangeLayout();
         }
 
         private void LayoutChild(UIElement element, int x, int y, int w, int h)

@@ -7,11 +7,221 @@ using System.Threading.Tasks;
 using SharpConstraintLayout.Maui.Example.Tool;
 using SharpConstraintLayout.Maui.Widget;
 using static SharpConstraintLayout.Maui.Widget.FluentConstraintSet;
+using SharpConstraintLayout.Maui.Helper.Widget;
 
 namespace SharpConstraintLayout.Maui.Example
 {
     public partial class MainPage
     {
+        void FlowPerformanceTest(ConstraintLayout page)
+        {
+            int buttonCount = 50;
+
+            var flow = new Flow() { };
+
+            flow.SetOrientation(Flow.Horizontal);
+            flow.SetWrapMode(Flow.WrapChain);
+            flow.SetHorizontalStyle(Flow.ChainPacked);
+            page.AddElement(flow);
+
+            page.AddElement(FifthTextBox);
+            flow.AddElement(FifthTextBox);
+            //Generate 1000 Button,all add to page
+
+            var buttonList = new List<Button>();
+            for (int i = 0; i < buttonCount; i++)
+            {
+
+                var button = new Button();
+                button.Text = "Button" + i;
+                buttonList.Add(button);
+                page.AddElement(button);
+                flow.AddElement(button);
+            }
+
+            using (var layoutSet = new FluentConstraintSet())
+            {
+                layoutSet.Clone(page);
+                layoutSet
+                    .Select(flow)
+                    .TopToTop().BottomToBottom().LeftToLeft()
+                    .Width(SizeBehavier.WrapContent)
+                    .Height(SizeBehavier.WrapContent);
+                layoutSet.ApplyTo(page);
+            }
+        }
+
+        void CircleConstraintTest(ConstraintLayout page)
+        {
+            layout = page;
+            layout.AddElement(FirstButton, SecondButton, FouthTextBlock);
+            using (var layoutSet = new FluentConstraintSet())
+            {
+                layoutSet.Clone(layout);
+                layoutSet.Select(FirstButton).CenterTo()
+                    .Select(SecondButton, FouthTextBlock)
+                .CircleTo(FirstButton, new[] { 50, 100 }, new[] { 60f, 240 });
+                layoutSet.ApplyTo(layout);
+            }
+
+            Task.Run(async () =>
+            {
+                int index = 0;
+                while (index < 1)
+                {
+                    await Task.Delay(3000);//wait UI show
+                    UIThread.Invoke(() =>
+                    {
+                        //The distance between SecondButton center and FirstButton center should equal to 50
+                        SimpleTest.AreEqual(Math.Abs(SecondButton.GetBounds().Center.Y - FirstButton.GetBounds().Center.Y) * 2, 50, nameof(CircleConstraintTest), "The distence between SecondButton center and FirstButton center should equal to 50");
+                        //The distance between FouthTextBlock center and FirstButton center should equal to 50
+                        SimpleTest.AreEqual(Math.Abs(FouthTextBlock.GetBounds().Center.Y - FirstButton.GetBounds().Center.Y) * 2, 50, nameof(CircleConstraintTest), "The distence between FouthTextBlock center and FirstButton center should equal to 50");
+                    }, page);
+
+                    index++;
+                }
+            });
+        }
+
+        void PlatformLayoutInConstraintLayoutTest(ConstraintLayout page)
+        {
+            var stackPanel = new StackLayout()
+            {
+                Orientation = StackOrientation.Horizontal,
+                Background = new SolidColorBrush(Colors.Coral),
+            };
+            page.AddElement(stackPanel);
+            stackPanel.Add(new Button() { Text = "InStackPanel" });
+            stackPanel.Add(new Button() { Text = "InStackPanel" });
+            stackPanel.Add(new Label() { Text = "InStackPanel" });
+            stackPanel.Add(new Editor() { Text = "InStackPanel" });
+
+            var grid = new Grid();
+            page.AddElement(grid);
+            grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
+            var textblock = new Label() { Text = "InGrid" };
+            var textbox = new Editor() { Text = "InGrid" };
+            textblock.SetValue(Grid.ColumnProperty, 0);//https://stackoverflow.com/a/27756061/13254773
+            textbox.SetValue(Grid.ColumnProperty, 1);//https://stackoverflow.com/a/27756061/13254773
+            grid.Add(textblock);
+            grid.Add(textbox);
+
+            var scrollView = new ScrollView();
+            page.AddElement(scrollView);
+            scrollView.Content = new StackLayout()
+            {
+                Orientation = StackOrientation.Vertical,
+                Background = new SolidColorBrush(Colors.Coral),
+            };
+            (scrollView.Content as StackLayout).Add(new Button() { Text = "InScrollViewer" });
+            (scrollView.Content as StackLayout).Add(new Button() { Text = "InScrollViewer" });
+            (scrollView.Content as StackLayout).Add(new Label() { Text = "InScrollViewer" });
+            (scrollView.Content as StackLayout).Add(new Editor() { Text = "InScrollViewer" });
+
+            using (var layoutSet = new FluentConstraintSet())
+            {
+                layoutSet.Clone(page);
+                layoutSet.Select(stackPanel)
+                    .CenterYTo().LeftToLeft()
+                    .Width(SizeBehavier.WrapContent)
+                    .Height(SizeBehavier.WrapContent)
+                    .Select(grid)
+                    .TopToBottom(stackPanel, 10).LeftToLeft()
+                    .Width(SizeBehavier.WrapContent)
+                    .Height(100)
+                    .Select(scrollView)
+                    .TopToBottom(grid, 10)
+                    .BottomToBottom()
+                    .LeftToLeft()
+                    .Width(SizeBehavier.WrapContent)
+                    .Height(SizeBehavier.WrapContent);
+                layoutSet.ApplyTo(page);
+            }
+        }
+
+        void NestedConstraintLayoutTest(ConstraintLayout page)
+        {
+            layout = new ConstraintLayout()
+            {
+                Background = new SolidColorBrush(Colors.Black)
+            };
+
+            using (var pageSet = new FluentConstraintSet())
+            {
+                page.AddElement(layout);
+                pageSet.Clone(page);
+                pageSet.Select(layout)
+                    .CenterTo()
+                    .Width(ConstraintSet.WrapContent)
+                    .Height(ConstraintSet.WrapContent);
+                pageSet.ApplyTo(page);
+                layout.AddElement(ThirdCanvas);
+                layout.AddElement(FirstButton);
+                using (var layoutSet = new FluentConstraintSet())
+                {
+                    layoutSet.Clone(layout);
+                    layoutSet
+                        .Select(FirstButton).CenterXTo().CenterYTo()
+                        .Width(FluentConstraintSet.SizeBehavier.WrapContent)
+                        .Height(FluentConstraintSet.SizeBehavier.WrapContent)
+                        .Select(ThirdCanvas).EdgesTo(null, 20, 20)
+                        .Width(FluentConstraintSet.SizeBehavier.MatchParent)
+                        .Height(FluentConstraintSet.SizeBehavier.MatchParent);
+                    layoutSet.ApplyTo(layout);
+                }
+            }
+        }
+
+        void FlowTest(ConstraintLayout page)
+        {
+            var flow = new Flow();
+
+            flow.SetOrientation(Flow.Vertical);
+            flow.SetWrapMode(Flow.WrapChain);
+            flow.SetHorizontalStyle(Flow.ChainSpreadInside);
+            layout = page;
+            layout.AddElement(ThirdCanvas, FirstButton, SecondButton, FouthTextBlock, FifthTextBox, SixthRichTextBlock, flow);
+            flow.AddElement(FirstButton, SecondButton, FouthTextBlock, FifthTextBox, SixthRichTextBlock);
+
+            using (var layoutSet = new FluentConstraintSet())
+            {
+                layoutSet.Clone(layout);
+                layoutSet
+                    .Select(flow)
+                    .EdgesXTo()
+                    .CenterYTo()
+                    .Width(SizeBehavier.MatchConstraint)
+                    .Height(SizeBehavier.WrapContent)
+                    .Select(FirstButton, SecondButton, FouthTextBlock, FifthTextBox, SixthRichTextBlock)
+                    .Width(SizeBehavier.WrapContent)
+                    .Height(SizeBehavier.WrapContent)
+                    .Select(ThirdCanvas).EdgesTo(flow)
+                    .Width(SizeBehavier.MatchConstraint)
+                    .Height(SizeBehavier.MatchConstraint);
+                //.Visibility(FluentConstraintSet.Visibility.Visible);
+                layoutSet.ApplyTo(layout);
+            }
+
+            Task.Run(async () =>
+            {
+                int index = 0;
+                while (index < 1)//test 20 times,you can edit textbox
+                {
+                    await Task.Delay(3000);//wait ui show
+                    UIThread.Invoke(() =>
+                    {
+                        SimpleTest.AreEqual(flow.GetBounds().Left, ThirdCanvas.GetBounds().Left, nameof(FlowTest), "Canvas Left position should equal to Flow");
+                        SimpleTest.AreEqual(flow.GetBounds().Right, ThirdCanvas.GetBounds().Right, nameof(FlowTest), "Canvas Right position should equal to Flow");
+                        SimpleTest.AreEqual(flow.GetBounds().Top, ThirdCanvas.GetBounds().Top, nameof(FlowTest), "Canvas Top position should equal to Flow");
+                        SimpleTest.AreEqual(flow.GetBounds().Bottom, ThirdCanvas.GetBounds().Bottom, nameof(FlowTest), "Canvas Bottom position should equal to Flow");
+                    }, page);
+
+                    index++;
+                }
+            });
+        }
+
         private void VisibilityTest(ConstraintLayout page)
         {
             layout = page;
@@ -75,6 +285,41 @@ namespace SharpConstraintLayout.Maui.Example
                 }
                 layoutSet.ApplyTo(layout);
             };
+        }
+
+        private void BarrierTest(ConstraintLayout page)
+        {
+            layout = page;
+
+            var barrier = new Widget.Barrier();
+
+            layout.AddElement(FifthTextBox, ThirdCanvas, barrier);
+
+            var layoutSet = new FluentConstraintSet();
+            layoutSet.Clone(layout);
+            layoutSet
+                .Select(FifthTextBox).CenterYTo().CenterXTo()
+                .Width(SizeBehavier.WrapContent).Height(SizeBehavier.WrapContent)
+                .Select(barrier).Barrier(Direction.Right, 0, new[] { FifthTextBox })
+                .Select(ThirdCanvas).LeftToRight(barrier).RightToRight()
+                .Width(SizeBehavier.MatchConstraint).Height(SizeBehavier.MatchParent);
+            layoutSet.ApplyTo(layout);
+
+            Task.Run(async () =>
+            {
+                int index = 0;
+                while (index < 5)//test 20 times,you can edit textbox
+                {
+                    await Task.Delay(3000);//wait ui show
+                    UIThread.Invoke(() =>
+                    {
+                        SimpleTest.AreEqual(FifthTextBox.GetBounds().Right, barrier.GetBounds().Left, nameof(BarrierTest), "Barrier position should equal to TextBox");
+                        SimpleTest.AreEqual(ThirdCanvas.GetBounds().Left, barrier.GetBounds().Left, nameof(BarrierTest), "Canvas position should equal to Barrier");
+                    }, page);
+
+                    index++;
+                }
+            });
         }
 
         private void GuidelineTest(ConstraintLayout page)

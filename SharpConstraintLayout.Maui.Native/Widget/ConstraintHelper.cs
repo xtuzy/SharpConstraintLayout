@@ -28,9 +28,11 @@ namespace SharpConstraintLayout.Maui.Widget
     using HelperWidget = androidx.constraintlayout.core.widgets.HelperWidget;
 
 #if __MAUI__
+    using Panel = Microsoft.Maui.Controls.ContentView;
     using FrameworkElement = Microsoft.Maui.Controls.View;
     using UIElement = Microsoft.Maui.Controls.View;
 #elif WINDOWS
+     using Panel = Microsoft.UI.Xaml.FrameworkElement;
     using FrameworkElement = Microsoft.UI.Xaml.FrameworkElement;
     using UIElement = Microsoft.UI.Xaml.UIElement;
 
@@ -39,10 +41,12 @@ namespace SharpConstraintLayout.Maui.Widget
     using Windows.Foundation;
     using SharpConstraintLayout.Maui.Widget.Interface;
 #elif __IOS__
+     using Panel= UIKit.UIView;
     using FrameworkElement = UIKit.UIView;
     using UIElement = UIKit.UIView;
 #elif __ANDROID__
     using Android.Content;
+    using Panel = Android.Views.View;
     using FrameworkElement = Android.Views.View;
     using SharpConstraintLayout.Maui.Widget.Interface;
 #endif
@@ -68,7 +72,7 @@ namespace SharpConstraintLayout.Maui.Widget
     ///     </pre>
     /// </para>
     /// </summary>
-    public abstract partial class ConstraintHelper : FrameworkElement, IConstraintHelper
+    public abstract partial class ConstraintHelper : Panel, IConstraintHelper
     {
         private const string TAG = "ConstraintHelper";
 
