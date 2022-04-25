@@ -94,19 +94,24 @@ namespace SharpConstraintLayout.Maui.Widget
         public static void SetViewVisibility(this UIElement element, int ConstraintSetVisible)
         {
 #if __MAUI__
-            if (ConstraintSetVisible == ConstraintSet.Invisible)
-                (element as VisualElement).IsVisible = false;
-            else if (ConstraintSetVisible == ConstraintSet.Visible)
+            if (ConstraintSetVisible == ConstraintSet.Invisible)//TODO
+            {
                 (element as VisualElement).IsVisible = true;
+                (element as VisualElement).Opacity = 0;
+            }
+            else if (ConstraintSetVisible == ConstraintSet.Visible)
+            {
+                (element as VisualElement).IsVisible = true;
+                if (element.Opacity == 0)
+                    element.Opacity = 1;
+            }
             else//Gone
             {
-                //throw new NotImplementedException("Maui没有默认的Visibility = ConstraintSet.Gone");
                 (element as VisualElement).IsVisible = false;
-                Debug.WriteLine("Maui没有默认的Visibility = ConstraintSet.Gone");
             }
 
 #elif WINDOWS
-            if (ConstraintSetVisible == ConstraintSet.Invisible)
+            if (ConstraintSetVisible == ConstraintSet.Invisible)//TODO
                 element.Opacity = 0;//https://stackoverflow.com/questions/28097153/workaround-for-visibilty-hidden-state-windows-phone-8-1-app-development
             else if (ConstraintSetVisible == ConstraintSet.Visible)
             {
@@ -125,9 +130,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 element.Hidden = false;
             else//Gone
             {
-                //throw new NotImplementedException("iOS没有默认的Visibility = ConstraintSet.Gone");
                 element.Hidden = true;
-                Debug.WriteLine("iOS没有默认的Visibility = ConstraintSet.Gone");
             }
 #elif __ANDROID__
             if (ConstraintSetVisible == ConstraintSet.Invisible)

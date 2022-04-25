@@ -17,6 +17,7 @@ namespace SharpConstraintLayout.Maui.DebugTool
 
         public static void WriteLine(string message)
         {
+#if DEBUG
 #if __IOS__
             client.SendMessage(message + "~iOS" + $"~{DateTime.Now}" + "\n");//~ split Log,Platform,Time
 #elif ANDROID
@@ -24,7 +25,6 @@ namespace SharpConstraintLayout.Maui.DebugTool
 #else
             client.SendMessage(message + "~Windows" + $"~{DateTime.Now}" + "\n");//~ split Log,Platform,Time      
 #endif
-#if DEBUG
             System.Diagnostics.Debug.WriteLine(message);
 #else
             Trace.WriteLine(message, "SharpConstraintLayout");

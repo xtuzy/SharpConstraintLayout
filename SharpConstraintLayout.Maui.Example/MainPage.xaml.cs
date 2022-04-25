@@ -29,11 +29,11 @@ public partial class MainPage : ContentPage
         //BaselineTest(content); 
         //GuidelineTest(content);
         //BarrierTest(content);
-        //VisibilityTest(content);
+        VisibilityTest(content);
         //FlowTest(content);
         //NestedConstraintLayoutTest(content);
         //CircleConstraintTest(content);
-        PlatformLayoutInConstraintLayoutTest(content);
+        //PlatformLayoutInConstraintLayoutTest(content);
         //FlowPerformanceTest(content);
 
     }
