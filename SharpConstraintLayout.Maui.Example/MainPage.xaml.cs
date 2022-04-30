@@ -18,7 +18,7 @@ public partial class MainPage : ContentPage
     {
         InitializeComponent();
 
-        ConstraintLayout.DEBUG = false;
+        ConstraintLayout.DEBUG = true;
         ConstraintLayout.MEASURE = true;
         var content = new ConstraintLayout();
         Page.Content = content;
