@@ -188,6 +188,9 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
                 SetMeasuredDimension(layout.MeasuredWidth, layout.MeasuredHeight);//Android中这个的作用应该是设置flow的大小
 #elif __IOS__ && !__MAUI__
                 this.Bounds = new CoreGraphics.CGRect(this.Bounds.X, this.Bounds.Y, layout.MeasuredWidth, layout.MeasuredHeight);
+#elif WINDOWS && !__MAUI__
+                this.Width = layout.MeasuredWidth;
+                this.Height = layout.MeasuredHeight;
 #endif
             }
             else

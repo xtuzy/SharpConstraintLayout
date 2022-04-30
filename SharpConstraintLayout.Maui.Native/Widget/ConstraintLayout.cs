@@ -849,6 +849,8 @@ namespace SharpConstraintLayout.Maui.Widget
                         if (DEBUG) SimpleDebug.WriteLine($"{child.GetType().FullName}  after onMeasure: widget={widget},control={child.GetViewLayoutInfo()}");
 #if __IOS__ && !__MAUI__
                         (w, h) = ((int)child.Bounds.Width, (int)child.Bounds.Height);//我在iOS的Flow中,将测量值存储到了Bounds
+#elif WINDOWS && !__MAUI__
+                        (w, h) = ((int)(child as FrameworkElement).Width, (int)(child as FrameworkElement).Height);
 #else
                         (w, h) = child.GetWrapContentSize();
 #endif
@@ -926,7 +928,7 @@ namespace SharpConstraintLayout.Maui.Widget
                         child.MeasureSelf(horizontalSpec, verticalSpec);
 
                         widget.setLastMeasureSpec(horizontalSpec, verticalSpec);
-                        (width, height) = child.GetMeasuredSize(widget);//Windows中Measure后的高度应该是DesiredSize
+                        (width, height) = child.GetWrapContentSize();//Windows中Measure后的高度应该是DesiredSize
                         baseline = (int)child.GetBaseline();
                         if (DEBUG)
                         {
