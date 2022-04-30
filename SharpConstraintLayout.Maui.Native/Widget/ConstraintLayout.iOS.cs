@@ -20,7 +20,7 @@ namespace SharpConstraintLayout.Maui.Widget
             init();
         }
 
-#region Add And Remove
+        #region Add And Remove
 
         public UIElement GetChildAt(int index)
         {
@@ -77,11 +77,30 @@ namespace SharpConstraintLayout.Maui.Widget
 
         public int ChildCount => Subviews.Length;
 
-#endregion
+        #endregion
 
-#region Measure And Layout
+        #region Measure And Layout
+        /// <summary>
+        /// Provide the size of the layout to parent
+        /// </summary>
+        public override Size IntrinsicContentSize
+        {
+            get
+            {
+                if (DEBUG) Debug.WriteLine($"{Superview} Load ConstraintLayout IntrinsicContentSize");
+                if (this.Bounds.Size.Width <= 0)
+                {
+                    return base.IntrinsicContentSize;
+                }
+                return this.Bounds.Size;
+            }
+        }
 
-        //public override Size IntrinsicContentSize => this.Frame.Size;
+        public override Size SystemLayoutSizeFittingSize(Size size)
+        {
+            if (DEBUG) Debug.WriteLine($"{Superview} Load ConstraintLayout SystemLayoutSizeFittingSize");
+            return base.SystemLayoutSizeFittingSize(size);
+        }
 
         /// <summary>
         /// iOS don't have measure method, but at first show, it will load LayoutSubviews twice,
@@ -113,8 +132,19 @@ namespace SharpConstraintLayout.Maui.Widget
                 (var w, var h) = this.GetWrapContentSize();
                 if (w <= 0 || h <= 0)
                 {
-                    if (Superview != null)
-                        MeasureLayout(this.Superview.Frame.Size);
+                    //search all superview, until superview's size is not zero
+                    var superview = this.Superview;
+                    while (superview != null)
+                    {
+                        if (superview.Frame.Size.Width > 1 || superview.Frame.Size.Height > 1)//float maybe is 0.00~, so i use 1, layout should't be 1dp or 1px
+                        {
+                            w = (int)superview.Frame.Width;
+                            h = (int)superview.Frame.Height;
+                            break;
+                        }
+                        superview = superview.Superview;
+                    }
+                    MeasureLayout(new Size(w, h));
                 }
                 else
                 {
@@ -143,7 +173,7 @@ namespace SharpConstraintLayout.Maui.Widget
             element.Frame = new CoreGraphics.CGRect(x, y, w, h);
         }
 
-#endregion
+        #endregion
     }
 }
 #endif

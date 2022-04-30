@@ -36,17 +36,61 @@ namespace SharpConstraintLayout.Maui.Native.Example
 
             createControls();
 
-            //baseAlignTest(Page);
-            //baselineTest(Page);
-            //guidelineTest(Page);//OK
-            //barrierTest(Page);//OK
-            //visibilityTest(Page);//OK
-            //flowTest(Page);
-            //nativeLayoutInConstraintLayoutTest(Page);
-            ConstraintLayoutInPlatformLayoutTest(Page);
-            //circleConstraintTest(Page);
-            //performanceTest(Page);
-            //performanceTest_WrapPanel(Page);
+            //BaseAlignTest(Page);
+            //BaselineTest(Page);
+            //GuidelineTest(Page);//OK
+            //BarrierTest(Page);//OK
+            //VisibilityTest(Page);//OK
+            //FlowTest(Page);
+            //PlatformLayoutInConstraintLayoutTest(Page);
+            //ConstraintLayoutInPlatformLayoutTest(Page);//Bug
+            //CircleConstraintTest(Page);
+            //FlowPerformanceTest(Page);
+            //WrapPanelPerformanceTest(Page);
+            //GroupTest(Page);
+            //PlaceholderTest(Page);
+            //SizeTest(Page);
+        }
+
+        void ConstraintLayoutInPlatformLayoutTest(ConstraintLayout page)
+        {
+            var scrollView = new UIScrollView()
+            {
+                BackgroundColor = UIColor.White,
+            };
+            page.AddSubview(scrollView);
+
+            using (var set = new FluentConstraintSet())
+            {
+                set.Clone(page);
+                set.Select(scrollView)
+                    .LeftToLeft().TopToTop()
+                    .Width(FluentConstraintSet.SizeBehavier.MatchParent)
+                    .Height(FluentConstraintSet.SizeBehavier.MatchParent);
+                set.ApplyTo(page);
+            }
+            var BaseAlignTestPage = new ConstraintLayout()
+            {
+                BackgroundColor = UIColor.SystemPink,
+            };
+            scrollView.AddSubview(BaseAlignTestPage);
+            BaseAlignTestPage.AddElement(FirstButton);
+            using (var set = new FluentConstraintSet())
+            {
+                set.Clone(BaseAlignTestPage);
+                set.Select(BaseAlignTestPage)
+                    .MinWidth(100)
+                    .MinHeight(100)
+                    .Width(200)
+                    .Height(200)
+                    .Select(FirstButton)
+                    .LeftToLeft().RightToRight().TopToTop().BottomToBottom()
+                    .Width(FluentConstraintSet.SizeBehavier.WrapContent)
+                    .Height(FluentConstraintSet.SizeBehavier.WrapContent);
+                set.ApplyTo(BaseAlignTestPage);
+            }
+            //BaseAlignTest(BaseAlignTestPage);
+
         }
 
         private void createControls()

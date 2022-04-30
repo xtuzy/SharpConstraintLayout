@@ -43,7 +43,7 @@ public partial class MainPage : ContentPage
         FirstButton = new Button()
         {
             Text = "FirstButton",
-            Background = new SolidColorBrush(Colors.Red)
+            //Background = new SolidColorBrush(Colors.Red)
         };
 
         SecondButton = new Button()

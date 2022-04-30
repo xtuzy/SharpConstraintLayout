@@ -30,63 +30,32 @@ namespace SharpConstraintLayout.Maui.Widget
 
     /// <summary>
     /// <b>Added in 1.1</b>
-    /// <para>
+    /// <br/>
     /// A Barrier references multiple widgets as input, and creates a virtual guideline based on the most
     /// extreme widget on the specified side. For example, a left barrier will align to the left of all the referenced views.
-    /// </para>
-    /// <para>
+    /// <br/>
     /// <h2>Example</h2>
-    /// </para>
-    ///     <para><div align="center" >
-    ///       <img width="325px" src="resources/images/barrier-buttons.png">
-    ///     </div>
-    ///     Let's have two buttons, @id/button1 and @id/button2. The constraint_referenced_ids field will reference
-    ///     them by simply having them as comma-separated list:
-    ///     <pre>
-    ///     {@code
-    ///         <androidx.constraintlayout.widget.Barrier
-    ///              android:id="@+id/barrier"
-    ///              android:layout_width="wrap_content"
-    ///              android:layout_height="wrap_content"
-    ///              app:barrierDirection="start"
-    ///              app:constraint_referenced_ids="button1,button2" />
-    ///     }
-    ///     </pre>
-    /// </para>
-    ///     <para>
-    ///         With the barrier direction set to start, we will have the following result:
-    /// </para>
-    ///     <para><div align="center" >
-    ///       <img width="325px" src="resources/images/barrier-start.png">
-    ///     </div>
-    /// </para>
-    ///     <para>
-    ///         Reversely, with the direction set to end, we will have:
-    /// </para>
-    ///     <para><div align="center" >
-    ///       <img width="325px" src="resources/images/barrier-end.png">
-    ///     </div>
-    /// </para>
-    ///     <para>
-    ///         If the widgets dimensions change, the barrier will automatically move according to its direction to get
-    ///         the most extreme widget:
-    /// </para>
-    ///     <para><div align="center" >
-    ///       <img width="325px" src="resources/images/barrier-adapt.png">
-    ///     </div>
-    /// 
-    /// </para>
-    ///     <para>
-    ///         Other widgets can then be constrained to the barrier itself, instead of the individual widget. This allows a layout
-    ///         to automatically adapt on widget dimension changes (e.g. different languages will end up with different length for similar worlds).
-    ///     </para>
+    /// <see href="https://developer.android.com/reference/androidx/constraintlayout/widget/resources/images/barrier-buttons.png"/>
+    /// Let's have two buttons, @id/button1 and @id/button2. The constraint_referenced_ids field will reference
+    /// them by simply having them as comma-separated list:
+    /// <br/>
+    /// With the barrier direction set to start, we will have the following result:<see href="https://developer.android.com/reference/androidx/constraintlayout/widget/resources/images/barrier-start.png"/>
+    /// <br/>
+    /// Reversely, with the direction set to end, we will have:<see href="https://developer.android.com/reference/androidx/constraintlayout/widget/resources/images/barrier-end.png"/>
+    /// <br/>
+    /// If the widgets dimensions change, the barrier will automatically move according to its direction to get
+    /// the most extreme widget:<see href="https://developer.android.com/reference/androidx/constraintlayout/widget/resources/images/barrier-adapt.png"/>
+    /// <br/>
+    /// Other widgets can then be constrained to the barrier itself, instead of the individual widget. This allows a layout
+    /// to automatically adapt on widget dimension changes (e.g. different languages will end up with different length for similar worlds).
+    /// <br/>
     /// <h2>GONE widgets handling</h2>
-    /// <para>If the barrier references GONE widgets, the default behavior is to create a barrier on the resolved position of the GONE widget.
+    /// If the barrier references GONE widgets, the default behavior is to create a barrier on the resolved position of the GONE widget.
     /// If you do not want to have the barrier take GONE widgets into account, you can change this by setting the attribute <i>barrierAllowsGoneWidgets</i>
-    /// to false (default being true).</para>
-    ///     </p>
-    /// </p>
+    /// to false (default being true).
+    /// <br/>
     /// 
+    /// <see href="https://developer.android.com/reference/androidx/constraintlayout/widget/Barrier">androidx.constraintlayout.widget.Barrier</see>
     /// </summary>
     public class Barrier : ConstraintHelper, IBarrier
     {
@@ -130,13 +99,11 @@ namespace SharpConstraintLayout.Maui.Widget
         public Barrier() : base()
 #endif
         {
-            Visible = ConstraintSet.Gone;
+            this.SetViewVisibility(ConstraintSet.Gone);
         }
 
         /// <summary>
-        /// Get the barrier type ({@code Barrier.LEFT}, {@code Barrier.TOP},
-        /// {@code Barrier.RIGHT}, {@code Barrier.BOTTOM}, {@code Barrier.END},
-        /// {@code Barrier.START})
+        /// Get the barrier type (<see cref="Barrier.LEFT"/> ,<see cref="Barrier.TOP"/> ,<see cref="Barrier.RIGHT"/> ,<see cref="Barrier.BOTTOM"/>, <see cref="Barrier.Start"/>, <see cref="Barrier.End"/>)
         /// </summary>
         public virtual int Type
         {

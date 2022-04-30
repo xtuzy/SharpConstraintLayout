@@ -178,7 +178,9 @@ namespace SharpConstraintLayout.Maui.Widget
                     //将新的约束更新到ConstraintLayout的ConstraintSet中
                     var param = constraintLayout.mConstraintSet.Constraints[id];
                     param.layout.Validate();
-                    constraint.ApplyTo(param.layout);
+                    constraint.ApplyTo(param.layout);//Android源码ApplyTo是应用到Params,Params中具有负责View布局的属性,其中Margin,Width,Height是ViewGroup自带的,其他是ConstraintLayout中新增的,也就是说,这里使用ConstraintSet替代Params,需要添加ViewGroup的属性
+                    //设置原本在ViewGroup.Params中的属性
+                    view.SetSizeAndMargin(constraint.layout.mWidth, constraint.layout.mHeight, constraint.layout.matchConstraintMinWidth, constraint.layout.matchConstraintMinHeight, constraint.layout.matchConstraintMaxWidth, constraint.layout.matchConstraintMaxHeight, constraint.layout.leftMargin, constraint.layout.topMargin, constraint.layout.rightMargin, constraint.layout.bottomMargin);
 
                     if (view is Guideline)//不像Android一样用户提供指定约束是isGuideline就创建Guideline,必须通过Guideline控件实现
                     {

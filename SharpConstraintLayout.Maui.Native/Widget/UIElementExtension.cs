@@ -29,7 +29,7 @@ namespace SharpConstraintLayout.Maui.Widget
     /// <summary>
     /// For deal with platform difference
     /// </summary>
-    internal static class UIElementExtension
+    public static class UIElementExtension
     {
 
         /// <summary>
@@ -179,25 +179,79 @@ namespace SharpConstraintLayout.Maui.Widget
         public static (int Width, int Height) GetMeasuredSize(this UIElement element, androidx.constraintlayout.core.widgets.ConstraintWidget widget)
         {
             var (w, h) = GetWrapContentSize(element);
-            if (w <= 0) w = widget.Width;
-            if (h <= 0) h = widget.Height;
+            //if (w <= 0) w = widget.Width;
+            //if (h <= 0) h = widget.Height;
             return (w, h);
         }
 
-        public static void MeasureSelf(this UIElement element, int horizontalSpec, int verticalSpec)
+        public static (int measuredWidth, int measureWidth) MeasureSelf(this UIElement element, int horizontalSpec, int verticalSpec)
         {
-
+            int w;
+            int h;
 #if __MAUI__
-            int w = MeasureSpec.GetSize(horizontalSpec);
-            int h = MeasureSpec.GetSize(verticalSpec);
-            element.Measure(w, h);
+            w = MeasureSpec.GetSize(horizontalSpec);
+            h = MeasureSpec.GetSize(verticalSpec);
+            var sizeRequest = element.Measure(w, h);
+            w = GetDefaultSize((int)sizeRequest.Request.Width, horizontalSpec);
+            h = GetDefaultSize((int)sizeRequest.Request.Height, verticalSpec);
 #elif WINDOWS
-            int w = MeasureSpec.GetSize(horizontalSpec);
-            int h = MeasureSpec.GetSize(verticalSpec);
+            w = MeasureSpec.GetSize(horizontalSpec);
+            h = MeasureSpec.GetSize(verticalSpec);
             element.Measure(new Windows.Foundation.Size(w, h));
+            (w, h) = element.GetWrapContentSize();
+            w = GetDefaultSize(w, horizontalSpec);
+            h = GetDefaultSize(h, verticalSpec);
+#elif __IOS__
+            (w,h) = element.GetWrapContentSize();
+            w = GetDefaultSize(w, horizontalSpec);
+            h = GetDefaultSize(h, verticalSpec);
 #elif __ANDROID__
-            element.Measure(horizontalSpec, verticalSpec);
+            element.Measure(horizontalSpec, verticalSpec);//Android中的measure会根据大小和MeasureSpec来测量,最后会存储测量值,其它平台不知道怎么存储,所以全返回
+            w = element.MeasuredWidth;
+            h = element.MeasuredHeight;
 #endif
+            return (w, h);
+        }
+
+        /// <summary>
+        /// Utility to return a default size. Uses the supplied size if the
+        /// MeasureSpec imposed no constraints. Will get larger if allowed
+        /// by the MeasureSpec. <see href="https://developer.android.com/reference/android/view/View#getDefaultSize(int,%20int)">View.getDefaultSize</see>.<br/>
+        /// 另外参考：<see href="https://www.jianshu.com/p/d16ec64181f2"/>
+        /// 如果父控件传递给的MeasureSpec的mode是MeasureSpec.UNSPECIFIED，就说明，父控件对自己没有任何限制，那么尺寸就选择自己需要的尺寸size;<br/>
+        /// 如果父控件传递给的MeasureSpec的mode是MeasureSpec.EXACTLY，就说明父控件有明确的要求，希望自己能用measureSpec中的尺寸，这时就推荐使用MeasureSpec.getSize(measureSpec);<br/>
+        /// 如果父控件传递给的MeasureSpec的mode是MeasureSpec.AT_MOST，就说明父控件希望自己不要超出MeasureSpec.getSize(measureSpec)，如果超出了，就选择MeasureSpec.getSize(measureSpec)，否则用自己想要的尺寸就行了;<br/>
+        /// </summary>
+        /// <param name="size">Default size for this view</param>
+        /// <param name="measureSpec">Constraints imposed by the parent</param>
+        /// <returns>The size this view should be.</returns>
+
+        static int GetDefaultSize(int size, int measureSpec)
+        {
+            int result = size;
+            int specMode = MeasureSpec.GetMode(measureSpec);
+            int specSize = MeasureSpec.GetSize(measureSpec);
+
+            if (specMode == MeasureSpec.UNSPECIFIED)
+            {
+                result = size;
+            }
+            else if (specMode == MeasureSpec.AT_MOST)
+            {
+                if (specSize < size)
+                {
+                    result = specSize;
+                }
+                else
+                {
+                    result = size;
+                }
+            }
+            if (specMode == MeasureSpec.EXACTLY)
+            {
+                result = specSize;
+            }
+            return result;
         }
 
         public static UIElement GetParent(this FrameworkElement element)
@@ -213,7 +267,59 @@ namespace SharpConstraintLayout.Maui.Widget
 #endif
         }
 
-        public static void SetTransform(this UIElement element, ConstraintSet.Transform transform)
+        internal static void SetSizeAndMargin(this UIElement element, int width, int height, int minWidth, int minHeight, int maxWidth, int maxHeight, int left, int top, int right, int bottom)
+        {
+#if __MAUI__
+            if (width > 0)
+                element.WidthRequest = width;
+            if (height > 0)
+                element.HeightRequest = height;
+            if (minWidth > 0)
+                element.MinimumWidthRequest = minWidth;
+            if (minHeight > 0)
+                element.MinimumHeightRequest = minHeight;
+            if (maxWidth > 0)
+                element.MaximumWidthRequest = maxWidth;
+            if (maxHeight > 0)
+                element.MaximumHeightRequest = maxHeight;
+            element.Margin = new Thickness(left, top, right, bottom);
+#elif WINDOWS
+            var view = element as FrameworkElement;
+            if (width > 0)
+                view.Width = width;
+            if (height > 0)
+                view.Height = height;
+            if (minWidth > 0)
+                view.MinWidth = minWidth;
+            if (minHeight > 0)
+                view.MinHeight = minHeight;
+            if (maxWidth > 0)
+                view.MaxWidth = maxWidth;
+            if (maxHeight > 0)
+                view.MaxHeight = maxHeight;
+            view.Margin = new Microsoft.UI.Xaml.Thickness(left, top, right, bottom);
+#elif __IOS__
+            element.Frame = new CoreGraphics.CGRect(element.Frame.X, element.Frame.Y, width, height);
+            element.LayoutMargins = new UIEdgeInsets(top, left, bottom, right);
+#elif __ANDROID__
+            if (element.LayoutParameters == null)
+                element.LayoutParameters = new ViewGroup.MarginLayoutParams(width, height);
+            if (minWidth > 0)
+                element.SetMinimumWidth(minWidth);
+            if (minHeight > 0)
+                element.SetMinimumHeight(minHeight);
+            var layoutParams = (element.LayoutParameters as ViewGroup.MarginLayoutParams);
+            if (layoutParams != null)
+            {
+                layoutParams.LeftMargin = left;
+                layoutParams.TopMargin = top;
+                layoutParams.RightMargin = right;
+                layoutParams.BottomMargin = bottom;
+            }
+#endif
+        }
+
+        internal static void SetTransform(this UIElement element, ConstraintSet.Transform transform)
         {
             if (transform == null)
                 return;
@@ -292,7 +398,7 @@ namespace SharpConstraintLayout.Maui.Widget
 #endif
         }
 
-        public static void SetAlphaProperty(this UIElement element, ConstraintSet.PropertySet propertySet)
+        internal static void SetAlphaProperty(this UIElement element, ConstraintSet.PropertySet propertySet)
         {
             if (propertySet == null)
                 return;

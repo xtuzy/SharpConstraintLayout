@@ -40,37 +40,32 @@ namespace SharpConstraintLayout.Maui.Widget
     //using View = android.view.View;
 
     /// <summary>
-    /// Utility class representing a Guideline helper object for <seealso cref="ConstraintLayout"/>.
+    /// Utility class representing a Guideline helper object for <seealso cref="ConstraintLayout"/>.<br/>
     /// Helper objects are not displayed on device (they are marked as {@code View.GONE}) and are only used
     /// for layout purposes. They only work within a <seealso cref="ConstraintLayout"/>.
-    /// <para>
+    /// <br/>
     /// A Guideline can be either horizontal or vertical:
     /// <ul>
-    ///     <li>Vertical Guidelines have a width of zero and the height of their <seealso cref="ConstraintLayout"/> parent</li>
-    ///     <li>Horizontal Guidelines have a height of zero and the width of their <seealso cref="ConstraintLayout"/> parent</li>
+    ///     <li>Vertical Guidelines have a width of zero and the height of their <seealso cref="ConstraintLayout"/> parent</li><br/>
+    ///     <li>Horizontal Guidelines have a height of zero and the width of their <seealso cref="ConstraintLayout"/> parent</li><br/>
     /// </ul>
-    /// </para>
-    /// <para>
+    /// <br/>
     /// Positioning a Guideline is possible in three different ways:
     /// <ul>
-    ///     <li>specifying a fixed distance from the left or the top of a layout ({@code layout_constraintGuide_begin})</li>
-    ///     <li>specifying a fixed distance from the right or the bottom of a layout ({@code layout_constraintGuide_end})</li>
-    ///     <li>specifying a percentage of the width or the height of a layout ({@code layout_constraintGuide_percent})</li>
+    ///     <li>specifying a fixed distance from the left or the top of a layout ({@code layout_constraintGuide_begin})</li><br/>
+    ///     <li>specifying a fixed distance from the right or the bottom of a layout ({@code layout_constraintGuide_end})</li><br/>
+    ///     <li>specifying a percentage of the width or the height of a layout ({@code layout_constraintGuide_percent})</li><br/>
     /// </ul>
-    /// </para>
-    /// <para>
+    /// <br/>
     /// Widgets can then be constrained to a Guideline, allowing multiple widgets to be positioned easily from
     /// one Guideline, or allowing reactive layout behavior by using percent positioning.
-    /// </para>
-    /// <para>
+    /// <br/>
     /// See the list of attributes in <seealso cref="androidx.constraintlayout.widget.ConstraintLayout.LayoutParams"/> to set a Guideline
     /// in XML, as well as the corresponding <seealso cref="ConstraintSet.setGuidelineBegin"/>, <seealso cref="ConstraintSet.setGuidelineEnd"/>
     /// and <seealso cref="ConstraintSet.SetGuidelinePercent"/> functions in <seealso cref="ConstraintSet"/>.
-    /// </para>
-    /// <para>
-    /// Example of a {@code Button} constrained to a vertical {@code Guideline}:<br>
-    /// {@sample resources/examples/Guideline.xml Guideline}
-    /// </para>
+    /// <br/>
+    /// 
+    /// <see href="https://developer.android.com/reference/androidx/constraintlayout/widget/Guideline">androidx.constraintlayout.widget.Guideline</see>
     /// </summary>
     public class Guideline : FrameworkElement, IDisposable, IGuideline
     {

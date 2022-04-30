@@ -55,7 +55,7 @@ namespace SharpConstraintLayout.Maui.Widget
 
     /// <summary>
     /// ConstraintLayout is a AndroidX layout for <see
-    /// href="https://developer.android.com/reference/androidx/constraintlayout/widget/ConstraintLayout">google</see>.
+    /// href="https://developer.android.com/reference/androidx/constraintlayout/widget/ConstraintLayout">androidx.constraintlayout.widget.ConstraintLayout</see>.
     /// Now you can use it at iOS and WinUI, that means you can reuse some android layout code when
     /// use UIKit and WinUI. <br/>
     ///
@@ -130,7 +130,7 @@ namespace SharpConstraintLayout.Maui.Widget
             var id = element.GetId();
 
             //Add to three dictionary(Wighet,View,Constraints)
-            ConstraintWidget widget = CreateOrGetWidgetAndAddToLayout(id);
+            ConstraintWidget widget = GetOrAddWidgetById(id);
             mConstraintSet.Constraints.Add(id, new ConstraintSet.Constraint());
             mConstraintSet.GetConstraint(id).layout.mWidth = ConstraintSet.WrapContent;//@zhouyang Add:Default set WrapContent,it is more useful
             mConstraintSet.GetConstraint(id).layout.mHeight = ConstraintSet.WrapContent;
@@ -164,13 +164,13 @@ namespace SharpConstraintLayout.Maui.Widget
 
             var id = element.GetId();
             idToViews.Remove(id);
-            ConstraintWidget widget = CreateOrGetWidgetAndAddToLayout(id);
+            ConstraintWidget widget = GetOrAddWidgetById(id);
             idsToConstraintWidgets.Remove(id);
             if (element is ConstraintHelper)
                 mConstraintHelpers.Remove(element as ConstraintHelper);
         }
 
-        private ConstraintWidget CreateOrGetWidgetAndAddToLayout(int id)
+        private ConstraintWidget GetOrAddWidgetById(int id)
         {
             if (id == this.GetId() || id == ConstraintSet.ParentId)
             {
@@ -218,12 +218,19 @@ namespace SharpConstraintLayout.Maui.Widget
         {
             if (view == this)
                 return MLayoutWidget;
-            return this.idsToConstraintWidgets[view.GetId()];
+            var id = view.GetId();
+            if (this.idsToConstraintWidgets.ContainsKey(id))
+                return this.idsToConstraintWidgets[id];
+            else
+                return null;
         }
 
         public UIElement FindElementById(int id)
         {
-            return idToViews[id];
+            if (idToViews.ContainsKey(id))
+                return idToViews[id];
+            else
+                return null;
         }
 
         #endregion Get
@@ -782,7 +789,8 @@ namespace SharpConstraintLayout.Maui.Widget
                     if (container != null && Optimizer.enabled(outerInstance.mOptimizationLevel, Optimizer.OPTIMIZATION_CACHE_MEASURES))
                     {
                         var currentSize = child.GetWrapContentSize();
-                        if (currentSize.Width == widget.Width && currentSize.Width < container.Width && currentSize.Height == widget.Height && currentSize.Height < container.Height && (int)child.GetBaseline() == widget.BaselineDistance && !widget.MeasureRequested)
+                        if (currentSize.Width !!= 0 && //为0的强制测量,避免出错
+                            currentSize.Width == widget.Width && currentSize.Width < container.Width && currentSize.Height == widget.Height && currentSize.Height < container.Height && (int)child.GetBaseline() == widget.BaselineDistance && !widget.MeasureRequested)
                         // note: the container check replicates legacy behavior, but we might want
                         // to not enforce that in 3.0
                         {
@@ -824,6 +832,8 @@ namespace SharpConstraintLayout.Maui.Widget
                 int height = 0;
                 int baseline = 0;
 
+                int w = 0;
+                int h = 0;
                 if ((measure.measureStrategy == BasicMeasure.Measure.TRY_GIVEN_DIMENSIONS
                     || measure.measureStrategy == BasicMeasure.Measure.USE_GIVEN_DIMENSIONS)
                     || !(horizontalMatchConstraints
@@ -837,16 +847,16 @@ namespace SharpConstraintLayout.Maui.Widget
                         if (DEBUG) SimpleDebug.WriteLine($"{child.GetType().FullName} before onMeasure: widget={widget},spec=({MeasureSpec.GetSize(horizontalSpec)} x {MeasureSpec.GetSize(verticalSpec)})");
                         ((VirtualLayout)child).onMeasure(layout, horizontalSpec, verticalSpec);
                         if (DEBUG) SimpleDebug.WriteLine($"{child.GetType().FullName}  after onMeasure: widget={widget}");
+                        (w, h) = child.GetMeasuredSize(widget);
                     }
                     else
                     {
                         if (DEBUG) SimpleDebug.WriteLine($"{child.GetType().FullName}  before onMeasure: widget={widget},control={child.GetWrapContentSize()},spec=({AndroidMeasureSpec.GetSize(horizontalSpec)} x {AndroidMeasureSpec.GetSize(verticalSpec)})");
-                        child.MeasureSelf(horizontalSpec, verticalSpec);
+                        (w, h) = child.MeasureSelf(horizontalSpec, verticalSpec);
                         if (DEBUG) SimpleDebug.WriteLine($"{child.GetType().FullName}  after onMeasure: widget={widget},control={child.GetWrapContentSize()}");
                     }
                     widget.setLastMeasureSpec(horizontalSpec, verticalSpec);
 
-                    (int w, int h) = child.GetMeasuredSize(widget);//Windows中Measure后的高度应该是DesiredSize
                     baseline = (int)child.GetBaseline();
 
                     width = w;
@@ -855,7 +865,7 @@ namespace SharpConstraintLayout.Maui.Widget
                     if (DEBUG)
                     {
                         string measurement = $"spec ({AndroidMeasureSpec.ToString(horizontalSpec)} x {AndroidMeasureSpec.ToString(verticalSpec)}) => ({width} {height})";
-                        SimpleDebug.WriteLine($"{child.GetType().FullName} measure result: {measurement}");
+                        SimpleDebug.WriteLine($"{child.GetType().FullName} platform measure result: {measurement}");
                     }
 
                     if (widget.mMatchConstraintMinWidth > 0)
@@ -889,7 +899,11 @@ namespace SharpConstraintLayout.Maui.Widget
                             height = (int)(0.5f + width / ratio);
                         }
                     }
-
+                    /*
+                     * 这个步骤不理解:这里的意思是拿测量过后的值和最大最小的值对比得到的大小再次进行测量,取这次测量大小为最终大小.
+                     * 但问题是再次测量得到的值不能作为最终值(Windows),因为WrapContent测量得出来的还是第一次测量的值
+                     */
+#if __ANDROID__ && !__MAUI__
                     if (w != width || h != height)
                     {
                         if (w != width)
@@ -912,6 +926,7 @@ namespace SharpConstraintLayout.Maui.Widget
                             SimpleDebug.WriteLine("measure (b) " + widget.DebugName + " : " + measurement2);
                         }
                     }
+#endif
                 }
 
                 bool hasBaseline = baseline != -1;
@@ -926,14 +941,14 @@ namespace SharpConstraintLayout.Maui.Widget
                     measure.measuredNeedsSolverPass = true;
                 }
                 //在Windows中嵌套Stack Panel和具体数值时,发现设置StackPanel宽度为MatchParent不生效,依旧为WrapContent时的大小,我认为只有WrapContent的控件才需要自身Measure值,其他的ConstraintWidget会自己计算出
-                if (widget.HorizontalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.WRAP_CONTENT)
-                    measure.measuredWidth = width;
-                else
-                    measure.measuredWidth = widget.Width;
-                if (widget.VerticalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.WRAP_CONTENT)
-                    measure.measuredHeight = height;
-                else
-                    measure.measuredHeight = widget.Height;
+                //if (widget.HorizontalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.WRAP_CONTENT)
+                measure.measuredWidth = width;
+                //else
+                //    measure.measuredWidth = widget.Width;
+                //if (widget.VerticalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.WRAP_CONTENT)
+                measure.measuredHeight = height;
+                // else
+                //    measure.measuredHeight = widget.Height;
                 measure.measuredHasBaseline = hasBaseline;
                 measure.measuredBaseline = baseline;
                 if (MEASURE)

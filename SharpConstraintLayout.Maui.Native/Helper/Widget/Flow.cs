@@ -97,6 +97,8 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
     /// laid out in a set of rows and columns instead of chains. The attribute specifying chains
     /// style and bias are thus not going to be applied.
     /// <br/>
+    /// 
+    /// <see href="https://developer.android.com/reference/androidx/constraintlayout/helper/widget/Flow">androidx.constraintlayout.helper.widget.Flow</see>
     /// </summary>
     public class Flow : VirtualLayout, IFlow
     {

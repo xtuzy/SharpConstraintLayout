@@ -23,9 +23,73 @@ namespace SharpConstraintLayout.Maui.Native.Example
 {
     public partial class MainPage
     {
+        void PlaceholderTest(ConstraintLayout page)
+        {
+            Placeholder.IsEditMode = true;
+            Placeholder placeHolder = null;
+#if WINDOWS || __IOS__
+            placeHolder = new Placeholder();
+#elif __ANDROID__
+            placeHolder = new Placeholder(page.Context);
+#endif
+            page.AddElement(placeHolder, FifthTextBox);
+            placeHolder.SetContent(FifthTextBox);
+
+            using (var constraintSet = new FluentConstraintSet())
+            {
+                constraintSet.Clone(page);
+                constraintSet.Select(placeHolder)
+                    .CenterTo()
+                    .MinWidth(300).MinHeight(300)
+                    .Width(SizeBehavier.WrapContent).Height(SizeBehavier.WrapContent);
+                constraintSet.ApplyTo(page);
+            }
+        }
+
+        void GroupTest(ConstraintLayout page)
+        {
+            Group group = null;
+#if WINDOWS || __IOS__
+            group = new Group();
+#elif __ANDROID__
+            group = new Group(page.Context);
+#endif
+            page.AddElement(FirstButton, group, SecondButton, ThirdCanvas, FouthTextBlock);
+            group.AddElement(SecondButton);
+            group.AddElement(ThirdCanvas);
+            group.AddElement(FouthTextBlock);
+            using (var constraintSet = new FluentConstraintSet())
+            {
+                constraintSet.Clone(page);
+                constraintSet.Select(FirstButton).CenterTo()
+                    .Select(SecondButton).LeftToRight(FirstButton).CenterYTo(FirstButton)
+                    .Select(ThirdCanvas).RightToLeft(FirstButton).CenterYTo(FirstButton)
+                    .PercentWidth(0.2f).PercentWidth(0.3f)
+                    .Width(SizeBehavier.MatchConstraint).Height(SizeBehavier.MatchConstraint)
+                    .Select(FouthTextBlock).LeftToRight(FirstButton).TopToBottom(FirstButton);
+                constraintSet.ApplyTo(page);
+            }
+
+#if WINDOWS || __ANDROID__
+            FirstButton.Click += (s, e) =>
+#elif __IOS__
+            FirstButton.TouchUpInside += (s, e) =>
+#endif
+                        {
+                            if (group.Visible == ConstraintSet.Gone)
+                            {
+                                group.Visible = ConstraintSet.Visible;
+                            }
+                            else
+                            {
+                                group.Visible = ConstraintSet.Gone;
+                            }
+                        };
+        }
+
         void FlowPerformanceTest(ConstraintLayout page)
         {
-            int buttonCount = 50;
+            int buttonCount = 10;
 #if __ANDROID__
             var flow = new Flow(page.Context) { };
 #else
@@ -140,6 +204,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             }
 #endif
         }
+
         void CircleConstraintTest(ConstraintLayout page)
         {
             layout = page;
@@ -172,10 +237,6 @@ namespace SharpConstraintLayout.Maui.Native.Example
             });
         }
 
-        void ConstraintLayoutInPlatformLayoutTest(ConstraintLayout page)
-        {
-
-        }
         void PlatformLayoutInConstraintLayoutTest(ConstraintLayout page)
         {
 #if WINDOWS
@@ -242,14 +303,14 @@ namespace SharpConstraintLayout.Maui.Native.Example
             stackPanel.AddView(new Button(page.Context) { Text = "InStackPanel" });
             stackPanel.AddView(new TextView(page.Context) { Text = "InStackPanel" });
             stackPanel.AddView(new EditText(page.Context) { Text = "InStackPanel" });
-            var grid = new GridLayout(page.Context) {  };
+            var grid = new GridLayout(page.Context) { };
             page.AddElement(grid);
             grid.ColumnCount = 2;
             grid.RowCount = 2;
             grid.AddView(new TextView(page.Context) { Text = "InGrid", LayoutParameters = new GridLayout.LayoutParams(GridLayout.InvokeSpec(0, 1, 1), GridLayout.InvokeSpec(0, 1, 1)) });
             grid.AddView(new TextView(page.Context) { Text = "InGrid", LayoutParameters = new GridLayout.LayoutParams(GridLayout.InvokeSpec(0, 1, 1), GridLayout.InvokeSpec(1, 1, 1)) });
             grid.AddView(new TextView(page.Context) { Text = "InGrid", LayoutParameters = new GridLayout.LayoutParams(GridLayout.InvokeSpec(1, 1, 1), GridLayout.InvokeSpec(0, 1, 1)) });
-            grid.AddView(new EditText(page.Context) { Text = "InGrid" , LayoutParameters = new GridLayout.LayoutParams(GridLayout.InvokeSpec(1, 1, 1), GridLayout.InvokeSpec(1, 1, 1)) });
+            grid.AddView(new EditText(page.Context) { Text = "InGrid", LayoutParameters = new GridLayout.LayoutParams(GridLayout.InvokeSpec(1, 1, 1), GridLayout.InvokeSpec(1, 1, 1)) });
             var scrollView = new ScrollView(page.Context);
             page.AddElement(scrollView);
             scrollView.AddView(new LinearLayout(page.Context)
@@ -428,6 +489,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             };
 #endif
         }
+
         /// <summary>
         /// test nested layout warp content and it's child match parent
         /// </summary>
@@ -758,6 +820,46 @@ namespace SharpConstraintLayout.Maui.Native.Example
                     SimpleTest.AreEqual(page.GetBounds().Right, ThirdCanvas.GetBounds().Right, nameof(BaseAlignTest), "ThirdCanvas's Right should equal to page's Right");
                     SimpleTest.AreEqual(page.GetBounds().Top, ThirdCanvas.GetBounds().Top, nameof(BaseAlignTest), "ThirdCanvas's Top should equal to page's Top");
                     SimpleTest.AreEqual(page.GetBounds().Bottom, ThirdCanvas.GetBounds().Bottom, nameof(BaseAlignTest), "ThirdCanvas's Bottom should equal to page's Bottom");
+                }, page);
+            });
+        }
+
+        private void SizeTest(ConstraintLayout page)
+        {
+            page.AddElement(FirstButton, SecondButton, ThirdCanvas, FifthTextBox);
+            using (var layoutSet = new FluentConstraintSet())
+            {
+                layoutSet.Clone(page);
+                layoutSet
+                    .Select(FirstButton).CenterTo()
+                    .Select(SecondButton).LeftToLeft(FirstButton).TopToBottom(FirstButton)
+                    .MinWidth(200).MinHeight(100)
+                    .MaxHeight(200)
+                    .Width(100).Height(300)
+                    .Select(ThirdCanvas)
+                    .LeftToRight(FirstButton).RightToRight().TopToTop(FirstButton)
+                    .Width(SizeBehavier.MatchConstraint)
+                    .Height(SizeBehavier.MatchConstraint)
+                    .WHRatio("2:1")
+                    .Select(FifthTextBox)
+                    .LeftToLeft(FirstButton).BottomToTop(FirstButton)
+                    .MinWidth(100)
+                    .MaxWidth(200);
+                layoutSet.ApplyTo(page);
+            }
+
+            Task.Run(async () =>
+            {
+                await Task.Delay(3000);//wait UI change or show
+                UIThread.Invoke(() =>
+                {
+                    //SecondButton Height shound be equal to 200
+                    SimpleTest.AreEqual(200, SecondButton.GetSize().Height, nameof(SizeTest), "SecondButton's height should be 200");
+                    //SecondButton Width shound be equal to 200
+                    SimpleTest.AreEqual(200, SecondButton.GetSize().Width, nameof(SizeTest), "SecondButton's width should be 200");
+                    //The height of ThirdCanvas should be equal to the width of ThirdCanvas divided by 2
+                    SimpleTest.AreEqual(ThirdCanvas.GetSize().Width / 2, ThirdCanvas.GetSize().Height, nameof(SizeTest), "ThirdCanvas's height should be equal to ThirdCanvas's width divided by 2");
+
                 }, page);
             });
         }
