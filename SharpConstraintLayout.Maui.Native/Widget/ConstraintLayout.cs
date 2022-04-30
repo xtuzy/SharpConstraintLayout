@@ -692,7 +692,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 int widthPadding = paddingWidth;
 
                 var child = (UIElement)widget.CompanionWidget;
-
+                var childCurrentPlatformMeasuredSize = child.GetWrapContentSize();//Windows上DesireSize会随TextBox变化,iOS的ContentSize也会变,安卓的好像指挥先标记需要测量,之后MeasuredSize才变.这里放在最前面,是因为获取iOS的ContentSize可能需要计算,避免重复计算就放在最前.
                 switch (horizontalBehavior)
                 {
                     case ConstraintWidget.DimensionBehaviour.FIXED:
@@ -722,7 +722,7 @@ namespace SharpConstraintLayout.Maui.Widget
                                 // So in that case, we have to double-check the other side is stable (else we can't
                                 // just assume the wrap value will be correct).
                                 // bool otherDimensionStable = child.MeasuredHeight == widget.Height;//Windows中当前还未Measure,先使用Defalut DesiredSize尝试
-                                bool otherDimensionStable = child.GetWrapContentSize().Height == widget.Height;
+                                bool otherDimensionStable = childCurrentPlatformMeasuredSize.Height == widget.Height;
                                 bool useCurrent = measure.measureStrategy == BasicMeasure.Measure.USE_GIVEN_DIMENSIONS || !shouldDoWrap || (shouldDoWrap && otherDimensionStable) || (child is Placeholder) || (widget.ResolvedHorizontally);
                                 if (useCurrent)
                                 {
@@ -762,7 +762,7 @@ namespace SharpConstraintLayout.Maui.Widget
                                 // So in that case, we have to double-check the other side is stable (else we can't
                                 // just assume the wrap value will be correct).
                                 //bool otherDimensionStable = child.MeasuredWidth == widget.Width;//Windows中Measure后的高度应该是DesiredSize
-                                bool otherDimensionStable = child.GetWrapContentSize().Width == widget.Width;
+                                bool otherDimensionStable = childCurrentPlatformMeasuredSize.Width == widget.Width;
                                 bool useCurrent = measure.measureStrategy == BasicMeasure.Measure.USE_GIVEN_DIMENSIONS || !shouldDoWrap || (shouldDoWrap && otherDimensionStable) || (child is Placeholder) || (widget.ResolvedVertically);
                                 if (useCurrent)
                                 {
@@ -788,8 +788,8 @@ namespace SharpConstraintLayout.Maui.Widget
                     ConstraintWidgetContainer container = (ConstraintWidgetContainer)widget.Parent;
                     if (container != null && Optimizer.enabled(outerInstance.mOptimizationLevel, Optimizer.OPTIMIZATION_CACHE_MEASURES))
                     {
-                        var currentSize = child.GetWrapContentSize();
-                        if (currentSize.Width !!= 0 && //为0的强制测量,避免出错
+                        var currentSize = childCurrentPlatformMeasuredSize;
+                        if (currentSize.Width! != 0 && //为0的强制测量,避免出错
                             currentSize.Width == widget.Width && currentSize.Width < container.Width && currentSize.Height == widget.Height && currentSize.Height < container.Height && (int)child.GetBaseline() == widget.BaselineDistance && !widget.MeasureRequested)
                         // note: the container check replicates legacy behavior, but we might want
                         // to not enforce that in 3.0
@@ -846,13 +846,21 @@ namespace SharpConstraintLayout.Maui.Widget
                         androidx.constraintlayout.core.widgets.VirtualLayout layout = (androidx.constraintlayout.core.widgets.VirtualLayout)widget;
                         if (DEBUG) SimpleDebug.WriteLine($"{child.GetType().FullName} before onMeasure: widget={widget},spec=({MeasureSpec.GetSize(horizontalSpec)} x {MeasureSpec.GetSize(verticalSpec)})");
                         ((VirtualLayout)child).onMeasure(layout, horizontalSpec, verticalSpec);
-                        if (DEBUG) SimpleDebug.WriteLine($"{child.GetType().FullName}  after onMeasure: widget={widget}");
-                        (w, h) = child.GetMeasuredSize(widget);
+                        if (DEBUG) SimpleDebug.WriteLine($"{child.GetType().FullName}  after onMeasure: widget={widget},control={child.GetViewLayoutInfo()}");
+#if __IOS__ && !__MAUI__
+                        (w, h) = ((int)child.Bounds.Width, (int)child.Bounds.Height);//我在iOS的Flow中,将测量值存储到了Bounds
+#else
+                        (w, h) = child.GetWrapContentSize();
+#endif
                     }
                     else
                     {
                         if (DEBUG) SimpleDebug.WriteLine($"{child.GetType().FullName}  before onMeasure: widget={widget},control={child.GetWrapContentSize()},spec=({AndroidMeasureSpec.GetSize(horizontalSpec)} x {AndroidMeasureSpec.GetSize(verticalSpec)})");
+#if __IOS__ && !__MAUI__
+                        (w, h) = (UIElementExtension.GetDefaultSize(childCurrentPlatformMeasuredSize.Width, horizontalSpec), UIElementExtension.GetDefaultSize(childCurrentPlatformMeasuredSize.Height, verticalSpec));//iOS没有Measure函数,只需要使用当前的测量值即可
+#else
                         (w, h) = child.MeasureSelf(horizontalSpec, verticalSpec);
+#endif
                         if (DEBUG) SimpleDebug.WriteLine($"{child.GetType().FullName}  after onMeasure: widget={widget},control={child.GetWrapContentSize()}");
                     }
                     widget.setLastMeasureSpec(horizontalSpec, verticalSpec);

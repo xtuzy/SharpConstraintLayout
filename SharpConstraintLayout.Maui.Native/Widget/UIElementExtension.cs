@@ -156,7 +156,7 @@ namespace SharpConstraintLayout.Maui.Widget
 #elif __IOS__
             //此处有各种Size的对比:https://zhangbuhuai.com/post/auto-layout-part-1.html
             var (w, h) = ((int)element.IntrinsicContentSize.Width, (int)element.IntrinsicContentSize.Height);//有固有大小的控件
-            //iOS有些View的IntrinsicContentSize始终为-1,此时尝试使用SystemLayoutSizeFittingSize获得大小,但也可能获得0
+            //iOS有些View的IntrinsicContentSize始终为-1,此时尝试使用SystemLayoutSizeFittingSize获得AutoLayout约束大小,但也可能获得0
             if (w <= 0 || h <= 0)
             {
                 var size = element.SystemLayoutSizeFittingSize(UIView.UILayoutFittingCompressedSize);
@@ -168,20 +168,6 @@ namespace SharpConstraintLayout.Maui.Widget
 #elif __ANDROID__
             return (element.MeasuredWidth, element.MeasuredHeight);
 #endif
-        }
-
-        /// <summary>
-        /// 获取控件测量的大小,这个大小结合了ConstraintWidget被设置的大小
-        /// </summary>
-        /// <param name="element"></param>
-        /// <param name="widget"></param>
-        /// <returns></returns>
-        public static (int Width, int Height) GetMeasuredSize(this UIElement element, androidx.constraintlayout.core.widgets.ConstraintWidget widget)
-        {
-            var (w, h) = GetWrapContentSize(element);
-            //if (w <= 0) w = widget.Width;
-            //if (h <= 0) h = widget.Height;
-            return (w, h);
         }
 
         public static (int measuredWidth, int measureWidth) MeasureSelf(this UIElement element, int horizontalSpec, int verticalSpec)
@@ -202,7 +188,7 @@ namespace SharpConstraintLayout.Maui.Widget
             w = GetDefaultSize(w, horizontalSpec);
             h = GetDefaultSize(h, verticalSpec);
 #elif __IOS__
-            (w,h) = element.GetWrapContentSize();
+            (w, h) = element.GetWrapContentSize();
             w = GetDefaultSize(w, horizontalSpec);
             h = GetDefaultSize(h, verticalSpec);
 #elif __ANDROID__
@@ -226,7 +212,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <param name="measureSpec">Constraints imposed by the parent</param>
         /// <returns>The size this view should be.</returns>
 
-        static int GetDefaultSize(int size, int measureSpec)
+        internal static int GetDefaultSize(int size, int measureSpec)
         {
             int result = size;
             int specMode = MeasureSpec.GetMode(measureSpec);

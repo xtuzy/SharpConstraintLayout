@@ -107,7 +107,6 @@ namespace SharpConstraintLayout.Maui.Native.Example
             var buttonList = new List<Button>();
             for (int i = 0; i < buttonCount; i++)
             {
-
                 var button = new Button();
                 button.Content = "Button" + i;
                 buttonList.Add(button);
