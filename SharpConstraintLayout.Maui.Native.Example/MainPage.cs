@@ -89,7 +89,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
 
         void FlowPerformanceTest(ConstraintLayout page)
         {
-            int buttonCount = 10;
+            int buttonCount = 50;
 #if __ANDROID__
             var flow = new Flow(page.Context) { };
 #else

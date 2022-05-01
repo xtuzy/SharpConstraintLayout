@@ -137,7 +137,7 @@ namespace SharpConstraintLayout.Core.Benchmark
             flow.connect(ConstraintAnchor.Type.BOTTOM, root, ConstraintAnchor.Type.BOTTOM);
             flow.connect(ConstraintAnchor.Type.LEFT, root, ConstraintAnchor.Type.LEFT);
 
-            Console.WriteLine("Flow WRAP_CONTENT 水平居中");
+            //Console.WriteLine("Flow WRAP_CONTENT 水平居中");
             flow.HorizontalDimensionBehaviour = ConstraintWidget.DimensionBehaviour.WRAP_CONTENT;
             flow.connect(ConstraintAnchor.Type.RIGHT, root, ConstraintAnchor.Type.RIGHT);
 

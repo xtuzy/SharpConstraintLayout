@@ -15,7 +15,7 @@ namespace SharpConstraintLayout.Maui.Example
     {
         void FlowPerformanceTest(ConstraintLayout page)
         {
-            int buttonCount = 10;
+            int buttonCount = 50;
 
             var flow = new Flow() { };
 

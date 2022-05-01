@@ -45,7 +45,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             //PlatformLayoutInConstraintLayoutTest(Page);
             //ConstraintLayoutInPlatformLayoutTest(Page);//Bug
             //CircleConstraintTest(Page);
-            //FlowPerformanceTest(Page);
+            FlowPerformanceTest(Page);
             //WrapPanelPerformanceTest(Page);
             //GroupTest(Page);
             //PlaceholderTest(Page);

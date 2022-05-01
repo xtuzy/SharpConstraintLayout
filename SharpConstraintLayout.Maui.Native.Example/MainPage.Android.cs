@@ -23,7 +23,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
 
         public MainPage(Context? context) : base(context)
         {
-            ConstraintLayout.DEBUG = true;
+            ConstraintLayout.DEBUG = false;
             ConstraintLayout.MEASURE = true;
             Id = View.GenerateViewId();
             this.LayoutParameters = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent);

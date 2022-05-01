@@ -36,12 +36,6 @@
     <TrimMode>copyused</TrimMode>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU' and '$(TargetFramework)' == 'net6.0-android'">
-    <EmbedAssembliesIntoApk>False</EmbedAssembliesIntoApk>
-    <PublishTrimmed>False</PublishTrimmed>
-    <TrimMode>copyused</TrimMode>
-  </PropertyGroup>
-
   <ItemGroup>
     <!-- App Icon -->
     <MauiIcon Include="Resources\appicon.svg" ForegroundFile="Resources\appiconfg.svg" Color="#512BD4" />
@@ -67,7 +61,7 @@
   <ItemGroup>
     <!--use this you can "hotreload" when use pure code write ui-->
     <PackageReference Include="BenchmarkDotNet" Version="0.13.1" />
-    <PackageReference Include="ReloadPreview" Version="3.0.5" />
+    <PackageReference Include="ReloadPreview" Version="3.0.6" />
   </ItemGroup>
   <!--only ios and maccatalyst have these-->
   <ItemGroup Condition="'$(TargetFramework)'!= 'net6.0-ios' and '$(TargetFramework)' != 'net6.0-maccatalyst'">
