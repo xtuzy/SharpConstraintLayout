@@ -31,7 +31,7 @@ namespace SharpConstraintLayout.Maui.Widget
     using BasicMeasure = androidx.constraintlayout.core.widgets.analyzer.BasicMeasure;
 
 #if __MAUI__
-    using Panel = Microsoft.Maui.Controls.AbsoluteLayout;
+    using Panel = Microsoft.Maui.Controls.Layout;
     using UIElement = Microsoft.Maui.Controls.View;
     using Microsoft.Maui.Graphics;
 #elif WINDOWS
@@ -239,7 +239,7 @@ namespace SharpConstraintLayout.Maui.Widget
         bool isInfinityAvailabelSize = false;
         long measureTime = 0;
 
-        internal Size MeasureLayout(Size availableSize)
+        public Size MeasureLayout(Size availableSize)
         {
             if (DEBUG) SimpleDebug.WriteLine($"{nameof(MeasureLayout)} {this.GetType().FullName} {availableSize}");
             if (MEASURE)
@@ -551,7 +551,7 @@ namespace SharpConstraintLayout.Maui.Widget
 
         #region Layout
 
-        internal void ArrangeLayout()
+        public void ArrangeLayout()
         {
             //layout child
             foreach (ConstraintWidget child in mLayout.Children)

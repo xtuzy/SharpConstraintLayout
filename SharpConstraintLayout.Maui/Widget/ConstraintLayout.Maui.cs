@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using UIElement = Microsoft.Maui.Controls.View;
 namespace SharpConstraintLayout.Maui.Widget
 {
-    public partial class ConstraintLayout
+    public partial class ConstraintLayout : IConstraintLayout
     {
         public ConstraintLayout()
         {
@@ -56,25 +56,26 @@ namespace SharpConstraintLayout.Maui.Widget
 
         void LayoutChild(UIElement element, int x, int y, int w, int h)
         {
-            //element.Arrange(new Rect(x, y, w, h));
-            AbsoluteLayout.SetLayoutBounds(element, new Rect(x, y, w, h));
+            element.Arrange(new Rect(x, y, w, h));
+            //AbsoluteLayout.SetLayoutBounds(element, new Rect(x, y, w, h));
         }
-
         #endregion
+
+        public Size GetMLayoutWidgetSize() { return new Size(MLayoutWidget.Width, MLayoutWidget.Height); }
     }
 
-    internal class ConstraintLayoutManager : AbsoluteLayoutManager
+    internal class ConstraintLayoutManager : LayoutManager
     {
-        WeakReference<ConstraintLayout> Layout;
+        WeakReference<IConstraintLayout> Layout;
 
-        public ConstraintLayoutManager(IAbsoluteLayout absoluteLayout) : base(absoluteLayout)
+        public ConstraintLayoutManager(IConstraintLayout constraintLayout) : base(constraintLayout)
         {
-            Layout = new WeakReference<ConstraintLayout>(absoluteLayout as ConstraintLayout);
+            Layout = new WeakReference<IConstraintLayout>(constraintLayout);
         }
 
         public override Size Measure(double widthConstraint, double heightConstraint)
         {
-            base.Measure(widthConstraint, heightConstraint);
+            //base.Measure(widthConstraint, heightConstraint);
             Layout.TryGetTarget(out var layout);
             var size = layout.MeasureLayout(new Size(widthConstraint, heightConstraint));
 
@@ -84,16 +85,25 @@ namespace SharpConstraintLayout.Maui.Widget
         public override Size ArrangeChildren(Rect bounds)
         {
             Layout.TryGetTarget(out var layout);
-            if (bounds.Width != layout.MLayoutWidget.Width || bounds.Height != layout.MLayoutWidget.Height)
+            var layoutWidgwtSize = layout.GetMLayoutWidgetSize();
+            if (bounds.Width != layoutWidgwtSize.Width || bounds.Height != layoutWidgwtSize.Height)
             {
                 // We haven't received our desired size. We need to refresh the rows.
                 layout.MeasureLayout(bounds.Size);
             }
 
             layout.ArrangeLayout();
-            base.ArrangeChildren(bounds);
+            //base.ArrangeChildren(bounds);
             return bounds.Size;
         }
+    }
+
+    interface IConstraintLayout : Microsoft.Maui.ILayout
+    {
+        Size MeasureLayout(Size availableSize);
+        void ArrangeLayout();
+
+        Size GetMLayoutWidgetSize();
     }
 }
 #endif
