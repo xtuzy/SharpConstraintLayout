@@ -4,6 +4,8 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
+using SharpConstraintLayout.Maui.DebugTool;
+using SharpConstraintLayout.Maui.Native.Example.Tool;
 using SharpConstraintLayout.Maui.Widget;
 using System;
 using System.Collections.Generic;
@@ -27,8 +29,10 @@ namespace SharpConstraintLayout.Maui.Native.Example
 
         public MainPage()
         {
-            ConstraintLayout.DEBUG = false;
-            ConstraintLayout.MEASURE = true;
+            ConstraintLayout.DEBUG = true;
+            //ConstraintLayout.MEASURE_MEASURELAYOUT = true;
+            //ConstraintLayout.MEASUREEVERYWIDGET = true;
+            //ConstraintLayout.MEASUREEVERYCHILD = true;
 
             createControls();
             this.Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.HotPink);
@@ -36,7 +40,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             //baseAlignTest(this);
             //baselineTest(this); 
             //guidelineTest(this);
-            BarrierTest(this);//bug:text box have false length
+            //BarrierTest(this);//bug:text box have false length
             //VisibilityTest(this);
             //FlowTest(this);
             //NestedConstraintLayoutTest(this);
@@ -47,7 +51,86 @@ namespace SharpConstraintLayout.Maui.Native.Example
             //GroupTest(this);
             //PlaceholderTest(this);
             //SizeTest(this);
+            ConstraintLayoutInPlatformLayoutTest(this);
+        }
 
+        void ConstraintLayoutInPlatformLayoutTest(ConstraintLayout page)
+        {
+            var scrollView = new ScrollViewer()
+            {
+                Background = new SolidColorBrush(Colors.White),
+            };
+            page.AddElement(scrollView);
+
+            using (var set = new FluentConstraintSet())
+            {
+                set.Clone(page);
+                set.Select(scrollView)
+                    .LeftToLeft().TopToTop()
+                    .Width(FluentConstraintSet.SizeBehavier.MatchParent)
+                    .Height(FluentConstraintSet.SizeBehavier.MatchParent);
+                set.ApplyTo(page);
+            }
+
+            var firstConstraintLayoutPage = new ConstraintLayout()
+            {
+                Background = new SolidColorBrush(Colors.Pink),
+                ConstrainWidth = ConstraintSet.MatchParent,
+                ConstrainHeight = ConstraintSet.MatchParent,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
+                ConstrainPaddingLeft = 10,
+                ConstrainPaddingTop = 10,
+                ConstrainPaddingRight = 10,
+                ConstrainPaddingBottom = 10,
+            };
+
+            scrollView.Content = firstConstraintLayoutPage;
+            var firstConstraintLayoutPageBackground = new Canvas()
+            {
+                Background = new SolidColorBrush(Colors.Yellow),
+            };
+            
+            firstConstraintLayoutPage.AddElement(firstConstraintLayoutPageBackground);
+            firstConstraintLayoutPage.AddElement(FirstButton);
+            firstConstraintLayoutPage.AddElement(SecondButton);
+            firstConstraintLayoutPage.AddElement(ThirdCanvas);
+            firstConstraintLayoutPage.AddElement(FouthTextBlock);
+            firstConstraintLayoutPage.AddElement(FifthTextBox);
+            firstConstraintLayoutPage.AddElement(SixthRichTextBlock);
+
+            using (var set = new FluentConstraintSet())
+            {
+                set.Clone(firstConstraintLayoutPage);
+                set.Select(FirstButton)
+                    .TopToTop().CenterXTo()
+                    .Select(SecondButton).TopToBottom(FirstButton).CenterXTo()
+                    .Select(ThirdCanvas).TopToBottom(SecondButton).CenterXTo()
+                    .Width(FluentConstraintSet.SizeBehavier.MatchParent).Height(FluentConstraintSet.SizeBehavier.MatchParent)
+                    .Select(FouthTextBlock).TopToBottom(ThirdCanvas).CenterXTo()
+                    .Select(FifthTextBox).TopToBottom(FouthTextBlock).CenterXTo()
+                    .Select(SixthRichTextBlock).TopToBottom(FifthTextBox).CenterXTo()
+                    .Select(FirstButton, SecondButton, FouthTextBlock, FifthTextBox, SixthRichTextBlock)
+                    .Width(FluentConstraintSet.SizeBehavier.WrapContent)
+                    .Height(FluentConstraintSet.SizeBehavier.WrapContent)
+                    .Select(firstConstraintLayoutPageBackground)
+                    .EdgesTo()
+                    .Width(FluentConstraintSet.SizeBehavier.MatchConstraint)
+                    .Height(FluentConstraintSet.SizeBehavier.MatchConstraint);
+                set.ApplyTo(firstConstraintLayoutPage);
+            }
+
+            Task.Run(async () =>
+                  {
+                      await Task.Delay(3000);//wait ui show
+                      UIThread.Invoke(() =>
+                         {
+                             SimpleDebug.WriteLine("firstConstraintLayoutPage:" + firstConstraintLayoutPage.GetViewLayoutInfo());
+                             SimpleDebug.WriteLine("FirstButton:" + FirstButton.GetViewLayoutInfo());
+                             SimpleDebug.WriteLine("scrollView:" + scrollView.GetViewLayoutInfo());
+                             SimpleDebug.WriteLine("page:" + page.GetViewLayoutInfo());
+                         }, page);
+                  });
         }
 
         private void createControls()

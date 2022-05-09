@@ -37,7 +37,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// </summary>
         /// <param name="element"></param>
         /// <returns></returns>
-        public static float GetBaseline(this UIElement element)
+        public static int GetBaseline(this UIElement element, int elementHeight = 0)
         {
 #if __MAUI__
             //TODO
@@ -49,7 +49,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 baselineOffset = (element as TextBlock)?.BaselineOffset;
                 if (baselineOffset == null)
                     baselineOffset = (element as RichTextBlock)?.BaselineOffset;
-                return (float)baselineOffset;
+                return (int)baselineOffset;
             }
             else
             {
@@ -57,16 +57,16 @@ namespace SharpConstraintLayout.Maui.Widget
             }
 #elif __IOS__
             //https://stackoverflow.com/questions/35922215/how-to-calculate-uitextview-first-baseline-position-relatively-to-the-origin
-            if (element is UITextField || element is UITextView || element is UILabel || element is UIButton)
+            if (element is UITextField || element is UITextView || element is UILabel /* || element is UIButton*/)
             {
                 var fontMetrics = (element as UITextField)?.Font;
                 if (fontMetrics == null)
                     fontMetrics = (element as UITextView)?.Font;
-                if (fontMetrics == null)
-                    fontMetrics = (element as UIButton)?.TitleLabel?.Font;
+                /*if (fontMetrics == null)
+                    fontMetrics = (element as UIButton)?.TitleLabel?.Font;*/
                 if (fontMetrics == null)
                     fontMetrics = (element as UILabel)?.Font;
-                return (float)(element.IntrinsicContentSize.Height / 2 + (float)((fontMetrics.Descender - fontMetrics.Ascender) / 2 - fontMetrics.Descender));
+                return (int)(elementHeight / 2 + (float)((fontMetrics.Descender - fontMetrics.Ascender) / 2 - fontMetrics.Descender));
             }
             else
                 return ConstraintSet.Unset;
@@ -155,16 +155,29 @@ namespace SharpConstraintLayout.Maui.Widget
             return ((int)element.DesiredSize.Width, (int)element.DesiredSize.Height);
 #elif __IOS__
             //此处有各种Size的对比:https://zhangbuhuai.com/post/auto-layout-part-1.html
-            var (w, h) = ((int)element.IntrinsicContentSize.Width, (int)element.IntrinsicContentSize.Height);//有固有大小的控件
-            //iOS有些View的IntrinsicContentSize始终为-1,此时尝试使用SystemLayoutSizeFittingSize获得AutoLayout约束大小,但也可能获得0
-            if (w <= 0 || h <= 0)
+            //此处有AutoLayout中对各种Sizde的使用解释:https://www.jianshu.com/p/3a872a0bfe11
+
+            CGSize size = CGSize.Empty;
+            size = element.IntrinsicContentSize;//有固有大小的控件
+            //iOS有些View的IntrinsicContentSize始终为-1,例如UIView,UIStackView,此时尝试使用SystemLayoutSizeFittingSize获得AutoLayout约束大小,但也可能获得不正确的值
+            if (size.Width == UIView.NoIntrinsicMetric || size.Height == UIView.NoIntrinsicMetric)
             {
-                var size = element.SystemLayoutSizeFittingSize(UIView.UILayoutFittingCompressedSize);
-                w = (int)size.Width;
-                h = (int)size.Height;
-                if (ConstraintLayout.DEBUG) Debug.WriteLine($"{element.GetType().FullName} SystemLayoutSizeFittingSize: {size}");
+                var autoLayoutSize = element.SystemLayoutSizeFittingSize(UIView.UILayoutFittingCompressedSize);
+                if (size.Width == UIView.NoIntrinsicMetric)
+                    size.Width = autoLayoutSize.Width;
+                if (size.Height == UIView.NoIntrinsicMetric)
+                    size.Height = autoLayoutSize.Height;
             }
-            return (w, h);
+            //if (ConstraintLayout.DEBUG) Debug.WriteLine($"{element.GetType().FullName} IntrinsicContentSize: {element.IntrinsicContentSize}");
+            //if (ConstraintLayout.DEBUG) Debug.WriteLine($"{element.GetType().FullName} SystemLayoutSizeFittingSize: {element.SystemLayoutSizeFittingSize(UIView.UILayoutFittingCompressedSize)}");
+            //if (ConstraintLayout.DEBUG) Debug.WriteLine($"{element.GetType().FullName} Bounds: {element.Bounds}");
+            //以上在对比UITextField时发现有IntrinsicContentSize时,SystemLayoutSizeFittingSize一样有,IntrinsicContentSize变化时,后者也会变,而Bounds不会
+
+            if (size.Width < 5)//假定不正确的SystemLayoutSizeFittingSize都小于5,因为正常的控件大小至少比5dp要大
+                size.Width = 0;
+            if (size.Height < 5)
+                size.Height = 0;
+            return ((int)size.Width, (int)size.Height);
 #elif __ANDROID__
             return (element.MeasuredWidth, element.MeasuredHeight);
 #endif
@@ -285,11 +298,21 @@ namespace SharpConstraintLayout.Maui.Widget
                 view.MaxHeight = maxHeight;
             view.Margin = new Microsoft.UI.Xaml.Thickness(left, top, right, bottom);
 #elif __IOS__
-            element.Frame = new CoreGraphics.CGRect(element.Frame.X, element.Frame.Y, width, height);
+            //element.Frame = new CoreGraphics.CGRect(element.Frame.X, element.Frame.Y, width, height);
+            if (width > 0 && height > 0)
+                element.Frame = new CoreGraphics.CGRect(element.Frame.X, element.Frame.Y, width, height);
+            else if (width > 0)
+                element.Frame = new CoreGraphics.CGRect(element.Frame.X, element.Frame.Y, width, element.Frame.Height);
+            else if (height > 0)
+                element.Frame = new CoreGraphics.CGRect(element.Frame.X, element.Frame.Y, element.Frame.Width, height);
             element.LayoutMargins = new UIEdgeInsets(top, left, bottom, right);
 #elif __ANDROID__
             if (element.LayoutParameters == null)
-                element.LayoutParameters = new ViewGroup.MarginLayoutParams(width, height);
+                element.LayoutParameters = new ViewGroup.MarginLayoutParams(ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.WrapContent);
+            if (width > 0 || width == -1 || width == -2)//width==0是设置MatchConstraint,我没有在LayoutParams中实现,因此等于0作为不设置处理
+                element.LayoutParameters.Width = width;
+            if (height > 0 || height == -1 || height == -2)
+                element.LayoutParameters.Height = height;
             if (minWidth > 0)
                 element.SetMinimumWidth(minWidth);
             if (minHeight > 0)

@@ -17,6 +17,9 @@ using Android.Content;
 
 namespace SharpConstraintLayout.Maui.Widget
 {
+    /// <summary>
+    /// 设置child
+    /// </summary>
     public class FluentConstraintSet : ConstraintSet
     {
         public Element Select(params UIElement[] views)

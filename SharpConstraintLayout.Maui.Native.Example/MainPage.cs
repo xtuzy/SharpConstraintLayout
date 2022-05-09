@@ -148,7 +148,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
 
         void WrapPanelPerformanceTest(ConstraintLayout page)
         {
-            ConstraintLayout.MEASURE = false;
+            ConstraintLayout.MEASURE_MEASURELAYOUT = false;
             //WrapPanel.DEBUG = true;
             WrapPanel.MEASURE = true;
             int buttonCount = 50;
@@ -710,6 +710,9 @@ namespace SharpConstraintLayout.Maui.Native.Example
                     {
                         SimpleTest.AreEqual(FifthTextBox.GetBounds().Right, barrier.GetBounds().Left, nameof(BarrierTest), "Barrier position should equal to TextBox");
                         SimpleTest.AreEqual(ThirdCanvas.GetBounds().Left, barrier.GetBounds().Left, nameof(BarrierTest), "Canvas position should equal to Barrier");
+#if __IOS__
+                        SimpleTest.AreEqual(FifthTextBox.Subviews.Length, 0, nameof(BarrierTest), "FifthTextBox should not have subview");
+#endif
                     }, page);
 
                     index++;

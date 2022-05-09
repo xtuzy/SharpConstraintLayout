@@ -17,7 +17,7 @@ namespace SharpConstraintLayout.Maui.Widget
             init();
         }
 
-#region Add And Remove
+        #region Add And Remove
 
         public UIElement GetChildAt(int index)
         {
@@ -47,38 +47,29 @@ namespace SharpConstraintLayout.Maui.Widget
 
         public int ChildCount { get { return Children != null ? Children.Count : 0; } }
 
-#endregion
+        #endregion
 
         protected override Size MeasureOverride(Size availableSize)
         {
             /*
              * Analysis available size
              */
-            int availableWidth = 0;
-            int availableHeight = 0;
 
             //sometimes no fixsize
             if (double.IsPositiveInfinity(availableSize.Width))
             {
-                availableWidth = int.MaxValue; isInfinityAvailabelSize = true;
+                isInfinityAvailabelWidth = true;
             }
-            else
-                availableWidth = (int)availableSize.Width;
 
             if (double.IsPositiveInfinity(availableSize.Height))
             {
-                availableHeight = int.MaxValue;
-                isInfinityAvailabelSize = true;
-            }
-            else
-            {
-                availableHeight = (int)availableSize.Height;
+                isInfinityAvailabelHeight = true;
             }
 
-            return MeasureLayout(new Size(availableWidth, availableHeight));
+            return MeasureLayout(availableSize);
         }
 
-#region Layout
+        #region Layout
 
         protected override Size ArrangeOverride(Size finalSize)
         {
@@ -88,7 +79,7 @@ namespace SharpConstraintLayout.Maui.Widget
             if (finalSize.Width != MLayoutWidget.Width || finalSize.Height != MLayoutWidget.Height)
             {
                 // We haven't received our desired size. We need to refresh the rows.
-                MeasureLayout(finalSize);
+                finalSize = MeasureLayout(finalSize);
             }
 
             ArrangeLayout();
@@ -102,7 +93,7 @@ namespace SharpConstraintLayout.Maui.Widget
             element.Arrange(new Rect(x, y, w, h));
         }
 
-#endregion
+        #endregion
     }
 }
 #endif

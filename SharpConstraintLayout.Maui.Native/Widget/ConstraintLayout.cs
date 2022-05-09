@@ -52,6 +52,7 @@ namespace SharpConstraintLayout.Maui.Widget
     using AndroidMeasureSpec = SharpConstraintLayout.Maui.Widget.MeasureSpec;
     using SharpConstraintLayout.Maui.DebugTool;
     using SharpConstraintLayout.Maui.Widget.Interface;
+    using System.Diagnostics;
 
     /// <summary>
     /// ConstraintLayout is a AndroidX layout for <see
@@ -78,9 +79,11 @@ namespace SharpConstraintLayout.Maui.Widget
         /// </summary>
         public static bool DEBUG = false;
         /// <summary>
-        /// if is true,will print time of measure+layout spend.
+        /// if is true,will print time of measure spend.
         /// </summary>
-        public static bool MEASURE = false;
+        public static bool MEASURE_MEASURELAYOUT = false;
+        public static bool MEASUREEVERYWIDGET = false;
+        public static bool MEASUREEVERYCHILD = false;
 
         public static bool LOG = true;
 
@@ -235,16 +238,147 @@ namespace SharpConstraintLayout.Maui.Widget
 
         #endregion Get
 
-        #region Measure
-        bool isInfinityAvailabelSize = false;
-        long measureTime = 0;
+        #region LayoutProperty
+        /// <summary>
+        /// ConstraintLayout的内边距
+        /// </summary>
+        public int ConstrainPaddingTop { set; get; }
+        public int ConstrainPaddingBottom { set; get; }
+        public int ConstrainPaddingLeft { set; get; }
+        public int ConstrainPaddingRight { set; get; }
+        public int ConstrainPaddingStart { set; get; }
+        public int ConstrainPaddingEnd { set; get; }
 
-        public Size MeasureLayout(Size availableSize)
+        /// <summary>
+        /// Compute the padding width, taking in account RTL start/end padding if available and present.
+        /// <see cref="getPaddingWidth"/>
+        /// </summary>
+        /// <returns></returns>
+        private int PaddingWidth
         {
-            if (DEBUG) SimpleDebug.WriteLine($"{nameof(MeasureLayout)} {this.GetType().FullName} {availableSize}");
-            if (MEASURE)
+            get
             {
-                measureTime = DateTimeHelperClass.CurrentUnixTimeMillis();
+
+                int widthPadding = Math.Max(0, ConstrainPaddingRight) + Math.Max(0, ConstrainPaddingLeft);
+                int rtlPadding = 0;
+
+                if (ISSUPPORTRTLPLATFORM)
+                {
+                    rtlPadding = Math.Max(0, ConstrainPaddingStart) + Math.Max(0, ConstrainPaddingEnd);
+                }
+                if (rtlPadding > 0)
+                {
+                    widthPadding = rtlPadding;
+                }
+
+                return widthPadding;
+            }
+        }
+
+        private int mMinWidth = 0;
+        private int mMinHeight = 0;
+        private int mMaxWidth = int.MaxValue;
+        private int mMaxHeight = int.MaxValue;
+
+        public int ConstrainMinWidth
+        {
+            get => mMinWidth;
+            set
+            {
+                if (value == mMinWidth)
+                    return;
+                mMinWidth = value;
+                RequestReLayout();
+            }
+        }
+
+        public int ConstrainMinHeight
+        {
+            get => mMinHeight;
+            set
+            {
+                if (value == mMinHeight)
+                    return;
+                mMinHeight = value;
+                RequestReLayout();
+            }
+        }
+
+        public int ConstrainMaxWidth
+        {
+            get => mMaxWidth;
+            set
+            {
+                if (value == mMaxWidth)
+                    return;
+                mMaxWidth = value;
+                RequestReLayout();
+            }
+        }
+
+        public int ConstrainMaxHeight
+        {
+            get => mMaxHeight;
+            set
+            {
+                if (value == mMaxHeight)
+                    return;
+                mMaxHeight = value;
+                RequestReLayout();
+            }
+        }
+
+        /// <summary>
+        /// 约束自身的大小,可能会与父布局产生冲突
+        /// </summary>
+        public int ConstrainHeight
+        {
+            get
+            {
+                return this.mConstraintSet.GetConstraint(this.GetId()).layout.mHeight;
+            }
+            set
+            {
+                if (value > 0)
+                {
+                    this.SetSizeAndMargin(0, value, 0, 0, 0, 0, 0, 0, 0, 0);
+                }
+                this.mConstraintSet.GetConstraint(this.GetId()).layout.mHeight = value;
+                this.mConstraintSet.IsChanged = true;
+            }
+        }
+
+        public int ConstrainWidth
+        {
+            get
+            {
+                return this.mConstraintSet.GetConstraint(this.GetId()).layout.mWidth;
+            }
+            set
+            {
+                if (value > 0)
+                {
+                    this.SetSizeAndMargin(value, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+                }
+                this.mConstraintSet.GetConstraint(this.GetId()).layout.mWidth = value;
+                this.mConstraintSet.IsChanged = true;
+            }
+        }
+
+        #endregion LayoutProperty
+
+        #region Measure
+        bool isInfinityAvailabelWidth = false;
+        bool isInfinityAvailabelHeight = false;
+
+        public Size MeasureLayout(Size availableSize, int horizontalSpec = 0, int verticalSpec = 0)
+        {
+            Stopwatch updateHierarchySW = null;
+
+            if (MEASURE_MEASURELAYOUT)
+            {
+                updateHierarchySW = new Stopwatch();
+                updateHierarchySW.Start();
             }
 
             //Update Constraints to wigets
@@ -263,22 +397,40 @@ namespace SharpConstraintLayout.Maui.Widget
                 mConstraintSet.IsChanged = false;
             }
 
+            if (MEASURE_MEASURELAYOUT)
+            {
+                updateHierarchySW.Stop();
+                SimpleDebug.WriteLine($"{this} updateHierarchy time: {updateHierarchySW.Elapsed.TotalMilliseconds.ToString("0.000")} ms");
+            }
+
+#if !(__ANDROID__ && !__MAUI__)//Android不需要分析该布局的Spec
+
             //If a direction available value and we need MATCH_PARENT, that always generate mistake result, so we not accept it. please modify constraint.
-            if (isInfinityAvailabelSize && (MLayoutWidget.HorizontalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.MATCH_PARENT || MLayoutWidget.VerticalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.MATCH_PARENT))
+            if ((isInfinityAvailabelWidth && MLayoutWidget.HorizontalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.MATCH_PARENT) || (isInfinityAvailabelHeight && MLayoutWidget.VerticalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.MATCH_PARENT))
             {
                 var errorStr = $"ConstraintLayout's parent {this.GetParent()} gived ConstraintLayout a infinity size, you set ConstraintLayout have MATCH_PARENT size, ConstraintLayout can't generate correct result.";
-                throw new InvalidOperationException(errorStr);
+                Trace.WriteLine(errorStr, "Error");
+                //throw new InvalidOperationException(errorStr);
             }
 
             int availableWidth = (int)availableSize.Width;
             int availableHeight = (int)availableSize.Height;
 
+            if (isInfinityAvailabelWidth)
+            {
+                availableWidth = int.MaxValue;
+            }
+
+            if (isInfinityAvailabelHeight)
+            {
+                availableHeight = int.MaxValue;
+            }
+
             int horizontalDimension = availableWidth;
             int verticalDimension = availableHeight;
-
-            int horizontalSpec = 0;
-            int verticalSpec = 0;
-
+            /*
+             * Android中Spec的制作:ScrollView传入的高是UNSPECIFIED,高度有具体数值.
+             */
             switch (MLayoutWidget.HorizontalDimensionBehaviour)
             {
                 case ConstraintWidget.DimensionBehaviour.FIXED:
@@ -290,19 +442,21 @@ namespace SharpConstraintLayout.Maui.Widget
                         horizontalSpec = AndroidMeasureSpec.MakeMeasureSpec(horizontalDimension, AndroidMeasureSpec.EXACTLY);
                     }
                     break;
-                case ConstraintWidget.DimensionBehaviour.WRAP_CONTENT:
+                case ConstraintWidget.DimensionBehaviour.WRAP_CONTENT://WrapContent时,如果Window中Parent传入无限值,代表对此Layout大小没有限制,如果是确定数值,则代表有限制
                     {
-                        horizontalSpec = AndroidMeasureSpec.MakeMeasureSpec(horizontalDimension, AndroidMeasureSpec.AT_MOST);
+                        if (isInfinityAvailabelWidth)
+                            horizontalSpec = AndroidMeasureSpec.MakeMeasureSpec(horizontalDimension, AndroidMeasureSpec.UNSPECIFIED);//ScrollView的子View是UNSPECIFIED,Windouws中对应无限值
+                        else
+                            horizontalSpec = AndroidMeasureSpec.MakeMeasureSpec(horizontalDimension, AndroidMeasureSpec.AT_MOST);
                     }
                     break;
-                case ConstraintWidget.DimensionBehaviour.MATCH_PARENT:
-                    {
-                        horizontalSpec = AndroidMeasureSpec.MakeMeasureSpec(horizontalDimension, AndroidMeasureSpec.EXACTLY);
-                    }
-                    break;
+                case ConstraintWidget.DimensionBehaviour.MATCH_PARENT://MatchParent时,Parent最终都有固定大小,此Layout大小也就确定,所以此处使用EXACTLY
                 case ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT:
                     {
-                        horizontalSpec = AndroidMeasureSpec.MakeMeasureSpec(horizontalDimension, AndroidMeasureSpec.EXACTLY);
+                        if (isInfinityAvailabelWidth)
+                            horizontalSpec = AndroidMeasureSpec.MakeMeasureSpec(horizontalDimension, AndroidMeasureSpec.UNSPECIFIED);
+                        else
+                            horizontalSpec = AndroidMeasureSpec.MakeMeasureSpec(horizontalDimension, AndroidMeasureSpec.EXACTLY);
                     }
                     break;
             }
@@ -320,34 +474,50 @@ namespace SharpConstraintLayout.Maui.Widget
                     break;
                 case ConstraintWidget.DimensionBehaviour.WRAP_CONTENT:
                     {
-                        verticalSpec = AndroidMeasureSpec.MakeMeasureSpec(verticalDimension, AndroidMeasureSpec.AT_MOST);
+                        if (isInfinityAvailabelHeight)
+                            verticalSpec = AndroidMeasureSpec.MakeMeasureSpec(verticalDimension, AndroidMeasureSpec.UNSPECIFIED);//ScrollView的子View是UNSPECIFIED,Windouws中对应无限值
+                        else
+                            verticalSpec = AndroidMeasureSpec.MakeMeasureSpec(verticalDimension, AndroidMeasureSpec.AT_MOST);
                     }
                     break;
                 case ConstraintWidget.DimensionBehaviour.MATCH_PARENT:
-                    {
-                        verticalSpec = AndroidMeasureSpec.MakeMeasureSpec(verticalDimension, AndroidMeasureSpec.EXACTLY);
-                    }
-                    break;
                 case ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT:
                     {
-                        verticalSpec = AndroidMeasureSpec.MakeMeasureSpec(verticalDimension, AndroidMeasureSpec.EXACTLY);
+                        if (isInfinityAvailabelHeight)
+                            verticalSpec = AndroidMeasureSpec.MakeMeasureSpec(verticalDimension, AndroidMeasureSpec.UNSPECIFIED);//ScrollView的子View是UNSPECIFIED,Windouws中对应无限值
+                        else
+                            verticalSpec = AndroidMeasureSpec.MakeMeasureSpec(verticalDimension, AndroidMeasureSpec.EXACTLY);
                     }
                     break;
             }
 
+#endif
+
+            if (DEBUG) SimpleDebug.WriteLine($"{nameof(MeasureLayout)} {this.GetType().FullName} {availableSize} Spec=({AndroidMeasureSpec.ToString(horizontalSpec)} x {AndroidMeasureSpec.ToString(verticalSpec)})");
+
             MLayoutWidget.Rtl = isRtl();
+
+            Stopwatch resolveSystemSW = null;
+
+            if (MEASURE_MEASURELAYOUT)
+            {
+                resolveSystemSW = new Stopwatch();
+                resolveSystemSW.Start();
+            }
+
             resolveSystem(MLayoutWidget, mOptimizationLevel, horizontalSpec, verticalSpec);
+
+            if (MEASURE_MEASURELAYOUT)
+            {
+                resolveSystemSW.Stop();
+                SimpleDebug.WriteLine($"{this} resolveSystem time: {resolveSystemSW.Elapsed.TotalMilliseconds.ToString("0.000")} ms");
+            }
+
             resolveMeasuredDimension(horizontalSpec, verticalSpec, MLayoutWidget.Width, MLayoutWidget.Height,
                     MLayoutWidget.WidthMeasuredTooSmall, MLayoutWidget.HeightMeasuredTooSmall);
 
-            if (MEASURE)
-            {
-                measureTime = DateTimeHelperClass.CurrentUnixTimeMillis() - measureTime;
-                SimpleDebug.WriteLine($"ConstraintLayout {MLayoutWidget.DebugName} child ({ChildCount}) DONE onMeasure: ({AndroidMeasureSpec.ToString(horizontalSpec)} x {AndroidMeasureSpec.ToString(verticalSpec)}) => ({mLastMeasureWidth} x {mLastMeasureHeight}) , spend {measureTime}ms");
-            }
-
-            //windows需要返回值
-            return new Size(MLayoutWidget.Width, MLayoutWidget.Height);
+            //windows和iOS将返回值作为该Layout的大小
+            return new Size(mLastMeasureWidth, mLastMeasureHeight);
         }
 
         /// <summary>
@@ -386,20 +556,11 @@ namespace SharpConstraintLayout.Maui.Widget
                 resolvedHeightSize |= AndroidMeasureSpec.MEASURED_STATE_TOO_SMALL;
             }
 #if __ANDROID__ && !__MAUI__
-            SetMeasuredDimension(resolvedWidthSize, resolvedHeightSize);
+            SetMeasuredDimension(resolvedWidthSize, resolvedHeightSize);//存储大小到布局树,iOS通过设置Bounds,Windows通过返回大小
 #endif
             mLastMeasureWidth = resolvedWidthSize;
             mLastMeasureHeight = resolvedHeightSize;
         }
-
-        private int PaddingTop = 0;
-        private int PaddingBottom = 0;
-        private int PaddingLeft = 0;
-        private int PaddingRight = 0;
-        private int PaddingStart = 0;
-        private int PaddingEnd = 0;
-
-        private int PaddingWidth() => PaddingRight - PaddingLeft;
 
         // Cache last measure
         private int mLastMeasureWidth = -1;
@@ -424,16 +585,16 @@ namespace SharpConstraintLayout.Maui.Widget
             int heightMode = AndroidMeasureSpec.GetMode(heightMeasureSpec);
             int heightSize = AndroidMeasureSpec.GetSize(heightMeasureSpec);
 
-            int paddingY = Math.Max(0, PaddingTop);
-            int paddingBottom = Math.Max(0, PaddingBottom);
+            int paddingY = Math.Max(0, ConstrainPaddingTop);
+            int paddingBottom = Math.Max(0, ConstrainPaddingBottom);
             int paddingHeight = paddingY + paddingBottom;
-            int paddingWidth = PaddingWidth();
+            int paddingWidth = PaddingWidth;
             int paddingX;
             //传入布局的测量数据,用于测量child时
             mMeasurer.captureLayoutInfo(widthMeasureSpec, heightMeasureSpec, paddingY, paddingBottom, paddingWidth, paddingHeight);
 
-            int paddingStart = Math.Max(0, PaddingStart);
-            int paddingEnd = Math.Max(0, PaddingEnd);
+            int paddingStart = Math.Max(0, ConstrainPaddingStart);
+            int paddingEnd = Math.Max(0, ConstrainPaddingEnd);
             if (paddingStart > 0 || paddingEnd > 0)
             {
                 if (isRtl())
@@ -447,7 +608,7 @@ namespace SharpConstraintLayout.Maui.Widget
             }
             else
             {
-                paddingX = Math.Max(0, PaddingLeft);
+                paddingX = Math.Max(0, ConstrainPaddingLeft);
             }
 
             widthSize -= paddingWidth;
@@ -456,11 +617,6 @@ namespace SharpConstraintLayout.Maui.Widget
             setSelfDimensionBehaviour(layout, widthMode, widthSize, heightMode, heightSize);
             layout.measure(optimizationLevel, widthMode, widthSize, heightMode, heightSize, mLastMeasureWidth, mLastMeasureHeight, paddingX, paddingY);
         }
-
-        private int mMinWidth = 0;
-        private int mMinHeight = 0;
-        private int mMaxWidth = int.MaxValue;
-        private int mMaxHeight = int.MaxValue;
 
         protected void setSelfDimensionBehaviour(ConstraintWidgetContainer layout, int widthMode, int widthSize, int heightMode, int heightSize)
         {
@@ -619,7 +775,21 @@ namespace SharpConstraintLayout.Maui.Widget
 
             public virtual void measure(ConstraintWidget widget, BasicMeasure.Measure measure)
             {
+                Stopwatch sw = null;
+
+                if (MEASUREEVERYWIDGET)
+                {
+                    sw = new Stopwatch();
+                    sw.Start();
+                }
+
                 AndroidSourceCodeMeasureUseSpecForWindows(widget, measure);
+
+                if (MEASUREEVERYWIDGET)
+                {
+                    sw.Stop();
+                    SimpleDebug.WriteLine($"{widget.CompanionWidget} widget measure time: {sw.Elapsed.TotalMilliseconds.ToString("0.000")} ms");
+                }
             }
 
             public virtual void didMeasures()
@@ -671,14 +841,6 @@ namespace SharpConstraintLayout.Maui.Widget
                     return;
                 }
 
-                long startMeasure = 0;
-                long endMeasure = 0;
-
-                if (MEASURE)
-                {
-                    startMeasure = DateTimeHelperClass.nanoTime();
-                }
-
                 ConstraintWidget.DimensionBehaviour horizontalBehavior = measure.horizontalBehavior;
                 ConstraintWidget.DimensionBehaviour verticalBehavior = measure.verticalBehavior;
 
@@ -692,7 +854,22 @@ namespace SharpConstraintLayout.Maui.Widget
                 int widthPadding = paddingWidth;
 
                 var child = (UIElement)widget.CompanionWidget;
+
+                Stopwatch sw = null;
+                if (MEASUREEVERYCHILD)
+                {
+                    sw = new Stopwatch();
+                    sw.Start();
+                }
+
                 var childCurrentPlatformMeasuredSize = child.GetWrapContentSize();//Windows上DesireSize会随TextBox变化,iOS的ContentSize也会变,安卓的好像指挥先标记需要测量,之后MeasuredSize才变.这里放在最前面,是因为获取iOS的ContentSize可能需要计算,避免重复计算就放在最前.
+                var childCurrentPlatformBaseline = child.GetBaseline(childCurrentPlatformMeasuredSize.Height);//缓存Baseline为iOS
+                if (MEASUREEVERYCHILD)
+                {
+                    sw.Stop();
+                    SimpleDebug.WriteLine($"{widget.CompanionWidget} measure time: {sw.Elapsed.TotalMilliseconds.ToString("0.000")} ms");
+                }
+
                 switch (horizontalBehavior)
                 {
                     case ConstraintWidget.DimensionBehaviour.FIXED:
@@ -788,9 +965,12 @@ namespace SharpConstraintLayout.Maui.Widget
                     ConstraintWidgetContainer container = (ConstraintWidgetContainer)widget.Parent;
                     if (container != null && Optimizer.enabled(outerInstance.mOptimizationLevel, Optimizer.OPTIMIZATION_CACHE_MEASURES))
                     {
+
                         var currentSize = childCurrentPlatformMeasuredSize;
-                        if (currentSize.Width! != 0 && //为0的强制测量,避免出错
-                            currentSize.Width == widget.Width && currentSize.Width < container.Width && currentSize.Height == widget.Height && currentSize.Height < container.Height && (int)child.GetBaseline() == widget.BaselineDistance && !widget.MeasureRequested)
+                        if (currentSize.Width > 0 && //为0的强制测量,避免出错
+                            currentSize.Width == widget.Width && currentSize.Width < container.Width && currentSize.Height == widget.Height && currentSize.Height < container.Height &&
+                            childCurrentPlatformBaseline == widget.BaselineDistance
+                            && !widget.MeasureRequested)
                         // note: the container check replicates legacy behavior, but we might want
                         // to not enforce that in 3.0
                         {
@@ -869,7 +1049,11 @@ namespace SharpConstraintLayout.Maui.Widget
                     }
                     widget.setLastMeasureSpec(horizontalSpec, verticalSpec);
 
-                    baseline = (int)child.GetBaseline();
+#if __ANDROID__ && !__MAUI__
+                    baseline = child.GetBaseline();//Android重新测量后可能有新的Baseline,iOS和Windows在MeasureSelf前就确定了
+#else
+                    baseline = childCurrentPlatformBaseline;
+#endif
 
                     width = w;
                     height = h;
@@ -931,7 +1115,7 @@ namespace SharpConstraintLayout.Maui.Widget
 
                         widget.setLastMeasureSpec(horizontalSpec, verticalSpec);
                         (width, height) = child.GetWrapContentSize();//Windows中Measure后的高度应该是DesiredSize
-                        baseline = (int)child.GetBaseline();
+                        baseline = child.GetBaseline();
                         if (DEBUG)
                         {
                             string measurement2 = AndroidMeasureSpec.ToString(horizontalSpec) + " x " + AndroidMeasureSpec.ToString(verticalSpec) + " => " + width + " x " + height;
@@ -963,14 +1147,6 @@ namespace SharpConstraintLayout.Maui.Widget
                 //    measure.measuredHeight = widget.Height;
                 measure.measuredHasBaseline = hasBaseline;
                 measure.measuredBaseline = baseline;
-                if (MEASURE)
-                {
-                    endMeasure = DateTimeHelperClass.nanoTime();
-                    if (outerInstance.mMetrics != null)
-                    {
-                        outerInstance.mMetrics.measuresWidgetsDuration += (endMeasure - startMeasure);
-                    }
-                }
             }
 
             ///<summary>

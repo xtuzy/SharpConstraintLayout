@@ -10,6 +10,7 @@ using UIElement = UIKit.UIView;
 using CoreGraphics;
 using Size = CoreGraphics.CGSize;
 using Microsoft.Maui.Graphics;
+using UIKit;
 
 namespace SharpConstraintLayout.Maui.Widget
 {
@@ -80,6 +81,25 @@ namespace SharpConstraintLayout.Maui.Widget
         #endregion
 
         #region Measure And Layout
+        public override void UpdateConstraints()
+        {
+            if (DEBUG) Debug.WriteLine($"{Superview} Load ConstraintLayout UpdateConstraints");
+
+            base.UpdateConstraints();
+        }
+
+        public override CGRect Frame
+        {
+            get
+            {
+                return base.Frame;
+            }
+            set => base.Frame = value;
+        }
+        /// <summary>
+        /// DEBUG info will use IntrinsicContentSize, will have infinity loop, so set just use it at first time measure.
+        /// </summary>
+        bool isFirstTimeMeasure = true;
         /// <summary>
         /// Provide the size of the layout to parent
         /// </summary>
@@ -87,19 +107,64 @@ namespace SharpConstraintLayout.Maui.Widget
         {
             get
             {
-                if (DEBUG) Debug.WriteLine($"{Superview} Load ConstraintLayout IntrinsicContentSize");
-                if (this.Bounds.Size.Width <= 0)
+                if (DEBUG) Debug.WriteLine($"{Superview} Load ConstraintLayout IntrinsicContentSize:Bounds {this.Bounds}");
+                if (this.Bounds.Size.Width <= 5 && isFirstTimeMeasure)
                 {
-                    return base.IntrinsicContentSize;
+                    isFirstTimeMeasure = false;
+                    this.Bounds = new CGRect(this.Bounds.Location, MeasureSubviews());
                 }
                 return this.Bounds.Size;
             }
         }
 
-        public override Size SystemLayoutSizeFittingSize(Size size)
+        public CGSize MeasureSubviews()
         {
-            if (DEBUG) Debug.WriteLine($"{Superview} Load ConstraintLayout SystemLayoutSizeFittingSize");
-            return base.SystemLayoutSizeFittingSize(size);
+            /*
+            * layoutSubviews调用机制(链接：https://www.jianshu.com/p/915c7cc0e959)
+            * 1 直接调用setLayoutSubviews。
+            * 2 addSubview的时候触发layoutSubviews。
+            * 3 当view的frame发生改变的时候触发layoutSubviews。
+            * 4 第一次滑动UIScrollView的时候触发layoutSubviews。
+            * 5 旋转Screen会触发父UIView上的layoutSubviews事件。
+            * 6 改变一个UIView大小的时候也会触发父UIView上的layoutSubviews事件。
+           */
+            Size avaliableSize;
+            if (this.Frame.Size.Width > 0)//取自身的大小作为availableSize
+            {
+                //作为ConstraintLayout的子ConstraintLayout是肯定有大小的,而作为根布局也有大小
+                avaliableSize = this.Frame.Size;
+                if (Superview is UIScrollView && avaliableSize.Height == 0)//如果是UIScrollView并且高度为0,则代表高度可以无限值
+                {
+                    isInfinityAvailabelHeight = true;
+                    avaliableSize.Height = int.MaxValue;
+                }
+                if (DEBUG) Debug.WriteLine($"{this.GetType().Name} MeasureSubviews: Use Frame size={avaliableSize}");
+            }
+            else
+            {
+                //没有被父布局设置大小时,可能是使用了原生布局,也可能是使用了AutoLayout约束大小,如果都获取不到,那么取父布局的大小
+                avaliableSize = base.SystemLayoutSizeFittingSize(UIView.UILayoutFittingCompressedSize); ;
+                if (avaliableSize.Width <= 0 || avaliableSize.Height <= 0)
+                {
+                    //search all superview, until superview's size is not zero
+                    var superview = this.Superview;
+                    while (superview != null)
+                    {
+                        if (superview.Frame.Size.Width > 1 || superview.Frame.Size.Height > 1)//float maybe is 0.00~, so i use 1, layout should't be 1dp or 1px
+                        {
+                            avaliableSize = superview.Frame.Size;
+                            break;
+                        }
+                        superview = superview.Superview;
+                    }
+                    if (DEBUG) Debug.WriteLine($"{this.GetType().Name} MeasureSubviews: Use {superview} size={avaliableSize}");
+                }
+                else
+                    if (DEBUG) Debug.WriteLine($"{this.GetType().Name} MeasureSubviews: Use SystemLayoutSizeFittingSize size={avaliableSize}");
+
+            }
+
+            return MeasureLayout(avaliableSize);
         }
 
         /// <summary>
@@ -108,57 +173,19 @@ namespace SharpConstraintLayout.Maui.Widget
         /// </summary>
         public override void LayoutSubviews()
         {
-            //base.LayoutSubviews();
-            if (DEBUG) Debug.WriteLine($"{this.GetType().FullName} {nameof(LayoutSubviews)} Frame={this.Frame} Parent={Superview.GetType().FullName} Parents' Frame={this.Superview?.Frame}");
+            if (DEBUG) Debug.WriteLine($"{this.GetType().FullName} {nameof(LayoutSubviews)} Start: Frame={this.Frame} Parent={Superview.GetType().FullName} Parents' Frame={this.Superview?.Frame}");
 
-            /*
-             * layoutSubviews调用机制(链接：https://www.jianshu.com/p/915c7cc0e959)
-             * 1 直接调用setLayoutSubviews。
-             * 2 addSubview的时候触发layoutSubviews。
-             * 3 当view的frame发生改变的时候触发layoutSubviews。
-             * 4 第一次滑动UIScrollView的时候触发layoutSubviews。
-             * 5 旋转Screen会触发父UIView上的layoutSubviews事件。
-             * 6 改变一个UIView大小的时候也会触发父UIView上的layoutSubviews事件。
-            */
-
-            if (this.Frame.Size.Width > 0)//取自身的大小作为availableSize
-            {
-                //作为ConstraintLayout的子ConstraintLayout是肯定有大小的,而作为根布局也有大小
-                MeasureLayout(this.Frame.Size);
-            }
-            else
-            {
-                //没有被父布局设置大小时,可能是使用了原生布局,也可能是使用了AutoLayout约束大小,如果都获取不到,那么取父布局的大小
-                (var w, var h) = this.GetWrapContentSize();
-                if (w <= 0 || h <= 0)
-                {
-                    //search all superview, until superview's size is not zero
-                    var superview = this.Superview;
-                    while (superview != null)
-                    {
-                        if (superview.Frame.Size.Width > 1 || superview.Frame.Size.Height > 1)//float maybe is 0.00~, so i use 1, layout should't be 1dp or 1px
-                        {
-                            w = (int)superview.Frame.Width;
-                            h = (int)superview.Frame.Height;
-                            break;
-                        }
-                        superview = superview.Superview;
-                    }
-                    MeasureLayout(new Size(w, h));
-                }
-                else
-                {
-                    MeasureLayout(new Size(w, h));
-                }
-            }
-
-            if (DEBUG) Debug.WriteLine($"{this.GetType().FullName} {nameof(LayoutSubviews)} Widget={this.MLayoutWidget.ToString()}");
+            base.LayoutSubviews();
 
             //更新layout的大小, Layout不指定自身位置
-            if (this.Frame.Width != MLayoutWidget.Width || this.Frame.Height != MLayoutWidget.Height)
-                this.Bounds = new CGRect(this.Bounds.X, this.Bounds.Y, MLayoutWidget.Width, MLayoutWidget.Height);
-
+            var finalSize = MeasureSubviews();
+            if ((int)this.Frame.Width != (int)finalSize.Width || (int)this.Frame.Height != (int)finalSize.Height)//如果不一致代表父布局会获取到错误的大小,所以重新设置,这里不会刷新父布局
+            {
+                this.Bounds = new CGRect(this.Bounds.Location, finalSize);
+            }
             ArrangeLayout();
+
+            if (DEBUG) Debug.WriteLine($"{this.GetType().FullName} {nameof(LayoutSubviews)} Finish: Frame={this.Frame} Widget={this.MLayoutWidget.ToString()}");
         }
 
         private void LayoutChild(UIElement element, int x, int y, int w, int h)
@@ -174,6 +201,7 @@ namespace SharpConstraintLayout.Maui.Widget
         }
 
         #endregion
+
     }
 }
 #endif

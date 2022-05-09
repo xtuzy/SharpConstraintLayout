@@ -100,7 +100,7 @@ namespace SharpConstraintLayout.Maui.Widget
 
     interface IConstraintLayout : Microsoft.Maui.ILayout
     {
-        Size MeasureLayout(Size availableSize);
+        Size MeasureLayout(Size availableSize, int horizontalSpec = 0, int verticalSpec = 0);
         void ArrangeLayout();
 
         Size GetMLayoutWidgetSize();
