@@ -20,35 +20,22 @@ namespace SharpConstraintLayout.Maui.Widget
 {
 
     /// <summary>
-    /// Control the visibility and elevation of the referenced views
+    /// Control the visibility and elevation of the referenced views.<b>Added in 1.1</b>
+    /// <br/>
+    /// This class controls the visibility of a set of referenced widgets.
+    /// Widgets are referenced by being added to a comma separated list of ids, e.g:<code>group.Visiable = ConstraintSet.Gone</code>
+    /// <br/>
+    /// The visibility of the group will be applied to the referenced widgets.
+    /// It's a convenient way to easily hide/show a set of widgets without having to maintain this set
+    /// programmatically.
+    /// <br/>
+    /// <h2>Multiple groups</h2>
+    /// <br/>
+    /// Multiple groups can reference the same widgets -- in that case, the XML declaration order will
+    /// define the final visibility state (the group declared last will have the last word).
+    /// <br/>
     /// 
-    /// <b>Added in 1.1</b>
-    /// <para>
-    ///     This class controls the visibility of a set of referenced widgets.
-    ///     Widgets are referenced by being added to a comma separated list of ids, e.g:
-    ///     <pre>
-    ///     {@code
-    ///          <androidx.constraintlayout.widget.Group
-    ///              android:id="@+id/group"
-    ///              android:layout_width="wrap_content"
-    ///              android:layout_height="wrap_content"
-    ///              android:visibility="visible"
-    ///              app:constraint_referenced_ids="button4,button9" />
-    ///     }
-    ///     </pre>
-    /// </para>
-    ///     <para>
-    ///         The visibility of the group will be applied to the referenced widgets.
-    ///         It's a convenient way to easily hide/show a set of widgets without having to maintain this set
-    ///         programmatically.
-    /// </para>
-    ///     <para>
-    ///     <h2>Multiple groups</h2>
-    /// </para>
-    ///     <para>
-    ///         Multiple groups can reference the same widgets -- in that case, the XML declaration order will
-    ///         define the final visibility state (the group declared last will have the last word).
-    /// </para>
+    /// <see href="https://developer.android.com/reference/androidx/constraintlayout/widget/Group">androidx.constraintlayout.widget.Group</see>
     /// </summary>
     public class Group : ConstraintHelper, IGroup
     {
@@ -72,20 +59,20 @@ namespace SharpConstraintLayout.Maui.Widget
             applyLayoutFeatures();
         }
 
-        public override int Visible
+        public override int ConstrainVisibility
         {
             set
             {
-                base.Visible = value;
+                base.ConstrainVisibility = value;
                 applyLayoutFeatures();
             }
         }
 
-        public override float Elevation
+        public override float ConstrainElevation
         {
             set
             {
-                base.Elevation = value;
+                base.ConstrainElevation = value;
                 applyLayoutFeatures();
             }
         }

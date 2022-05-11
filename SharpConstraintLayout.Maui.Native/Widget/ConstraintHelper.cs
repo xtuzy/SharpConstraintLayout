@@ -32,7 +32,7 @@ namespace SharpConstraintLayout.Maui.Widget
     using FrameworkElement = Microsoft.Maui.Controls.View;
     using UIElement = Microsoft.Maui.Controls.View;
 #elif WINDOWS
-     using Panel = Microsoft.UI.Xaml.FrameworkElement;
+    using Panel = Microsoft.UI.Xaml.FrameworkElement;
     using FrameworkElement = Microsoft.UI.Xaml.FrameworkElement;
     using UIElement = Microsoft.UI.Xaml.UIElement;
 
@@ -41,7 +41,7 @@ namespace SharpConstraintLayout.Maui.Widget
     using Windows.Foundation;
     using SharpConstraintLayout.Maui.Widget.Interface;
 #elif __IOS__
-     using Panel= UIKit.UIView;
+    using Panel = UIKit.UIView;
     using FrameworkElement = UIKit.UIView;
     using UIElement = UIKit.UIView;
 #elif __ANDROID__
@@ -53,24 +53,13 @@ namespace SharpConstraintLayout.Maui.Widget
     /// <summary>
     /// @suppress
     /// <b>Added in 1.1</b>
-    /// <para>
+    /// <br/>
     ///     This class manages a set of referenced widgets. HelperWidget objects can be created to act upon the set
     ///     of referenced widgets. The difference between {@code ConstraintHelper} and {@code ViewGroup} is that
     ///     multiple {@code ConstraintHelper} can reference the same widgets.
-    /// </para>
-    /// <para>
+    /// <br/>
     ///     Widgets are referenced by being added to a comma separated list of ids, e.g:
-    ///     <pre>
-    ///     {@code
-    ///         <androidx.constraintlayout.widget.Barrier
-    ///              android:id="@+id/barrier"
-    ///              android:layout_width="wrap_content"
-    ///              android:layout_height="wrap_content"
-    ///              app:barrierDirection="start"
-    ///              app:constraint_referenced_ids="button1,button2" />
-    ///     }
-    ///     </pre>
-    /// </para>
+    /// <br/>
     /// </summary>
     public abstract partial class ConstraintHelper : Panel, IConstraintHelper
     {
@@ -107,7 +96,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// The view also need to have its id set in order to be added.
         /// </summary>
         /// <param name="view"> </param>
-        public virtual void AddElement(FrameworkElement view)
+        public virtual void ReferenceElement(FrameworkElement view)
         {
 
             if (view == this)
@@ -310,7 +299,7 @@ namespace SharpConstraintLayout.Maui.Widget
         protected internal virtual void applyLayoutFeatures(ConstraintLayout container)
         {
             //var visibility = this.Visibility;//平台有差异,以Widget为准
-            var visibility = (this.mHelperWidget as ConstraintWidget).Visibility;
+            var visibility = container.mConstraintSet.GetConstraint(this.GetId()).propertySet.visibility;
 
             for (int i = 0; i < mCount; i++)
             {
@@ -319,7 +308,6 @@ namespace SharpConstraintLayout.Maui.Widget
                 if (view != null)
                 {
                     UIElementExtension.SetViewVisibility(view, visibility);
-
                 }
             }
         }
@@ -516,22 +504,30 @@ namespace SharpConstraintLayout.Maui.Widget
         /// ConstraintSet.VISIBLE,GONE,INVISIBLE
         /// </summary>
         int visible;
+
         /// <summary>
-        /// 替代平台的Visibility和Hiden,不建议使用,没有更新到Constraint,不会被Clone,请使用ConstraintSet设置Visibility
+        /// 替代平台的Visibility和Hiden.请在设置ConstraintSet后使用.
         /// </summary>
-        public virtual int Visible
+        public virtual int ConstrainVisibility
         {
             set
             {
+                //让PlatformView改变可见性
                 UIElementExtension.SetViewVisibility(this, value);
-                (this.mHelperWidget as ConstraintWidget).Visibility = value;//更新到Widget
+                //存储新的到ConstraintSet
+                if (this.GetParent() != null)
+                    (this.GetParent() as ConstraintLayout).mConstraintSet.GetConstraint(this.GetId()).propertySet.visibility = value;//更新到Widget
                 visible = value;
             }
             get { return visible; }
         }
 
         float elevation;
-        public virtual float Elevation
+
+        /// <summary>
+        /// TODO:Platform不一定有高程,所以未开启该属性.
+        /// </summary>
+        public virtual float ConstrainElevation
         {
             set { elevation = value; }
             get { return elevation; }

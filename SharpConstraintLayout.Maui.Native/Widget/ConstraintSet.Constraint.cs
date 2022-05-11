@@ -200,9 +200,9 @@ namespace SharpConstraintLayout.Maui.Widget
                 {
                     layout.mHelperType = BARRIER_TYPE;
                     Barrier barrier = (Barrier)helper;
-                    layout.mBarrierDirection = barrier.Type;
+                    layout.mBarrierDirection = barrier.ConstrainType;
                     layout.mReferenceIds = barrier.ReferencedIds;
-                    layout.mBarrierMargin = barrier.Margin;
+                    layout.mBarrierMargin = barrier.ConstrainMargin;
                 }
             }
 

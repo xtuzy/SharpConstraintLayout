@@ -79,7 +79,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 if (parent is ConstraintLayout)
                 {
                     ConstraintLayout container = (ConstraintLayout)parent;
-                    int visibility = Visible;
+                    int visibility = ConstrainVisibility;
                     float elevation = 0;
 
                     for (int i = 0; i < mCount; i++)
@@ -90,7 +90,7 @@ namespace SharpConstraintLayout.Maui.Widget
                         {
                             if (mApplyVisibilityOnAttach)
                             {
-                                Visible = visibility;
+                                ConstrainVisibility = visibility;
                             }
                         }
                     }
@@ -105,11 +105,11 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <summary>
         /// @suppress
         /// </summary>
-        public override int Visible
+        public override int ConstrainVisibility
         {
             set
             {
-                base.Visible = value;
+                base.ConstrainVisibility = value;
                 applyLayoutFeatures();
             }
 

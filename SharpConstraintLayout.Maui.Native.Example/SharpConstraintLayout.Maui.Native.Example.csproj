@@ -30,6 +30,7 @@
     <SupportedOSPlatformsVersion Condition="'$(TargetFramework)' == 'net6.0-android'">21.0</SupportedOSPlatformsVersion>
     <SupportedOSPlatformsVersion Condition="$(TargetFramework.Contains('-windows'))">10.0.17763.0</SupportedOSPlatformsVersion>
     <TargetPlatformsMinVersion Condition="$(TargetFramework.Contains('-windows'))">10.0.17763.0</TargetPlatformsMinVersion>
+    <MtouchDebug>True</MtouchDebug>
   </PropertyGroup>
   <!--Copy form android template, deploy to device need EmbedAssembliesIntoApk = false -->
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU' and '$(TargetFramework)' == 'net6.0-android'">

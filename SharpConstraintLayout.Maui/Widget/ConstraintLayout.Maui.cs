@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using UIElement = Microsoft.Maui.Controls.View;
 namespace SharpConstraintLayout.Maui.Widget
 {
-    public partial class ConstraintLayout
+    public partial class ConstraintLayout : IMauiConstraintLayout
     {
         public ConstraintLayout()
         {
@@ -49,6 +49,21 @@ namespace SharpConstraintLayout.Maui.Widget
 
         #region Layout
 
+        public (bool isInfinityAvailabelWidth, bool isInfinityAvailabelHeight) IsInfinitable(ConstraintLayout layout, int constrainWidth, int constrainHeight, Size availableSize)
+        {
+            bool isInfinityAvailabelWidth = false;
+            bool isInfinityAvailabelHeight = false;
+            if (double.IsPositiveInfinity(availableSize.Width))
+            {
+                isInfinityAvailabelWidth = true;
+            }
+
+            if (double.IsPositiveInfinity(availableSize.Height))
+            {
+                isInfinityAvailabelHeight = true;
+            }
+            return (isInfinityAvailabelWidth, isInfinityAvailabelHeight);
+        }
         protected override ILayoutManager CreateLayoutManager()
         {
             return new ConstraintLayoutManager(this);
@@ -56,44 +71,61 @@ namespace SharpConstraintLayout.Maui.Widget
 
         void LayoutChild(UIElement element, int x, int y, int w, int h)
         {
-            //element.Arrange(new Rect(x, y, w, h));
-            AbsoluteLayout.SetLayoutBounds(element, new Rect(x, y, w, h));
+            element.Arrange(new Rect(x, y, w, h));
+            //AbsoluteLayout.SetLayoutBounds(element, new Rect(x, y, w, h));
         }
-
         #endregion
+
+        public Size GetLastMeasureSize() { return new Size(mLastMeasureWidth, mLastMeasureHeight); }
     }
 
-    internal class ConstraintLayoutManager : AbsoluteLayoutManager
+    internal class ConstraintLayoutManager : LayoutManager
     {
-        WeakReference<ConstraintLayout> Layout;
+        WeakReference<IMauiConstraintLayout> Layout;
 
-        public ConstraintLayoutManager(IAbsoluteLayout absoluteLayout) : base(absoluteLayout)
+        public ConstraintLayoutManager(IMauiConstraintLayout constraintLayout) : base(constraintLayout)
         {
-            Layout = new WeakReference<ConstraintLayout>(absoluteLayout as ConstraintLayout);
+            Layout = new WeakReference<IMauiConstraintLayout>(constraintLayout);
         }
 
         public override Size Measure(double widthConstraint, double heightConstraint)
         {
-            base.Measure(widthConstraint, heightConstraint);
+            //base.Measure(widthConstraint, heightConstraint);
             Layout.TryGetTarget(out var layout);
-            var size = layout.MeasureLayout(new Size(widthConstraint, heightConstraint));
 
-            return size;
+            var availableSize = new Size(widthConstraint, heightConstraint);
+
+            (int horizontalSpec, int verticalSpec) = layout.MakeSpec(layout as ConstraintLayout, availableSize);
+
+            return layout.MeasureLayout(availableSize, horizontalSpec, verticalSpec);
         }
 
         public override Size ArrangeChildren(Rect bounds)
         {
+            Size finalSize = bounds.Size;
             Layout.TryGetTarget(out var layout);
-            if (bounds.Width != layout.MLayoutWidget.Width || bounds.Height != layout.MLayoutWidget.Height)
+            var lastMeasureSize = layout.GetLastMeasureSize();
+            if (finalSize.Width != lastMeasureSize.Width || finalSize.Height != lastMeasureSize.Height)
             {
                 // We haven't received our desired size. We need to refresh the rows.
-                layout.MeasureLayout(bounds.Size);
+                (int horizontalSpec, int verticalSpec) = layout.MakeSpec(layout as ConstraintLayout, finalSize);
+                finalSize = layout.MeasureLayout(finalSize, horizontalSpec, verticalSpec);
             }
 
             layout.ArrangeLayout();
-            base.ArrangeChildren(bounds);
-            return bounds.Size;
+            //base.ArrangeChildren(bounds);
+            return finalSize;
         }
+    }
+
+    interface IMauiConstraintLayout : Microsoft.Maui.ILayout
+    {
+        Size MeasureLayout(Size availableSize, int horizontalSpec = 0, int verticalSpec = 0);
+        void ArrangeLayout();
+
+        Size GetLastMeasureSize();
+
+        (int horizontalSpec, int verticalSpec) MakeSpec(ConstraintLayout layout, Size availableSize);
     }
 }
 #endif

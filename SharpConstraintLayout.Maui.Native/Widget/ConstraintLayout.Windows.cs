@@ -17,7 +17,7 @@ namespace SharpConstraintLayout.Maui.Widget
             init();
         }
 
-#region Add And Remove
+        #region Add And Remove
 
         public UIElement GetChildAt(int index)
         {
@@ -47,48 +47,50 @@ namespace SharpConstraintLayout.Maui.Widget
 
         public int ChildCount { get { return Children != null ? Children.Count : 0; } }
 
-#endregion
+        #endregion
 
         protected override Size MeasureOverride(Size availableSize)
         {
             /*
              * Analysis available size
              */
-            int availableWidth = 0;
-            int availableHeight = 0;
+            (int horizontalSpec, int verticalSpec) = MakeSpec(this, availableSize);
 
-            //sometimes no fixsize
+            return MeasureLayout(availableSize, horizontalSpec, verticalSpec);
+        }
+
+        /// <summary>
+        /// 判断是否可以无限大小
+        /// </summary>
+        /// <returns></returns>
+        public (bool isInfinityAvailabelWidth, bool isInfinityAvailabelHeight) IsInfinitable(ConstraintLayout layout, int constrainWidth, int constrainHeight, Size availableSize)
+        {
+            bool isInfinityAvailabelWidth = false;
+            bool isInfinityAvailabelHeight = false;
             if (double.IsPositiveInfinity(availableSize.Width))
             {
-                availableWidth = int.MaxValue; isInfinityAvailabelSize = true;
+                isInfinityAvailabelWidth = true;
             }
-            else
-                availableWidth = (int)availableSize.Width;
 
             if (double.IsPositiveInfinity(availableSize.Height))
             {
-                availableHeight = int.MaxValue;
-                isInfinityAvailabelSize = true;
+                isInfinityAvailabelHeight = true;
             }
-            else
-            {
-                availableHeight = (int)availableSize.Height;
-            }
-
-            return MeasureLayout(new Size(availableWidth, availableHeight));
+            return (isInfinityAvailabelWidth, isInfinityAvailabelHeight);
         }
 
-#region Layout
+        #region Layout
 
         protected override Size ArrangeOverride(Size finalSize)
         {
             if (DEBUG) Debug.WriteLine($"{nameof(ArrangeOverride)} {this} {finalSize}");
 
             //参考:https://github.com/CommunityToolkit/WindowsCommunityToolkit/blob/main/Microsoft.Toolkit.Uwp.UI.Controls.Primitives/WrapPanel/WrapPanel.cs
-            if (finalSize.Width != MLayoutWidget.Width || finalSize.Height != MLayoutWidget.Height)
+            if (finalSize.Width != mLastMeasureWidth || finalSize.Height != mLastMeasureHeight)
             {
                 // We haven't received our desired size. We need to refresh the rows.
-                MeasureLayout(finalSize);
+                (int horizontalSpec, int verticalSpec) = MakeSpec(this, finalSize);
+                finalSize = MeasureLayout(finalSize, horizontalSpec, verticalSpec);
             }
 
             ArrangeLayout();
@@ -102,7 +104,7 @@ namespace SharpConstraintLayout.Maui.Widget
             element.Arrange(new Rect(x, y, w, h));
         }
 
-#endregion
+        #endregion
     }
 }
 #endif

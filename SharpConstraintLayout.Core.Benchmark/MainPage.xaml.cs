@@ -17,7 +17,7 @@ namespace SharpConstraintLayout.Core.Benchmark
 
             CSharpBasisConstraintTestSummary.Text = nameof(CSharpBasisConstraintTestSummary) + ":\n" + SimpleClock.BenchmarkTime(() =>
             {
-                new CSharpConstraintLayoutTest().CSharpBasisConstraintTest(1000);
+                new CSharpConstraintLayoutTest().CSharpBasisConstraintTest(int.Parse(WidgetCount.Text));
             }, 1);
         }
 
@@ -26,7 +26,7 @@ namespace SharpConstraintLayout.Core.Benchmark
 #if __ANDROID__
             JavaBasisConstraintTestSummary.Text = nameof(JavaBasisConstraintTestSummary) + ":\n" + SimpleClock.BenchmarkTime(() =>
             {
-                new JavaConstraintLayoutTest().JavaBasisConstraintTest(1000);
+                new JavaConstraintLayoutTest().JavaBasisConstraintTest(int.Parse(WidgetCount.Text));
             }, 1);
 #endif
         }
@@ -35,7 +35,7 @@ namespace SharpConstraintLayout.Core.Benchmark
         {
             CSharpFlowConstraintTestSummary.Text = nameof(CSharpFlowConstraintTestSummary) + ":\n" + SimpleClock.BenchmarkTime(() =>
             {
-                new CSharpConstraintLayoutTest().CSharpFlowConstraintTest(1000);
+                new CSharpConstraintLayoutTest().CSharpFlowConstraintTest(int.Parse(WidgetCount.Text));
             }, 1);
         }
 

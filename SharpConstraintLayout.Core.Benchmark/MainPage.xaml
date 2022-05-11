@@ -9,40 +9,40 @@
         <Grid
             Padding="{OnPlatform iOS='30,60,30,30',
                                  Default='30'}"
-            RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,*"
+            RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,*"
             RowSpacing="25">
-
+            <Entry x:Name="WidgetCount" Grid.Row="0" />
             <Button
                 x:Name="CSharpBasisConstraintTestButton"
-                Grid.Row="0"
+                Grid.Row="1"
                 Clicked="CSharpBasisConstraintTestButton_Clicked"
                 FontAttributes="Bold"
                 HorizontalOptions="Center"
                 Text="CSharpBasisConstraint" />
             <Button
                 x:Name="JavaBasisConstraintTestButton"
-                Grid.Row="1"
+                Grid.Row="2"
                 Clicked="JavaBasisConstraintTestButton_Clicked"
                 FontAttributes="Bold"
                 HorizontalOptions="Center"
                 Text="JavaBasisConstraint" />
             <Button
                 x:Name="CSharpFlowConstraintTestButton"
-                Grid.Row="2"
+                Grid.Row="3"
                 Clicked="CSharpFlowConstraintTestButton_Clicked"
                 FontAttributes="Bold"
                 HorizontalOptions="Center"
                 Text="CSharpFlowConstraint" />
             <Button
                 x:Name="SleepTestButton"
-                Grid.Row="3"
+                Grid.Row="4"
                 Clicked="SleepTestButton_Clicked"
                 FontAttributes="Bold"
                 HorizontalOptions="Center"
                 Text="SleepTest" />
             <Label
                 x:Name="CSharpBasisConstraintTestSummary"
-                Grid.Row="4"
+                Grid.Row="5"
                 FontAttributes="Bold"
                 FontSize="18"
                 HorizontalOptions="Center"
@@ -50,21 +50,21 @@
 
             <Label
                 x:Name="JavaBasisConstraintTestSummary"
-                Grid.Row="5"
+                Grid.Row="6"
                 FontAttributes="Bold"
                 FontSize="18"
                 HorizontalOptions="Center"
                 Text="JavaBasisConstraintTest: 0" />
             <Label
                 x:Name="CSharpFlowConstraintTestSummary"
-                Grid.Row="6"
+                Grid.Row="7"
                 FontAttributes="Bold"
                 FontSize="18"
                 HorizontalOptions="Center"
                 Text="CSharpFlowConstraintTest: 0" />
             <Label
                 x:Name="SleepTestSummary"
-                Grid.Row="7"
+                Grid.Row="8"
                 FontAttributes="Bold"
                 FontSize="18"
                 HorizontalOptions="Center"

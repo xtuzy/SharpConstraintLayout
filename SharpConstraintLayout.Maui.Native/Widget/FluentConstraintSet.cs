@@ -17,6 +17,9 @@ using Android.Content;
 
 namespace SharpConstraintLayout.Maui.Widget
 {
+    /// <summary>
+    /// 设置child
+    /// </summary>
     public class FluentConstraintSet : ConstraintSet
     {
         public Element Select(params UIElement[] views)
@@ -603,13 +606,16 @@ namespace SharpConstraintLayout.Maui.Widget
             }
 
             /// <summary>
-            /// TODO
+            /// "w:h", it calculate according to <see cref="Width(int)"/> or <see cref="Height(int)"/>, not other like <see cref="MinWidth(int)"/>.
             /// </summary>
-            /// <param name="ratio"></param>
+            /// <param name="ratio">notice it is a string, it should like "w:h", such as "16:9"</param>
             /// <returns></returns>
             public Element WHRatio(string ratio)
             {
-                throw new NotImplementedException();
+                setReference.TryGetTarget(out var set);
+                foreach (var id in ids)
+                    set?.SetDimensionRatio(id, ratio);
+                return this;
             }
 
             #endregion Size
@@ -769,7 +775,7 @@ namespace SharpConstraintLayout.Maui.Widget
         {
             foreach (var view in views)
             {
-                helper.AddElement(view);
+                helper.ReferenceElement(view);
             }
         }
     }

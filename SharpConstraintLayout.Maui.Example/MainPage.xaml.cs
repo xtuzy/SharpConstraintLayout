@@ -18,8 +18,8 @@ public partial class MainPage : ContentPage
     {
         InitializeComponent();
 
-        ConstraintLayout.DEBUG = false;
-        ConstraintLayout.MEASURE = true;
+        ConstraintLayout.DEBUG = true;
+        ConstraintLayout.MEASURE_MEASURELAYOUT = true;
         var content = new ConstraintLayout();
         Page.Content = content;
         createControls();
@@ -28,8 +28,8 @@ public partial class MainPage : ContentPage
         //BaseAlignTest(content);
         //BaselineTest(content); 
         //GuidelineTest(content);
-        //BarrierTest(content);
-        VisibilityTest(content);
+        BarrierTest(content);
+        //VisibilityTest(content);
         //FlowTest(content);
         //NestedConstraintLayoutTest(content);
         //CircleConstraintTest(content);
@@ -43,7 +43,7 @@ public partial class MainPage : ContentPage
         FirstButton = new Button()
         {
             Text = "FirstButton",
-            Background = new SolidColorBrush(Colors.Red)
+            //Background = new SolidColorBrush(Colors.Red)
         };
 
         SecondButton = new Button()

@@ -17,7 +17,7 @@ namespace SharpConstraintLayout.Maui.Widget
             init();
         }
 
-#region Add And Remove
+        #region Add And Remove
         public override void AddView(UIElement element)
         {
             base.AddView(element);
@@ -66,13 +66,27 @@ namespace SharpConstraintLayout.Maui.Widget
             this.RemoveAllViews();
         }
 
-#endregion
+        #endregion
 
-#region Measure And Layout
+        #region Measure And Layout
+
+        /// <summary>
+        /// Android中不使用
+        /// </summary>
+        /// <param name="layout"></param>
+        /// <param name="constrainWidth"></param>
+        /// <param name="constrainHeight"></param>
+        /// <param name="availableSize"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public (bool isInfinityAvailabelWidth, bool isInfinityAvailabelHeight) IsInfinitable(ConstraintLayout layout, int constrainWidth, int constrainHeight, Size availableSize)
+        {
+            throw new NotImplementedException();
+        }
         protected override void OnMeasure(int widthMeasureSpec, int heightMeasureSpec)
         {
             //base.OnMeasure(widthMeasureSpec, heightMeasureSpec);
-            MeasureLayout(new Size(SharpConstraintLayout.Maui.Widget.MeasureSpec.GetSize(widthMeasureSpec), SharpConstraintLayout.Maui.Widget.MeasureSpec.GetSize(heightMeasureSpec)));
+            MeasureLayout(new Size(SharpConstraintLayout.Maui.Widget.MeasureSpec.GetSize(widthMeasureSpec), SharpConstraintLayout.Maui.Widget.MeasureSpec.GetSize(heightMeasureSpec)), widthMeasureSpec, heightMeasureSpec);
         }
 
         protected override void OnLayout(bool changed, int l, int t, int r, int b)
@@ -85,7 +99,7 @@ namespace SharpConstraintLayout.Maui.Widget
             element.Layout(x, y, x + w, y + h);
         }
 
-#endregion
+        #endregion
     }
 }
 #endif

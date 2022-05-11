@@ -115,8 +115,8 @@ namespace SharpConstraintLayout.Maui.Widget
                     Barrier barrier = ((Barrier)view);
                     constraint.layout.mBarrierAllowsGoneWidgets = barrier.AllowsGoneWidget;
                     constraint.layout.mReferenceIds = barrier.ReferencedIds;
-                    constraint.layout.mBarrierDirection = barrier.Type;
-                    constraint.layout.mBarrierMargin = barrier.Margin;
+                    constraint.layout.mBarrierDirection = barrier.ConstrainType;
+                    constraint.layout.mBarrierMargin = barrier.ConstrainMargin;
                 }
             }
         }
@@ -165,8 +165,8 @@ namespace SharpConstraintLayout.Maui.Widget
                         constraint.layout.mHelperType = BARRIER_TYPE;
                         Barrier barrier = (Barrier)view;
                         //barrier.Id = id;
-                        barrier.Type = constraint.layout.mBarrierDirection;
-                        barrier.Margin = constraint.layout.mBarrierMargin;
+                        barrier.ConstrainType = constraint.layout.mBarrierDirection;
+                        barrier.ConstrainMargin = constraint.layout.mBarrierMargin;
 
                         barrier.AllowsGoneWidget = constraint.layout.mBarrierAllowsGoneWidgets;
                         if (constraint.layout.mReferenceIds != null)
@@ -178,7 +178,9 @@ namespace SharpConstraintLayout.Maui.Widget
                     //将新的约束更新到ConstraintLayout的ConstraintSet中
                     var param = constraintLayout.mConstraintSet.Constraints[id];
                     param.layout.Validate();
-                    constraint.ApplyTo(param.layout);
+                    constraint.ApplyTo(param.layout);//Android源码ApplyTo是应用到Params,Params中具有负责View布局的属性,其中Margin,Width,Height是ViewGroup自带的,其他是ConstraintLayout中新增的,也就是说,这里使用ConstraintSet替代Params,需要添加ViewGroup的属性
+                    //设置原本在ViewGroup.Params中的属性
+                    view.SetSizeAndMargin(constraint.layout.mWidth, constraint.layout.mHeight, constraint.layout.matchConstraintMinWidth, constraint.layout.matchConstraintMinHeight, constraint.layout.matchConstraintMaxWidth, constraint.layout.matchConstraintMaxHeight, constraint.layout.leftMargin, constraint.layout.topMargin, constraint.layout.rightMargin, constraint.layout.bottomMargin);
 
                     if (view is Guideline)//不像Android一样用户提供指定约束是isGuideline就创建Guideline,必须通过Guideline控件实现
                     {

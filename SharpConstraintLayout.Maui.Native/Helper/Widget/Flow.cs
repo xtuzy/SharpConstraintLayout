@@ -97,6 +97,8 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
     /// laid out in a set of rows and columns instead of chains. The attribute specifying chains
     /// style and bias are thus not going to be applied.
     /// <br/>
+    /// 
+    /// <see href="https://developer.android.com/reference/androidx/constraintlayout/helper/widget/Flow">androidx.constraintlayout.helper.widget.Flow</see>
     /// </summary>
     public class Flow : VirtualLayout, IFlow
     {
@@ -182,10 +184,16 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
             {
                 if (ConstraintLayout.DEBUG) Debug.WriteLine(TAG, $"widthMode {widthMode}, widthSize {widthSize}, heightMode {heightMode}, heightSize {heightSize}");
                 layout.measure(widthMode, widthSize, heightMode, heightSize);
-#if __ANDROID__ && !__MAUI__
+#if __MAUI__
+                this.WidthRequest = layout.Width;
+                this.HeightRequest = layout.Height;
+#elif __ANDROID__ && !__MAUI__
                 SetMeasuredDimension(layout.MeasuredWidth, layout.MeasuredHeight);//Android中这个的作用应该是设置flow的大小
 #elif __IOS__ && !__MAUI__
                 this.Bounds = new CoreGraphics.CGRect(this.Bounds.X, this.Bounds.Y, layout.MeasuredWidth, layout.MeasuredHeight);
+#elif WINDOWS && !__MAUI__
+                this.Width = layout.MeasuredWidth;
+                this.Height = layout.MeasuredHeight;
 #endif
             }
             else
