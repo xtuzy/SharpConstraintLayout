@@ -113,6 +113,9 @@ namespace SharpConstraintLayout.Maui.Widget
             //ConstraintSet.Constraints.Add(ConstraintSet.PARENT_ID, new ConstraintSet.Constraint());//对于Layout,都用ParentID代替GetHashCode,这是因为Layout可以在ApplyTo时替换
             //这里换种思路,不管是ParentId还是HashCode对应的应该都是同一个约束,修改也是同一个
             var rootConstraint = new ConstraintSet.Constraint();
+            rootConstraint.layout.mWidth = ConstraintSet.MatchParent;//@zhouyang Add:Default set WrapContent,it is more useful
+            rootConstraint.layout.mHeight = ConstraintSet.MatchParent;
+
             mConstraintSet.Constraints.Add(ConstraintSet.ParentId, rootConstraint);
             mConstraintSet.Constraints.Add(this.GetId(), rootConstraint);
 
@@ -134,9 +137,11 @@ namespace SharpConstraintLayout.Maui.Widget
 
             //Add to three dictionary(Wighet,View,Constraints)
             ConstraintWidget widget = GetOrAddWidgetById(id);
-            mConstraintSet.Constraints.Add(id, new ConstraintSet.Constraint());
-            mConstraintSet.GetConstraint(id).layout.mWidth = ConstraintSet.WrapContent;//@zhouyang Add:Default set WrapContent,it is more useful
-            mConstraintSet.GetConstraint(id).layout.mHeight = ConstraintSet.WrapContent;
+
+            var childConstraint = new ConstraintSet.Constraint();
+            mConstraintSet.Constraints.Add(id, childConstraint);
+            childConstraint.layout.mWidth = ConstraintSet.WrapContent;//@zhouyang Add:Default set WrapContent,it is more useful
+            childConstraint.layout.mHeight = ConstraintSet.WrapContent;
             idToViews.Add(id, element as UIElement);
             // Do stuff with the added object
             if (element is Guideline)//Guideline have default widget

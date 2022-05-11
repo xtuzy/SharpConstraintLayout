@@ -525,10 +525,11 @@ namespace SharpConstraintLayout.Maui.Native.Example
                 pageSet.Clone(page);
                 pageSet.Select(layout)
                     .CenterTo(page)
-                    .Width(SizeBehavier.WrapContent)
+                    .Width(200)
                     .Height(SizeBehavier.WrapContent);
                 pageSet.ApplyTo(page);
-                layout.ConstrainWidth = layout.ConstrainHeight = ConstraintSet.WrapContent;
+                layout.ConstrainWidth = 200;
+                    layout.ConstrainHeight = ConstraintSet.WrapContent;
                 layout.AddElement(ThirdCanvas);
                 layout.AddElement(FirstButton);
                 using (var layoutSet = new FluentConstraintSet())
@@ -539,8 +540,9 @@ namespace SharpConstraintLayout.Maui.Native.Example
                         .Width(FluentConstraintSet.SizeBehavier.WrapContent)
                         .Height(FluentConstraintSet.SizeBehavier.WrapContent)
                         .Select(ThirdCanvas)//.EdgesTo(null, 20, 20)
-                        .Width(FluentConstraintSet.SizeBehavier.MatchParent)
-                        .Height(FluentConstraintSet.SizeBehavier.MatchParent);
+                        .MinWidth(100).MinHeight(100).EdgesTo()
+                        .Width(FluentConstraintSet.SizeBehavier.MatchConstraint)
+                        .Height(FluentConstraintSet.SizeBehavier.MatchConstraint);
                     layoutSet.ApplyTo(layout);
                 }
             }

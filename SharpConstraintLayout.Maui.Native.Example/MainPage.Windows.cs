@@ -43,7 +43,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             //BarrierTest(this);//bug:text box have false length
             //VisibilityTest(this);//bug:invisiable not correct
             //FlowTest(this);
-            //NestedConstraintLayoutTest(this);
+            NestedConstraintLayoutTest(this);
             //CircleConstraintTest(this);
             //PlatformLayoutInConstraintLayoutTest(this);//OK
             //FlowPerformanceTest(this);
@@ -51,7 +51,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             //GroupTest(this);
             //PlaceholderTest(this);
             //SizeTest(this);
-            ConstraintLayoutInPlatformLayoutTest(this);
+            //ConstraintLayoutInPlatformLayoutTest(this);
         }
 
         void ConstraintLayoutInPlatformLayoutTest(ConstraintLayout page)
