@@ -9,7 +9,8 @@
     <PackageTags>wpf;constraintlayout</PackageTags>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>1.1</Version>
+    <Version>1.1.1</Version>
+    <PackageReleaseNotes>use span test performance</PackageReleaseNotes>
   </PropertyGroup>
 
 </Project>

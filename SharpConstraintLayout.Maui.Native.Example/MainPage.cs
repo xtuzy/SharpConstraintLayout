@@ -10,6 +10,7 @@ using System.Diagnostics;
 using SharpConstraintLayout.Maui.Helper.Widget;
 using SharpConstraintLayout.Maui.Native.Example.Tool;
 using MauiWrapPanel.WrapPanel;
+using SharpConstraintLayout.Maui.DebugTool;
 #if __ANDROID__
 using Android.Views;
 using Android.Widget;
@@ -213,7 +214,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
                 layoutSet.Clone(layout);
                 layoutSet.Select(FirstButton).CenterTo()
                     .Select(SecondButton, FouthTextBlock)
-                .CircleTo(FirstButton, new[] { 50, 100 }, new[] { 60f, 240 });
+                .CircleTo(FirstButton, new[] { 100, 100 }, new[] { 60f, 240 });
                 layoutSet.ApplyTo(layout);
             }
 
@@ -226,9 +227,9 @@ namespace SharpConstraintLayout.Maui.Native.Example
                     UIThread.Invoke(() =>
                     {
                         //The distance between SecondButton center and FirstButton center should equal to 50
-                        SimpleTest.AreEqual(Math.Abs(SecondButton.GetBounds().Center.Y - FirstButton.GetBounds().Center.Y) * 2, 50, nameof(CircleConstraintTest), "The distence between SecondButton center and FirstButton center should equal to 50");
+                        SimpleTest.AreEqual(Math.Abs(SecondButton.GetBounds().Center.Y - FirstButton.GetBounds().Center.Y) * 2, 100, nameof(CircleConstraintTest), "The distence between SecondButton center and FirstButton center should equal to 100");
                         //The distance between FouthTextBlock center and FirstButton center should equal to 50
-                        SimpleTest.AreEqual(Math.Abs(FouthTextBlock.GetBounds().Center.Y - FirstButton.GetBounds().Center.Y) * 2, 50, nameof(CircleConstraintTest), "The distence between FouthTextBlock center and FirstButton center should equal to 50");
+                        SimpleTest.AreEqual(Math.Abs(FouthTextBlock.GetBounds().Center.Y - FirstButton.GetBounds().Center.Y) * 2, 100, nameof(CircleConstraintTest), "The distence between FouthTextBlock center and FirstButton center should equal to 100");
                     }, page);
 
                     index++;
@@ -238,6 +239,10 @@ namespace SharpConstraintLayout.Maui.Native.Example
 
         void PlatformLayoutInConstraintLayoutTest(ConstraintLayout page)
         {
+            page.ConstrainPaddingTop = 10;
+            page.ConstrainPaddingBottom = 10;
+            page.ConstrainPaddingLeft = 10;
+            page.ConstrainPaddingRight = 10;
 #if WINDOWS
             var stackPanel = new StackPanel()
             {
@@ -274,23 +279,6 @@ namespace SharpConstraintLayout.Maui.Native.Example
             (scrollView.Content as StackPanel).Children.Add(new TextBlock() { Text = "InScrollViewer" });
             (scrollView.Content as StackPanel).Children.Add(new TextBox() { Text = "InScrollViewer" });
 
-            using (var layoutSet = new FluentConstraintSet())
-            {
-                layoutSet.Clone(page);
-                layoutSet.Select(stackPanel)
-                    .CenterYTo().LeftToLeft()
-                    .Width(SizeBehavier.WrapContent)
-                    .Height(SizeBehavier.WrapContent)
-                    .Select(grid)
-                    .TopToBottom(stackPanel, 10).LeftToLeft()
-                    .Width(SizeBehavier.WrapContent)
-                    .Height(SizeBehavier.WrapContent)
-                    .Select(scrollView)
-                    .TopToBottom(grid, 10).BottomToBottom().LeftToLeft()
-                    .Width(SizeBehavier.WrapContent)
-                    .Height(SizeBehavier.MatchConstraint);
-                layoutSet.ApplyTo(page);
-            }
 #elif ANDROID
             var stackPanel = new LinearLayout(page.Context)
             {
@@ -322,23 +310,6 @@ namespace SharpConstraintLayout.Maui.Native.Example
             (scrollView.GetChildAt(0) as LinearLayout).AddView(new TextView(page.Context) { Text = "InScrollViewer" });
             (scrollView.GetChildAt(0) as LinearLayout).AddView(new EditText(page.Context) { Text = "InScrollViewer" });
 
-            using (var layoutSet = new FluentConstraintSet())
-            {
-                layoutSet.Clone(page);
-                layoutSet.Select(stackPanel)
-                    .CenterTo()
-                    .Width(SizeBehavier.WrapContent)
-                    .Height(SizeBehavier.WrapContent)
-                    .Select(grid)
-                    .TopToBottom(stackPanel, 10).LeftToLeft()
-                    .Width(SizeBehavier.WrapContent)
-                    .Height(SizeBehavier.WrapContent)
-                    .Select(scrollView)
-                    .TopToBottom(grid, 10).BottomToBottom().LeftToLeft()
-                    .Width(600)
-                    .Height(SizeBehavier.MatchConstraint);
-                layoutSet.ApplyTo(page);
-            }
 #elif __IOS__
             var stackPanel = new UIStackView()
             {
@@ -378,20 +349,22 @@ namespace SharpConstraintLayout.Maui.Native.Example
             var scrollView = new UIScrollView()
             {
                 BackgroundColor = UIColor.SystemPink,
+                ContentSize = new CoreGraphics.CGSize(300, 500),
             };
             page.AddSubview(scrollView);
             scrollView.AddSubview(new UIStackView()
             {
                 Axis = UILayoutConstraintAxis.Vertical,
-                BackgroundColor = UIColor.LightGray,
+                BackgroundColor = UIColor.Brown,
                 Spacing = 20,
                 TranslatesAutoresizingMaskIntoConstraints = false,
+                Frame = new CoreGraphics.CGRect(0, 0, 300, 500),
             });
 
-            scrollView.Subviews[0].LeftAnchor.ConstraintEqualTo(scrollView.LeftAnchor).Active = true;
-            scrollView.Subviews[0].RightAnchor.ConstraintEqualTo(scrollView.RightAnchor).Active = true;
-            scrollView.Subviews[0].TopAnchor.ConstraintEqualTo(scrollView.TopAnchor).Active = true;
-            scrollView.Subviews[0].BottomAnchor.ConstraintEqualTo(scrollView.BottomAnchor).Active = true;
+            //scrollView.Subviews[0].LeftAnchor.ConstraintEqualTo(scrollView.LeftAnchor).Active = true;
+            //scrollView.Subviews[0].RightAnchor.ConstraintEqualTo(scrollView.RightAnchor).Active = true;
+            //scrollView.Subviews[0].TopAnchor.ConstraintEqualTo(scrollView.TopAnchor).Active = true;
+            //scrollView.Subviews[0].BottomAnchor.ConstraintEqualTo(scrollView.BottomAnchor).Active = true;
 
             var firstButtonInScrollView = new UIButton() { BackgroundColor = UIColor.Gray };
             firstButtonInScrollView.SetTitle("InScrollViewer", UIControlState.Normal);
@@ -404,6 +377,16 @@ namespace SharpConstraintLayout.Maui.Native.Example
 
             scrollView.AddSubview(new UILabel() { Text = "InScrollViewer" });
 
+            Task.Run(async () =>
+            {
+
+                await Task.Delay(3000);//wait ui show
+                UIThread.Invoke(() =>
+                {
+                    DebugTool.SimpleDebug.WriteLine("scrollView.ContentSize:" + scrollView.ContentSize);
+                }, page);
+            });
+#endif
             using (var layoutSet = new FluentConstraintSet())
             {
                 layoutSet.Clone(page);
@@ -416,22 +399,11 @@ namespace SharpConstraintLayout.Maui.Native.Example
                     .Width(SizeBehavier.WrapContent)
                     .Height(SizeBehavier.WrapContent)
                     .Select(scrollView)
-                    .TopToBottom(grid, 10).BottomToBottom().LeftToLeft().RightToRight()
-                    .Width(SizeBehavier.MatchConstraint)
+                    .TopToBottom(grid, 10).BottomToBottom().LeftToLeft()
+                    .Width(SizeBehavier.WrapContent)//ios don't know size
                     .Height(SizeBehavier.MatchConstraint);
                 layoutSet.ApplyTo(page);
             }
-
-            Task.Run(async () =>
-            {
-
-                await Task.Delay(3000);//wait ui show
-                UIThread.Invoke(() =>
-                {
-                    DebugTool.SimpleDebug.WriteLine("scrollView.ContentSize:" + scrollView.ContentSize);
-                }, page);
-            });
-#endif
         }
 
         void AnimationTest(ConstraintLayout page)
@@ -465,14 +437,16 @@ namespace SharpConstraintLayout.Maui.Native.Example
             pageSet.Clone(page);
 
 #if ANDROID
-            Android.Animation.ValueAnimator animator = Android.Animation.ValueAnimator.OfInt(50, 1000);
+            Android.Animation.ValueAnimator animator = Android.Animation.ValueAnimator.OfInt(0, 50);
             animator.SetDuration(5000);
             animator.Start();
             animator.Update += (object sender, Android.Animation.ValueAnimator.AnimatorUpdateEventArgs e) =>
             {
                 int newValue = (int)e.Animation.AnimatedValue;
                 // Apply this new value to the object being animated.
-                pageSet.Select(guide).GuidelineOrientation(FluentConstraintSet.Orientation.X).GuidelineBegin(newValue)
+                pageSet.Select(guide)
+                    .GuidelineOrientation(FluentConstraintSet.Orientation.X)
+                    .GuidelinePercent(newValue / 100f)
                      .Select(layout).LeftToRight(guide).RightToRight(page).TopToTop(page).BottomToBottom(page)
                      .Width(SizeBehavier.MatchConstraint)
                      .Height(SizeBehavier.MatchConstraint);
@@ -525,11 +499,11 @@ namespace SharpConstraintLayout.Maui.Native.Example
                 pageSet.Clone(page);
                 pageSet.Select(layout)
                     .CenterTo(page)
-                    .Width(200)
+                    .Width(SizeBehavier.MatchParent)
                     .Height(SizeBehavier.WrapContent);
                 pageSet.ApplyTo(page);
-                layout.ConstrainWidth = 200;
-                    layout.ConstrainHeight = ConstraintSet.WrapContent;
+                layout.ConstrainWidth = ConstraintSet.MatchParent;
+                layout.ConstrainHeight = ConstraintSet.WrapContent;
                 layout.AddElement(ThirdCanvas);
                 layout.AddElement(FirstButton);
                 using (var layoutSet = new FluentConstraintSet())
@@ -573,11 +547,22 @@ namespace SharpConstraintLayout.Maui.Native.Example
 #else
             var flow = new Flow();
 #endif
+#if __IOS__
+            // Create a new tap gesture
+            var flowClickGesture = new UITapGestureRecognizer();
+            // Wire up the event handler (have to use a selector)
+            flowClickGesture.AddTarget(() => { SimpleDebug.WriteLine("Touch iOS Flow!"); });  // to be defined                                                       // Add the gesture recognizer to the view
+            flow.AddGestureRecognizer(flowClickGesture);
+            var canvasClickGesture = new UITapGestureRecognizer();
+            // Wire up the event handler (have to use a selector)
+            canvasClickGesture.AddTarget(() => { SimpleDebug.WriteLine("Touch iOS Canvas!"); });  // to be defined                                                                              // Add the gesture recognizer to the view
+            ThirdCanvas.AddGestureRecognizer(canvasClickGesture);
+#endif
             flow.SetOrientation(Flow.Vertical);
             flow.SetWrapMode(Flow.WrapChain);
             flow.SetHorizontalStyle(Flow.ChainSpreadInside);
             layout = page;
-            layout.AddElement(ThirdCanvas, FirstButton, SecondButton, FouthTextBlock, FifthTextBox, SixthRichTextBlock, flow);
+            layout.AddElement(flow, ThirdCanvas, FirstButton, SecondButton, FouthTextBlock, FifthTextBox, SixthRichTextBlock);
             flow.AddElement(FirstButton, SecondButton, FouthTextBlock, FifthTextBox, SixthRichTextBlock);
 
             using (var layoutSet = new FluentConstraintSet())
@@ -838,6 +823,10 @@ namespace SharpConstraintLayout.Maui.Native.Example
 
         private void SizeTest(ConstraintLayout page)
         {
+            page.ConstrainPaddingTop = 10;
+            page.ConstrainPaddingBottom = 10;
+            page.ConstrainPaddingLeft = 10;
+            page.ConstrainPaddingRight = 10;
             page.AddElement(FirstButton, SecondButton, ThirdCanvas, FifthTextBox);
             using (var layoutSet = new FluentConstraintSet())
             {

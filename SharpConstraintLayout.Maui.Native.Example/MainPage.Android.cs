@@ -25,32 +25,32 @@ namespace SharpConstraintLayout.Maui.Native.Example
 
         public MainPage(Context? context) : base(context)
         {
-            ConstraintLayout.DEBUG = true;
-            //ConstraintLayout.MEASURE_MEASURELAYOUT = true;
+            ConstraintLayout.DEBUG = false;
+            ConstraintLayout.MEASURE_MEASURELAYOUT = true;
             Id = View.GenerateViewId();
             this.LayoutParameters = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent);
             createControls();
             this.SetBackgroundColor(Color.HotPink);
 
             //BaseAlignTest(this);
-            //BaselineTest(this);
+            //BaselineTest(this);//how to calculate baseline of TextBox,Label
             //GuidelineTest(this);//OK
             //BarrierTest(this);//OK
             //VisibilityTest(this);//OK
-            //FlowTest(this);
-            NestedConstraintLayoutTest(this);
+            //FlowTest(this);//bad performance
+            //NestedConstraintLayoutTest(this);
             //PlatformLayoutInConstraintLayoutTest(this);//OK
-            //animationTest(this);
+            //AnimationTest(this);
             //CircleConstraintTest(this);
-            //FlowPerformanceTest(this);
-            //WrapPanelPerformanceTest(this);
+            //FlowPerformanceTest(this);//bad performance,need 20~40ms
+            //WrapPanelPerformanceTest(this);//fast 3~7ms
             //GroupTest(this);
             //PlaceholderTest(this);
             //SizeTest(this);
-            //ConstraintLayoutInPlatformLayoutTest(this);
+            ConstraintLayoutInScrollViewTest(this);
         }
 
-        void ConstraintLayoutInPlatformLayoutTest(ConstraintLayout page)
+        void ConstraintLayoutInScrollViewTest(ConstraintLayout page)
         {
             var linerlayout = new LinearLayout(page.Context)
             {

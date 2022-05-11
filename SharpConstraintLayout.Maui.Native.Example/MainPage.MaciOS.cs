@@ -27,8 +27,8 @@ namespace SharpConstraintLayout.Maui.Native.Example
 
         public MainPage(CGRect frame)
         {
-            ConstraintLayout.DEBUG = true;
-            //ConstraintLayout.MEASURE_MEASURELAYOUT = true;
+            ConstraintLayout.DEBUG = false;
+            ConstraintLayout.MEASURE_MEASURELAYOUT = true;
             //ConstraintLayout.MEASUREEVERYWIDGET = true;
             //ConstraintLayout.MEASUREEVERYCHILD = true;
 
@@ -47,14 +47,15 @@ namespace SharpConstraintLayout.Maui.Native.Example
             //BarrierTest(Page);//OK
             //VisibilityTest(Page);//OK
             //FlowTest(Page);
-            //PlatformLayoutInConstraintLayoutTest(Page);
-            ConstraintLayoutInPlatformLayoutTest(Page);//Bug
+            //PlatformLayoutInConstraintLayoutTest(Page);//Bug
+            //ConstraintLayoutInPlatformLayoutTest(Page);
             //CircleConstraintTest(Page);
             //FlowPerformanceTest(Page);//Bad performance,need 16~20ms.
-            //WrapPanelPerformanceTest(Page);
+            //WrapPanelPerformanceTest(Page);//bug, cant click
             //GroupTest(Page);
             //PlaceholderTest(Page);
             //SizeTest(Page);
+            NestedConstraintLayoutTest(Page);
         }
 
         void ConstraintLayoutInPlatformLayoutTest(ConstraintLayout page)
@@ -197,7 +198,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             SixthRichTextBlock = new UITextView()
             {
                 ScrollEnabled = false,
-                AttributedText = new NSAttributedString("RichTextBlock咩咩咩咩咩咩咩咩咩咩咩咩咩咩咩咩咩咩咩  咩咩咩咩咩咩咩", UIFont.SystemFontOfSize(14))
+                AttributedText = new NSAttributedString("RichTextBlock咩咩咩咩咩咩咩", UIFont.SystemFontOfSize(14))
             };
             SixthRichTextBlock.Changed += (sender, e) =>
             {

@@ -29,8 +29,8 @@ namespace SharpConstraintLayout.Maui.Native.Example
 
         public MainPage()
         {
-            ConstraintLayout.DEBUG = true;
-            //ConstraintLayout.MEASURE_MEASURELAYOUT = true;
+            ConstraintLayout.DEBUG = false;
+            ConstraintLayout.MEASURE_MEASURELAYOUT = true;
             //ConstraintLayout.MEASUREEVERYWIDGET = true;
             //ConstraintLayout.MEASUREEVERYCHILD = true;
 
@@ -43,7 +43,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             //BarrierTest(this);//bug:text box have false length
             //VisibilityTest(this);//bug:invisiable not correct
             //FlowTest(this);
-            NestedConstraintLayoutTest(this);
+            //NestedConstraintLayoutTest(this);
             //CircleConstraintTest(this);
             //PlatformLayoutInConstraintLayoutTest(this);//OK
             //FlowPerformanceTest(this);
@@ -51,10 +51,10 @@ namespace SharpConstraintLayout.Maui.Native.Example
             //GroupTest(this);
             //PlaceholderTest(this);
             //SizeTest(this);
-            //ConstraintLayoutInPlatformLayoutTest(this);
+            ConstraintLayoutInScrollViewTest(this);
         }
 
-        void ConstraintLayoutInPlatformLayoutTest(ConstraintLayout page)
+        void ConstraintLayoutInScrollViewTest(ConstraintLayout page)
         {
             var scrollView = new ScrollViewer()
             {
@@ -134,6 +134,37 @@ namespace SharpConstraintLayout.Maui.Native.Example
                   });
         }
 
+        void ConstraintLayoutInListViewTest(ConstraintLayout page)
+        {
+            var listView = new ListView()
+            {
+                Background = new SolidColorBrush(Colors.White),
+            };
+            page.AddElement(listView);
+
+            using (var set = new FluentConstraintSet())
+            {
+                set.Clone(page);
+                set.Select(listView)
+                    .LeftToLeft().TopToTop()
+                    .Width(FluentConstraintSet.SizeBehavier.MatchParent)
+                    .Height(FluentConstraintSet.SizeBehavier.MatchParent);
+                set.ApplyTo(page);
+            }
+
+            var firstConstraintLayoutPage = new ConstraintLayout()
+            {
+                Background = new SolidColorBrush(Colors.Pink),
+                ConstrainWidth = ConstraintSet.MatchParent,
+                ConstrainHeight = ConstraintSet.WrapContent,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
+                ConstrainPaddingLeft = 10,
+                ConstrainPaddingTop = 10,
+                ConstrainPaddingRight = 10,
+                ConstrainPaddingBottom = 10,
+            };
+        }
         private void createControls()
         {
             FirstButton = new Button()
