@@ -32,7 +32,7 @@ namespace SharpConstraintLayout.Maui.Widget
     using FrameworkElement = Microsoft.Maui.Controls.View;
     using UIElement = Microsoft.Maui.Controls.View;
 #elif WINDOWS
-     using Panel = Microsoft.UI.Xaml.FrameworkElement;
+    using Panel = Microsoft.UI.Xaml.FrameworkElement;
     using FrameworkElement = Microsoft.UI.Xaml.FrameworkElement;
     using UIElement = Microsoft.UI.Xaml.UIElement;
 
@@ -96,7 +96,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// The view also need to have its id set in order to be added.
         /// </summary>
         /// <param name="view"> </param>
-        public virtual void AddElement(FrameworkElement view)
+        public virtual void ReferenceElement(FrameworkElement view)
         {
 
             if (view == this)
@@ -508,7 +508,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <summary>
         /// 替代平台的Visibility和Hiden.请在设置ConstraintSet后使用.
         /// </summary>
-        public virtual int Visible
+        public virtual int ConstrainVisibility
         {
             set
             {
@@ -527,7 +527,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <summary>
         /// TODO:Platform不一定有高程,所以未开启该属性.
         /// </summary>
-        public virtual float Elevation
+        public virtual float ConstrainElevation
         {
             set { elevation = value; }
             get { return elevation; }

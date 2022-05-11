@@ -112,7 +112,9 @@ namespace SharpConstraintLayout.Maui.Widget
 
 #elif WINDOWS
             if (ConstraintSetVisible == ConstraintSet.Invisible)//TODO
+            {
                 element.Opacity = 0;//https://stackoverflow.com/questions/28097153/workaround-for-visibilty-hidden-state-windows-phone-8-1-app-development
+            }
             else if (ConstraintSetVisible == ConstraintSet.Visible)
             {
                 element.Visibility = Microsoft.UI.Xaml.Visibility.Visible;

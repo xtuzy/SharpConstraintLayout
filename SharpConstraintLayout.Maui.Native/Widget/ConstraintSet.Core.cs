@@ -115,8 +115,8 @@ namespace SharpConstraintLayout.Maui.Widget
                     Barrier barrier = ((Barrier)view);
                     constraint.layout.mBarrierAllowsGoneWidgets = barrier.AllowsGoneWidget;
                     constraint.layout.mReferenceIds = barrier.ReferencedIds;
-                    constraint.layout.mBarrierDirection = barrier.Type;
-                    constraint.layout.mBarrierMargin = barrier.Margin;
+                    constraint.layout.mBarrierDirection = barrier.ConstrainType;
+                    constraint.layout.mBarrierMargin = barrier.ConstrainMargin;
                 }
             }
         }
@@ -165,8 +165,8 @@ namespace SharpConstraintLayout.Maui.Widget
                         constraint.layout.mHelperType = BARRIER_TYPE;
                         Barrier barrier = (Barrier)view;
                         //barrier.Id = id;
-                        barrier.Type = constraint.layout.mBarrierDirection;
-                        barrier.Margin = constraint.layout.mBarrierMargin;
+                        barrier.ConstrainType = constraint.layout.mBarrierDirection;
+                        barrier.ConstrainMargin = constraint.layout.mBarrierMargin;
 
                         barrier.AllowsGoneWidget = constraint.layout.mBarrierAllowsGoneWidgets;
                         if (constraint.layout.mReferenceIds != null)

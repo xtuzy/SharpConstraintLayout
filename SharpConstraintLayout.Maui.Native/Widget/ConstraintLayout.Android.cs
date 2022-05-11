@@ -69,6 +69,20 @@ namespace SharpConstraintLayout.Maui.Widget
         #endregion
 
         #region Measure And Layout
+
+        /// <summary>
+        /// Android中不使用
+        /// </summary>
+        /// <param name="layout"></param>
+        /// <param name="constrainWidth"></param>
+        /// <param name="constrainHeight"></param>
+        /// <param name="availableSize"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public (bool isInfinityAvailabelWidth, bool isInfinityAvailabelHeight) IsInfinitable(ConstraintLayout layout, int constrainWidth, int constrainHeight, Size availableSize)
+        {
+            throw new NotImplementedException();
+        }
         protected override void OnMeasure(int widthMeasureSpec, int heightMeasureSpec)
         {
             //base.OnMeasure(widthMeasureSpec, heightMeasureSpec);

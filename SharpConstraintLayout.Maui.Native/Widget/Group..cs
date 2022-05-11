@@ -59,20 +59,20 @@ namespace SharpConstraintLayout.Maui.Widget
             applyLayoutFeatures();
         }
 
-        public override int Visible
+        public override int ConstrainVisibility
         {
             set
             {
-                base.Visible = value;
+                base.ConstrainVisibility = value;
                 applyLayoutFeatures();
             }
         }
 
-        public override float Elevation
+        public override float ConstrainElevation
         {
             set
             {
-                base.Elevation = value;
+                base.ConstrainElevation = value;
                 applyLayoutFeatures();
             }
         }

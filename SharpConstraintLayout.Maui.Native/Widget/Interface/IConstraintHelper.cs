@@ -24,7 +24,7 @@ namespace SharpConstraintLayout.Maui.Widget.Interface
     {
         //JniPeerMembers JniPeerMembers { get; }
 
-        void AddElement(View view);
+        void ReferenceElement(View view);
         bool ContainsId(int id);
         //int[] GetReferencedIds();
         int IndexFromId(int id);

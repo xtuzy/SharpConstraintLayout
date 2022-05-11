@@ -117,7 +117,7 @@ namespace SharpConstraintLayout.Maui.Widget
         }
 
         [Obsolete("Android need set at layoutparams, please use constraintset.create to set orientation.")]
-        public virtual int Orientation
+        public virtual int ConstrainOrientation
         {
             set => mGuideline.Orientation = value;
             get => mGuideline.Orientation;

@@ -254,7 +254,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <see cref="getPaddingWidth"/>
         /// </summary>
         /// <returns></returns>
-        private int PaddingWidth
+        public int ConstrainPaddingWidth
         {
             get
             {
@@ -368,9 +368,150 @@ namespace SharpConstraintLayout.Maui.Widget
         #endregion LayoutProperty
 
         #region Measure
-        bool isInfinityAvailabelWidth = false;
-        bool isInfinityAvailabelHeight = false;
+        /// <summary>
+        /// 存储MeasureSpec给子ConstraintLayout使用,因为iOS和Windows布局体系里本身不传递
+        /// </summary>
+        public int HorizontalSpec { get; set; } = 0;
+        public int VerticalSpec { get; set; } = 0;
 
+        /// <summary>
+        /// Android中Spec由parent制作,其它平台需自己制作
+        /// </summary>
+        /// <param name="layout"></param>
+        /// <returns></returns>
+        public (int horizontalSpec, int verticalSpec) MakeSpec(ConstraintLayout layout, Size availableSize)
+        {
+            var constrainWidth = this.mConstraintSet.GetConstraint(this.GetId()).layout.mWidth;
+            var constrainHeight = this.mConstraintSet.GetConstraint(this.GetId()).layout.mHeight;
+            int horizontalSpec = 0;
+            int verticalSpec = 0;
+            (bool isInfinityAvailabelWidth, bool isInfinityAvailabelHeight) = IsInfinitable(this, constrainWidth, constrainHeight, availableSize);
+            //If a direction available value and we need MATCH_PARENT, that always generate mistake result, so we not accept it. please modify constraint.
+            if ((isInfinityAvailabelWidth && constrainWidth == ConstraintSet.MatchParent) || (isInfinityAvailabelHeight && constrainHeight == ConstraintSet.MatchParent))
+            {
+                var errorStr = $"ConstraintLayout's parent is {this.GetParent().GetType().Name},it give ConstraintLayout a infinity size, you set ConstraintLayout have MATCH_PARENT size, ConstraintLayout can't generate correct result.";
+                System.Diagnostics.Trace.WriteLine(errorStr, "Error");
+                throw new InvalidOperationException(errorStr);
+            }
+
+            int availableWidth = (int)availableSize.Width;
+            int availableHeight = (int)availableSize.Height;
+
+            if (isInfinityAvailabelWidth)
+            {
+                availableWidth = int.MaxValue;
+            }
+
+            if (isInfinityAvailabelHeight)
+            {
+                availableHeight = int.MaxValue;
+            }
+
+            int horizontalDimension = availableWidth;
+            int verticalDimension = availableHeight;
+            /*
+             * Android中Spec的制作:ScrollView传入的高是UNSPECIFIED,高度有具体数值.
+             */
+            if (constrainWidth == ConstraintSet.WrapContent)
+            {
+                //WrapContent时,如果Window中Parent传入无限值,代表对此Layout大小没有限制,如果是确定数值,则代表有限制
+                if (isInfinityAvailabelWidth)
+                    horizontalSpec = AndroidMeasureSpec.MakeMeasureSpec(horizontalDimension, AndroidMeasureSpec.UNSPECIFIED);//ScrollView的子View是UNSPECIFIED,Windouws中对应无限值
+                else
+                    horizontalSpec = AndroidMeasureSpec.MakeMeasureSpec(horizontalDimension, AndroidMeasureSpec.AT_MOST);
+                horizontalSpec = AndroidMeasureSpec.MakeMeasureSpec(horizontalDimension, AndroidMeasureSpec.AT_MOST);
+            }
+            else if (constrainWidth == ConstraintSet.MatchParent || constrainWidth == ConstraintSet.MatchConstraint)
+            { //MatchParent时,Parent最终都有固定大小,此Layout大小也就确定,所以此处使用EXACTLY
+
+                if (isInfinityAvailabelWidth)
+                    horizontalSpec = AndroidMeasureSpec.MakeMeasureSpec(horizontalDimension, AndroidMeasureSpec.UNSPECIFIED);
+                else
+                    horizontalSpec = AndroidMeasureSpec.MakeMeasureSpec(horizontalDimension, AndroidMeasureSpec.EXACTLY);
+            }
+            else
+            {
+                //指定了具体大小
+                horizontalSpec = AndroidMeasureSpec.MakeMeasureSpec(constrainWidth, AndroidMeasureSpec.EXACTLY);
+            }
+
+            if (constrainHeight == ConstraintSet.WrapContent)
+            {
+
+                if (isInfinityAvailabelHeight)
+                    verticalSpec = AndroidMeasureSpec.MakeMeasureSpec(verticalDimension, AndroidMeasureSpec.UNSPECIFIED);//ScrollView的子View是UNSPECIFIED,Windouws中对应无限值
+                else
+                {
+                    verticalSpec = AndroidMeasureSpec.MakeMeasureSpec(verticalDimension, AndroidMeasureSpec.AT_MOST);
+                }
+            }
+            else if (constrainHeight == ConstraintSet.MatchParent || constrainHeight == ConstraintSet.MatchConstraint)
+            {
+                if (isInfinityAvailabelHeight)
+                    verticalSpec = AndroidMeasureSpec.MakeMeasureSpec(verticalDimension, AndroidMeasureSpec.UNSPECIFIED);//ScrollView的子View是UNSPECIFIED,Windouws中对应无限值
+                else
+                    verticalSpec = AndroidMeasureSpec.MakeMeasureSpec(verticalDimension, AndroidMeasureSpec.EXACTLY);
+            }
+            else
+            {
+                verticalSpec = AndroidMeasureSpec.MakeMeasureSpec(constrainHeight, AndroidMeasureSpec.EXACTLY);
+            }
+
+            if (!isInfinityAvailabelWidth && constrainWidth <= 0)
+            {
+                if (this.GetParent() is ConstraintLayout)
+                {
+                    var parent = this.GetParent() as ConstraintLayout;
+                    if (parent.HorizontalSpec != 0)
+                    {
+                        horizontalSpec = AndroidMeasureSpec.getChildMeasureSpec(parent.HorizontalSpec, parent.ConstrainPaddingWidth, constrainWidth);
+                    }
+                    else
+                        if (DEBUG) SimpleDebug.WriteLine($"{parent} verticalSpec is 0");
+                }
+
+            }
+            if (!isInfinityAvailabelHeight && constrainHeight <= 0)
+            {
+                if (this.GetParent() is ConstraintLayout)
+                {
+                    var parent = this.GetParent() as ConstraintLayout;
+                    if (parent.VerticalSpec != 0)
+                    {
+                        verticalSpec = AndroidMeasureSpec.getChildMeasureSpec(parent.VerticalSpec, parent.ConstrainPaddingTop + parent.ConstrainPaddingBottom, constrainHeight);
+                    }
+                    else
+                        if (DEBUG) SimpleDebug.WriteLine($"{parent} verticalSpec is 0");
+                }
+
+            }
+
+            isInfinityAvailabelWidth = false;
+            isInfinityAvailabelHeight = false;
+
+            //存储Spec给Child使用
+            if (horizontalSpec != HorizontalSpec)
+            {
+                HorizontalSpec = horizontalSpec;
+            }
+            if (verticalSpec != VerticalSpec)
+            {
+                VerticalSpec = verticalSpec;
+            }
+
+            return (horizontalSpec, verticalSpec);
+        }
+
+        /// <summary>
+        /// iOS:iOS的布局流程中,父布局通过指定Frame来给Child布局,也就是说父布局要先知道Child测量的大小,这与Android不同,Android的布局流程是先给Child测量,然后再给父布局测量.
+        /// 这就导致Child需要依据父布局大小布局时,不知道父布局大小.当父布局是ConstraintLayout时,我们可以处理,当父布局是平台布局时,就需要按照平台布局特征来得到大小.
+        /// 如果父布局是UIScrollView时,可以有无限值,那么在Android布局体系中对应着Child是UNSPECIFIED
+        /// Windows:
+        /// </summary>
+        /// <param name="availableSize"></param>
+        /// <param name="horizontalSpec"></param>
+        /// <param name="verticalSpec"></param>
+        /// <returns></returns>
         public Size MeasureLayout(Size availableSize, int horizontalSpec = 0, int verticalSpec = 0)
         {
             Stopwatch updateHierarchySW = null;
@@ -402,96 +543,6 @@ namespace SharpConstraintLayout.Maui.Widget
                 updateHierarchySW.Stop();
                 SimpleDebug.WriteLine($"{this} updateHierarchy time: {updateHierarchySW.Elapsed.TotalMilliseconds.ToString("0.000")} ms");
             }
-
-#if !(__ANDROID__ && !__MAUI__)//Android不需要分析该布局的Spec
-
-            //If a direction available value and we need MATCH_PARENT, that always generate mistake result, so we not accept it. please modify constraint.
-            if ((isInfinityAvailabelWidth && MLayoutWidget.HorizontalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.MATCH_PARENT) || (isInfinityAvailabelHeight && MLayoutWidget.VerticalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.MATCH_PARENT))
-            {
-                var errorStr = $"ConstraintLayout's parent {this.GetParent()} gived ConstraintLayout a infinity size, you set ConstraintLayout have MATCH_PARENT size, ConstraintLayout can't generate correct result.";
-                Trace.WriteLine(errorStr, "Error");
-                //throw new InvalidOperationException(errorStr);
-            }
-
-            int availableWidth = (int)availableSize.Width;
-            int availableHeight = (int)availableSize.Height;
-
-            if (isInfinityAvailabelWidth)
-            {
-                availableWidth = int.MaxValue;
-            }
-
-            if (isInfinityAvailabelHeight)
-            {
-                availableHeight = int.MaxValue;
-            }
-
-            int horizontalDimension = availableWidth;
-            int verticalDimension = availableHeight;
-            /*
-             * Android中Spec的制作:ScrollView传入的高是UNSPECIFIED,高度有具体数值.
-             */
-            switch (MLayoutWidget.HorizontalDimensionBehaviour)
-            {
-                case ConstraintWidget.DimensionBehaviour.FIXED:
-                    {
-                        //已知是Fixed时说明默认没有赋值或者赋值了,赋值了的话原始的约束绝对有值,那么Widget.Width不用变,没有赋值的直接按available大小处理,因为
-                        //父布局会指定值,而我们不指定则代表遵从父布局的指定
-                        if (mConstraintSet.Constraints[this.GetId()].layout.mWidth > 0)//用原始的约束来判断是否为固定值,如果是WrapContent,MatchParent,MatchContraint,则<=0
-                            horizontalDimension = MLayoutWidget.Width;
-                        horizontalSpec = AndroidMeasureSpec.MakeMeasureSpec(horizontalDimension, AndroidMeasureSpec.EXACTLY);
-                    }
-                    break;
-                case ConstraintWidget.DimensionBehaviour.WRAP_CONTENT://WrapContent时,如果Window中Parent传入无限值,代表对此Layout大小没有限制,如果是确定数值,则代表有限制
-                    {
-                        if (isInfinityAvailabelWidth)
-                            horizontalSpec = AndroidMeasureSpec.MakeMeasureSpec(horizontalDimension, AndroidMeasureSpec.UNSPECIFIED);//ScrollView的子View是UNSPECIFIED,Windouws中对应无限值
-                        else
-                            horizontalSpec = AndroidMeasureSpec.MakeMeasureSpec(horizontalDimension, AndroidMeasureSpec.AT_MOST);
-                    }
-                    break;
-                case ConstraintWidget.DimensionBehaviour.MATCH_PARENT://MatchParent时,Parent最终都有固定大小,此Layout大小也就确定,所以此处使用EXACTLY
-                case ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT:
-                    {
-                        if (isInfinityAvailabelWidth)
-                            horizontalSpec = AndroidMeasureSpec.MakeMeasureSpec(horizontalDimension, AndroidMeasureSpec.UNSPECIFIED);
-                        else
-                            horizontalSpec = AndroidMeasureSpec.MakeMeasureSpec(horizontalDimension, AndroidMeasureSpec.EXACTLY);
-                    }
-                    break;
-            }
-
-            switch (MLayoutWidget.VerticalDimensionBehaviour)
-            {
-                case ConstraintWidget.DimensionBehaviour.FIXED:
-                    {
-                        // 已知是Fixed时说明默认没有赋值或者赋值了,赋值了的话原始的约束绝对有值,那么Widget.Width不用变,没有赋值的直接按available大小处理,因为
-                        //父布局会指定值,而我们不指定则代表遵从父布局的指定
-                        if (mConstraintSet.Constraints[this.GetId()].layout.mHeight > 0)//用原始的约束来判断是否为固定值,如果是WrapContent,MatchParent,MatchContraint,则<=0
-                            verticalDimension = MLayoutWidget.Height;
-                        verticalSpec = AndroidMeasureSpec.MakeMeasureSpec(verticalDimension, AndroidMeasureSpec.EXACTLY);
-                    }
-                    break;
-                case ConstraintWidget.DimensionBehaviour.WRAP_CONTENT:
-                    {
-                        if (isInfinityAvailabelHeight)
-                            verticalSpec = AndroidMeasureSpec.MakeMeasureSpec(verticalDimension, AndroidMeasureSpec.UNSPECIFIED);//ScrollView的子View是UNSPECIFIED,Windouws中对应无限值
-                        else
-                            verticalSpec = AndroidMeasureSpec.MakeMeasureSpec(verticalDimension, AndroidMeasureSpec.AT_MOST);
-                    }
-                    break;
-                case ConstraintWidget.DimensionBehaviour.MATCH_PARENT:
-                case ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT:
-                    {
-                        if (isInfinityAvailabelHeight)
-                            verticalSpec = AndroidMeasureSpec.MakeMeasureSpec(verticalDimension, AndroidMeasureSpec.UNSPECIFIED);//ScrollView的子View是UNSPECIFIED,Windouws中对应无限值
-                        else
-                            verticalSpec = AndroidMeasureSpec.MakeMeasureSpec(verticalDimension, AndroidMeasureSpec.EXACTLY);
-                    }
-                    break;
-            }
-
-#endif
 
             if (DEBUG) SimpleDebug.WriteLine($"{nameof(MeasureLayout)} {this.GetType().FullName} {availableSize} Spec=({AndroidMeasureSpec.ToString(horizontalSpec)} x {AndroidMeasureSpec.ToString(verticalSpec)})");
 
@@ -588,7 +639,7 @@ namespace SharpConstraintLayout.Maui.Widget
             int paddingY = Math.Max(0, ConstrainPaddingTop);
             int paddingBottom = Math.Max(0, ConstrainPaddingBottom);
             int paddingHeight = paddingY + paddingBottom;
-            int paddingWidth = PaddingWidth;
+            int paddingWidth = ConstrainPaddingWidth;
             int paddingX;
             //传入布局的测量数据,用于测量child时
             mMeasurer.captureLayoutInfo(widthMeasureSpec, heightMeasureSpec, paddingY, paddingBottom, paddingWidth, paddingHeight);

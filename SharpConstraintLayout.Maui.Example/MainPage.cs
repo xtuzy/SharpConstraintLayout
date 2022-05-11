@@ -25,7 +25,7 @@ namespace SharpConstraintLayout.Maui.Example
             page.AddElement(flow);
 
             page.AddElement(FifthTextBox);
-            flow.AddElement(FifthTextBox);
+            flow.ReferenceElement(FifthTextBox);
             //Generate 1000 Button,all add to page
 
             var buttonList = new List<Button>();
@@ -36,7 +36,7 @@ namespace SharpConstraintLayout.Maui.Example
                 button.Text = "Button" + i;
                 buttonList.Add(button);
                 page.AddElement(button);
-                flow.AddElement(button);
+                flow.ReferenceElement(button);
             }
 
             using (var layoutSet = new FluentConstraintSet())

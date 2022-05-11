@@ -775,7 +775,7 @@ namespace SharpConstraintLayout.Maui.Widget
         {
             foreach (var view in views)
             {
-                helper.AddElement(view);
+                helper.ReferenceElement(view);
             }
         }
     }

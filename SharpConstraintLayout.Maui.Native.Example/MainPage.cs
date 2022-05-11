@@ -55,9 +55,9 @@ namespace SharpConstraintLayout.Maui.Native.Example
             group = new Group(page.Context);
 #endif
             page.AddElement(FirstButton, group, SecondButton, ThirdCanvas, FouthTextBlock);
-            group.AddElement(SecondButton);
-            group.AddElement(ThirdCanvas);
-            group.AddElement(FouthTextBlock);
+            group.ReferenceElement(SecondButton);
+            group.ReferenceElement(ThirdCanvas);
+            group.ReferenceElement(FouthTextBlock);
             using (var constraintSet = new FluentConstraintSet())
             {
                 constraintSet.Clone(page);
@@ -76,13 +76,13 @@ namespace SharpConstraintLayout.Maui.Native.Example
             FirstButton.TouchUpInside += (s, e) =>
 #endif
                         {
-                            if (group.Visible == ConstraintSet.Gone)
+                            if (group.ConstrainVisibility == ConstraintSet.Gone)
                             {
-                                group.Visible = ConstraintSet.Visible;
+                                group.ConstrainVisibility = ConstraintSet.Visible;
                             }
                             else
                             {
-                                group.Visible = ConstraintSet.Gone;
+                                group.ConstrainVisibility = ConstraintSet.Gone;
                             }
                         };
         }
@@ -101,7 +101,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             page.AddElement(flow);
 
             page.AddElement(FifthTextBox);
-            flow.AddElement(FifthTextBox);
+            flow.ReferenceElement(FifthTextBox);
             //Generate 1000 Button,all add to page
 #if WINDOWS
             var buttonList = new List<Button>();
@@ -111,7 +111,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
                 button.Content = "Button" + i;
                 buttonList.Add(button);
                 page.AddElement(button);
-                flow.AddElement(button);
+                flow.ReferenceElement(button);
             }
 #elif __ANDROID__
             var buttonList = new List<Button>();
@@ -121,7 +121,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
                 button.Text = "Button" + i;
                 buttonList.Add(button);
                 page.AddElement(button);
-                flow.AddElement(button);
+                flow.ReferenceElement(button);
             }
 #elif __IOS__
             var buttonList = new List<UIButton>();
@@ -131,7 +131,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
                 button.SetTitle("Button" + i, UIControlState.Normal);
                 buttonList.Add(button);
                 page.AddElement(button);
-                flow.AddElement(button);
+                flow.ReferenceElement(button);
             }
 #endif
             using (var layoutSet = new FluentConstraintSet())
@@ -495,6 +495,10 @@ namespace SharpConstraintLayout.Maui.Native.Example
         /// <param name="page"></param>
         void NestedConstraintLayoutTest(ConstraintLayout page)
         {
+            page.ConstrainPaddingTop = 10;
+            page.ConstrainPaddingBottom = 10;
+            page.ConstrainPaddingLeft = 10;
+            page.ConstrainPaddingRight = 10;
 #if __ANDROID__
             layout = new ConstraintLayout(page.Context)
             {
@@ -511,16 +515,20 @@ namespace SharpConstraintLayout.Maui.Native.Example
 #endif
             };
 #endif
-
+            layout.ConstrainPaddingTop = 10;
+            layout.ConstrainPaddingBottom = 10;
+            layout.ConstrainPaddingLeft = 10;
+            layout.ConstrainPaddingRight = 10;
             using (var pageSet = new FluentConstraintSet())
             {
                 page.AddElement(layout);
                 pageSet.Clone(page);
                 pageSet.Select(layout)
-                    .CenterYTo(page)
-                    .Width(ConstraintSet.WrapContent)
-                    .Height(ConstraintSet.WrapContent);
+                    .CenterTo(page)
+                    .Width(SizeBehavier.WrapContent)
+                    .Height(SizeBehavier.WrapContent);
                 pageSet.ApplyTo(page);
+                layout.ConstrainWidth = layout.ConstrainHeight = ConstraintSet.WrapContent;
                 layout.AddElement(ThirdCanvas);
                 layout.AddElement(FirstButton);
                 using (var layoutSet = new FluentConstraintSet())
@@ -530,7 +538,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
                         .Select(FirstButton).CenterXTo().CenterYTo()
                         .Width(FluentConstraintSet.SizeBehavier.WrapContent)
                         .Height(FluentConstraintSet.SizeBehavier.WrapContent)
-                        .Select(ThirdCanvas).EdgesTo(null, 20, 20)
+                        .Select(ThirdCanvas)//.EdgesTo(null, 20, 20)
                         .Width(FluentConstraintSet.SizeBehavier.MatchParent)
                         .Height(FluentConstraintSet.SizeBehavier.MatchParent);
                     layoutSet.ApplyTo(layout);

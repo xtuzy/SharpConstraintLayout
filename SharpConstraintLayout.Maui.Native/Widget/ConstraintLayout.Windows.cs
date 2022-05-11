@@ -54,8 +54,19 @@ namespace SharpConstraintLayout.Maui.Widget
             /*
              * Analysis available size
              */
+            (int horizontalSpec, int verticalSpec) = MakeSpec(this, availableSize);
 
-            //sometimes no fixsize
+            return MeasureLayout(availableSize, horizontalSpec, verticalSpec);
+        }
+
+        /// <summary>
+        /// 判断是否可以无限大小
+        /// </summary>
+        /// <returns></returns>
+        public (bool isInfinityAvailabelWidth, bool isInfinityAvailabelHeight) IsInfinitable(ConstraintLayout layout, int constrainWidth, int constrainHeight, Size availableSize)
+        {
+            bool isInfinityAvailabelWidth = false;
+            bool isInfinityAvailabelHeight = false;
             if (double.IsPositiveInfinity(availableSize.Width))
             {
                 isInfinityAvailabelWidth = true;
@@ -65,8 +76,7 @@ namespace SharpConstraintLayout.Maui.Widget
             {
                 isInfinityAvailabelHeight = true;
             }
-
-            return MeasureLayout(availableSize);
+            return (isInfinityAvailabelWidth, isInfinityAvailabelHeight);
         }
 
         #region Layout
@@ -76,10 +86,11 @@ namespace SharpConstraintLayout.Maui.Widget
             if (DEBUG) Debug.WriteLine($"{nameof(ArrangeOverride)} {this} {finalSize}");
 
             //参考:https://github.com/CommunityToolkit/WindowsCommunityToolkit/blob/main/Microsoft.Toolkit.Uwp.UI.Controls.Primitives/WrapPanel/WrapPanel.cs
-            if (finalSize.Width != MLayoutWidget.Width || finalSize.Height != MLayoutWidget.Height)
+            if (finalSize.Width != mLastMeasureWidth || finalSize.Height != mLastMeasureHeight)
             {
                 // We haven't received our desired size. We need to refresh the rows.
-                finalSize = MeasureLayout(finalSize);
+                (int horizontalSpec, int verticalSpec) = MakeSpec(this, finalSize);
+                finalSize = MeasureLayout(finalSize, horizontalSpec, verticalSpec);
             }
 
             ArrangeLayout();

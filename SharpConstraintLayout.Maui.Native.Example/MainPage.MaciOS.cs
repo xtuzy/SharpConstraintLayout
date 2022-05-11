@@ -27,8 +27,8 @@ namespace SharpConstraintLayout.Maui.Native.Example
 
         public MainPage(CGRect frame)
         {
-            //ConstraintLayout.DEBUG = true;
-            ConstraintLayout.MEASURE_MEASURELAYOUT = true;
+            ConstraintLayout.DEBUG = true;
+            //ConstraintLayout.MEASURE_MEASURELAYOUT = true;
             //ConstraintLayout.MEASUREEVERYWIDGET = true;
             //ConstraintLayout.MEASUREEVERYCHILD = true;
 
@@ -88,7 +88,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
                 //Frame = new CGRect(0, 0, 200, 100),
                 TranslatesAutoresizingMaskIntoConstraints = false,
                 BackgroundColor = UIColor.SystemPink,
-                ConstrainWidth = ConstraintSet.MatchParent,
+                ConstrainWidth = ConstraintSet.WrapContent,
                 ConstrainHeight = ConstraintSet.WrapContent,
                 ConstrainPaddingLeft = 10,
                 ConstrainPaddingTop = 10,
@@ -98,7 +98,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             scrollView.AddSubview(firstConstraintLayoutPage);
             firstConstraintLayoutPage.TopAnchor.ConstraintEqualTo(scrollView.CenterYAnchor).Active = true;
             firstConstraintLayoutPage.LeftAnchor.ConstraintEqualTo(scrollView.LeftAnchor).Active = true;
-            firstConstraintLayoutPage.WidthAnchor.ConstraintEqualTo(scrollView.WidthAnchor).Active = true;
+            firstConstraintLayoutPage.RightAnchor.ConstraintEqualTo(scrollView.RightAnchor).Active = true;
             firstConstraintLayoutPage.BottomAnchor.ConstraintEqualTo(scrollView.BottomAnchor).Active = true;
 
             var firstConstraintLayoutPageBackground = new UIView()
@@ -120,11 +120,11 @@ namespace SharpConstraintLayout.Maui.Native.Example
                 set.Select(FirstButton)
                     .TopToTop().CenterXTo()
                     .Select(SecondButton).TopToBottom(FirstButton).CenterXTo()
-                    .Select(ThirdCanvas).TopToBottom(SecondButton).CenterXTo()
+                    .Select(ThirdCanvas).TopToBottom(SecondButton).CenterXTo().Width(400).Height(1000)
                     .Select(FouthTextBlock).TopToBottom(ThirdCanvas).CenterXTo()
                     .Select(FifthTextBox).TopToBottom(FouthTextBlock).CenterXTo()
                     .Select(SixthRichTextBlock).TopToBottom(FifthTextBox).CenterXTo()
-                    .Select(FirstButton, SecondButton, ThirdCanvas, FouthTextBlock, FifthTextBox, SixthRichTextBlock)
+                    .Select(FirstButton, SecondButton, FouthTextBlock, FifthTextBox, SixthRichTextBlock)
                     .Width(FluentConstraintSet.SizeBehavier.WrapContent)
                     .Height(FluentConstraintSet.SizeBehavier.WrapContent)
                     .Select(firstConstraintLayoutPageBackground)
@@ -197,7 +197,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             SixthRichTextBlock = new UITextView()
             {
                 ScrollEnabled = false,
-                AttributedText = new NSAttributedString("RichTextBlock", UIFont.SystemFontOfSize(14))
+                AttributedText = new NSAttributedString("RichTextBlock咩咩咩咩咩咩咩咩咩咩咩咩咩咩咩咩咩咩咩  咩咩咩咩咩咩咩", UIFont.SystemFontOfSize(14))
             };
             SixthRichTextBlock.Changed += (sender, e) =>
             {

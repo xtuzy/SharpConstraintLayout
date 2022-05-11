@@ -37,11 +37,11 @@ namespace SharpConstraintLayout.Maui.Native.Example
             createControls();
             this.Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.HotPink);
 
-            //baseAlignTest(this);
-            //baselineTest(this); 
-            //guidelineTest(this);
+            //BaseAlignTest(this);
+            //BaselineTest(this); //bug:first time not align baseline
+            //GuidelineTest(this);
             //BarrierTest(this);//bug:text box have false length
-            //VisibilityTest(this);
+            //VisibilityTest(this);//bug:invisiable not correct
             //FlowTest(this);
             //NestedConstraintLayoutTest(this);
             //CircleConstraintTest(this);
@@ -76,7 +76,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             {
                 Background = new SolidColorBrush(Colors.Pink),
                 ConstrainWidth = ConstraintSet.MatchParent,
-                ConstrainHeight = ConstraintSet.MatchParent,
+                ConstrainHeight = ConstraintSet.WrapContent,
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Top,
                 ConstrainPaddingLeft = 10,
@@ -90,7 +90,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             {
                 Background = new SolidColorBrush(Colors.Yellow),
             };
-            
+
             firstConstraintLayoutPage.AddElement(firstConstraintLayoutPageBackground);
             firstConstraintLayoutPage.AddElement(FirstButton);
             firstConstraintLayoutPage.AddElement(SecondButton);
@@ -106,7 +106,8 @@ namespace SharpConstraintLayout.Maui.Native.Example
                     .TopToTop().CenterXTo()
                     .Select(SecondButton).TopToBottom(FirstButton).CenterXTo()
                     .Select(ThirdCanvas).TopToBottom(SecondButton).CenterXTo()
-                    .Width(FluentConstraintSet.SizeBehavier.MatchParent).Height(FluentConstraintSet.SizeBehavier.MatchParent)
+                    .Width(FluentConstraintSet.SizeBehavier.MatchParent)
+                    .Height(1000)
                     .Select(FouthTextBlock).TopToBottom(ThirdCanvas).CenterXTo()
                     .Select(FifthTextBox).TopToBottom(FouthTextBlock).CenterXTo()
                     .Select(SixthRichTextBlock).TopToBottom(FifthTextBox).CenterXTo()

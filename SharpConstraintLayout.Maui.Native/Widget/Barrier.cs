@@ -105,7 +105,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <summary>
         /// Get the barrier type (<see cref="Barrier.LEFT"/> ,<see cref="Barrier.TOP"/> ,<see cref="Barrier.RIGHT"/> ,<see cref="Barrier.BOTTOM"/>, <see cref="Barrier.Start"/>, <see cref="Barrier.End"/>)
         /// </summary>
-        public virtual int Type
+        public virtual int ConstrainType
         {
             get
             {
@@ -208,7 +208,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// Returns the barrier margin
         /// </summary>
         /// <returns> the barrier margin (in pixels) </returns>
-        public new virtual int Margin
+        public virtual int ConstrainMargin
         {
             get
             {
