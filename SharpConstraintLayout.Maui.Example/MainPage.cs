@@ -8,6 +8,7 @@ using SharpConstraintLayout.Maui.Example.Tool;
 using SharpConstraintLayout.Maui.Widget;
 using static SharpConstraintLayout.Maui.Widget.FluentConstraintSet;
 using SharpConstraintLayout.Maui.Helper.Widget;
+using SharpConstraintLayout.Maui.DebugTool;
 
 namespace SharpConstraintLayout.Maui.Example
 {
@@ -60,7 +61,7 @@ namespace SharpConstraintLayout.Maui.Example
                 layoutSet.Clone(layout);
                 layoutSet.Select(FirstButton).CenterTo()
                     .Select(SecondButton, FouthTextBlock)
-                .CircleTo(FirstButton, new[] { 50, 100 }, new[] { 60f, 240 });
+                .CircleTo(FirstButton, new[] { 100, 100 }, new[] { 60f, 240 });
                 layoutSet.ApplyTo(layout);
             }
 
@@ -73,9 +74,9 @@ namespace SharpConstraintLayout.Maui.Example
                     UIThread.Invoke(() =>
                     {
                         //The distance between SecondButton center and FirstButton center should equal to 50
-                        SimpleTest.AreEqual(Math.Abs(SecondButton.GetBounds().Center.Y - FirstButton.GetBounds().Center.Y) * 2, 50, nameof(CircleConstraintTest), "The distence between SecondButton center and FirstButton center should equal to 50");
+                        SimpleTest.AreEqual(Math.Abs(SecondButton.GetBounds().Center.Y - FirstButton.GetBounds().Center.Y) * 2, 100, nameof(CircleConstraintTest), "The distence between SecondButton center and FirstButton center should equal to 100");
                         //The distance between FouthTextBlock center and FirstButton center should equal to 50
-                        SimpleTest.AreEqual(Math.Abs(FouthTextBlock.GetBounds().Center.Y - FirstButton.GetBounds().Center.Y) * 2, 50, nameof(CircleConstraintTest), "The distence between FouthTextBlock center and FirstButton center should equal to 50");
+                        SimpleTest.AreEqual(Math.Abs(FouthTextBlock.GetBounds().Center.Y - FirstButton.GetBounds().Center.Y) * 2, 100, nameof(CircleConstraintTest), "The distence between FouthTextBlock center and FirstButton center should equal to 100");
                     }, page);
 
                     index++;
@@ -347,6 +348,7 @@ namespace SharpConstraintLayout.Maui.Example
                 await Task.Delay(3000);//wait ui show
                 UIThread.Invoke(() =>
                 {
+                    SimpleDebug.WriteLine($"{page} position={page.GetBounds()}");
                     SimpleTest.AreEqual(page.GetSize().Width / 2, layout.GetBounds().X, nameof(GuidelineTest), "Horiable guideline should at center");
                 }, page);
             });

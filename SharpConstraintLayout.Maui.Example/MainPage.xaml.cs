@@ -18,20 +18,26 @@ public partial class MainPage : ContentPage
     {
         InitializeComponent();
 
-        ConstraintLayout.DEBUG = true;
+        //ConstraintLayout.DEBUG = true;
         ConstraintLayout.MEASURE_MEASURELAYOUT = true;
-        var content = new ConstraintLayout();
+        var content = new ConstraintLayout()
+        {
+            ConstrainPaddingTop = 10,
+            ConstrainPaddingBottom = 10,
+            ConstrainPaddingLeft = 10,
+            ConstrainPaddingRight = 10,
+            Background = new SolidColorBrush(Colors.HotPink),
+        };
         Page.Content = content;
         createControls();
-        this.Background = new SolidColorBrush(Colors.HotPink);
 
         //BaseAlignTest(content);
-        //BaselineTest(content); 
+        //BaselineTest(content);
         //GuidelineTest(content);
-        BarrierTest(content);
+        //BarrierTest(content);
         //VisibilityTest(content);
         //FlowTest(content);
-        //NestedConstraintLayoutTest(content);
+        NestedConstraintLayoutTest(content);
         //CircleConstraintTest(content);
         //PlatformLayoutInConstraintLayoutTest(content);
         //FlowPerformanceTest(content);

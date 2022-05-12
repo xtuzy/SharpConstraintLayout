@@ -71,15 +71,15 @@ namespace SharpConstraintLayout.Maui.Widget
 
         void LayoutChild(UIElement element, int x, int y, int w, int h)
         {
-            element.Arrange(new Rect(x, y, w, h));
-            //AbsoluteLayout.SetLayoutBounds(element, new Rect(x, y, w, h));
+            //element.Arrange(new Rect(x, y, w, h));
+            AbsoluteLayout.SetLayoutBounds(element, new Rect(x, y, w, h));
         }
         #endregion
 
         public Size GetLastMeasureSize() { return new Size(mLastMeasureWidth, mLastMeasureHeight); }
     }
 
-    internal class ConstraintLayoutManager : LayoutManager
+    internal class ConstraintLayoutManager : AbsoluteLayoutManager
     {
         WeakReference<IMauiConstraintLayout> Layout;
 
@@ -90,14 +90,17 @@ namespace SharpConstraintLayout.Maui.Widget
 
         public override Size Measure(double widthConstraint, double heightConstraint)
         {
-            //base.Measure(widthConstraint, heightConstraint);
+
             Layout.TryGetTarget(out var layout);
 
             var availableSize = new Size(widthConstraint, heightConstraint);
 
             (int horizontalSpec, int verticalSpec) = layout.MakeSpec(layout as ConstraintLayout, availableSize);
 
-            return layout.MeasureLayout(availableSize, horizontalSpec, verticalSpec);
+            var finalSize = layout.MeasureLayout(availableSize, horizontalSpec, verticalSpec);
+            base.Measure(widthConstraint, heightConstraint);
+
+            return finalSize;
         }
 
         public override Size ArrangeChildren(Rect bounds)
@@ -113,12 +116,12 @@ namespace SharpConstraintLayout.Maui.Widget
             }
 
             layout.ArrangeLayout();
-            //base.ArrangeChildren(bounds);
+            base.ArrangeChildren(bounds);
             return finalSize;
         }
     }
 
-    interface IMauiConstraintLayout : Microsoft.Maui.ILayout
+    interface IMauiConstraintLayout : Microsoft.Maui.IAbsoluteLayout
     {
         Size MeasureLayout(Size availableSize, int horizontalSpec = 0, int verticalSpec = 0);
         void ArrangeLayout();

@@ -31,7 +31,7 @@ namespace SharpConstraintLayout.Maui.Widget
     using BasicMeasure = androidx.constraintlayout.core.widgets.analyzer.BasicMeasure;
 
 #if __MAUI__
-    using Panel = Microsoft.Maui.Controls.Layout;
+    using Panel = Microsoft.Maui.Controls.AbsoluteLayout;
     using UIElement = Microsoft.Maui.Controls.View;
     using Microsoft.Maui.Graphics;
 #elif WINDOWS
