@@ -29,7 +29,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
 
         public MainPage()
         {
-            ConstraintLayout.DEBUG = false;
+            //ConstraintLayout.DEBUG = false;
             ConstraintLayout.MEASURE_MEASURELAYOUT = true;
             //ConstraintLayout.MEASUREEVERYWIDGET = true;
             //ConstraintLayout.MEASUREEVERYCHILD = true;
@@ -39,7 +39,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
 
             //BaseAlignTest(this);
             //BaselineTest(this); //bug:first time not align baseline
-            //GuidelineTest(this);
+            GuidelineTest(this);
             //BarrierTest(this);//bug:text box have false length
             //VisibilityTest(this);//bug:invisiable not correct
             //FlowTest(this);
@@ -51,7 +51,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             //GroupTest(this);
             //PlaceholderTest(this);
             //SizeTest(this);
-            ConstraintLayoutInScrollViewTest(this);
+            //ConstraintLayoutInScrollViewTest(this);
         }
 
         void ConstraintLayoutInScrollViewTest(ConstraintLayout page)

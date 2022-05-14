@@ -2,7 +2,7 @@
 
 [![NuGet version(SharpConstraintLayout.Core)](https://img.shields.io/nuget/v/SharpConstraintLayout.Core?label=SharpConstraintLayout.Core)](https://www.nuget.org/packages/SharpConstraintLayout.Core/)
 [![NuGet version(SharpConstraintLayout.Maui.Native)](https://img.shields.io/nuget/v/SharpConstraintLayout.Maui.Native?label=SharpConstraintLayout.Maui.Native)](https://www.nuget.org/packages/SharpConstraintLayout.Maui.Native/)
-
+[![NuGet version(SharpConstraintLayout.Maui)](https://img.shields.io/nuget/v/SharpConstraintLayout.Maui?label=SharpConstraintLayout.Maui)](https://www.nuget.org/packages/SharpConstraintLayout.Maui/)
 This is a C# port of [ConstraintLayout](https://github.com/androidx/constraintlayout), it convert [constraintlayout.core](https://github.com/androidx/constraintlayout/tree/main/constraintlayout/core) and create ConstraintLayout for WPF. Now, you can use ConstraintLayout in C# world 🎆
 
 ## Using ConstraintLayout

@@ -71,39 +71,34 @@ namespace SharpConstraintLayout.Maui.Widget
 
         void LayoutChild(UIElement element, int x, int y, int w, int h)
         {
-            element.Arrange(new Rect(x, y, w, h));
-            //AbsoluteLayout.SetLayoutBounds(element, new Rect(x, y, w, h));
+            (element as IView).Arrange(new Rect(x, y, w, h));
         }
         #endregion
 
         public Size GetLastMeasureSize() { return new Size(mLastMeasureWidth, mLastMeasureHeight); }
     }
 
-    internal class ConstraintLayoutManager : LayoutManager
+    public class ConstraintLayoutManager : LayoutManager
     {
-        WeakReference<IMauiConstraintLayout> Layout;
-
         public ConstraintLayoutManager(IMauiConstraintLayout constraintLayout) : base(constraintLayout)
         {
-            Layout = new WeakReference<IMauiConstraintLayout>(constraintLayout);
         }
 
         public override Size Measure(double widthConstraint, double heightConstraint)
         {
-            //base.Measure(widthConstraint, heightConstraint);
-            Layout.TryGetTarget(out var layout);
-
             var availableSize = new Size(widthConstraint, heightConstraint);
+            var layout = Layout as ConstraintLayout;
+            (int horizontalSpec, int verticalSpec) = layout.MakeSpec(layout, availableSize);
 
-            (int horizontalSpec, int verticalSpec) = layout.MakeSpec(layout as ConstraintLayout, availableSize);
+            var finalSize = layout.MeasureLayout(availableSize, horizontalSpec, verticalSpec);
 
-            return layout.MeasureLayout(availableSize, horizontalSpec, verticalSpec);
+            return finalSize;
         }
 
         public override Size ArrangeChildren(Rect bounds)
         {
             Size finalSize = bounds.Size;
-            Layout.TryGetTarget(out var layout);
+            var layout = Layout as ConstraintLayout;
             var lastMeasureSize = layout.GetLastMeasureSize();
             if (finalSize.Width != lastMeasureSize.Width || finalSize.Height != lastMeasureSize.Height)
             {
@@ -113,12 +108,11 @@ namespace SharpConstraintLayout.Maui.Widget
             }
 
             layout.ArrangeLayout();
-            //base.ArrangeChildren(bounds);
             return finalSize;
         }
     }
 
-    interface IMauiConstraintLayout : Microsoft.Maui.ILayout
+    public interface IMauiConstraintLayout : Microsoft.Maui.ILayout
     {
         Size MeasureLayout(Size availableSize, int horizontalSpec = 0, int verticalSpec = 0);
         void ArrangeLayout();

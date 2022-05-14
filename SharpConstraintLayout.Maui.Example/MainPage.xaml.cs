@@ -1,5 +1,7 @@
 ﻿using Microsoft.Maui.Controls.Shapes;
+using SharpConstraintLayout.Maui.DebugTool;
 using SharpConstraintLayout.Maui.Widget;
+using static SharpConstraintLayout.Maui.Widget.FluentConstraintSet;
 
 namespace SharpConstraintLayout.Maui.Example;
 
@@ -18,15 +20,20 @@ public partial class MainPage : ContentPage
     {
         InitializeComponent();
 
-        ConstraintLayout.DEBUG = true;
+        //ConstraintLayout.DEBUG = true;
         ConstraintLayout.MEASURE_MEASURELAYOUT = true;
-        var content = new ConstraintLayout();
+        var content = new ConstraintLayout()
+        {
+            ConstrainPaddingTop = 10,
+            ConstrainPaddingBottom = 10,
+            ConstrainPaddingLeft = 10,
+            ConstrainPaddingRight = 10,
+            Background = new SolidColorBrush(Colors.HotPink),
+        };
         Page.Content = content;
         createControls();
-        this.Background = new SolidColorBrush(Colors.HotPink);
-
         //BaseAlignTest(content);
-        //BaselineTest(content); 
+        //BaselineTest(content);
         //GuidelineTest(content);
         BarrierTest(content);
         //VisibilityTest(content);
@@ -35,7 +42,6 @@ public partial class MainPage : ContentPage
         //CircleConstraintTest(content);
         //PlatformLayoutInConstraintLayoutTest(content);
         //FlowPerformanceTest(content);
-
     }
 
     private void createControls()
@@ -68,7 +74,11 @@ public partial class MainPage : ContentPage
         {
             Text = "FifthTextBox",
         };
-
+        FifthTextBox.SizeChanged += (sender, e) =>
+        {
+            //layout.InvalidateMeasure();
+            SimpleDebug.WriteLine("FifthTextBox.SizeChanged");
+        };
         //https://stackoverflow.com/questions/35710355/uwpc-adding-text-to-richtextblock
         SixthRichTextBlock = new Editor()
         {
