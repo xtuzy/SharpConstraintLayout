@@ -1,5 +1,7 @@
 ﻿using Microsoft.Maui.Controls.Shapes;
+using SharpConstraintLayout.Maui.DebugTool;
 using SharpConstraintLayout.Maui.Widget;
+using static SharpConstraintLayout.Maui.Widget.FluentConstraintSet;
 
 namespace SharpConstraintLayout.Maui.Example;
 
@@ -30,18 +32,16 @@ public partial class MainPage : ContentPage
         };
         Page.Content = content;
         createControls();
-
         //BaseAlignTest(content);
         //BaselineTest(content);
         //GuidelineTest(content);
-        //BarrierTest(content);
+        BarrierTest(content);
         //VisibilityTest(content);
         //FlowTest(content);
-        NestedConstraintLayoutTest(content);
+        //NestedConstraintLayoutTest(content);
         //CircleConstraintTest(content);
         //PlatformLayoutInConstraintLayoutTest(content);
         //FlowPerformanceTest(content);
-
     }
 
     private void createControls()
@@ -74,7 +74,11 @@ public partial class MainPage : ContentPage
         {
             Text = "FifthTextBox",
         };
-
+        FifthTextBox.SizeChanged += (sender, e) =>
+        {
+            //layout.InvalidateMeasure();
+            SimpleDebug.WriteLine("FifthTextBox.SizeChanged");
+        };
         //https://stackoverflow.com/questions/35710355/uwpc-adding-text-to-richtextblock
         SixthRichTextBlock = new Editor()
         {

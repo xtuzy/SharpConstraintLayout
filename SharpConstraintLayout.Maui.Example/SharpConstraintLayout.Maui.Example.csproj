@@ -49,6 +49,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="ReloadPreview" Version="3.0.6" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\SharpConstraintLayout.Maui\SharpConstraintLayout.Maui.csproj" />
   </ItemGroup>
 

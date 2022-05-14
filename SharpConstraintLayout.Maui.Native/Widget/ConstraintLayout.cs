@@ -31,7 +31,7 @@ namespace SharpConstraintLayout.Maui.Widget
     using BasicMeasure = androidx.constraintlayout.core.widgets.analyzer.BasicMeasure;
 
 #if __MAUI__
-    using Panel = Microsoft.Maui.Controls.AbsoluteLayout;
+    using Panel = Microsoft.Maui.Controls.Layout;
     using UIElement = Microsoft.Maui.Controls.View;
     using Microsoft.Maui.Graphics;
 #elif WINDOWS
@@ -1012,6 +1012,7 @@ namespace SharpConstraintLayout.Maui.Widget
                  * AndroidX.ConstraintLayout use mDirtyHierarchy to mark need measure, but it like also measure all.
                  * At Windows, WrapPanel also remeasure all, i feel it not good, so Windows i use these code still.
                 */
+#if !__MAUI__
 #if __ANDROID__ && !__MAUI__
                 //before measure,we don't know new size, we just know it is dirty,
                 //so all dirty need remeasure,other view that wrap content maybe not remeasure.
@@ -1049,6 +1050,7 @@ namespace SharpConstraintLayout.Maui.Widget
                         }
                     }
                 }
+#endif
                 bool horizontalMatchConstraints = (horizontalBehavior == ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT);
                 bool verticalMatchConstraints = (verticalBehavior == ConstraintWidget.DimensionBehaviour.MATCH_CONSTRAINT);
 
@@ -1101,7 +1103,7 @@ namespace SharpConstraintLayout.Maui.Widget
 #else
                         (w, h) = child.MeasureSelf(horizontalSpec, verticalSpec);
 #endif
-                        if (DEBUG) SimpleDebug.WriteLine($"{child.GetType().FullName}  after onMeasure: widget={widget},control={child.GetWrapContentSize()}");
+                        if (DEBUG) SimpleDebug.WriteLine($"{child.GetType().FullName}  after onMeasure: widget={widget},control={child.GetWrapContentSize()},measured=({w} x {h})");
                     }
                     widget.setLastMeasureSpec(horizontalSpec, verticalSpec);
 
