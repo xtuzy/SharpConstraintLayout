@@ -9,6 +9,8 @@ using SharpConstraintLayout.Maui.Widget;
 using static SharpConstraintLayout.Maui.Widget.FluentConstraintSet;
 using SharpConstraintLayout.Maui.Helper.Widget;
 using SharpConstraintLayout.Maui.DebugTool;
+using SharpConstraintLayout.Maui.Example.Models;
+using SharpConstraintLayout.Maui.Example.ViewModels;
 
 namespace SharpConstraintLayout.Maui.Example
 {
@@ -16,13 +18,15 @@ namespace SharpConstraintLayout.Maui.Example
     {
         void FlowPerformanceTest(ConstraintLayout page)
         {
+            (Button FirstButton, Button SecondButton, ContentView ThirdCanvas, Label FouthTextBlock, Entry FifthTextBox, Editor SixthRichTextBlock) = CreateControls();
+
             int buttonCount = 50;
 
             var flow = new Flow() { };
 
-            flow.SetOrientation(Flow.Horizontal);
-            flow.SetWrapMode(Flow.WrapChain);
-            flow.SetHorizontalStyle(Flow.ChainPacked);
+            flow.SetOrientation(SharpConstraintLayout.Maui.Helper.Widget.Flow.Horizontal);
+            flow.SetWrapMode(SharpConstraintLayout.Maui.Helper.Widget.Flow.WrapChain);
+            flow.SetHorizontalStyle(SharpConstraintLayout.Maui.Helper.Widget.Flow.ChainPacked);
             page.AddElement(flow);
 
             page.AddElement(FifthTextBox);
@@ -54,7 +58,9 @@ namespace SharpConstraintLayout.Maui.Example
 
         void CircleConstraintTest(ConstraintLayout page)
         {
-            layout = page;
+            (Button FirstButton, Button SecondButton, ContentView ThirdCanvas, Label FouthTextBlock, Entry FifthTextBox, Editor SixthRichTextBlock) = CreateControls();
+
+            var layout = page;
             layout.AddElement(FirstButton, SecondButton, FouthTextBlock);
             using (var layoutSet = new FluentConstraintSet())
             {
@@ -89,7 +95,7 @@ namespace SharpConstraintLayout.Maui.Example
             var stackPanel = new StackLayout()
             {
                 Orientation = StackOrientation.Horizontal,
-                Background = new SolidColorBrush(Colors.Coral),
+                Background = new SolidColorBrush(Colors.Aqua),
             };
             page.AddElement(stackPanel);
             stackPanel.Add(new Button() { Text = "InStackPanel" });
@@ -97,7 +103,7 @@ namespace SharpConstraintLayout.Maui.Example
             stackPanel.Add(new Label() { Text = "InStackPanel" });
             stackPanel.Add(new Editor() { Text = "InStackPanel" });
 
-            var grid = new Grid();
+            var grid = new Grid() { BackgroundColor = Colors.Aqua};
             page.AddElement(grid);
             grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
             grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
@@ -113,7 +119,7 @@ namespace SharpConstraintLayout.Maui.Example
             scrollView.Content = new StackLayout()
             {
                 Orientation = StackOrientation.Vertical,
-                Background = new SolidColorBrush(Colors.Coral),
+                Background = new SolidColorBrush(Colors.Aqua),
             };
             (scrollView.Content as StackLayout).Add(new Button() { Text = "InScrollViewer" });
             (scrollView.Content as StackLayout).Add(new Button() { Text = "InScrollViewer" });
@@ -124,11 +130,11 @@ namespace SharpConstraintLayout.Maui.Example
             {
                 layoutSet.Clone(page);
                 layoutSet.Select(stackPanel)
-                    .CenterYTo().LeftToLeft()
+                    .TopToTop().LeftToLeft()
                     .Width(SizeBehavier.WrapContent)
                     .Height(SizeBehavier.WrapContent)
                     .Select(grid)
-                    .TopToBottom(stackPanel, 10).LeftToLeft()
+                    .CenterYTo().LeftToLeft()
                     .Width(SizeBehavier.WrapContent)
                     .Height(100)
                     .Select(scrollView)
@@ -136,14 +142,16 @@ namespace SharpConstraintLayout.Maui.Example
                     .BottomToBottom()
                     .LeftToLeft()
                     .Width(SizeBehavier.WrapContent)
-                    .Height(SizeBehavier.WrapContent);
+                    .Height(SizeBehavier.MatchConstraint);
                 layoutSet.ApplyTo(page);
             }
         }
 
         void NestedConstraintLayoutTest(ConstraintLayout page)
         {
-            layout = new ConstraintLayout()
+            (Button FirstButton, Button SecondButton, ContentView ThirdCanvas, Label FouthTextBlock, Entry FifthTextBox, Editor SixthRichTextBlock) = CreateControls();
+
+            var layout = new ConstraintLayout()
             {
                 Background = new SolidColorBrush(Colors.Black)
             };
@@ -176,12 +184,14 @@ namespace SharpConstraintLayout.Maui.Example
 
         void FlowTest(ConstraintLayout page)
         {
+            (Button FirstButton, Button SecondButton, ContentView ThirdCanvas, Label FouthTextBlock, Entry FifthTextBox, Editor SixthRichTextBlock) = CreateControls();
+
             var flow = new Flow();
 
-            flow.SetOrientation(Flow.Vertical);
-            flow.SetWrapMode(Flow.WrapChain);
-            flow.SetHorizontalStyle(Flow.ChainSpreadInside);
-            layout = page;
+            flow.SetOrientation(SharpConstraintLayout.Maui.Helper.Widget.Flow.Vertical);
+            flow.SetWrapMode(SharpConstraintLayout.Maui.Helper.Widget.Flow.WrapChain);
+            flow.SetHorizontalStyle(SharpConstraintLayout.Maui.Helper.Widget.Flow.ChainSpreadInside);
+            var layout = page;
             layout.AddElement(ThirdCanvas, FirstButton, SecondButton, FouthTextBlock, FifthTextBox, SixthRichTextBlock, flow);
             flow.AddElement(FirstButton, SecondButton, FouthTextBlock, FifthTextBox, SixthRichTextBlock);
 
@@ -225,7 +235,9 @@ namespace SharpConstraintLayout.Maui.Example
 
         private void VisibilityTest(ConstraintLayout page)
         {
-            layout = page;
+            (Button FirstButton, Button SecondButton, ContentView ThirdCanvas, Label FouthTextBlock, Entry FifthTextBox, Editor SixthRichTextBlock) = CreateControls();
+
+            var layout = page;
 
             layout.AddElement(FirstButton, SecondButton, ThirdCanvas);
 
@@ -290,7 +302,9 @@ namespace SharpConstraintLayout.Maui.Example
 
         private void BarrierTest(ConstraintLayout page)
         {
-            layout = page;
+            (Button FirstButton, Button SecondButton, ContentView ThirdCanvas, Label FouthTextBlock, Entry FifthTextBox, Editor SixthRichTextBlock) = CreateControls();
+
+            var layout = page;
 
             var barrier = new Widget.Barrier();
 
@@ -337,7 +351,7 @@ namespace SharpConstraintLayout.Maui.Example
 
             var pageSet = new FluentConstraintSet();
             pageSet.Clone(page);
-            pageSet.Select(guide).GuidelineOrientation(FluentConstraintSet.Orientation.X).GuidelinePercent(0.5f)
+            pageSet.Select(guide).GuidelineOrientation(FluentConstraintSet.Orientation.Y).GuidelinePercent(0.5f)
             .Select(layout).LeftToRight(guide).RightToRight(page).TopToTop(page).BottomToBottom(page)
             .Width(SizeBehavier.MatchConstraint)
             .Height(SizeBehavier.MatchConstraint);
@@ -356,7 +370,10 @@ namespace SharpConstraintLayout.Maui.Example
 
         private void BaseAlignTest(ConstraintLayout page)
         {
-            layout = page;
+            (Button FirstButton, Button SecondButton, ContentView ThirdCanvas, Label FouthTextBlock, Entry FifthTextBox, Editor SixthRichTextBlock) = CreateControls();
+            FifthTextBox.FontSize = 20;
+
+            var layout = page;
 
             layout.AddElement(FirstButton, SecondButton, ThirdCanvas, FouthTextBlock, FifthTextBox, SixthRichTextBlock);
 
@@ -370,9 +387,9 @@ namespace SharpConstraintLayout.Maui.Example
                 .Select(ThirdCanvas).Width(SizeBehavier.MatchConstraint).Height(SizeBehavier.MatchConstraint)
                 .Select(SecondButton).RightToRight(FirstButton).TopToBottom(FirstButton)
                 .Select(ThirdCanvas).LeftToRight(FirstButton).RightToRight().EdgesYTo()
-                .Select(FouthTextBlock).RightToRight(SecondButton).TopToBottom(SecondButton)
-                .Select(FifthTextBox).BottomToTop(FirstButton).LeftToLeft(FirstButton).RightToRight(FirstButton)
-                .Select(SixthRichTextBlock).RightToLeft(FouthTextBlock).BaselineToBaseline(FouthTextBlock);
+                .Select(FouthTextBlock).RightToRight(SecondButton, 20).TopToBottom(SecondButton, 20)
+                .Select(FifthTextBox).RightToLeft(FouthTextBlock, 20).BaselineToBaseline(FouthTextBlock)
+                .Select(SixthRichTextBlock).RightToLeft(FifthTextBox, 20).BaselineToBaseline(FifthTextBox);
             layoutSet.ApplyTo(layout);
 
             Task.Run(async () =>
@@ -393,6 +410,121 @@ namespace SharpConstraintLayout.Maui.Example
                     SimpleTest.AreEqual(page.GetBounds().Bottom, ThirdCanvas.GetBounds().Bottom, nameof(BaseAlignTest), "ThirdCanvas's Bottom should equal to page's Bottom");
                 }, page);
             });
+        }
+
+        void ConstraintLayoutInListViewTest(ListView listView)
+        {
+            var list = new List<MicrosoftNews>();
+            list.Add(new MicrosoftNews()
+            {
+                Title = "央视 | 秘鲁北部发生长途客车坠崖事故 致至少11死34伤",
+                ImageUrl = "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AAXjc2n?w=300&h=174&q=60&m=6&f=jpg&u=t",
+                SourceForm = "MSN",
+                SourceFormImageUrl = "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/BBVQ5Hs.img?w=36&h=36&q=60&m=6&f=png&u=t"
+            });
+            list.Add(new MicrosoftNews()
+            {
+                Title = "上海16个区当中15个区实现社会面清零",
+                ImageUrl = "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/BB19W3O1?w=300&h=174&q=60&m=6&f=jpg&u=t",
+                SourceForm = "每日经济新闻",
+                SourceFormImageUrl = "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AAO4ppI.img?w=36&h=36&q=60&m=6&f=png&u=t"
+            });
+            list.Add(new MicrosoftNews()
+            {
+                Title = "袁隆平离开我们一年了",
+                ImageUrl = "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/BB19n8rU.img?w=406&h=304&q=90&m=6&f=jpg&x=2277&y=1318&u=t",
+                SourceForm = "光明网",
+                SourceFormImageUrl = "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AARPRel.img?w=36&h=36&q=60&m=6&f=png&u=t"
+            });
+            list.Add(new MicrosoftNews()
+            {
+                Title = "就Android应用支付系统 Match Group和Google达成临时妥协",
+                ImageUrl = "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AAXxMr9.img?w=300&h=225&q=90&m=6&f=jpg&u=t",
+                SourceForm = "cnBeta",
+            });
+
+            var dataTemplateForBigWindow = new DataTemplate(() =>
+            {
+                var viewCell = new ViewCell();
+                var layout = new ConstraintLayout() { ConstrainWidth = ConstraintSet.MatchParent, ConstrainHeight = ConstraintSet.WrapContent, BackgroundColor = Color.FromRgb(66, 66, 66) };
+                var title = new Label() { TextColor = Colors.White, FontSize = 30, FontAttributes = FontAttributes.Bold };
+                title.SetBinding(Label.TextProperty, nameof(Models.MicrosoftNews.Title));
+                var image = new Image();
+                image.SetBinding(Image.SourceProperty, nameof(Models.MicrosoftNews.ImageUrl));
+                var sourceFrom = new Label() { TextColor = Color.FromRgb(175, 165, 136), FontSize = 12, FontAttributes = FontAttributes.Bold };
+                sourceFrom.SetBinding(Label.TextProperty, nameof(Models.MicrosoftNews.SourceForm));
+                var sourceFromeImage = new Image();
+                sourceFromeImage.SetBinding(Image.SourceProperty, nameof(Models.MicrosoftNews.SourceForm));
+                layout.AddElement(image, title, sourceFromeImage, sourceFrom);
+                using (var set = new FluentConstraintSet())
+                {
+                    set.Clone(layout);
+                    var guideLine = new Guideline() { };
+                    layout.AddElement(guideLine);
+                    set
+                    .Select(guideLine).GuidelineOrientation(Orientation.X).GuidelinePercent(0.5f)
+                    .Select(image).EdgesXTo().BottomToTop(guideLine)
+                    .Width(SizeBehavier.MatchParent).Height(SizeBehavier.WrapContent)
+                    .Select(sourceFromeImage).LeftToLeft(null, 20).BottomToTop(title, 20)
+                    .Width(SizeBehavier.WrapContent).Height(SizeBehavier.WrapContent)
+                    .Select(sourceFrom).LeftToRight(sourceFromeImage, 20).CenterYTo(sourceFromeImage)
+                    .Select(title).LeftToLeft(null, 20).RightToRight(null, 20).BottomToBottom(null, 20).Width(SizeBehavier.MatchConstraint);
+                    set.ApplyTo(layout);
+                }
+                viewCell.View = layout;
+                return viewCell;
+            });
+
+            var dataTemplateForLittleWindow = new DataTemplate(() =>
+            {
+                var viewCell = new ViewCell();
+                var layout = new ConstraintLayout() { ConstrainWidth = ConstraintSet.MatchParent, ConstrainHeight = ConstraintSet.WrapContent, BackgroundColor = Color.FromRgb(66, 66, 66) };
+                var title = new Label() { TextColor = Colors.White, FontSize = 30, FontAttributes = FontAttributes.Bold };
+                title.SetBinding(Label.TextProperty, nameof(Models.MicrosoftNews.Title));
+                var image = new Image();
+                image.SetBinding(Image.SourceProperty, nameof(Models.MicrosoftNews.ImageUrl));
+                var sourceFrom = new Label() { TextColor = Color.FromRgb(175, 165, 136), FontSize = 12, FontAttributes = FontAttributes.Bold };
+                sourceFrom.SetBinding(Label.TextProperty, nameof(Models.MicrosoftNews.SourceForm));
+                var sourceFromeImage = new Image();
+                sourceFromeImage.SetBinding(Image.SourceProperty, nameof(Models.MicrosoftNews.SourceForm));
+                layout.AddElement(image, title, sourceFromeImage, sourceFrom);
+                using (var set = new FluentConstraintSet())
+                {
+                    set.Clone(layout);
+                    set
+                    .Select(image).RightToRight(null, 20).TopToTop(null, 20)
+                    .Width(140).Height(140)
+                    .Select(sourceFromeImage).LeftToLeft(null, 20).TopToTop(image)
+                    .Width(SizeBehavier.WrapContent).Height(SizeBehavier.WrapContent)
+                    .Select(sourceFrom).LeftToRight(sourceFromeImage, 20).CenterYTo(sourceFromeImage)
+                    .Select(title).LeftToLeft(null, 20).RightToLeft(image, 20).TopToBottom(sourceFromeImage, 20).Width(SizeBehavier.MatchConstraint);
+                    set.ApplyTo(layout);
+                }
+                viewCell.View = layout;
+                return viewCell;
+            });
+
+            listView.ItemTemplate = new ListViewDataTemplateSelector()
+            {
+                BigWindowTemplate = dataTemplateForBigWindow,
+                LittleWindowTemplate = dataTemplateForLittleWindow,
+            };
+            var model = new ListViewViewModel() { News = list };
+            this.BindingContext = model;
+            listView.HasUnevenRows = true;
+            listView.ItemsSource = model.News;
+        }
+
+        public class ListViewDataTemplateSelector : DataTemplateSelector
+        {
+            public DataTemplate BigWindowTemplate { get; set; }
+            public DataTemplate LittleWindowTemplate { get; set; }
+
+            protected override DataTemplate OnSelectTemplate(object item, BindableObject container)
+            {
+                //return App.Current.Windows.First().Page.Width >= 744 ? BigWindowTemplate : LittleWindowTemplate;
+                return LittleWindowTemplate;
+            }
         }
     }
 }

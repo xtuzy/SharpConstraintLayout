@@ -15,13 +15,14 @@
     <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
     <TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
     <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
-    <Version>2.1.1.1</Version>
+    <Version>2.1.1.2</Version>
     <Description>constraintlayout for maui</Description>
     <Copyright></Copyright>
     <PackageProjectUrl>https://github.com/xtuzy/SharpConstraintLayout</PackageProjectUrl>
     <RepositoryUrl>https://github.com/xtuzy/SharpConstraintLayout</RepositoryUrl>
     <PackageReleaseNotes>first preview version for maui</PackageReleaseNotes>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 
   </PropertyGroup>
 

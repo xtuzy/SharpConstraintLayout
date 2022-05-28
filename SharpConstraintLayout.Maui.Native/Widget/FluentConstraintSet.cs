@@ -60,12 +60,12 @@ namespace SharpConstraintLayout.Maui.Widget
         }
 
         /// <summary>
-        /// Guideline
+        /// Guideline Orientation of line.
         /// </summary>
         public enum Orientation
         {
-            Y = ConstraintSet.Horizontal,
-            X = ConstraintSet.Vertical,
+            X = ConstraintSet.Horizontal,
+            Y = ConstraintSet.Vertical,
         }
 
         /// <summary>

@@ -395,7 +395,8 @@ namespace SharpConstraintLayout.Maui.Widget
             if ((isInfinityAvailabelWidth && constrainWidth == ConstraintSet.MatchParent) || (isInfinityAvailabelHeight && constrainHeight == ConstraintSet.MatchParent))
             {
                 var errorStr = $"ConstraintLayout's parent is {this.GetParent().GetType().Name},it give ConstraintLayout a infinity size, you set ConstraintLayout have MATCH_PARENT size, ConstraintLayout can't generate correct result.";
-                System.Diagnostics.Trace.WriteLine(errorStr, "Error");
+                System.Diagnostics.Debug.WriteLine(errorStr);
+                System.Diagnostics.Trace.WriteLine(errorStr);
                 throw new InvalidOperationException(errorStr);
             }
 
@@ -918,8 +919,12 @@ namespace SharpConstraintLayout.Maui.Widget
                     sw.Start();
                 }
 
-                var childCurrentPlatformMeasuredSize = child.GetWrapContentSize();//Windows上DesireSize会随TextBox变化,iOS的ContentSize也会变,安卓的好像指挥先标记需要测量,之后MeasuredSize才变.这里放在最前面,是因为获取iOS的ContentSize可能需要计算,避免重复计算就放在最前.
-                var childCurrentPlatformBaseline = child.GetBaseline(childCurrentPlatformMeasuredSize.Height);//缓存Baseline为iOS
+#if __MAUI__
+                var childCurrentPlatformMeasuredSize = child.GetWrapContentSize();
+#else
+                var childCurrentPlatformMeasuredSize = child.GetWrapContentSize();//Windows上DesireSize会随TextBox变化,iOS的ContentSize也会变,安卓的好像指挥先标记需要测量,之后MeasuredSize才变.这里放在最前面,是因为获取iOS的ContentSize可能需要计算,避免重复计算就放在最前.MAUI同Android
+                var childCurrentPlatformBaseline = child.GetBaseline(childCurrentPlatformMeasuredSize.Height);//缓存Baseline为iOS;MAUI因为不进行Pass判断,因此不提前计算
+#endif
                 if (MEASUREEVERYCHILD)
                 {
                     sw.Stop();
@@ -1011,6 +1016,8 @@ namespace SharpConstraintLayout.Maui.Widget
                  * That because Android only get real size after measure, Windows can get real size before load measure. so we let android must remeasure.
                  * AndroidX.ConstraintLayout use mDirtyHierarchy to mark need measure, but it like also measure all.
                  * At Windows, WrapPanel also remeasure all, i feel it not good, so Windows i use these code still.
+                 * 
+                 * MAUI需要Measure后才有正确的大小,否则和之前的一样,那么会一直Pass,因此让其一直需要重新测量
                 */
 #if !__MAUI__
 #if __ANDROID__ && !__MAUI__
@@ -1107,8 +1114,8 @@ namespace SharpConstraintLayout.Maui.Widget
                     }
                     widget.setLastMeasureSpec(horizontalSpec, verticalSpec);
 
-#if __ANDROID__ && !__MAUI__
-                    baseline = child.GetBaseline();//Android重新测量后可能有新的Baseline,iOS和Windows在MeasureSelf前就确定了
+#if __ANDROID__ || __MAUI__
+                    baseline = child.GetBaseline(h);//Android重新测量后可能有新的Baseline,iOS和Windows在MeasureSelf前就确定了,MAUI同Android
 #else
                     baseline = childCurrentPlatformBaseline;
 #endif
@@ -1157,7 +1164,7 @@ namespace SharpConstraintLayout.Maui.Widget
                      * 这个步骤不理解:这里的意思是拿测量过后的值和最大最小的值对比得到的大小再次进行测量,取这次测量大小为最终大小.
                      * 但问题是再次测量得到的值不能作为最终值(Windows),因为WrapContent测量得出来的还是第一次测量的值
                      */
-#if __ANDROID__ && !__MAUI__
+#if __ANDROID__ || __MAUI__
                     if (w != width || h != height)
                     {
                         if (w != width)
@@ -1169,11 +1176,10 @@ namespace SharpConstraintLayout.Maui.Widget
                             verticalSpec = AndroidMeasureSpec.MakeMeasureSpec(height, AndroidMeasureSpec.EXACTLY);
                         }
                         //child.measure(horizontalSpec, verticalSpec);
-                        child.MeasureSelf(horizontalSpec, verticalSpec);
+                        (width, height) = child.MeasureSelf(horizontalSpec, verticalSpec);
 
                         widget.setLastMeasureSpec(horizontalSpec, verticalSpec);
-                        (width, height) = child.GetWrapContentSize();//Windows中Measure后的高度应该是DesiredSize
-                        baseline = child.GetBaseline();
+                        baseline = child.GetBaseline(height);
                         if (DEBUG)
                         {
                             string measurement2 = AndroidMeasureSpec.ToString(horizontalSpec) + " x " + AndroidMeasureSpec.ToString(verticalSpec) + " => " + width + " x " + height;
@@ -1194,15 +1200,9 @@ namespace SharpConstraintLayout.Maui.Widget
                 {
                     measure.measuredNeedsSolverPass = true;
                 }
-                //在Windows中嵌套Stack Panel和具体数值时,发现设置StackPanel宽度为MatchParent不生效,依旧为WrapContent时的大小,我认为只有WrapContent的控件才需要自身Measure值,其他的ConstraintWidget会自己计算出
-                //if (widget.HorizontalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.WRAP_CONTENT)
+
                 measure.measuredWidth = width;
-                //else
-                //    measure.measuredWidth = widget.Width;
-                //if (widget.VerticalDimensionBehaviour == ConstraintWidget.DimensionBehaviour.WRAP_CONTENT)
                 measure.measuredHeight = height;
-                // else
-                //    measure.measuredHeight = widget.Height;
                 measure.measuredHasBaseline = hasBaseline;
                 measure.measuredBaseline = baseline;
             }

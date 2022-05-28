@@ -746,7 +746,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
 
             var pageSet = new FluentConstraintSet();
             pageSet.Clone(page);
-            pageSet.Select(guide).GuidelineOrientation(FluentConstraintSet.Orientation.X).GuidelinePercent(0.5f)
+            pageSet.Select(guide).GuidelineOrientation(FluentConstraintSet.Orientation.Y).GuidelinePercent(0.5f)
             .Select(layout).LeftToRight(guide).RightToRight(page).TopToTop(page).BottomToBottom(page)
             .Width(SizeBehavier.MatchConstraint)
             .Height(SizeBehavier.MatchConstraint);
