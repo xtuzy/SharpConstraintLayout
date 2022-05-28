@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -31,16 +30,95 @@ namespace SharpConstraintLayout.Maui.Widget
     /// </summary>
     public static class UIElementExtension
     {
-
         /// <summary>
         /// Baseline To Font Center Height
+        /// Android:the offset of the baseline within the widget's bounds or -1 if baseline alignment is not supported
         /// </summary>
         /// <param name="element"></param>
         /// <returns></returns>
         public static int GetBaseline(this UIElement element, int elementHeight = 0)
         {
 #if __MAUI__
-            //TODO
+            if (element is IBaseline)
+            {
+                return (element as IBaseline).GetBaseline();
+            }
+            if (element is Button)
+            {
+                return ConstraintSet.Unset;
+            }
+            var platformView = (element as View).Handler.PlatformView;
+#if WINDOWS
+            if (platformView is Microsoft.UI.Xaml.Controls.TextBox ||
+                platformView is Microsoft.UI.Xaml.Controls.TextBlock ||
+                platformView is Microsoft.UI.Xaml.Controls.AutoSuggestBox ||
+                platformView is Microsoft.UI.Xaml.Controls.NumberBox ||
+                platformView is Microsoft.UI.Xaml.Controls.PasswordBox ||
+                platformView is Microsoft.UI.Xaml.Controls.RichEditBox ||
+                platformView is Microsoft.UI.Xaml.Controls.RichTextBlock
+                )
+            {
+                string fontFamily = null;
+                double fontSize = 0;
+                if (platformView is Microsoft.UI.Xaml.Controls.Control)
+                {
+                    var actualView = platformView as Microsoft.UI.Xaml.Controls.Control;
+                    fontFamily = actualView.FontFamily.Source;
+                    fontSize = actualView.FontSize;
+                }
+                else if (platformView is Microsoft.UI.Xaml.Controls.TextBlock)
+                {
+                    var actualView = platformView as Microsoft.UI.Xaml.Controls.TextBlock;
+                    fontFamily = actualView.FontFamily.Source;
+                    fontSize = actualView.FontSize;
+                    //return (int)actualView.BaselineOffset;
+                }
+                else if (platformView is Microsoft.UI.Xaml.Controls.RichTextBlock)
+                {
+                    var actualView = platformView as Microsoft.UI.Xaml.Controls.RichTextBlock;
+                    fontFamily = actualView.FontFamily.Source;
+                    fontSize = actualView.FontSize;
+                    //return (int)actualView.BaselineOffset;
+                }
+
+                //参考https://github.com/microsoft/Win2D-Samples/blob/master/ExampleGallery/CustomTextLayouts.xaml.cs
+                var textFormat = new Microsoft.Graphics.Canvas.Text.CanvasTextFormat();
+                textFormat.FontFamily = fontFamily;
+                textFormat.FontSize = (float)fontSize;
+                var textDirection = Microsoft.Graphics.Canvas.Text.CanvasTextDirection.LeftToRightThenTopToBottom;
+                var textAnalyzer = new Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer("A", textDirection);
+                var fontResult = textAnalyzer.GetFonts(textFormat);
+                var fontFace = fontResult[0].Value.FontFace;
+                return (int)(elementHeight / 2 + (fontFace.Ascent - (fontFace.Descent + fontFace.Ascent) / 2) * fontSize);
+            }
+#elif __IOS__
+            //https://stackoverflow.com/questions/35922215/how-to-calculate-uitextview-first-baseline-position-relatively-to-the-origin
+            if (platformView is UIKit.UITextField ||
+                platformView is UIKit.UITextView ||
+                platformView is UIKit.UILabel)
+            {
+                UIKit.UIFont fontMetrics = null;
+                if (platformView is UIKit.UITextField)
+                {
+                    var actualView = platformView as UIKit.UITextField;
+                    fontMetrics = actualView.Font;
+                }
+                else if (platformView is UIKit.UITextView)
+                {
+                    var actualView = platformView as UIKit.UITextView;
+                    fontMetrics = actualView.Font;
+                }
+                else if (platformView is UIKit.UILabel)
+                {
+                    var actualView = platformView as UIKit.UILabel;
+                    fontMetrics = actualView.Font;
+                }
+                return (elementHeight / 2 + (int)((fontMetrics.Descender - fontMetrics.Ascender) / 2 - fontMetrics.Descender));
+            }
+#elif __ANDROID__
+            var offset = (platformView as Android.Views.View).Baseline;
+            return offset;
+#endif
             return ConstraintSet.Unset;
 #elif WINDOWS
             double? baselineOffset = 0;
@@ -283,7 +361,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 element.MaximumWidthRequest = maxWidth;
             if (maxHeight > 0)
                 element.MaximumHeightRequest = maxHeight;
-            element.Margin = new Thickness(left, top, right, bottom);
+            //element.Margin = new Thickness(left, top, right, bottom);//Maui中会将Margin计算入Size,我们需要的只是控件间间距
 #elif WINDOWS
             var view = element as FrameworkElement;
             if (width > 0)
@@ -298,7 +376,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 view.MaxWidth = maxWidth;
             if (maxHeight > 0)
                 view.MaxHeight = maxHeight;
-            view.Margin = new Microsoft.UI.Xaml.Thickness(left, top, right, bottom);
+            //view.Margin = new Microsoft.UI.Xaml.Thickness(left, top, right, bottom);
 #elif __IOS__
             //element.Frame = new CoreGraphics.CGRect(element.Frame.X, element.Frame.Y, width, height);
             if (width > 0 && height > 0)
@@ -307,7 +385,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 element.Frame = new CoreGraphics.CGRect(element.Frame.X, element.Frame.Y, width, element.Frame.Height);
             else if (height > 0)
                 element.Frame = new CoreGraphics.CGRect(element.Frame.X, element.Frame.Y, element.Frame.Width, height);
-            element.LayoutMargins = new UIEdgeInsets(top, left, bottom, right);
+            //element.LayoutMargins = new UIEdgeInsets(top, left, bottom, right);
 #elif __ANDROID__
             if (element.LayoutParameters == null)
                 element.LayoutParameters = new ViewGroup.MarginLayoutParams(ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.WrapContent);

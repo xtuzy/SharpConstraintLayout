@@ -1,0 +1,77 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="SharpConstraintLayout.Maui.Example.MainPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:my="clr-namespace:SharpConstraintLayout.Maui.Widget;assembly=SharpConstraintLayout.Maui"
+    x:Name="Page">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <ScrollView Grid.Row="0" Orientation="Horizontal">
+            <HorizontalStackLayout>
+                <Button
+                    x:Name="BaseAlign"
+                    Clicked="BaseAlign_Clicked"
+                    Text="BaseAlign" />
+                <Button
+                    x:Name="Baseline"
+                    Clicked="Baseline_Clicked"
+                    Text="Baseline" />
+                <Button
+                    x:Name="Guideline"
+                    Clicked="Guideline_Clicked"
+                    Text="Guideline" />
+                <Button
+                    x:Name="Barrier"
+                    Clicked="Barrier_Clicked"
+                    Text="Barrier" />
+                <Button
+                    x:Name="Visibility"
+                    Clicked="Visibility_Clicked"
+                    Text="Visibility" />
+                <Button
+                    x:Name="Flow"
+                    Clicked="Flow_Clicked"
+                    Text="Flow" />
+                <Button
+                    x:Name="CircleConstraint"
+                    Clicked="CircleConstraint_Clicked"
+                    Text="CircleConstraint" />
+                <Button
+                    x:Name="NestedConstraintLayout"
+                    Clicked="NestedConstraintLayout_Clicked"
+                    Text="NestedConstraintLayout" />
+                <Button
+                    x:Name="PlatformLayoutInConstraintLayout"
+                    Clicked="PlatformLayoutInConstraintLayout_Clicked"
+                    Text="PlatformLayoutInConstraintLayout" />
+                <Button
+                    x:Name="FlowPerformance"
+                    Clicked="FlowPerformance_Clicked"
+                    Text="FlowPerformance" />
+                <Button
+                    x:Name="ConstraintLayoutInListView"
+                    Clicked="ConstraintLayoutInListView_Clicked"
+                    Text="ConstraintLayoutInListView" />
+            </HorizontalStackLayout>
+        </ScrollView>
+        <Grid
+            x:Name="gridLayout"
+            Grid.Row="1"
+            BackgroundColor="Coral">
+            <my:ConstraintLayout
+                x:Name="TempConstraintLayout"
+                BackgroundColor="AliceBlue"
+                HeightRequest="200"
+                WidthRequest="200">
+                <Button
+                    x:Name="TempButton"
+                    Clicked="TempButton_Clicked"
+                    Text="45" />
+            </my:ConstraintLayout>
+        </Grid>
+    </Grid>
+</ContentPage>
