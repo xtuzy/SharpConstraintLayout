@@ -768,9 +768,9 @@ namespace SharpConstraintLayout.Maui.Widget
     public static class FluentConstraintHelperExtension
     {
 #if WINDOWS && !__MAUI__
-        public static void AddElement(this ConstraintHelper helper, params FrameworkElement[] views)
+        public static void ReferenceElement(this ConstraintHelper helper, params FrameworkElement[] views)
 #else
-        public static void AddElement(this ConstraintHelper helper, params UIElement[] views)
+        public static void ReferenceElement(this ConstraintHelper helper, params UIElement[] views)
 #endif
         {
             foreach (var view in views)

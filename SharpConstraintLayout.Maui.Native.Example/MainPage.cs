@@ -563,7 +563,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             flow.SetHorizontalStyle(Flow.ChainSpreadInside);
             layout = page;
             layout.AddElement(flow, ThirdCanvas, FirstButton, SecondButton, FouthTextBlock, FifthTextBox, SixthRichTextBlock);
-            flow.AddElement(FirstButton, SecondButton, FouthTextBlock, FifthTextBox, SixthRichTextBlock);
+            flow.ReferenceElement(FirstButton, SecondButton, FouthTextBlock, FifthTextBox, SixthRichTextBlock);
 
             using (var layoutSet = new FluentConstraintSet())
             {
