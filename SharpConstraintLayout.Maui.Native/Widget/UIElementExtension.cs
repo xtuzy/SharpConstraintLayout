@@ -345,6 +345,55 @@ namespace SharpConstraintLayout.Maui.Widget
             return element.Parent as UIElement;
 #endif
         }
+#if __MAUI__
+        internal static void SetWidth(this UIElement element, int width)
+        {
+            if (width > 0)
+                element.WidthRequest = width;
+            else
+                element.WidthRequest = ConstraintSet.Unset;
+        }
+
+        internal static void SetHeight(this UIElement element, int height)
+        {
+            if (height > 0)
+                element.HeightRequest = height;
+            else
+                element.HeightRequest = ConstraintSet.Unset;
+        }
+
+        internal static void SetMinWidth(this UIElement element, int minWidth)
+        {
+            if (minWidth > 0)
+                element.MinimumWidthRequest = minWidth;
+            else;
+            //element.MinimumWidthRequest = ConstraintSet.Unset;
+        }
+
+        internal static void SetMinHeight(this UIElement element, int minHeight)
+        {
+            if (minHeight > 0)
+                element.MinimumHeightRequest = minHeight;
+            else;
+            //element.MinimumHeightRequest = ConstraintSet.Unset;
+        }
+
+        internal static void SetMaxWidth(this UIElement element, int maxWidth)
+        {
+            if (maxWidth > 0)
+                element.MaximumWidthRequest = maxWidth;
+            else;
+            //element.MaximumWidthRequest = double.PositiveInfinity;
+        }
+
+        internal static void SetMaxHeight(this UIElement element, int maxHeight)
+        {
+            if (maxHeight > 0)
+                element.MaximumHeightRequest = maxHeight;
+            else;
+            //element.MaximumHeightRequest = double.PositiveInfinity;
+        }
+#endif
 
         internal static void SetSizeAndMargin(this UIElement element, int width, int height, int minWidth, int minHeight, int maxWidth, int maxHeight, int left, int top, int right, int bottom)
         {

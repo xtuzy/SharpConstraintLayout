@@ -136,13 +136,13 @@ namespace SharpConstraintLayout.Maui.Widget
             var id = element.GetId();
 
             //Add to three dictionary(Wighet,View,Constraints)
-            ConstraintWidget widget = GetOrAddWidgetById(id);
+            ConstraintWidget widget = GetOrAddWidgetById(id);//加入存储Widget的字典
 
             var childConstraint = new ConstraintSet.Constraint();
-            mConstraintSet.Constraints.Add(id, childConstraint);
+            mConstraintSet.Constraints.Add(id, childConstraint);//加入存储约束的字典
             childConstraint.layout.mWidth = ConstraintSet.WrapContent;//@zhouyang Add:Default set WrapContent,it is more useful
             childConstraint.layout.mHeight = ConstraintSet.WrapContent;
-            idToViews.Add(id, element as UIElement);
+            idToViews.Add(id, element as UIElement);//加入存储View的字典
             // Do stuff with the added object
             if (element is Guideline)//Guideline have default widget
             {
@@ -171,11 +171,12 @@ namespace SharpConstraintLayout.Maui.Widget
             }
 
             var id = element.GetId();
-            idToViews.Remove(id);
+            idToViews.Remove(id);//从存储View的字典中移除
             ConstraintWidget widget = GetOrAddWidgetById(id);
-            idsToConstraintWidgets.Remove(id);
+            idsToConstraintWidgets.Remove(id);//从存储Widget的字典移除
             if (element is ConstraintHelper)
                 mConstraintHelpers.Remove(element as ConstraintHelper);
+            mConstraintSet.Constraints.Remove(id);//从存储约束的字典移除
         }
 
         private ConstraintWidget GetOrAddWidgetById(int id)
@@ -346,7 +347,11 @@ namespace SharpConstraintLayout.Maui.Widget
             {
                 if (value > 0)
                 {
+#if __MAUI__
+                    this.SetHeight(value);
+#else
                     this.SetSizeAndMargin(0, value, 0, 0, 0, 0, 0, 0, 0, 0);
+#endif
                 }
                 this.mConstraintSet.GetConstraint(this.GetId()).layout.mHeight = value;
                 this.mConstraintSet.IsChanged = true;
@@ -363,7 +368,12 @@ namespace SharpConstraintLayout.Maui.Widget
             {
                 if (value > 0)
                 {
+#if __MAUI__
+                    this.SetWidth(value);
+#else
                     this.SetSizeAndMargin(value, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+#endif
+
                 }
                 this.mConstraintSet.GetConstraint(this.GetId()).layout.mWidth = value;
                 this.mConstraintSet.IsChanged = true;

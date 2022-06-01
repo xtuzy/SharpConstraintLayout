@@ -746,6 +746,26 @@ namespace SharpConstraintLayout.Maui.Widget
 
             #endregion Chain
 
+            #region Clear
+
+            public Element Clear()
+            {
+                setReference.TryGetTarget(out var set);
+                foreach (var id in ids)
+                    set?.Clear(id);
+                return this;
+            }
+
+            public Element Clear(Edge edge)
+            {
+                setReference.TryGetTarget(out var set);
+                foreach (var id in ids)
+                    set?.Clear(id, (int)edge);
+                return this;
+            }
+
+            #endregion
+
             public void Dispose()
             {
                 setReference = null;

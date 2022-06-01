@@ -15,7 +15,11 @@ public partial class MainPage : ContentPage
 
         //ConstraintLayout.DEBUG = true;
         ConstraintLayout.MEASURE_MEASURELAYOUT = true;
-
+        this.SizeChanged += (sender, e) =>
+        {
+            System.Diagnostics.Debug.WriteLine("MainPage: Width=" + (sender as Page).Bounds.Width);
+            App.WindowWidth = (int)(sender as Page).Bounds.Width;
+        };
         TempButton_Clicked(null, null);
     }
 
@@ -171,10 +175,11 @@ public partial class MainPage : ContentPage
         FlowPerformanceTest(content);
     }
 
+    ListView listView;
     private void ConstraintLayoutInListView_Clicked(object sender, EventArgs e)
     {
         gridLayout.RemoveAt(gridLayout.Count - 1);
-        var listView = new ListView();
+        listView = new ListView();
         gridLayout.Add(listView);
         ConstraintLayoutInListViewTest(listView);
     }
