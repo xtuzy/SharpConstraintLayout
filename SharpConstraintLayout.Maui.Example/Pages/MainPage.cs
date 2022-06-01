@@ -443,6 +443,60 @@ namespace SharpConstraintLayout.Maui.Example
                 ImageUrl = "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AAXxMr9.img?w=300&h=225&q=90&m=6&f=jpg&u=t",
                 SourceForm = "cnBeta",
             });
+            list.Add(new MicrosoftNews()
+            {
+                Title = "央视 | 秘鲁北部发生长途客车坠崖事故 致至少11死34伤",
+                ImageUrl = "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AAXjc2n?w=300&h=174&q=60&m=6&f=jpg&u=t",
+                SourceForm = "MSN",
+                SourceFormImageUrl = "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/BBVQ5Hs.img?w=36&h=36&q=60&m=6&f=png&u=t"
+            });
+            list.Add(new MicrosoftNews()
+            {
+                Title = "上海16个区当中15个区实现社会面清零",
+                ImageUrl = "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/BB19W3O1?w=300&h=174&q=60&m=6&f=jpg&u=t",
+                SourceForm = "每日经济新闻",
+                SourceFormImageUrl = "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AAO4ppI.img?w=36&h=36&q=60&m=6&f=png&u=t"
+            });
+            list.Add(new MicrosoftNews()
+            {
+                Title = "袁隆平离开我们一年了",
+                ImageUrl = "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/BB19n8rU.img?w=406&h=304&q=90&m=6&f=jpg&x=2277&y=1318&u=t",
+                SourceForm = "光明网",
+                SourceFormImageUrl = "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AARPRel.img?w=36&h=36&q=60&m=6&f=png&u=t"
+            });
+            list.Add(new MicrosoftNews()
+            {
+                Title = "就Android应用支付系统 Match Group和Google达成临时妥协",
+                ImageUrl = "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AAXxMr9.img?w=300&h=225&q=90&m=6&f=jpg&u=t",
+                SourceForm = "cnBeta",
+            });
+            list.Add(new MicrosoftNews()
+            {
+                Title = "央视 | 秘鲁北部发生长途客车坠崖事故 致至少11死34伤",
+                ImageUrl = "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AAXjc2n?w=300&h=174&q=60&m=6&f=jpg&u=t",
+                SourceForm = "MSN",
+                SourceFormImageUrl = "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/BBVQ5Hs.img?w=36&h=36&q=60&m=6&f=png&u=t"
+            });
+            list.Add(new MicrosoftNews()
+            {
+                Title = "上海16个区当中15个区实现社会面清零",
+                ImageUrl = "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/BB19W3O1?w=300&h=174&q=60&m=6&f=jpg&u=t",
+                SourceForm = "每日经济新闻",
+                SourceFormImageUrl = "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AAO4ppI.img?w=36&h=36&q=60&m=6&f=png&u=t"
+            });
+            list.Add(new MicrosoftNews()
+            {
+                Title = "袁隆平离开我们一年了",
+                ImageUrl = "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/BB19n8rU.img?w=406&h=304&q=90&m=6&f=jpg&x=2277&y=1318&u=t",
+                SourceForm = "光明网",
+                SourceFormImageUrl = "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AARPRel.img?w=36&h=36&q=60&m=6&f=png&u=t"
+            });
+            list.Add(new MicrosoftNews()
+            {
+                Title = "就Android应用支付系统 Match Group和Google达成临时妥协",
+                ImageUrl = "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AAXxMr9.img?w=300&h=225&q=90&m=6&f=jpg&u=t",
+                SourceForm = "cnBeta",
+            });
 
             var dataTemplate = new DataTemplate(() =>
             {
@@ -484,16 +538,33 @@ namespace SharpConstraintLayout.Maui.Example
                 .Select(sourceFrom).LeftToRight(sourceFromeImage, 20).CenterYTo(sourceFromeImage)
                 .Select(title).LeftToLeft(null, 20).RightToLeft(image, 20).TopToBottom(sourceFromeImage, 20).Width(SizeBehavier.MatchConstraint);
 
+                double oldValue = -1;
                 layout.SizeChanged += (sender, e) =>
                         {
+                            if (oldValue == -1)
+                            {
+                                if ((sender as View).Bounds.Width > 744)
+                                {
+                                    bigWindow.ApplyTo(layout);
+                                }
+                                else
+                                {
+                                    littleWindow.ApplyTo(layout);
+                                }
+                            }
+
                             if ((sender as View).Bounds.Width > 744)
                             {
-                                bigWindow.ApplyTo(layout);
+                                if (oldValue < 744)
+                                    bigWindow.ApplyTo(layout);
+
                             }
                             else
                             {
-                                littleWindow.ApplyTo(layout);
+                                if (oldValue > 744)
+                                    littleWindow.ApplyTo(layout);
                             }
+                            oldValue = (sender as View).Bounds.Width;
                         };
 
                 viewCell.View = layout;
