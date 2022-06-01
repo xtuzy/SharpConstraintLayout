@@ -179,8 +179,17 @@ namespace SharpConstraintLayout.Maui.Widget
                     var param = constraintLayout.mConstraintSet.Constraints[id];
                     param.layout.Validate();
                     constraint.ApplyTo(param.layout);//Android源码ApplyTo是应用到Params,Params中具有负责View布局的属性,其中Margin,Width,Height是ViewGroup自带的,其他是ConstraintLayout中新增的,也就是说,这里使用ConstraintSet替代Params,需要添加ViewGroup的属性
-                    //设置原本在ViewGroup.Params中的属性
+                                                     //设置原本在ViewGroup.Params中的属性
+#if __MAUI__
+                    view.SetWidth(constraint.layout.mWidth);
+                    view.SetHeight(constraint.layout.mHeight);
+                    view.SetMinWidth(constraint.layout.matchConstraintMinWidth);
+                    view.SetMinHeight(constraint.layout.matchConstraintMinHeight);
+                    view.SetMaxWidth(constraint.layout.matchConstraintMaxWidth);
+                    view.SetMaxHeight(constraint.layout.matchConstraintMaxHeight);
+#else
                     view.SetSizeAndMargin(constraint.layout.mWidth, constraint.layout.mHeight, constraint.layout.matchConstraintMinWidth, constraint.layout.matchConstraintMinHeight, constraint.layout.matchConstraintMaxWidth, constraint.layout.matchConstraintMaxHeight, constraint.layout.leftMargin, constraint.layout.topMargin, constraint.layout.rightMargin, constraint.layout.bottomMargin);
+#endif
 
                     if (view is Guideline)//不像Android一样用户提供指定约束是isGuideline就创建Guideline,必须通过Guideline控件实现
                     {
@@ -540,11 +549,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <param name="margin">the margin to constrain (margin must be positive)</param>
         public virtual void Connect(int startID, int startSide, int endID, int endSide, int margin)
         {
-            if (!mConstraints.ContainsKey(startID))
-            {
-                mConstraints[startID] = new Constraint();
-            }
-            Constraint constraint = mConstraints[startID];
+            Constraint constraint = get(startID);
             if (constraint == null)
             {
                 return;
@@ -718,11 +723,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <param name="endSide">the side of widget to constrain to</param>
         public virtual void Connect(int startID, int startSide, int endID, int endSide)
         {
-            if (!mConstraints.ContainsKey(startID))
-            {
-                mConstraints[startID] = new Constraint();
-            }
-            Constraint constraint = mConstraints[startID];
+            Constraint constraint = get(startID);
             if (constraint == null)
             {
                 return;
@@ -930,11 +931,21 @@ namespace SharpConstraintLayout.Maui.Widget
             }
         }
 
+        /// <summary>
+        /// 清除该View的所有约束
+        /// </summary>
+        /// <param name="viewId"></param>
         public void Clear(int viewId)
         {
             mConstraints.Remove(viewId);
         }
 
+        /// <summary>
+        /// 清楚某一边的约束
+        /// </summary>
+        /// <param name="viewId"></param>
+        /// <param name="anchor"></param>
+        /// <exception cref="System.ArgumentException"></exception>
         public void Clear(int viewId, int anchor)
         {
             if (mConstraints.ContainsKey(viewId))
@@ -1882,7 +1893,10 @@ namespace SharpConstraintLayout.Maui.Widget
         {
             if (!mConstraints.ContainsKey(id))
             {
-                mConstraints[id] = new Constraint();
+                var newConstraint = new Constraint();
+                mConstraints[id] = newConstraint;
+                newConstraint.layout.mWidth = ConstraintSet.WrapContent;//@zhouyang Add:Default set WrapContent,it is more useful
+                newConstraint.layout.mHeight = ConstraintSet.WrapContent;
             }
             return mConstraints[id];
         }

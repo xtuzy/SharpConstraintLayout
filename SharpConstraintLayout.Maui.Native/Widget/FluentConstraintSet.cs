@@ -746,6 +746,26 @@ namespace SharpConstraintLayout.Maui.Widget
 
             #endregion Chain
 
+            #region Clear
+
+            public Element Clear()
+            {
+                setReference.TryGetTarget(out var set);
+                foreach (var id in ids)
+                    set?.Clear(id);
+                return this;
+            }
+
+            public Element Clear(Edge edge)
+            {
+                setReference.TryGetTarget(out var set);
+                foreach (var id in ids)
+                    set?.Clear(id, (int)edge);
+                return this;
+            }
+
+            #endregion
+
             public void Dispose()
             {
                 setReference = null;
@@ -768,9 +788,9 @@ namespace SharpConstraintLayout.Maui.Widget
     public static class FluentConstraintHelperExtension
     {
 #if WINDOWS && !__MAUI__
-        public static void AddElement(this ConstraintHelper helper, params FrameworkElement[] views)
+        public static void ReferenceElement(this ConstraintHelper helper, params FrameworkElement[] views)
 #else
-        public static void AddElement(this ConstraintHelper helper, params UIElement[] views)
+        public static void ReferenceElement(this ConstraintHelper helper, params UIElement[] views)
 #endif
         {
             foreach (var view in views)

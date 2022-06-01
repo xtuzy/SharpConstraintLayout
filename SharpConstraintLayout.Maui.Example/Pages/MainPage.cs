@@ -103,7 +103,7 @@ namespace SharpConstraintLayout.Maui.Example
             stackPanel.Add(new Label() { Text = "InStackPanel" });
             stackPanel.Add(new Editor() { Text = "InStackPanel" });
 
-            var grid = new Grid() { BackgroundColor = Colors.Aqua};
+            var grid = new Grid() { BackgroundColor = Colors.Aqua };
             page.AddElement(grid);
             grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
             grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
@@ -193,7 +193,7 @@ namespace SharpConstraintLayout.Maui.Example
             flow.SetHorizontalStyle(SharpConstraintLayout.Maui.Helper.Widget.Flow.ChainSpreadInside);
             var layout = page;
             layout.AddElement(ThirdCanvas, FirstButton, SecondButton, FouthTextBlock, FifthTextBox, SixthRichTextBlock, flow);
-            flow.AddElement(FirstButton, SecondButton, FouthTextBlock, FifthTextBox, SixthRichTextBlock);
+            flow.ReferenceElement(FirstButton, SecondButton, FouthTextBlock, FifthTextBox, SixthRichTextBlock);
 
             using (var layoutSet = new FluentConstraintSet())
             {
@@ -412,6 +412,7 @@ namespace SharpConstraintLayout.Maui.Example
             });
         }
 
+        ListViewViewModel listViewViewModel;
         void ConstraintLayoutInListViewTest(ListView listView)
         {
             var list = new List<MicrosoftNews>();
@@ -442,8 +443,62 @@ namespace SharpConstraintLayout.Maui.Example
                 ImageUrl = "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AAXxMr9.img?w=300&h=225&q=90&m=6&f=jpg&u=t",
                 SourceForm = "cnBeta",
             });
+            list.Add(new MicrosoftNews()
+            {
+                Title = "央视 | 秘鲁北部发生长途客车坠崖事故 致至少11死34伤",
+                ImageUrl = "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AAXjc2n?w=300&h=174&q=60&m=6&f=jpg&u=t",
+                SourceForm = "MSN",
+                SourceFormImageUrl = "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/BBVQ5Hs.img?w=36&h=36&q=60&m=6&f=png&u=t"
+            });
+            list.Add(new MicrosoftNews()
+            {
+                Title = "上海16个区当中15个区实现社会面清零",
+                ImageUrl = "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/BB19W3O1?w=300&h=174&q=60&m=6&f=jpg&u=t",
+                SourceForm = "每日经济新闻",
+                SourceFormImageUrl = "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AAO4ppI.img?w=36&h=36&q=60&m=6&f=png&u=t"
+            });
+            list.Add(new MicrosoftNews()
+            {
+                Title = "袁隆平离开我们一年了",
+                ImageUrl = "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/BB19n8rU.img?w=406&h=304&q=90&m=6&f=jpg&x=2277&y=1318&u=t",
+                SourceForm = "光明网",
+                SourceFormImageUrl = "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AARPRel.img?w=36&h=36&q=60&m=6&f=png&u=t"
+            });
+            list.Add(new MicrosoftNews()
+            {
+                Title = "就Android应用支付系统 Match Group和Google达成临时妥协",
+                ImageUrl = "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AAXxMr9.img?w=300&h=225&q=90&m=6&f=jpg&u=t",
+                SourceForm = "cnBeta",
+            });
+            list.Add(new MicrosoftNews()
+            {
+                Title = "央视 | 秘鲁北部发生长途客车坠崖事故 致至少11死34伤",
+                ImageUrl = "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AAXjc2n?w=300&h=174&q=60&m=6&f=jpg&u=t",
+                SourceForm = "MSN",
+                SourceFormImageUrl = "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/BBVQ5Hs.img?w=36&h=36&q=60&m=6&f=png&u=t"
+            });
+            list.Add(new MicrosoftNews()
+            {
+                Title = "上海16个区当中15个区实现社会面清零",
+                ImageUrl = "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/BB19W3O1?w=300&h=174&q=60&m=6&f=jpg&u=t",
+                SourceForm = "每日经济新闻",
+                SourceFormImageUrl = "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AAO4ppI.img?w=36&h=36&q=60&m=6&f=png&u=t"
+            });
+            list.Add(new MicrosoftNews()
+            {
+                Title = "袁隆平离开我们一年了",
+                ImageUrl = "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/BB19n8rU.img?w=406&h=304&q=90&m=6&f=jpg&x=2277&y=1318&u=t",
+                SourceForm = "光明网",
+                SourceFormImageUrl = "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AARPRel.img?w=36&h=36&q=60&m=6&f=png&u=t"
+            });
+            list.Add(new MicrosoftNews()
+            {
+                Title = "就Android应用支付系统 Match Group和Google达成临时妥协",
+                ImageUrl = "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AAXxMr9.img?w=300&h=225&q=90&m=6&f=jpg&u=t",
+                SourceForm = "cnBeta",
+            });
 
-            var dataTemplateForBigWindow = new DataTemplate(() =>
+            var dataTemplate = new DataTemplate(() =>
             {
                 var viewCell = new ViewCell();
                 var layout = new ConstraintLayout() { ConstrainWidth = ConstraintSet.MatchParent, ConstrainHeight = ConstraintSet.WrapContent, BackgroundColor = Color.FromRgb(66, 66, 66) };
@@ -456,75 +511,71 @@ namespace SharpConstraintLayout.Maui.Example
                 var sourceFromeImage = new Image();
                 sourceFromeImage.SetBinding(Image.SourceProperty, nameof(Models.MicrosoftNews.SourceForm));
                 layout.AddElement(image, title, sourceFromeImage, sourceFrom);
-                using (var set = new FluentConstraintSet())
-                {
-                    set.Clone(layout);
-                    var guideLine = new Guideline() { };
-                    layout.AddElement(guideLine);
-                    set
-                    .Select(guideLine).GuidelineOrientation(Orientation.X).GuidelinePercent(0.5f)
-                    .Select(image).EdgesXTo().BottomToTop(guideLine)
-                    .Width(SizeBehavier.MatchParent).Height(SizeBehavier.WrapContent)
-                    .Select(sourceFromeImage).LeftToLeft(null, 20).BottomToTop(title, 20)
-                    .Width(SizeBehavier.WrapContent).Height(SizeBehavier.WrapContent)
-                    .Select(sourceFrom).LeftToRight(sourceFromeImage, 20).CenterYTo(sourceFromeImage)
-                    .Select(title).LeftToLeft(null, 20).RightToRight(null, 20).BottomToBottom(null, 20).Width(SizeBehavier.MatchConstraint);
-                    set.ApplyTo(layout);
-                }
+
+                var guideLine = new Guideline() { };
+                layout.AddElement(guideLine);
+
+                var littleWindow = new FluentConstraintSet();
+                littleWindow.Clone(layout);
+                littleWindow
+                .Select(guideLine, image, sourceFromeImage, sourceFrom, title).Clear()//需要移除之前的约束
+                .Select(guideLine).GuidelineOrientation(Orientation.X).GuidelinePercent(0.6f)
+                .Select(image).EdgesXTo().BottomToTop(guideLine)
+                .Width(SizeBehavier.MatchParent).Height(SizeBehavier.WrapContent)
+                .Select(sourceFromeImage).LeftToLeft(null, 20).BottomToTop(title, 20)
+                .Width(SizeBehavier.WrapContent).Height(SizeBehavier.WrapContent)
+                .Select(sourceFrom).LeftToRight(sourceFromeImage, 20).CenterYTo(sourceFromeImage)
+                .Select(title).LeftToLeft(null, 20).RightToRight(null, 20).BottomToBottom(null, 20).Width(SizeBehavier.MatchConstraint);
+
+                var bigWindow = new FluentConstraintSet();
+                bigWindow.Clone(layout);
+                bigWindow
+                .Select(guideLine, image, sourceFromeImage, sourceFrom, title).Clear()//需要移除之前的约束
+                .Select(image).RightToRight(null, 20).TopToTop(null, 20)
+                .Width(140).Height(140)
+                .Select(sourceFromeImage).LeftToLeft(null, 20).TopToTop(image)
+                .Width(SizeBehavier.WrapContent).Height(SizeBehavier.WrapContent)
+                .Select(sourceFrom).LeftToRight(sourceFromeImage, 20).CenterYTo(sourceFromeImage)
+                .Select(title).LeftToLeft(null, 20).RightToLeft(image, 20).TopToBottom(sourceFromeImage, 20).Width(SizeBehavier.MatchConstraint);
+
+                double oldValue = -1;
+                layout.SizeChanged += (sender, e) =>
+                        {
+                            if (oldValue == -1)
+                            {
+                                if ((sender as View).Bounds.Width > 744)
+                                {
+                                    bigWindow.ApplyTo(layout);
+                                }
+                                else
+                                {
+                                    littleWindow.ApplyTo(layout);
+                                }
+                            }
+
+                            if ((sender as View).Bounds.Width > 744)
+                            {
+                                if (oldValue < 744)
+                                    bigWindow.ApplyTo(layout);
+
+                            }
+                            else
+                            {
+                                if (oldValue > 744)
+                                    littleWindow.ApplyTo(layout);
+                            }
+                            oldValue = (sender as View).Bounds.Width;
+                        };
+
                 viewCell.View = layout;
                 return viewCell;
             });
 
-            var dataTemplateForLittleWindow = new DataTemplate(() =>
-            {
-                var viewCell = new ViewCell();
-                var layout = new ConstraintLayout() { ConstrainWidth = ConstraintSet.MatchParent, ConstrainHeight = ConstraintSet.WrapContent, BackgroundColor = Color.FromRgb(66, 66, 66) };
-                var title = new Label() { TextColor = Colors.White, FontSize = 30, FontAttributes = FontAttributes.Bold };
-                title.SetBinding(Label.TextProperty, nameof(Models.MicrosoftNews.Title));
-                var image = new Image();
-                image.SetBinding(Image.SourceProperty, nameof(Models.MicrosoftNews.ImageUrl));
-                var sourceFrom = new Label() { TextColor = Color.FromRgb(175, 165, 136), FontSize = 12, FontAttributes = FontAttributes.Bold };
-                sourceFrom.SetBinding(Label.TextProperty, nameof(Models.MicrosoftNews.SourceForm));
-                var sourceFromeImage = new Image();
-                sourceFromeImage.SetBinding(Image.SourceProperty, nameof(Models.MicrosoftNews.SourceForm));
-                layout.AddElement(image, title, sourceFromeImage, sourceFrom);
-                using (var set = new FluentConstraintSet())
-                {
-                    set.Clone(layout);
-                    set
-                    .Select(image).RightToRight(null, 20).TopToTop(null, 20)
-                    .Width(140).Height(140)
-                    .Select(sourceFromeImage).LeftToLeft(null, 20).TopToTop(image)
-                    .Width(SizeBehavier.WrapContent).Height(SizeBehavier.WrapContent)
-                    .Select(sourceFrom).LeftToRight(sourceFromeImage, 20).CenterYTo(sourceFromeImage)
-                    .Select(title).LeftToLeft(null, 20).RightToLeft(image, 20).TopToBottom(sourceFromeImage, 20).Width(SizeBehavier.MatchConstraint);
-                    set.ApplyTo(layout);
-                }
-                viewCell.View = layout;
-                return viewCell;
-            });
-
-            listView.ItemTemplate = new ListViewDataTemplateSelector()
-            {
-                BigWindowTemplate = dataTemplateForBigWindow,
-                LittleWindowTemplate = dataTemplateForLittleWindow,
-            };
-            var model = new ListViewViewModel() { News = list };
-            this.BindingContext = model;
+            listView.ItemTemplate = dataTemplate;
+            listViewViewModel = new ListViewViewModel() { News = list };
+            this.BindingContext = listViewViewModel;
             listView.HasUnevenRows = true;
-            listView.ItemsSource = model.News;
-        }
-
-        public class ListViewDataTemplateSelector : DataTemplateSelector
-        {
-            public DataTemplate BigWindowTemplate { get; set; }
-            public DataTemplate LittleWindowTemplate { get; set; }
-
-            protected override DataTemplate OnSelectTemplate(object item, BindableObject container)
-            {
-                //return App.Current.Windows.First().Page.Width >= 744 ? BigWindowTemplate : LittleWindowTemplate;
-                return LittleWindowTemplate;
-            }
+            listView.ItemsSource = listViewViewModel.News;
         }
     }
 }
