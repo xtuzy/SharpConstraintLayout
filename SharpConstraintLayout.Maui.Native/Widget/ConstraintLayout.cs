@@ -404,7 +404,11 @@ namespace SharpConstraintLayout.Maui.Widget
             //If a direction available value and we need MATCH_PARENT, that always generate mistake result, so we not accept it. please modify constraint.
             if ((isInfinityAvailabelWidth && constrainWidth == ConstraintSet.MatchParent) || (isInfinityAvailabelHeight && constrainHeight == ConstraintSet.MatchParent))
             {
+#if __MAUI__
+                var errorStr = $"ConstraintLayout's parent is {this.Parent.GetType().Name},it give ConstraintLayout a infinity size, you set ConstraintLayout have MATCH_PARENT size, ConstraintLayout can't generate correct result.";
+#else
                 var errorStr = $"ConstraintLayout's parent is {this.GetParent().GetType().Name},it give ConstraintLayout a infinity size, you set ConstraintLayout have MATCH_PARENT size, ConstraintLayout can't generate correct result.";
+#endif
                 System.Diagnostics.Debug.WriteLine(errorStr);
                 System.Diagnostics.Trace.WriteLine(errorStr);
                 throw new InvalidOperationException(errorStr);

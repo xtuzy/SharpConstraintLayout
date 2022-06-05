@@ -162,11 +162,15 @@ public partial class MainPage : ContentPage
         NestedConstraintLayoutTest(content);
     }
 
-    private void PlatformLayoutInConstraintLayout_Clicked(object sender, EventArgs e)
+    private void StackLayoutInConstraintLayout_Clicked(object sender, EventArgs e)
     {
         var content = CreateConstraintLayout();
-        PlatformLayoutInConstraintLayoutTest(content);
-
+        StackLayoutInConstraintLayoutTest(content);
+    }
+    private void ScrollViewInConstraintLayout_Clicked(object sender, EventArgs e)
+    {
+        var content = CreateConstraintLayout();
+        ScrollViewInConstraintLayoutTest(content);
     }
 
     private void FlowPerformance_Clicked(object sender, EventArgs e)
