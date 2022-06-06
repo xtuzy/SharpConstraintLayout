@@ -444,7 +444,7 @@ namespace SharpConstraintLayout.Maui.Example
         }
 
         ListViewViewModel listViewViewModel;
-        void ConstraintLayoutInListViewTest(ListView listView)
+        private void ConstraintLayoutInListViewTest(ListView listView)
         {
             var list = new List<MicrosoftNews>();
             list.Add(new MicrosoftNews()
@@ -609,7 +609,7 @@ namespace SharpConstraintLayout.Maui.Example
             listView.ItemsSource = listViewViewModel.News;
         }
 
-        void ConstraintLayoutInScrollViewTest(ListView listView)
+        private void ConstraintLayoutInScrollViewTest(ListView listView)
         {
 
         }

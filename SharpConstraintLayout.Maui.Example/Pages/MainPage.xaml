@@ -60,6 +60,10 @@
                     x:Name="ConstraintLayoutInListView"
                     Clicked="ConstraintLayoutInListView_Clicked"
                     Text="ConstraintLayoutInListView" />
+                <Button
+                    x:Name="ConstraintLayoutInContentView"
+                    Clicked="ConstraintLayoutInContentView_Clicked"
+                    Text="ConstraintLayoutInContentView" />
             </HorizontalStackLayout>
         </ScrollView>
         <Grid
