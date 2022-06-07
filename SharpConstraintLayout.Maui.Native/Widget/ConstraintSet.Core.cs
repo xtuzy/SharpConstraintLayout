@@ -179,7 +179,8 @@ namespace SharpConstraintLayout.Maui.Widget
                     var param = constraintLayout.mConstraintSet.Constraints[id];
                     param.layout.Validate();
                     constraint.ApplyTo(param.layout);//Android源码ApplyTo是应用到Params,Params中具有负责View布局的属性,其中Margin,Width,Height是ViewGroup自带的,其他是ConstraintLayout中新增的,也就是说,这里使用ConstraintSet替代Params,需要添加ViewGroup的属性
-                                                     //设置原本在ViewGroup.Params中的属性
+
+                    //设置原本在ViewGroup.Params中的属性,这些属性影响Android中View的Measure值,因此我们需要在其他平台单独设置
 #if __MAUI__
                     view.SetWidth(constraint.layout.mWidth);
                     view.SetHeight(constraint.layout.mHeight);
@@ -209,11 +210,11 @@ namespace SharpConstraintLayout.Maui.Widget
                     {
                         //view.Visibility = constraint.propertySet.visibility;
                         param.propertySet.visibility = constraint.propertySet.visibility;//这里我变成设置constraint
-                        UIElementExtension.SetViewVisibility(view, constraint.propertySet.visibility);
+                        view.SetViewVisibility(constraint.propertySet.visibility);
                     }
-
-                    view.SetAlphaProperty(param.propertySet);
-                    view.SetTransform(param.transform);
+                    if (constraint.propertySet.visibility != ConstraintSet.Invisible)//在可见性为Invisible时,设置可见性时会将Alpha设置为0,再设置Alpha会造成冲突
+                        view.SetAlphaProperty(constraint.propertySet);
+                    view.SetTransform(constraint.transform);
                 }
                 else
                 {

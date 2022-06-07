@@ -61,6 +61,9 @@
     <MauiXaml Update="Pages\ConstraintLayoutInListViewView.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
+    <MauiXaml Update="Pages\ShowAnimationView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </MauiXaml>
     <MauiXaml Update="Pages\TestContentView.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>

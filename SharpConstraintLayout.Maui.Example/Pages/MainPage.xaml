@@ -64,6 +64,10 @@
                     x:Name="ConstraintLayoutInContentView"
                     Clicked="ConstraintLayoutInContentView_Clicked"
                     Text="ConstraintLayoutInContentView" />
+                <Button
+                    x:Name="Animation"
+                    Clicked="Animation_Clicked"
+                    Text="Animation" />
             </HorizontalStackLayout>
         </ScrollView>
         <Grid
