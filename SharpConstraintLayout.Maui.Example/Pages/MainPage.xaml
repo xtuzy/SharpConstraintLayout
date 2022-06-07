@@ -45,9 +45,13 @@
                     Clicked="NestedConstraintLayout_Clicked"
                     Text="NestedConstraintLayout" />
                 <Button
-                    x:Name="PlatformLayoutInConstraintLayout"
-                    Clicked="PlatformLayoutInConstraintLayout_Clicked"
-                    Text="PlatformLayoutInConstraintLayout" />
+                    x:Name="StackLayoutInConstraintLayout"
+                    Clicked="StackLayoutInConstraintLayout_Clicked"
+                    Text="StackLayoutInConstraintLayout" />
+                <Button
+                    x:Name="ScrollViewInConstraintLayout"
+                    Clicked="ScrollViewInConstraintLayout_Clicked"
+                    Text="ScrollViewInConstraintLayout" />
                 <Button
                     x:Name="FlowPerformance"
                     Clicked="FlowPerformance_Clicked"
@@ -56,6 +60,14 @@
                     x:Name="ConstraintLayoutInListView"
                     Clicked="ConstraintLayoutInListView_Clicked"
                     Text="ConstraintLayoutInListView" />
+                <Button
+                    x:Name="ConstraintLayoutInContentView"
+                    Clicked="ConstraintLayoutInContentView_Clicked"
+                    Text="ConstraintLayoutInContentView" />
+                <Button
+                    x:Name="Animation"
+                    Clicked="Animation_Clicked"
+                    Text="Animation" />
             </HorizontalStackLayout>
         </ScrollView>
         <Grid
@@ -70,7 +82,6 @@
                 <Button
                     x:Name="TempButton"
                     Clicked="TempButton_Clicked"
-                    
                     Text="45" />
             </my:ConstraintLayout>
         </Grid>

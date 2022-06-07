@@ -1,6 +1,7 @@
 ﻿using Microsoft.Maui.Controls.Shapes;
 using SharpConstraintLayout.Maui.DebugTool;
 using SharpConstraintLayout.Maui.Example.Models;
+using SharpConstraintLayout.Maui.Example.Pages;
 using SharpConstraintLayout.Maui.Example.ViewModels;
 using SharpConstraintLayout.Maui.Widget;
 using static SharpConstraintLayout.Maui.Widget.FluentConstraintSet;
@@ -14,7 +15,7 @@ public partial class MainPage : ContentPage
         InitializeComponent();
 
         //ConstraintLayout.DEBUG = true;
-        ConstraintLayout.MEASURE_MEASURELAYOUT = true;
+        //ConstraintLayout.MEASURE_MEASURELAYOUT = true;
         this.SizeChanged += (sender, e) =>
         {
             System.Diagnostics.Debug.WriteLine("MainPage: Width=" + (sender as Page).Bounds.Width);
@@ -162,11 +163,16 @@ public partial class MainPage : ContentPage
         NestedConstraintLayoutTest(content);
     }
 
-    private void PlatformLayoutInConstraintLayout_Clicked(object sender, EventArgs e)
+    private void StackLayoutInConstraintLayout_Clicked(object sender, EventArgs e)
     {
         var content = CreateConstraintLayout();
-        PlatformLayoutInConstraintLayoutTest(content);
+        StackLayoutInConstraintLayoutTest(content);
+    }
 
+    private void ScrollViewInConstraintLayout_Clicked(object sender, EventArgs e)
+    {
+        var content = CreateConstraintLayout();
+        ScrollViewInConstraintLayoutTest(content);
     }
 
     private void FlowPerformance_Clicked(object sender, EventArgs e)
@@ -192,6 +198,20 @@ public partial class MainPage : ContentPage
             set.Select(TempButton).CenterXTo();
             set.ApplyTo(TempConstraintLayout);
         }
+    }
+
+    private void ConstraintLayoutInContentView_Clicked(object sender, EventArgs e)
+    {
+        gridLayout.RemoveAt(gridLayout.Count - 1);
+        var contentView = new TestContentView();
+        gridLayout.Add(contentView);
+    }
+
+    private void Animation_Clicked(object sender, EventArgs e)
+    {
+        gridLayout.RemoveAt(gridLayout.Count - 1);
+        var contentView = new ShowAnimationView();
+        gridLayout.Add(contentView);
     }
 }
 

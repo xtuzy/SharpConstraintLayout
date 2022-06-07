@@ -90,30 +90,8 @@ namespace SharpConstraintLayout.Maui.Example
             });
         }
 
-        void PlatformLayoutInConstraintLayoutTest(ConstraintLayout page)
+        void ScrollViewInConstraintLayoutTest(ConstraintLayout page)
         {
-            var stackPanel = new StackLayout()
-            {
-                Orientation = StackOrientation.Horizontal,
-                Background = new SolidColorBrush(Colors.Aqua),
-            };
-            page.AddElement(stackPanel);
-            stackPanel.Add(new Button() { Text = "InStackPanel" });
-            stackPanel.Add(new Button() { Text = "InStackPanel" });
-            stackPanel.Add(new Label() { Text = "InStackPanel" });
-            stackPanel.Add(new Editor() { Text = "InStackPanel" });
-
-            var grid = new Grid() { BackgroundColor = Colors.Aqua };
-            page.AddElement(grid);
-            grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-            var textblock = new Label() { Text = "InGrid" };
-            var textbox = new Editor() { Text = "InGrid" };
-            textblock.SetValue(Grid.ColumnProperty, 0);//https://stackoverflow.com/a/27756061/13254773
-            textbox.SetValue(Grid.ColumnProperty, 1);//https://stackoverflow.com/a/27756061/13254773
-            grid.Add(textblock);
-            grid.Add(textbox);
-
             var scrollView = new ScrollView();
             page.AddElement(scrollView);
             scrollView.Content = new StackLayout()
@@ -121,10 +99,70 @@ namespace SharpConstraintLayout.Maui.Example
                 Orientation = StackOrientation.Vertical,
                 Background = new SolidColorBrush(Colors.Aqua),
             };
-            (scrollView.Content as StackLayout).Add(new Button() { Text = "InScrollViewer" });
-            (scrollView.Content as StackLayout).Add(new Button() { Text = "InScrollViewer" });
-            (scrollView.Content as StackLayout).Add(new Label() { Text = "InScrollViewer" });
-            (scrollView.Content as StackLayout).Add(new Editor() { Text = "InScrollViewer" });
+            (scrollView.Content as StackLayout).Add(new Button() { Text = "ScrollViewInConstraintLayout" });
+            (scrollView.Content as StackLayout).Add(new Editor() { Text = "InScrollViewer", HorizontalOptions = LayoutOptions.Center });
+            for (var index = 1; index < 20; index++)
+            {
+                (scrollView.Content as StackLayout).Add(new Label() { Text = index.ToString(), HorizontalOptions = LayoutOptions.Center });
+            }
+            var grid = new Grid();
+            page.AddElement(grid);
+            var normalScrollView = new ScrollView();
+            grid.Add(normalScrollView);
+            normalScrollView.Content = new StackLayout()
+            {
+                Orientation = StackOrientation.Vertical,
+                Background = new SolidColorBrush(Colors.Aqua),
+            };
+
+            (normalScrollView.Content as StackLayout).Add(new Button() { Text = "ScrollViewInGrid" });
+            (normalScrollView.Content as StackLayout).Add(new Editor() { Text = "InScrollViewer", HorizontalOptions = LayoutOptions.Center });
+            for (var index = 1; index < 20; index++)
+            {
+                (normalScrollView.Content as StackLayout).Add(new Label() { Text = index.ToString(), HorizontalOptions = LayoutOptions.Center });
+            }
+
+            using (var layoutSet = new FluentConstraintSet())
+            {
+                layoutSet.Clone(page);
+                var guideline = new Guideline();
+                page.AddElement(guideline);
+                layoutSet
+                    .Select(guideline).GuidelineOrientation(Orientation.Y).GuidelinePercent(0.5f)
+                    .Select(scrollView)
+                    .TopToTop()
+                    .BottomToBottom()
+                    .LeftToLeft()
+                    .RightToRight(guideline, 10)
+                    .Width(SizeBehavier.MatchConstraint)
+                    .Height(SizeBehavier.MatchConstraint)
+                    .Select(grid)
+                    .LeftToRight(guideline, 10).RightToRight().TopToTop().BottomToBottom()
+                    .Width(SizeBehavier.MatchConstraint).Height(SizeBehavier.MatchConstraint);
+                layoutSet.ApplyTo(page);
+            }
+
+        }
+
+        void StackLayoutInConstraintLayoutTest(ConstraintLayout page)
+        {
+
+            var stackPanel = new HorizontalStackLayout()
+            {
+                Background = new SolidColorBrush(Colors.Aqua),
+            };
+            page.AddElement(stackPanel);
+            stackPanel.Add(new Button() { Text = "InStackPanel" });
+            stackPanel.Add(new Label() { Text = "InStackPanel" });
+            stackPanel.Add(new Editor() { Text = "InStackPanel" });
+
+            var grid = new Grid();
+            page.AddElement(grid);
+            var normalStackLayout = new HorizontalStackLayout();
+            grid.Add(normalStackLayout);
+            normalStackLayout.Add(new Button() { Text = "InStackPanel" });
+            normalStackLayout.Add(new Label() { Text = "InStackPanel" });
+            normalStackLayout.Add(new Editor() { Text = "InStackPanel" });
 
             using (var layoutSet = new FluentConstraintSet())
             {
@@ -134,15 +172,8 @@ namespace SharpConstraintLayout.Maui.Example
                     .Width(SizeBehavier.WrapContent)
                     .Height(SizeBehavier.WrapContent)
                     .Select(grid)
-                    .CenterYTo().LeftToLeft()
-                    .Width(SizeBehavier.WrapContent)
-                    .Height(100)
-                    .Select(scrollView)
-                    .TopToBottom(grid, 10)
-                    .BottomToBottom()
-                    .LeftToLeft()
-                    .Width(SizeBehavier.WrapContent)
-                    .Height(SizeBehavier.MatchConstraint);
+                    .LeftToLeft().TopToBottom(stackPanel).RightToRight().BottomToBottom()
+                    .Width(SizeBehavier.MatchConstraint).Height(SizeBehavier.MatchConstraint);
                 layoutSet.ApplyTo(page);
             }
         }
@@ -413,7 +444,7 @@ namespace SharpConstraintLayout.Maui.Example
         }
 
         ListViewViewModel listViewViewModel;
-        void ConstraintLayoutInListViewTest(ListView listView)
+        private void ConstraintLayoutInListViewTest(ListView listView)
         {
             var list = new List<MicrosoftNews>();
             list.Add(new MicrosoftNews()
@@ -576,6 +607,11 @@ namespace SharpConstraintLayout.Maui.Example
             this.BindingContext = listViewViewModel;
             listView.HasUnevenRows = true;
             listView.ItemsSource = listViewViewModel.News;
+        }
+
+        private void ConstraintLayoutInScrollViewTest(ListView listView)
+        {
+
         }
     }
 }

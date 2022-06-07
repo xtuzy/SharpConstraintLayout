@@ -96,7 +96,17 @@ namespace SharpConstraintLayout.Maui.Widget
             public int circleConstraint = UNSET;
             public int circleRadius = 0;
             public float circleAngle = 0;
+            /// <summary>
+            /// (The comment form ConstraintLayout.LayoutParams)
+            /// The design time location of the left side of the child.
+            /// Used at design time for a horizontally unconstrained child.
+            /// </summary>
             public int editorAbsoluteX = UNSET;
+            /// <summary>
+            /// (The comment form ConstraintLayout.LayoutParams)
+            /// The design time location of the right side of the child.
+            /// Used at design time for a vertically unconstrained child.
+            /// </summary>
             public int editorAbsoluteY = UNSET;
             public int orientation = UNSET;
             public int leftMargin = 0;
@@ -221,7 +231,22 @@ namespace SharpConstraintLayout.Maui.Widget
             public int[] mReferenceIds;
             public string mReferenceIdString;
             public string constraintTag;
+
+            /// <summary>
+            /// (The comment form ConstraintLayout.LayoutParams)
+            /// Specify if the horizontal dimension is constrained in case both left and right constraints are set
+            /// and the widget dimension is not a fixed dimension.
+            /// By default, if a widget is set to WRAP_CONTENT, we will treat that dimension as a fixed dimension, meaning the dimension will not change regardless  of constraints.
+            /// Setting this attribute to true allows the dimension to change in order to respect constraints.
+            /// </summary>
             public bool constrainedWidth = false;
+            /// <summary>
+            /// (The comment form ConstraintLayout.LayoutParams)
+            /// Specify if the vertical dimension is constrained in case both top and bottom constraints are set
+            /// and the widget dimension is not a fixed dimension.
+            /// By default, if a widget is set to WRAP_CONTENT, we will treat that dimension as a fixed dimension, meaning the dimension will not change regardless of constraints.
+            /// Setting this attribute to true allows the dimension to change in order to respect constraints.
+            /// </summary>
             public bool constrainedHeight = false;
 
             // TODO public boolean mChainUseRtl = false;

@@ -172,7 +172,7 @@ namespace SharpConstraintLayout.Maui.Widget
         public static void SetViewVisibility(this UIElement element, int ConstraintSetVisible)
         {
 #if __MAUI__
-            if (ConstraintSetVisible == ConstraintSet.Invisible)//TODO
+            if (ConstraintSetVisible == ConstraintSet.Invisible)//MAUI中使用Alpha=0来表示Invisible
             {
                 (element as VisualElement).IsVisible = true;
                 (element as VisualElement).Opacity = 0;
@@ -462,7 +462,13 @@ namespace SharpConstraintLayout.Maui.Widget
             if (transform == null)
                 return;
 #if __MAUI__
-            //TODO
+            element.ScaleX = transform.scaleX;
+            element.ScaleY = transform.scaleY;
+            element.Rotation = transform.rotation;
+            element.RotationX = transform.rotationX;
+            element.RotationY = transform.rotationY;
+            element.TranslationX = transform.translationX;
+            element.TranslationY = transform.translationY;
 #elif ANDROID
             //Copy from ConstraintSet
             var view = element;
