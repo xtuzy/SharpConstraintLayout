@@ -14,7 +14,7 @@ public partial class MainPage : ContentPage
     {
         InitializeComponent();
 
-        //ConstraintLayout.DEBUG = true;
+        ConstraintLayout.DEBUG = true;
         //ConstraintLayout.MEASURE_MEASURELAYOUT = true;
         this.SizeChanged += (sender, e) =>
         {
