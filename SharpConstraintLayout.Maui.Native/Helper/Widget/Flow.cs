@@ -185,8 +185,10 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
                 if (ConstraintLayout.DEBUG) Debug.WriteLine(TAG, $"widthMode {widthMode}, widthSize {widthSize}, heightMode {heightMode}, heightSize {heightSize}");
                 layout.measure(widthMode, widthSize, heightMode, heightSize);
 #if __MAUI__
-                this.WidthRequest = layout.Width;
-                this.HeightRequest = layout.Height;
+                //this.WidthRequest = layout.Width;
+                //this.HeightRequest = layout.Height;给WidthRequest赋值造成测量循环
+
+                MeasuredSize = new Size(layout.MeasuredWidth, layout.MeasuredHeight);
 #elif __ANDROID__ && !__MAUI__
                 SetMeasuredDimension(layout.MeasuredWidth, layout.MeasuredHeight);//Android中这个的作用应该是设置flow的大小
 #elif __IOS__ && !__MAUI__

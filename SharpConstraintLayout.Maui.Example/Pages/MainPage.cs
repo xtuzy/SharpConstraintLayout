@@ -182,33 +182,79 @@ namespace SharpConstraintLayout.Maui.Example
         {
             (Button FirstButton, Button SecondButton, ContentView ThirdCanvas, Label FouthTextBlock, Entry FifthTextBox, Editor SixthRichTextBlock) = CreateControls();
 
-            var layout = new ConstraintLayout()
+            var leftLayout = new ConstraintLayout()
             {
-                Background = new SolidColorBrush(Colors.Black)
+                ConstrainPaddingTop = 10,
+                ConstrainPaddingBottom = 10,
+                ConstrainPaddingLeft = 10,
+                ConstrainPaddingRight = 10,
+                DebugName = "left",
+                Background = new SolidColorBrush(Colors.Red)
+            };
+
+            var rightLayout = new ConstraintLayout()
+            {
+                ConstrainPaddingTop = 10,
+                ConstrainPaddingBottom = 10,
+                ConstrainPaddingLeft = 10,
+                ConstrainPaddingRight = 10,
+                DebugName = "right",
+                Background = new SolidColorBrush(Colors.Green)
             };
 
             using (var pageSet = new FluentConstraintSet())
             {
-                page.AddElement(layout);
+                page.AddElement(leftLayout, rightLayout);
                 pageSet.Clone(page);
-                pageSet.Select(layout)
-                    .CenterTo()
-                    .Width(ConstraintSet.WrapContent)
-                    .Height(ConstraintSet.WrapContent);
+                pageSet.Select(leftLayout)
+                    .EdgesYTo(null, 10).LeftToLeft(null, 10).RightToLeft(rightLayout, 5)
+                    .Width(SizeBehavier.MatchConstraint)
+                    .Height(SizeBehavier.MatchParent)
+                    .Select(rightLayout).EdgesYTo(null, 10).LeftToRight(leftLayout, 5).RightToRight(null, 10)
+                    .Width(SizeBehavier.MatchConstraint)
+                    .Height(SizeBehavier.MatchConstraint)
+                    ;
+
                 pageSet.ApplyTo(page);
-                layout.AddElement(ThirdCanvas);
-                layout.AddElement(FirstButton);
+                var leftChildView = new ConstraintLayout()
+                {
+                    DebugName = "Second",
+                    Background = new SolidColorBrush(Colors.Yellow)
+                };
+                leftLayout.AddElement(leftChildView);
                 using (var layoutSet = new FluentConstraintSet())
                 {
-                    layoutSet.Clone(layout);
+                    layoutSet.Clone(leftLayout);
                     layoutSet
-                        .Select(FirstButton).CenterXTo().CenterYTo()
-                        .Width(FluentConstraintSet.SizeBehavier.WrapContent)
-                        .Height(FluentConstraintSet.SizeBehavier.WrapContent)
-                        .Select(ThirdCanvas).EdgesTo(null, 20, 20)
-                        .Width(FluentConstraintSet.SizeBehavier.MatchParent)
-                        .Height(FluentConstraintSet.SizeBehavier.MatchParent);
-                    layoutSet.ApplyTo(layout);
+                        .Select(leftChildView).EdgesTo(null, 20, 20)
+                        .Width(SizeBehavier.MatchConstraint)
+                        .Height(SizeBehavier.MatchConstraint);
+                    layoutSet.ApplyTo(leftLayout);
+                }
+
+                var rightChildView = new ConstraintLayout()
+                {
+                    DebugName = "Second",
+                    Background = new SolidColorBrush(Colors.Yellow),
+                    ConstrainWidth = ConstraintSet.WrapContent,
+                };
+                rightLayout.AddElement(rightChildView);
+                rightChildView.Add(FirstButton);
+                using (var layoutSet = new FluentConstraintSet())
+                {
+                    layoutSet.Clone(rightLayout);
+                    layoutSet
+                        .Select(rightChildView).EdgesTo(null, 20, 20)
+                        .Width(SizeBehavier.WrapContent)
+                        .Height(SizeBehavier.MatchConstraint);
+                    layoutSet.ApplyTo(rightLayout);
+
+                    using (var set = new FluentConstraintSet())
+                    {
+                        set.Clone(rightChildView);
+                        set.Select(FirstButton).CenterTo();
+                        set.ApplyTo(rightChildView);
+                    }
                 }
             }
         }
@@ -535,13 +581,17 @@ namespace SharpConstraintLayout.Maui.Example
                 var layout = new ConstraintLayout() { ConstrainWidth = ConstraintSet.MatchParent, ConstrainHeight = ConstraintSet.WrapContent, BackgroundColor = Color.FromRgb(66, 66, 66) };
                 var title = new Label() { TextColor = Colors.White, FontSize = 30, FontAttributes = FontAttributes.Bold };
                 title.SetBinding(Label.TextProperty, nameof(Models.MicrosoftNews.Title));
-                var image = new Image();
-                image.SetBinding(Image.SourceProperty, nameof(Models.MicrosoftNews.ImageUrl));
+                //var image = new Image();
+                //image.SetBinding(Image.SourceProperty, nameof(Models.MicrosoftNews.ImageUrl));
                 var sourceFrom = new Label() { TextColor = Color.FromRgb(175, 165, 136), FontSize = 12, FontAttributes = FontAttributes.Bold };
                 sourceFrom.SetBinding(Label.TextProperty, nameof(Models.MicrosoftNews.SourceForm));
-                var sourceFromeImage = new Image();
-                sourceFromeImage.SetBinding(Image.SourceProperty, nameof(Models.MicrosoftNews.SourceForm));
-                layout.AddElement(image, title, sourceFromeImage, sourceFrom);
+                //var sourceFromeImage = new Image();
+                //sourceFromeImage.SetBinding(Image.SourceProperty, nameof(Models.MicrosoftNews.SourceForm));
+                layout.AddElement(
+                    //image, 
+                    title,
+                    //sourceFromeImage, 
+                    sourceFrom);
 
                 var guideLine = new Guideline() { };
                 layout.AddElement(guideLine);
@@ -549,26 +599,26 @@ namespace SharpConstraintLayout.Maui.Example
                 var littleWindow = new FluentConstraintSet();
                 littleWindow.Clone(layout);
                 littleWindow
-                .Select(guideLine, image, sourceFromeImage, sourceFrom, title).Clear()//需要移除之前的约束
+                .Select(guideLine,
+                //image, sourceFromeImage, 
+                sourceFrom, title).Clear()//需要移除之前的约束
                 .Select(guideLine).GuidelineOrientation(Orientation.X).GuidelinePercent(0.6f)
-                .Select(image).EdgesXTo().BottomToTop(guideLine)
-                .Width(SizeBehavier.MatchParent).Height(SizeBehavier.WrapContent)
-                .Select(sourceFromeImage).LeftToLeft(null, 20).BottomToTop(title, 20)
-                .Width(SizeBehavier.WrapContent).Height(SizeBehavier.WrapContent)
-                .Select(sourceFrom).LeftToRight(sourceFromeImage, 20).CenterYTo(sourceFromeImage)
+                //.Select(image).EdgesXTo().BottomToTop(guideLine).Width(SizeBehavier.MatchParent).Height(SizeBehavier.WrapContent)
+                //.Select(sourceFromeImage).LeftToLeft(null, 20).BottomToTop(title, 20).Width(SizeBehavier.WrapContent).Height(SizeBehavier.WrapContent)
+                .Select(sourceFrom)//.LeftToRight(sourceFromeImage, 20).CenterYTo(sourceFromeImage)
                 .Select(title).LeftToLeft(null, 20).RightToRight(null, 20).BottomToBottom(null, 20).Width(SizeBehavier.MatchConstraint);
 
                 var bigWindow = new FluentConstraintSet();
                 bigWindow.Clone(layout);
                 bigWindow
-                .Select(guideLine, image, sourceFromeImage, sourceFrom, title).Clear()//需要移除之前的约束
-                .Select(image).RightToRight(null, 20).TopToTop(null, 20)
-                .Width(140).Height(140)
-                .Select(sourceFromeImage).LeftToLeft(null, 20).TopToTop(image)
-                .Width(SizeBehavier.WrapContent).Height(SizeBehavier.WrapContent)
-                .Select(sourceFrom).LeftToRight(sourceFromeImage, 20).CenterYTo(sourceFromeImage)
-                .Select(title).LeftToLeft(null, 20).RightToLeft(image, 20).TopToBottom(sourceFromeImage, 20).Width(SizeBehavier.MatchConstraint);
-
+                .Select(guideLine,
+                //image, sourceFromeImage, 
+                sourceFrom, title).Clear()//需要移除之前的约束
+                                          //.Select(image).RightToRight(null, 20).TopToTop(null, 20).Width(140).Height(140)
+                                          //.Select(sourceFromeImage).LeftToLeft(null, 20).TopToTop(image).Width(SizeBehavier.WrapContent).Height(SizeBehavier.WrapContent)
+                .Select(sourceFrom)//.LeftToRight(sourceFromeImage, 20).CenterYTo(sourceFromeImage)
+                .Select(title).LeftToLeft(null, 20)//.RightToLeft(image, 20).TopToBottom(sourceFromeImage, 20).Width(SizeBehavier.MatchConstraint);
+                ;
                 double oldValue = -1;
                 layout.SizeChanged += (sender, e) =>
                         {

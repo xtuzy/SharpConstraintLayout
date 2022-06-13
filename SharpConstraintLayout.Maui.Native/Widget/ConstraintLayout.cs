@@ -78,6 +78,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// if is true,will print some layout info.
         /// </summary>
         public static bool DEBUG = false;
+        public string DebugName;
         /// <summary>
         /// if is true,will print time of measure spend.
         /// </summary>
@@ -335,7 +336,9 @@ namespace SharpConstraintLayout.Maui.Widget
         }
 
         /// <summary>
-        /// 约束自身的大小,可能会与父布局产生冲突
+        /// 该属性约束自身的高度,其值可以是固定数值,或者<see cref="ConstraintSet.WrapContent"/>,<see cref="ConstraintSet.MatchConstraint"/>,<see cref="ConstraintSet.MatchParent"/>,
+        /// 当依赖Parent给与的高度时,使用<see cref="ConstraintSet.MatchParent"/>,其为默认;当依赖自身Child的大小时,使用其它.
+        /// (因为父布局的行为不能确定,因此可能会与父布局产生冲突,请多加尝试)
         /// </summary>
         public int ConstrainHeight
         {
@@ -358,6 +361,11 @@ namespace SharpConstraintLayout.Maui.Widget
             }
         }
 
+        /// <summary>
+        /// 该属性约束自身的宽度,其值可以是固定数值,或者<see cref="ConstraintSet.WrapContent"/>,<see cref="ConstraintSet.MatchConstraint"/>,<see cref="ConstraintSet.MatchParent"/>,
+        /// 当依赖Parent给与的宽度时,使用<see cref="ConstraintSet.MatchParent"/>,其为默认;当依赖自身Child的大小时,使用其它.
+        /// (因为父布局的行为不能确定,因此可能会与父布局产生冲突,请多加尝试)
+        /// </summary>
         public int ConstrainWidth
         {
             get
@@ -383,11 +391,14 @@ namespace SharpConstraintLayout.Maui.Widget
         #endregion LayoutProperty
 
         #region Measure
+
+        /*@zhouyang 2022/6/13 注释掉.
         /// <summary>
         /// 存储MeasureSpec给子ConstraintLayout使用,因为iOS和Windows布局体系里本身不传递
         /// </summary>
         public int HorizontalSpec { get; set; } = 0;
         public int VerticalSpec { get; set; } = 0;
+        */
 
         /// <summary>
         /// Android中Spec由parent制作,其它平台需自己制作
@@ -477,7 +488,12 @@ namespace SharpConstraintLayout.Maui.Widget
                 verticalSpec = AndroidMeasureSpec.MakeMeasureSpec(constrainHeight, AndroidMeasureSpec.EXACTLY);
             }
 
-            if (!isInfinityAvailabelWidth && constrainWidth <= 0)
+            /*
+             * @zhouyang 2022/6/13 注释掉以下与HorizontalSpec相关代码.
+             * 在处理嵌套ConstraintLayout时,如果指定了子ConstraintLayout的大小,那么Measure时传入ConsraintLayout的值应该是确定的,
+             * 如果再使用Parent的度量值去计算,那么大小会不正确.
+             */
+            /*if (!isInfinityAvailabelWidth && constrainWidth <= 0)
             {
                 if (this.GetParent() is ConstraintLayout)
                 {
@@ -503,13 +519,12 @@ namespace SharpConstraintLayout.Maui.Widget
                     else
                         if (DEBUG) SimpleDebug.WriteLine($"{parent} verticalSpec is 0");
                 }
-
-            }
+            }*/
 
             isInfinityAvailabelWidth = false;
             isInfinityAvailabelHeight = false;
 
-            //存储Spec给Child使用
+            /*//存储Spec给Child使用
             if (horizontalSpec != HorizontalSpec)
             {
                 HorizontalSpec = horizontalSpec;
@@ -517,7 +532,7 @@ namespace SharpConstraintLayout.Maui.Widget
             if (verticalSpec != VerticalSpec)
             {
                 VerticalSpec = verticalSpec;
-            }
+            }*/
 
             return (horizontalSpec, verticalSpec);
         }
@@ -1107,7 +1122,9 @@ namespace SharpConstraintLayout.Maui.Widget
                         ((VirtualLayout)child).onMeasure(layout, horizontalSpec, verticalSpec);
                         if (DEBUG) SimpleDebug.WriteLine($"{child.GetType().FullName}  after onMeasure: widget={widget},control={child.GetViewLayoutInfo()}");
 #if __MAUI__
-                        (w, h) = ((int)child.WidthRequest, (int)child.HeightRequest);
+                        //(w, h) = ((int)child.WidthRequest, (int)child.HeightRequest);
+                        var size = (child as VirtualLayout).MeasuredSize;
+                        (w, h) = ((int)size.Width, (int)size.Height);
 #elif __IOS__ && !__MAUI__
                         (w, h) = ((int)child.Bounds.Width, (int)child.Bounds.Height);//我在iOS的Flow中,将测量值存储到了Bounds
 #elif WINDOWS && !__MAUI__
