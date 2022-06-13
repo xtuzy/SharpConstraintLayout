@@ -14,7 +14,7 @@ public partial class MainPage : ContentPage
     {
         InitializeComponent();
 
-        ConstraintLayout.DEBUG = true;
+        //ConstraintLayout.DEBUG = true;
         //ConstraintLayout.MEASURE_MEASURELAYOUT = true;
         this.SizeChanged += (sender, e) =>
         {
@@ -73,6 +73,7 @@ public partial class MainPage : ContentPage
             ConstrainPaddingBottom = 10,
             ConstrainPaddingLeft = 10,
             ConstrainPaddingRight = 10,
+            DebugName = "Root",
             Background = new SolidColorBrush(Colors.HotPink),
         };
         gridLayout.RemoveAt(gridLayout.Count - 1);

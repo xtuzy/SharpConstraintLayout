@@ -182,33 +182,79 @@ namespace SharpConstraintLayout.Maui.Example
         {
             (Button FirstButton, Button SecondButton, ContentView ThirdCanvas, Label FouthTextBlock, Entry FifthTextBox, Editor SixthRichTextBlock) = CreateControls();
 
-            var layout = new ConstraintLayout()
+            var leftLayout = new ConstraintLayout()
             {
-                Background = new SolidColorBrush(Colors.Black)
+                ConstrainPaddingTop = 10,
+                ConstrainPaddingBottom = 10,
+                ConstrainPaddingLeft = 10,
+                ConstrainPaddingRight = 10,
+                DebugName = "left",
+                Background = new SolidColorBrush(Colors.Red)
+            };
+
+            var rightLayout = new ConstraintLayout()
+            {
+                ConstrainPaddingTop = 10,
+                ConstrainPaddingBottom = 10,
+                ConstrainPaddingLeft = 10,
+                ConstrainPaddingRight = 10,
+                DebugName = "right",
+                Background = new SolidColorBrush(Colors.Green)
             };
 
             using (var pageSet = new FluentConstraintSet())
             {
-                page.AddElement(layout);
+                page.AddElement(leftLayout, rightLayout);
                 pageSet.Clone(page);
-                pageSet.Select(layout)
-                    .CenterTo()
-                    .Width(ConstraintSet.WrapContent)
-                    .Height(ConstraintSet.WrapContent);
+                pageSet.Select(leftLayout)
+                    .EdgesYTo(null, 10).LeftToLeft(null, 10).RightToLeft(rightLayout, 5)
+                    .Width(SizeBehavier.MatchConstraint)
+                    .Height(SizeBehavier.MatchParent)
+                    .Select(rightLayout).EdgesYTo(null, 10).LeftToRight(leftLayout, 5).RightToRight(null, 10)
+                    .Width(SizeBehavier.MatchConstraint)
+                    .Height(SizeBehavier.MatchConstraint)
+                    ;
+
                 pageSet.ApplyTo(page);
-                layout.AddElement(ThirdCanvas);
-                layout.AddElement(FirstButton);
+                var leftChildView = new ConstraintLayout()
+                {
+                    DebugName = "Second",
+                    Background = new SolidColorBrush(Colors.Yellow)
+                };
+                leftLayout.AddElement(leftChildView);
                 using (var layoutSet = new FluentConstraintSet())
                 {
-                    layoutSet.Clone(layout);
+                    layoutSet.Clone(leftLayout);
                     layoutSet
-                        .Select(FirstButton).CenterXTo().CenterYTo()
-                        .Width(FluentConstraintSet.SizeBehavier.WrapContent)
-                        .Height(FluentConstraintSet.SizeBehavier.WrapContent)
-                        .Select(ThirdCanvas).EdgesTo(null, 20, 20)
-                        .Width(FluentConstraintSet.SizeBehavier.MatchParent)
-                        .Height(FluentConstraintSet.SizeBehavier.MatchParent);
-                    layoutSet.ApplyTo(layout);
+                        .Select(leftChildView).EdgesTo(null, 20, 20)
+                        .Width(SizeBehavier.MatchConstraint)
+                        .Height(SizeBehavier.MatchConstraint);
+                    layoutSet.ApplyTo(leftLayout);
+                }
+
+                var rightChildView = new ConstraintLayout()
+                {
+                    DebugName = "Second",
+                    Background = new SolidColorBrush(Colors.Yellow),
+                    ConstrainWidth = ConstraintSet.WrapContent,
+                };
+                rightLayout.AddElement(rightChildView);
+                rightChildView.Add(FirstButton);
+                using (var layoutSet = new FluentConstraintSet())
+                {
+                    layoutSet.Clone(rightLayout);
+                    layoutSet
+                        .Select(rightChildView).EdgesTo(null, 20, 20)
+                        .Width(SizeBehavier.WrapContent)
+                        .Height(SizeBehavier.MatchConstraint);
+                    layoutSet.ApplyTo(rightLayout);
+
+                    using (var set = new FluentConstraintSet())
+                    {
+                        set.Clone(rightChildView);
+                        set.Select(FirstButton).CenterTo();
+                        set.ApplyTo(rightChildView);
+                    }
                 }
             }
         }
