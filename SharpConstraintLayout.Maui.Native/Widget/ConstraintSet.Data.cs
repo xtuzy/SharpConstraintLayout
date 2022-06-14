@@ -27,6 +27,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// 只对ConstraintLayout中的有效,用户设置中使用的ConstraintSet不使用该Tag
         /// </summary>
         public bool IsChanged = false;
+        public bool IsForAnimation = false;
 
         private const string TAG = "ConstraintSet";
         private const string ERROR_MESSAGE = "XML parser error must be within a Constraint ";

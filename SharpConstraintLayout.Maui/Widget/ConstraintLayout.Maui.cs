@@ -1,5 +1,6 @@
 ﻿#if __MAUI__
 using Microsoft.Maui.Layouts;
+using SharpConstraintLayout.Maui.Widget;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -77,13 +78,39 @@ namespace SharpConstraintLayout.Maui.Widget
             return new ConstraintLayoutManager(this);
         }
 
-        void LayoutChild(UIElement element, int x, int y, int w, int h)
+        public void LayoutChild(UIElement element, int x, int y, int w, int h)
         {
             (element as IView).Arrange(new Rect(x, y, w, h));
         }
         #endregion
 
         public Size GetLastMeasureSize() { return new Size(mLastMeasureWidth, mLastMeasureHeight); }
+
+        /// <summary>
+        /// 获取ConstraintLayout所有子View信息,这是为动画特别提供的
+        /// </summary>
+        /// <param name="isNeedMeasure">没有测量过的可能需要测量才能获得到正确的信息</param>
+        /// <returns></returns>
+        public Dictionary<int, ViewInfo> CaptureLayoutTreeInfo(bool isNeedMeasure = false)
+        {
+            //Try强制Measure
+            if (isNeedMeasure)
+            {
+                var availableSize = GetLastMeasureSize();
+                (int horizontalSpec, int verticalSpec) = this.MakeSpec(this, availableSize);
+                this.MeasureLayout(availableSize, horizontalSpec, verticalSpec);
+            }
+
+            var dic = new Dictionary<int, ViewInfo>();
+            foreach (var item in idToViews)
+            {
+                var view = item.Value;
+                var widget = GetOrAddWidgetById(item.Key);
+                var info = new ViewInfo() { X = widget.X, Y = widget.Y, Size = new Size(widget.Width, widget.Height), TranlateX = view.TranslationX, TranlateY = view.TranslationY, ScaleX = view.ScaleX, ScaleY = view.ScaleY, Alpha = view.Opacity, RotationX = view.RotationX, RotationY = view.RotationY };
+                dic.Add(item.Key, info);
+            }
+            return dic;
+        }
     }
 
     public class ConstraintLayoutManager : LayoutManager
@@ -107,6 +134,8 @@ namespace SharpConstraintLayout.Maui.Widget
         {
             Size finalSize = bounds.Size;
             var layout = Layout as ConstraintLayout;
+            if (layout.mConstraintSet.IsForAnimation)
+                return finalSize;
             var lastMeasureSize = layout.GetLastMeasureSize();
             if (finalSize.Width != lastMeasureSize.Width || finalSize.Height != lastMeasureSize.Height)
             {
