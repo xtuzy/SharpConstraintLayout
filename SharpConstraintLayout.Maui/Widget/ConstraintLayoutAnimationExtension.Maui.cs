@@ -11,19 +11,19 @@ namespace SharpConstraintLayout.Maui.Widget
     {
         public static void LayoutToWithAnim(this ConstraintLayout layout, ConstraintSet finishSet, string animName, uint rate = 16, uint length = 250, Easing easing = null, Action<double, bool> finished = null, Func<bool> repeat = null)
         {
-            var animation = CreateAnimation(layout, finishSet);
+            var animation = CreateAnimation(layout, finishSet, easing);
             if (finished == null)
-                animation.Commit(layout, animName, rate, 1200, easing, (v, b) => { finishSet.ApplyTo(layout); }, repeat);
+                animation.Commit(layout, animName, rate, length, Easing.Linear, (v, b) => { finishSet.ApplyTo(layout); }, repeat);
             else
-                animation.Commit(layout, animName, rate, 1200, easing, finished, repeat);
+                animation.Commit(layout, animName, rate, length, Easing.Linear, finished, repeat);
         }
 
-        public static Animation CreateAnimation(this ConstraintLayout layout, ConstraintSet finish)
+        public static Animation CreateAnimation(this ConstraintLayout layout, ConstraintSet finish, Easing easing)
         {
             var startLayoutTreeInfo = layout.CaptureLayoutTreeInfo();
             finish.ApplyToForAnim(layout);
             var finfishLayoutTreeInfo = layout.CaptureLayoutTreeInfo(true);
-            return GenerateAnimation(layout, startLayoutTreeInfo, finfishLayoutTreeInfo);
+            return GenerateAnimation(layout, startLayoutTreeInfo, finfishLayoutTreeInfo, easing);
         }
 
         public static Animation CreateAnimation(this ConstraintLayout layout, ConstraintSet start, ConstraintSet finish)
@@ -35,7 +35,7 @@ namespace SharpConstraintLayout.Maui.Widget
             return GenerateAnimation(layout, startLayoutTreeInfo, finfishLayoutTreeInfo);
         }
 
-        static Animation GenerateAnimation(ConstraintLayout layout, Dictionary<int, ViewInfo> startLayoutTreeInfo, Dictionary<int, ViewInfo> finfishLayoutTreeInfo)
+        static Animation GenerateAnimation(ConstraintLayout layout, Dictionary<int, ViewInfo> startLayoutTreeInfo, Dictionary<int, ViewInfo> finfishLayoutTreeInfo, Easing easing = null)
         {
             var animation = new Animation();
             foreach (var item in startLayoutTreeInfo)
@@ -69,7 +69,7 @@ namespace SharpConstraintLayout.Maui.Widget
                     view.ScaleX = startInfo.ScaleX + (finishInfo.ScaleX - startInfo.ScaleX) * v;
                     view.ScaleY = startInfo.ScaleY + (finishInfo.ScaleY - startInfo.ScaleY) * v;
                     view.Opacity = startInfo.Alpha + (finishInfo.Alpha - startInfo.Alpha) * v;
-                }, 0, 1));
+                }, 0, 1, easing));
             }
             return animation;
         }
