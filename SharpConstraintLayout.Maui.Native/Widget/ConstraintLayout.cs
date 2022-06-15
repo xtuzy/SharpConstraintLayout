@@ -175,9 +175,11 @@ namespace SharpConstraintLayout.Maui.Widget
             idToViews.Remove(id);//从存储View的字典中移除
             ConstraintWidget widget = GetOrAddWidgetById(id);
             idsToConstraintWidgets.Remove(id);//从存储Widget的字典移除
+            MLayoutWidget.remove(widget);
             if (element is ConstraintHelper)
                 mConstraintHelpers.Remove(element as ConstraintHelper);
             mConstraintSet.Constraints.Remove(id);//从存储约束的字典移除
+
         }
 
         private ConstraintWidget GetOrAddWidgetById(int id)

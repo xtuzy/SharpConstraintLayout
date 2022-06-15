@@ -26,6 +26,8 @@ namespace SharpConstraintLayout.Maui.Native.Example
     {
         void PlaceholderTest(ConstraintLayout page)
         {
+            (var FirstButton, var SecondButton, var ThirdCanvas, var FouthTextBlock, var FifthTextBox, var SixthRichTextBlock) = CreateControls();
+
             Placeholder.IsEditMode = true;
             Placeholder placeHolder = null;
 #if WINDOWS || __IOS__
@@ -49,6 +51,8 @@ namespace SharpConstraintLayout.Maui.Native.Example
 
         void GroupTest(ConstraintLayout page)
         {
+            (var FirstButton, var SecondButton, var ThirdCanvas, var FouthTextBlock, var FifthTextBox, var SixthRichTextBlock) = CreateControls();
+
             Group group = null;
 #if WINDOWS || __IOS__
             group = new Group();
@@ -90,6 +94,8 @@ namespace SharpConstraintLayout.Maui.Native.Example
 
         void FlowPerformanceTest(ConstraintLayout page)
         {
+            (var FirstButton, var SecondButton, var ThirdCanvas, var FouthTextBlock, var FifthTextBox, var SixthRichTextBlock) = CreateControls();
+
             int buttonCount = 50;
 #if __ANDROID__
             var flow = new Flow(page.Context) { };
@@ -149,6 +155,8 @@ namespace SharpConstraintLayout.Maui.Native.Example
 
         void WrapPanelPerformanceTest(ConstraintLayout page)
         {
+            (var FirstButton, var SecondButton, var ThirdCanvas, var FouthTextBlock, var FifthTextBox, var SixthRichTextBlock) = CreateControls();
+
             ConstraintLayout.MEASURE_MEASURELAYOUT = false;
             //WrapPanel.DEBUG = true;
             WrapPanel.MEASURE = true;
@@ -207,7 +215,9 @@ namespace SharpConstraintLayout.Maui.Native.Example
 
         void CircleConstraintTest(ConstraintLayout page)
         {
-            layout = page;
+            (var FirstButton, var SecondButton, var ThirdCanvas, var FouthTextBlock, var FifthTextBox, var SixthRichTextBlock) = CreateControls();
+
+            var layout = page;
             layout.AddElement(FirstButton, SecondButton, FouthTextBlock);
             using (var layoutSet = new FluentConstraintSet())
             {
@@ -239,6 +249,8 @@ namespace SharpConstraintLayout.Maui.Native.Example
 
         void PlatformLayoutInConstraintLayoutTest(ConstraintLayout page)
         {
+            (var FirstButton, var SecondButton, var ThirdCanvas, var FouthTextBlock, var FifthTextBox, var SixthRichTextBlock) = CreateControls();
+
             page.ConstrainPaddingTop = 10;
             page.ConstrainPaddingBottom = 10;
             page.ConstrainPaddingLeft = 10;
@@ -408,6 +420,8 @@ namespace SharpConstraintLayout.Maui.Native.Example
 
         void AnimationTest(ConstraintLayout page)
         {
+            (var FirstButton, var SecondButton, var ThirdCanvas, var FouthTextBlock, var FifthTextBox, var SixthRichTextBlock) = CreateControls();
+            ConstraintLayout layout;
 #if __ANDROID__
             layout = new ConstraintLayout(page.Context)
             {
@@ -469,10 +483,14 @@ namespace SharpConstraintLayout.Maui.Native.Example
         /// <param name="page"></param>
         void NestedConstraintLayoutTest(ConstraintLayout page)
         {
+            (var FirstButton, var SecondButton, var ThirdCanvas, var FouthTextBlock, var FifthTextBox, var SixthRichTextBlock) = CreateControls();
+
             page.ConstrainPaddingTop = 10;
             page.ConstrainPaddingBottom = 10;
             page.ConstrainPaddingLeft = 10;
             page.ConstrainPaddingRight = 10;
+
+            ConstraintLayout layout;
 #if __ANDROID__
             layout = new ConstraintLayout(page.Context)
             {
@@ -539,6 +557,8 @@ namespace SharpConstraintLayout.Maui.Native.Example
 
         void FlowTest(ConstraintLayout page)
         {
+            (var FirstButton, var SecondButton, var ThirdCanvas, var FouthTextBlock, var FifthTextBox, var SixthRichTextBlock) = CreateControls();
+
 #if __ANDROID__
             var flow = new Flow(page.Context)
             {
@@ -561,7 +581,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             flow.SetOrientation(Flow.Vertical);
             flow.SetWrapMode(Flow.WrapChain);
             flow.SetHorizontalStyle(Flow.ChainSpreadInside);
-            layout = page;
+            ConstraintLayout layout = page;
             layout.AddElement(flow, ThirdCanvas, FirstButton, SecondButton, FouthTextBlock, FifthTextBox, SixthRichTextBlock);
             flow.ReferenceElement(FirstButton, SecondButton, FouthTextBlock, FifthTextBox, SixthRichTextBlock);
 
@@ -605,7 +625,9 @@ namespace SharpConstraintLayout.Maui.Native.Example
 
         private void VisibilityTest(ConstraintLayout page)
         {
-            layout = page;
+            (var FirstButton, var SecondButton, var ThirdCanvas, var FouthTextBlock, var FifthTextBox, var SixthRichTextBlock) = CreateControls();
+
+            ConstraintLayout layout = page;
 
             layout.AddElement(FirstButton, SecondButton, ThirdCanvas);
 
@@ -673,6 +695,8 @@ namespace SharpConstraintLayout.Maui.Native.Example
 
         private void BarrierTest(ConstraintLayout page)
         {
+            (var FirstButton, var SecondButton, var ThirdCanvas, var FouthTextBlock, var FifthTextBox, var SixthRichTextBlock) = CreateControls();
+            ConstraintLayout layout;
             layout = page;
 #if __ANDROID__
             var barrier = new Barrier(page.Context)
@@ -717,6 +741,8 @@ namespace SharpConstraintLayout.Maui.Native.Example
 
         private void GuidelineTest(ConstraintLayout page)
         {
+            (var FirstButton, var SecondButton, var ThirdCanvas, var FouthTextBlock, var FifthTextBox, var SixthRichTextBlock) = CreateControls();
+
 #if __ANDROID__
             var layout = new ConstraintLayout(page.Context)
             {
@@ -764,6 +790,8 @@ namespace SharpConstraintLayout.Maui.Native.Example
 
         private void BaselineTest(ConstraintLayout page)
         {
+            (var FirstButton, var SecondButton, var ThirdCanvas, var FouthTextBlock, var FifthTextBox, var SixthRichTextBlock) = CreateControls();
+            ConstraintLayout layout;
             layout = page;
 
             layout.AddElement(FouthTextBlock, SixthRichTextBlock);
@@ -782,7 +810,9 @@ namespace SharpConstraintLayout.Maui.Native.Example
 
         private void BaseAlignTest(ConstraintLayout page)
         {
-            layout = page;
+            (var FirstButton, var SecondButton, var ThirdCanvas, var FouthTextBlock, var FifthTextBox, var SixthRichTextBlock) = CreateControls();
+
+            ConstraintLayout layout = page;
 
             layout.AddElement(FirstButton, SecondButton, ThirdCanvas, FouthTextBlock, FifthTextBox, SixthRichTextBlock);
 
@@ -823,6 +853,8 @@ namespace SharpConstraintLayout.Maui.Native.Example
 
         private void SizeTest(ConstraintLayout page)
         {
+            (var FirstButton, var SecondButton, var ThirdCanvas, var FouthTextBlock, var FifthTextBox, var SixthRichTextBlock) = CreateControls();
+
             page.ConstrainPaddingTop = 10;
             page.ConstrainPaddingBottom = 10;
             page.ConstrainPaddingLeft = 10;

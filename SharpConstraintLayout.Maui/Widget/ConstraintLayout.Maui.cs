@@ -46,8 +46,9 @@ namespace SharpConstraintLayout.Maui.Widget
 
         public void RemoveAllElements()
         {
-            foreach (var element in this.Children)
+            for (int i = this.Children.Count - 1; i >= 0; i--)
             {
+                var element = Children[i];
                 this.Remove(element);
             }
         }

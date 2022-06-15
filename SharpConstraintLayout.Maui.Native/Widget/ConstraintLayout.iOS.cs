@@ -65,8 +65,9 @@ namespace SharpConstraintLayout.Maui.Widget
 
         public void RemoveAllViews()
         {
-            foreach (var element in this.Subviews)
+            for (int i = this.Subviews.Length - 1; i >= 0; i--)
             {
+                var element = this.Subviews[i];
                 element.RemoveFromSuperview();
                 OnRemovedView(element);
             }
