@@ -17,7 +17,7 @@ namespace SharpConstraintLayout.Maui.Widget
             init();
         }
 
-#region Add And Remove
+        #region Add And Remove
 
         public UIElement GetChildAt(int index)
         {
@@ -26,14 +26,14 @@ namespace SharpConstraintLayout.Maui.Widget
 
         public void AddElement(UIElement element)
         {
-            Children?.Add(element);
             OnAddedView(element);
+            Children?.Add(element);
         }
 
         public void RemoveElement(UIElement element)
         {
-            Children?.Remove(element);
             OnRemovedView(element);
+            Children?.Remove(element);
         }
 
         public void RemoveAllElements()
@@ -41,14 +41,14 @@ namespace SharpConstraintLayout.Maui.Widget
             for (int i = this.Children.Count - 1; i >= 0; i--)
             {
                 var element = Children[i];
-                Children?.Remove(element);
                 OnRemovedView(element);
+                Children?.Remove(element);
             }
         }
 
         public int ChildCount { get { return Children != null ? Children.Count : 0; } }
 
-#endregion
+        #endregion
 
         protected override Size MeasureOverride(Size availableSize)
         {
@@ -80,7 +80,7 @@ namespace SharpConstraintLayout.Maui.Widget
             return (isInfinityAvailabelWidth, isInfinityAvailabelHeight);
         }
 
-#region Layout
+        #region Layout
 
         protected override Size ArrangeOverride(Size finalSize)
         {
@@ -105,7 +105,7 @@ namespace SharpConstraintLayout.Maui.Widget
             element.Arrange(new Rect(x, y, w, h));
         }
 
-#endregion
+        #endregion
     }
 }
 #endif

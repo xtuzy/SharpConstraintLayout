@@ -25,7 +25,7 @@ namespace SharpConstraintLayout.Maui.Widget
             init();
         }
 
-        #region Add And Remove
+#region Add And Remove
 
         public UIElement GetChildAt(int index)
         {
@@ -34,8 +34,8 @@ namespace SharpConstraintLayout.Maui.Widget
 
         public override void AddSubview(UIElement view)
         {
-            base.AddSubview(view);
             OnAddedView(view);
+            base.AddSubview(view);
         }
 
         /// <summary>
@@ -44,14 +44,13 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <param name="element"></param>
         public void AddElement(UIElement element)
         {
-            base.AddSubview(element);
-            OnAddedView(element);
+            this.AddSubview(element);
         }
 
         public void RemoveView(UIElement element)
         {
-            element.RemoveFromSuperview();
             OnRemovedView(element);
+            element.RemoveFromSuperview();
         }
 
         /// <summary>
@@ -68,8 +67,8 @@ namespace SharpConstraintLayout.Maui.Widget
             for (int i = this.Subviews.Length - 1; i >= 0; i--)
             {
                 var element = this.Subviews[i];
-                element.RemoveFromSuperview();
                 OnRemovedView(element);
+                element.RemoveFromSuperview();
             }
         }
 
@@ -83,9 +82,9 @@ namespace SharpConstraintLayout.Maui.Widget
 
         public int ChildCount => Subviews.Length;
 
-        #endregion
+#endregion
 
-        #region Measure And Layout
+#region Measure And Layout
         /// <summary>
         /// DEBUG info will use IntrinsicContentSize, will have infinity loop, so set just use it at first time measure.
         /// </summary>
@@ -215,7 +214,7 @@ namespace SharpConstraintLayout.Maui.Widget
             element.Frame = new CoreGraphics.CGRect(x, y, w, h);
         }
 
-        #endregion
+#endregion
 
     }
 }

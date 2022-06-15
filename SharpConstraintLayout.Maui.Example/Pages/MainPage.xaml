@@ -68,6 +68,10 @@
                     x:Name="Animation"
                     Clicked="Animation_Clicked"
                     Text="Animation" />
+                <Button
+                    x:Name="Group"
+                    Clicked="Group_Clicked"
+                    Text="Group" />
             </HorizontalStackLayout>
         </ScrollView>
         <Grid

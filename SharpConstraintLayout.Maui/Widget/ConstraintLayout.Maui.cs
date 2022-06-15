@@ -19,8 +19,8 @@ namespace SharpConstraintLayout.Maui.Widget
         #region Add And Remove
         public new void Add(IView child)
         {
-            base.Add(child);
             OnAddedView(child as UIElement);
+            base.Add(child);
         }
 
         public UIElement GetChildAt(int index)
@@ -35,8 +35,8 @@ namespace SharpConstraintLayout.Maui.Widget
 
         public new void Remove(IView child)
         {
-            base.Remove(child);
             OnRemovedView(child as UIElement);
+            base.Remove(child);
         }
 
         public void RemoveElement(UIElement element)

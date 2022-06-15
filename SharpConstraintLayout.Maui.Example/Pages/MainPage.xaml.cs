@@ -214,5 +214,11 @@ public partial class MainPage : ContentPage
         var contentView = new ShowAnimationView();
         gridLayout.Add(contentView);
     }
+
+    private void Group_Clicked(object sender, EventArgs e)
+    {
+        var content = CreateConstraintLayout();
+        GroupTest(content);
+    }
 }
 

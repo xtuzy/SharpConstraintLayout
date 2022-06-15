@@ -39,7 +39,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             var visibilityBt = new UIButton(); visibilityBt.SetTitle("Visibility", UIControlState.Normal);
             var flowBt = new UIButton(); flowBt.SetTitle("Flow", UIControlState.Normal);
             var platformLayoutInConstraintLayoutBt = new UIButton(); platformLayoutInConstraintLayoutBt.SetTitle("PlatformLayoutInConstraintLayout", UIControlState.Normal);
-            var constraintLayoutInPlatformLayoutBt = new UIButton(); constraintLayoutInPlatformLayoutBt.SetTitle("ConstraintLayoutInPlatformLayout", UIControlState.Normal);
+            var constraintLayoutInScrollViewBt = new UIButton(); constraintLayoutInScrollViewBt.SetTitle("ConstraintLayoutInScrollView", UIControlState.Normal);
             var circleConstraintBt = new UIButton(); circleConstraintBt.SetTitle("CircleConstraint", UIControlState.Normal);
             var flowPerformance = new UIButton(); flowPerformance.SetTitle("FlowPerformance", UIControlState.Normal);
             var wrapPanelPerformance = new UIButton(); wrapPanelPerformance.SetTitle("WrapPanelPerformance", UIControlState.Normal);
@@ -53,7 +53,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             buttonList.Add(visibilityBt);
             buttonList.Add(flowBt);
             buttonList.Add(platformLayoutInConstraintLayoutBt);
-            buttonList.Add(constraintLayoutInPlatformLayoutBt);
+            buttonList.Add(constraintLayoutInScrollViewBt);
             buttonList.Add(circleConstraintBt);
             buttonList.Add(flowPerformance);
             buttonList.Add(wrapPanelPerformance);
@@ -103,9 +103,9 @@ namespace SharpConstraintLayout.Maui.Native.Example
             {
                 PlatformLayoutInConstraintLayoutTest(layout);
             };
-            constraintLayoutInPlatformLayoutBt.TouchUpInside += (sender, e) =>
+            constraintLayoutInScrollViewBt.TouchUpInside += (sender, e) =>
             {
-                ConstraintLayoutInPlatformLayoutTest(layout);
+                ConstraintLayoutInScrollViewTest(layout);
             };
             circleConstraintBt.TouchUpInside += (sender, e) =>
             {
@@ -135,7 +135,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             //NestedConstraintLayoutTest(Page);
         }
 
-        void ConstraintLayoutInPlatformLayoutTest(ConstraintLayout page)
+        void ConstraintLayoutInScrollViewTest(ConstraintLayout page)
         {
             (UIButton FirstButton, UIButton SecondButton, UIView ThirdCanvas, UITextView FouthTextBlock, UITextField FifthTextBox, UITextView SixthRichTextBlock) = CreateControls();
             page.ConstrainPaddingLeft = 10;

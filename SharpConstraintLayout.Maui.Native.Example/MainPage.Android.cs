@@ -18,7 +18,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
     {
         public MainPage(Context? context) : base(context)
         {
-            ConstraintLayout.DEBUG = false;
+            //ConstraintLayout.DEBUG = false;
             ConstraintLayout.MEASURE_MEASURELAYOUT = true;
             Id = View.GenerateViewId();
             this.LayoutParameters = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent);
@@ -31,7 +31,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             var visibilityBt = new Button(context) { Text = "Visibility" };
             var flowBt = new Button(context) { Text = "Flow" };
             var platformLayoutInConstraintLayoutBt = new Button(context) { Text = "PlatformLayoutInConstraintLayout" };
-            var constraintLayoutInPlatformLayoutBt = new Button(context) { Text = "ConstraintLayoutInPlatformLayout" };
+            var constraintLayoutInScrollViewBt = new Button(context) { Text = "ConstraintLayoutInScrollView" };
             var circleConstraintBt = new Button(context) { Text = "CircleConstraint" };
             var flowPerformanceBt = new Button(context) { Text = "FlowPerformance" };
             var wrapPanelPerformanceBt = new Button(context) { Text = "WrapPanelPerformance" };
@@ -46,7 +46,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             buttonList.AddView(visibilityBt);
             buttonList.AddView(flowBt);
             buttonList.AddView(platformLayoutInConstraintLayoutBt);
-            buttonList.AddView(constraintLayoutInPlatformLayoutBt);
+            buttonList.AddView(constraintLayoutInScrollViewBt);
             buttonList.AddView(circleConstraintBt);
             buttonList.AddView(flowPerformanceBt);
             buttonList.AddView(wrapPanelPerformanceBt);
@@ -107,9 +107,10 @@ namespace SharpConstraintLayout.Maui.Native.Example
                 layout.RemoveAllElements();
                 PlatformLayoutInConstraintLayoutTest(layout);
             };
-            constraintLayoutInPlatformLayoutBt.Click += (sender, e) =>
+            constraintLayoutInScrollViewBt.Click += (sender, e) =>
             {
-                //ConstraintLayoutInPlatformLayoutTest(this);
+                layout.RemoveAllElements();
+                ConstraintLayoutInScrollViewTest(layout);
             };
             circleConstraintBt.Click += (sender, e) =>
             {

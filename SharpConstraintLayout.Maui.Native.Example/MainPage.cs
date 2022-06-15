@@ -399,23 +399,23 @@ namespace SharpConstraintLayout.Maui.Native.Example
                 }, page);
             });
 #endif
-            /*   using (var layoutSet = new FluentConstraintSet())
-               {
-                   layoutSet.Clone(page);
-                   layoutSet.Select(stackPanel)
-                       .CenterYTo().LeftToLeft()
-                       .Width(SizeBehavier.WrapContent)
-                       .Height(SizeBehavier.WrapContent)
-                       .Select(grid)
-                       .TopToBottom(stackPanel, 10).LeftToLeft()
-                       .Width(SizeBehavier.WrapContent)
-                       .Height(SizeBehavier.WrapContent)
-                       .Select(scrollView)
-                       .TopToBottom(grid, 10).BottomToBottom().LeftToLeft()
-                       .Width(SizeBehavier.WrapContent)//ios don't know size
-                       .Height(SizeBehavier.MatchConstraint);
-                   layoutSet.ApplyTo(page);
-               }*/
+            using (var layoutSet = new FluentConstraintSet())
+            {
+                layoutSet.Clone(page);
+                layoutSet.Select(stackPanel)
+                    .CenterYTo().LeftToLeft()
+                    .Width(SizeBehavier.WrapContent)
+                    .Height(SizeBehavier.WrapContent)
+                    .Select(grid)
+                    .TopToBottom(stackPanel, 10).LeftToLeft()
+                    .Width(SizeBehavier.WrapContent)
+                    .Height(SizeBehavier.WrapContent)
+                    .Select(scrollView)
+                    .TopToBottom(grid, 10).BottomToBottom().LeftToLeft()
+                    .Width(SizeBehavier.WrapContent)//ios don't know size
+                    .Height(SizeBehavier.MatchConstraint);
+                layoutSet.ApplyTo(page);
+            }
         }
 
         void AnimationTest(ConstraintLayout page)
@@ -484,75 +484,110 @@ namespace SharpConstraintLayout.Maui.Native.Example
         void NestedConstraintLayoutTest(ConstraintLayout page)
         {
             (var FirstButton, var SecondButton, var ThirdCanvas, var FouthTextBlock, var FifthTextBox, var SixthRichTextBlock) = CreateControls();
-
-            page.ConstrainPaddingTop = 10;
-            page.ConstrainPaddingBottom = 10;
-            page.ConstrainPaddingLeft = 10;
-            page.ConstrainPaddingRight = 10;
-
-            ConstraintLayout layout;
 #if __ANDROID__
-            layout = new ConstraintLayout(page.Context)
-            {
-                Id = View.GenerateViewId(),
-            };
-            layout.SetBackgroundColor(Android.Graphics.Color.Black);
+            var leftLayout = new ConstraintLayout(page.Context)
 #else
-            layout = new ConstraintLayout()
+            var leftLayout = new ConstraintLayout()
+#endif
             {
-#if WINDOWS
-                Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.Black)
-#elif __IOS__
-                BackgroundColor = UIColor.Black
-#endif
+                ConstrainPaddingTop = 10,
+                ConstrainPaddingBottom = 10,
+                ConstrainPaddingLeft = 10,
+                ConstrainPaddingRight = 10,
+                DebugName = "left",
             };
+#if __ANDROID__
+            var rightLayout = new ConstraintLayout(page.Context)
+#else
+            var rightLayout = new ConstraintLayout()
 #endif
-            layout.ConstrainPaddingTop = 10;
-            layout.ConstrainPaddingBottom = 10;
-            layout.ConstrainPaddingLeft = 10;
-            layout.ConstrainPaddingRight = 10;
+            {
+                ConstrainPaddingTop = 10,
+                ConstrainPaddingBottom = 10,
+                ConstrainPaddingLeft = 10,
+                ConstrainPaddingRight = 10,
+                DebugName = "right",
+            };
+
             using (var pageSet = new FluentConstraintSet())
             {
-                page.AddElement(layout);
+                page.AddElement(leftLayout, rightLayout);
                 pageSet.Clone(page);
-                pageSet.Select(layout)
-                    .CenterTo(page)
-                    .Width(SizeBehavier.MatchParent)
-                    .Height(SizeBehavier.WrapContent);
+                pageSet.Select(leftLayout)
+                    .EdgesYTo(null, 10).LeftToLeft(null, 10).RightToLeft(rightLayout, 5)
+                    .Width(SizeBehavier.MatchConstraint)
+                    .Height(SizeBehavier.MatchParent)
+                    .Select(rightLayout).EdgesYTo(null, 10).LeftToRight(leftLayout, 5).RightToRight(null, 10)
+                    .Width(SizeBehavier.MatchConstraint)
+                    .Height(SizeBehavier.MatchConstraint)
+                    ;
+
                 pageSet.ApplyTo(page);
-                layout.ConstrainWidth = ConstraintSet.MatchParent;
-                layout.ConstrainHeight = ConstraintSet.WrapContent;
-                layout.AddElement(ThirdCanvas);
-                layout.AddElement(FirstButton);
+#if __ANDROID__
+                var leftChildView = new ConstraintLayout(page.Context)
+#else
+                var leftChildView = new ConstraintLayout()
+#endif
+                {
+                    DebugName = "Second",
+                };
+                leftLayout.AddElement(leftChildView);
                 using (var layoutSet = new FluentConstraintSet())
                 {
-                    layoutSet.Clone(layout);
+                    layoutSet.Clone(leftLayout);
                     layoutSet
-                        .Select(FirstButton).CenterXTo().CenterYTo()
-                        .Width(FluentConstraintSet.SizeBehavier.WrapContent)
-                        .Height(FluentConstraintSet.SizeBehavier.WrapContent)
-                        .Select(ThirdCanvas)//.EdgesTo(null, 20, 20)
-                        .MinWidth(100).MinHeight(100).EdgesTo()
-                        .Width(FluentConstraintSet.SizeBehavier.MatchConstraint)
-                        .Height(FluentConstraintSet.SizeBehavier.MatchConstraint);
-                    layoutSet.ApplyTo(layout);
+                        .Select(leftChildView).EdgesTo(null, 20, 20)
+                        .Width(SizeBehavier.MatchConstraint)
+                        .Height(SizeBehavier.MatchConstraint);
+                    layoutSet.ApplyTo(leftLayout);
                 }
-            }
+#if __ANDROID__
+                var rightChildView = new ConstraintLayout(page.Context)
+#else
+                var rightChildView = new ConstraintLayout()
+#endif
+                {
+                    DebugName = "Second",
+                    ConstrainWidth = ConstraintSet.WrapContent,
+                };
+                rightLayout.AddElement(rightChildView);
+                rightChildView.AddElement(FirstButton);
+                using (var layoutSet = new FluentConstraintSet())
+                {
+                    layoutSet.Clone(rightLayout);
+                    layoutSet
+                        .Select(rightChildView).EdgesTo(null, 20, 20)
+                        .Width(SizeBehavier.WrapContent)
+                        .Height(SizeBehavier.MatchConstraint);
+                    layoutSet.ApplyTo(rightLayout);
 
-#if WINDOWS || ANDROID
-            FirstButton.Click += (sender, e) =>
-            {
-#if ANDROID
-                Toast.MakeText(page.Context, $"Button Y {FirstButton.GetZ()} ,Canvas Y {ThirdCanvas.GetZ()}", ToastLength.Long).Show();
-                //FirstButton.SetZ(ThirdCanvas.GetZ());
-                FirstButton.Elevation = 0;
-                layout.Invalidate();
-                Toast.MakeText(page.Context, $"Button Y {FirstButton.GetZ()} ,Canvas Y {ThirdCanvas.GetZ()}", ToastLength.Long).Show();
-#elif WINDOWS
-                //Debug.WriteLine($"Button Y {FirstButton.Z} ,Canvas Y {ThirdCanvas. GetZ()}");
+                    using (var set = new FluentConstraintSet())
+                    {
+                        set.Clone(rightChildView);
+                        set.Select(FirstButton).CenterTo();
+                        set.ApplyTo(rightChildView);
+                    }
+                }
+
+#if __ANDROID__
+                leftLayout.SetBackgroundColor(Android.Graphics.Color.Red);
+                rightLayout.SetBackgroundColor(Android.Graphics.Color.Green);
+                leftChildView.SetBackgroundColor(Android.Graphics.Color.Yellow);
+                rightChildView.SetBackgroundColor(Android.Graphics.Color.Yellow);
+
+#elif __IOS__
+                leftLayout.BackgroundColor = UIColor.Red;
+                rightLayout.BackgroundColor = UIColor.Green;
+                leftChildView.BackgroundColor = UIColor.Yellow;
+                rightChildView.BackgroundColor = UIColor.Yellow;
+
+#else
+                leftLayout.Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.Red);
+                rightLayout.Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.Green);
+                leftChildView.Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.Yellow);
+                rightChildView.Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.Yellow);
 #endif
-            };
-#endif
+            }
         }
 
         void FlowTest(ConstraintLayout page)

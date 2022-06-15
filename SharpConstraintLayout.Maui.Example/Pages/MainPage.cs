@@ -16,6 +16,42 @@ namespace SharpConstraintLayout.Maui.Example
 {
     public partial class MainPage
     {
+        void GroupTest(ConstraintLayout page)
+        {
+            (Button FirstButton, Button SecondButton, ContentView ThirdCanvas, Label FouthTextBlock, Entry FifthTextBox, Editor SixthRichTextBlock) = CreateControls();
+
+            var group = new Group();
+            var layout = page;
+            layout.AddElement(group, FirstButton, SecondButton, FouthTextBlock, FifthTextBox, SixthRichTextBlock);
+            group.ReferenceElement(FirstButton, SecondButton, FouthTextBlock);
+            using (var set = new FluentConstraintSet())
+            {
+                set.Clone(layout);
+                set.Select(SecondButton).CenterTo()
+                    .Select(FirstButton).RightToLeft(SecondButton).CenterYTo(SecondButton)
+                    .Select(FouthTextBlock).LeftToRight(SecondButton).CenterYTo(SecondButton)
+                    .Select(FifthTextBox).LeftToRight(FouthTextBlock).CenterYTo(FouthTextBlock)
+                    .Select(SixthRichTextBlock).RightToLeft(FirstButton).CenterYTo(FirstButton)
+                    ;
+                set.ApplyTo(layout);
+
+            }
+            SecondButton.Clicked += (sender, e) =>
+            {
+                if (group.ConstrainVisibility == ConstraintSet.Gone)
+                {
+                    group.ConstrainVisibility = ConstraintSet.Visible;
+                }
+                else if (group.ConstrainVisibility == ConstraintSet.Visible)
+                {
+                    group.ConstrainVisibility = ConstraintSet.Invisible;
+                }
+                else//Invisible
+                {
+                    group.ConstrainVisibility = ConstraintSet.Gone;
+                }
+            };
+        }
         void FlowPerformanceTest(ConstraintLayout page)
         {
             (Button FirstButton, Button SecondButton, ContentView ThirdCanvas, Label FouthTextBlock, Entry FifthTextBox, Editor SixthRichTextBlock) = CreateControls();
