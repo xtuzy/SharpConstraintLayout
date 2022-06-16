@@ -23,7 +23,7 @@ namespace SharpConstraintLayout.Maui.Example
             var group = new Group();
             var layout = page;
             layout.AddElement(group, FirstButton, SecondButton, FouthTextBlock, FifthTextBox, SixthRichTextBlock);
-            group.ReferenceElement(FirstButton, SecondButton, FouthTextBlock);
+            group.ReferenceElement(FirstButton, FouthTextBlock);
             using (var set = new FluentConstraintSet())
             {
                 set.Clone(layout);
