@@ -14,8 +14,8 @@ public partial class MainPage : ContentPage
     {
         InitializeComponent();
 
-        ConstraintLayout.DEBUG = true;
-        //ConstraintLayout.MEASURE_MEASURELAYOUT = true;
+        //ConstraintLayout.DEBUG = true;
+        ConstraintLayout.MEASURE_MEASURELAYOUT = true;
         this.SizeChanged += (sender, e) =>
         {
             System.Diagnostics.Debug.WriteLine("MainPage: Width=" + (sender as Page).Bounds.Width);

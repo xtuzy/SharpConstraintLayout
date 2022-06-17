@@ -307,6 +307,10 @@ namespace SharpConstraintLayout.Maui.Widget
                 FrameworkElement view = (FrameworkElement)container.FindElementById(id);
                 if (view != null)
                 {
+                    //Add @zhouang 2022/6/17
+                    //Solve https://github.com/xtuzy/SharpConstraintLayout/issues/10
+                    container.mConstraintSet.GetConstraint(id).propertySet.visibility = visibility;
+                    container.GetWidgetByElement(view).Visibility = visibility;
                     UIElementExtension.SetViewVisibility(view, visibility);
                 }
             }
