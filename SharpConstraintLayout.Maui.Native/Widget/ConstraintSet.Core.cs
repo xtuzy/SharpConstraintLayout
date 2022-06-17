@@ -345,14 +345,12 @@ namespace SharpConstraintLayout.Maui.Widget
 
                     //设置原本在ViewGroup.Params中的属性,这些属性影响Android中View的Measure值,因此我们需要在其他平台单独设置
 #if __MAUI__
-                    //view.SetWidth(constraint.layout.mWidth);
-                    view.SetWidth(ConstraintSet.Unset);
-                    //view.SetHeight(constraint.layout.mHeight);
-                    view.SetHeight(ConstraintSet.Unset);
-                    //view.SetMinWidth(ConstraintSet.Unset);
-                    //view.SetMinHeight(constraint.layout.matchConstraintMinHeight);
-                    //view.SetMaxWidth(constraint.layout.matchConstraintMaxWidth);
-                    //view.SetMaxHeight(constraint.layout.matchConstraintMaxHeight);
+                    view.SetWidth(constraint.layout.mWidth);
+                    view.SetHeight(constraint.layout.mHeight);
+                    view.SetMinWidth(constraint.layout.matchConstraintMinWidth);
+                    view.SetMinHeight(constraint.layout.matchConstraintMinHeight);
+                    view.SetMaxWidth(constraint.layout.matchConstraintMaxWidth);
+                    view.SetMaxHeight(constraint.layout.matchConstraintMaxHeight);
 #else
                     //view.SetSizeAndMargin(constraint.layout.mWidth, constraint.layout.mHeight, constraint.layout.matchConstraintMinWidth, constraint.layout.matchConstraintMinHeight, constraint.layout.matchConstraintMaxWidth, constraint.layout.matchConstraintMaxHeight, constraint.layout.leftMargin, constraint.layout.topMargin, constraint.layout.rightMargin, constraint.layout.bottomMargin);
 #endif

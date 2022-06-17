@@ -58,7 +58,7 @@ namespace SharpConstraintLayout.Maui.Example.Pages
             {
                 var finish = new FluentConstraintSet();
                 finish.Clone(layout);
-                finish.Select(backgroundView).Clear().TopToTop().LeftToLeft().Height(20).Width(SizeBehavier.MatchParent)
+                finish.Select(backgroundView).Clear().TopToTop().LeftToLeft().Height(50).MinHeight(20).Width(SizeBehavier.MatchParent)
                     .Select(button2).Clear().BottomToBottom(null, 20).RightToRight(null, 20);
                 layout.LayoutToWithAnim(finish, "ConstrainTo", 16, 1200, Easing.SpringOut);
             }

@@ -136,7 +136,18 @@ namespace SharpConstraintLayout.Maui.Widget
             Size finalSize = bounds.Size;
             var layout = Layout as ConstraintLayout;
             if (layout.mConstraintSet.IsForAnimation)
+            {
+                //如果是动画,那么此时计算布局完毕,但我们不能让其布局,因此直接返回.另外如果给WidthRequest等赋固定值,会造成下次的控件显示大小为固定值,因此需要重置
+                foreach (var child in layout.Children)
+                {
+                    var view = child as View;
+                    if (view.WidthRequest > 0)
+                        view.SetWidth(ConstraintSet.Unset);
+                    if (view.HeightRequest > 0)
+                        view.SetHeight(ConstraintSet.Unset);
+                }
                 return finalSize;
+            }
             var lastMeasureSize = layout.GetLastMeasureSize();
             if (finalSize.Width != lastMeasureSize.Width || finalSize.Height != lastMeasureSize.Height)
             {
