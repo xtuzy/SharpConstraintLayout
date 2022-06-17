@@ -695,9 +695,54 @@ namespace SharpConstraintLayout.Maui.Example
             listView.ItemsSource = listViewViewModel.News;
         }
 
-        private void ConstraintLayoutInScrollViewTest(ListView listView)
+        private void ConstraintLayoutInScrollViewTest(ScrollView listView)
         {
+            listView.Orientation = ScrollOrientation.Vertical;
+            (Button FirstButton, Button SecondButton, ContentView ThirdCanvas, Label FouthTextBlock, Entry FifthTextBox, Editor SixthRichTextBlock) = CreateControls();
+            var constraintlayout = new ConstraintLayout() { ConstrainWidth = ConstraintSet.MatchParent, ConstrainHeight = ConstraintSet.WrapContent };
+            listView.Content = constraintlayout;
+            constraintlayout.AddElement(FirstButton, SecondButton, ThirdCanvas);
+            using (var set = new FluentConstraintSet())
+            {
+                set.Clone(constraintlayout);
+                set.Select(FirstButton).CenterXTo().TopToTop()
+                    .Select(ThirdCanvas).CenterXTo().TopToBottom(FirstButton).Width(60).Height(1000)
+                    .Select(SecondButton).CenterXTo().TopToBottom(ThirdCanvas);
+                set.ApplyTo(constraintlayout);
+            }
+        }
 
+        private void RemoveAndAddTest(ConstraintLayout content)
+        {
+            (Button FirstButton, Button SecondButton, ContentView ThirdCanvas, Label FouthTextBlock, Entry FifthTextBox, Editor SixthRichTextBlock) = CreateControls();
+            content.AddElement(FirstButton, SecondButton, ThirdCanvas);
+            using (var set = new FluentConstraintSet())
+            {
+                set.Clone(content);
+                set.Select(FirstButton).CenterXTo().TopToTop()
+                    .Select(ThirdCanvas).CenterXTo().TopToBottom(FirstButton).Width(60).Height(60)
+                    .Select(SecondButton).CenterXTo().TopToBottom(ThirdCanvas);
+                set.ApplyTo(content);
+            }
+            FirstButton.Clicked += (sender, e) =>
+            {
+                content.RemoveElement(ThirdCanvas);
+            };
+            SecondButton.Clicked += (sender, e) =>
+            {
+                if (content.Contains(ThirdCanvas))
+                    return;
+                content.AddElement(ThirdCanvas);
+                using (var set = new FluentConstraintSet())
+                {
+                    set.Clone(content);
+                    set//.Select(FirstButton).CenterXTo().TopToTop()
+                        .Select(ThirdCanvas).CenterXTo().TopToBottom(FirstButton).Width(60).Height(60)
+                        //.Select(SecondButton).CenterXTo().TopToBottom(ThirdCanvas)
+                        ;
+                    set.ApplyTo(content);
+                }
+            };
         }
     }
 }

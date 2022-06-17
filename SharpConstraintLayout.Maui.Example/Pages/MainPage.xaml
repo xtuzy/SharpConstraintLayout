@@ -65,6 +65,10 @@
                     Clicked="ConstraintLayoutInContentView_Clicked"
                     Text="ConstraintLayoutInContentView" />
                 <Button
+                    x:Name="ConstraintLayoutInScrollView"
+                    Clicked="ConstraintLayoutInScrollView_Clicked"
+                    Text="ConstraintLayoutInScrollView" />
+                <Button
                     x:Name="Animation"
                     Clicked="Animation_Clicked"
                     Text="Animation" />
@@ -72,6 +76,10 @@
                     x:Name="Group"
                     Clicked="Group_Clicked"
                     Text="Group" />
+                <Button
+                    x:Name="RemoveAndAdd"
+                    Clicked="RemoveAndAdd_Clicked"
+                    Text="RemoveAndAdd" />
             </HorizontalStackLayout>
         </ScrollView>
         <Grid

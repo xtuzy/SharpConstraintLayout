@@ -220,5 +220,19 @@ public partial class MainPage : ContentPage
         var content = CreateConstraintLayout();
         GroupTest(content);
     }
+
+    private void ConstraintLayoutInScrollView_Clicked(object sender, EventArgs e)
+    {
+        gridLayout.RemoveAt(gridLayout.Count - 1);
+        var scrollView = new ScrollView();
+        gridLayout.Add(scrollView);
+        ConstraintLayoutInScrollViewTest(scrollView);
+    }
+
+    private void RemoveAndAdd_Clicked(object sender, EventArgs e)
+    {
+        var content = CreateConstraintLayout();
+        RemoveAndAddTest(content);
+    }
 }
 
