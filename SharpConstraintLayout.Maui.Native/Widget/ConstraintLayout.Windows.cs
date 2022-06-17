@@ -26,22 +26,23 @@ namespace SharpConstraintLayout.Maui.Widget
 
         public void AddElement(UIElement element)
         {
-            Children?.Add(element);
             OnAddedView(element);
+            Children?.Add(element);
         }
 
         public void RemoveElement(UIElement element)
         {
-            Children?.Remove(element);
             OnRemovedView(element);
+            Children?.Remove(element);
         }
 
         public void RemoveAllElements()
         {
-            foreach (var element in this.Children)
+            for (int i = this.Children.Count - 1; i >= 0; i--)
             {
-                Children?.Remove(element);
+                var element = Children[i];
                 OnRemovedView(element);
+                Children?.Remove(element);
             }
         }
 

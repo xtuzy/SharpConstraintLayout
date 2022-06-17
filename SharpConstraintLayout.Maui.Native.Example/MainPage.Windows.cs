@@ -18,13 +18,6 @@ namespace SharpConstraintLayout.Maui.Native.Example
 {
     public partial class MainPage : ConstraintLayout
     {
-        private Button FirstButton;
-
-        public Button SecondButton;
-        private Canvas ThirdCanvas;
-        private TextBlock FouthTextBlock;
-        private TextBox FifthTextBox;
-        private RichTextBlock SixthRichTextBlock;
         public ConstraintLayout layout;
 
         public MainPage()
@@ -34,28 +27,140 @@ namespace SharpConstraintLayout.Maui.Native.Example
             //ConstraintLayout.MEASUREEVERYWIDGET = true;
             //ConstraintLayout.MEASUREEVERYCHILD = true;
 
-            createControls();
             this.Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.HotPink);
+            var buttonList = new StackPanel() { Orientation = Orientation.Horizontal };
+            var baseAlignBt = new Button() { Content = "BaseAlign" };
+            var baselineBt = new Button() { Content = "Baseline" };
+            var guidelineBt = new Button() { Content = "Guideline" };
+            var barrierBt = new Button() { Content = "Barrier" };
+            var visibilityBt = new Button() { Content = "Visibility" };
+            var flowBt = new Button() { Content = "Flow" };
+            var platformLayoutInConstraintLayoutBt = new Button() { Content = "PlatformLayoutInConstraintLayout" };
+            var constraintLayoutInScrollViewBt = new Button() { Content = "ConstraintLayoutInScrollView" };
+            var constraintLayoutInListViewBt = new Button() { Content = "ConstraintLayoutInList" };
+            var circleConstraintBt = new Button() { Content = "CircleConstraint" };
+            var flowPerformanceBt = new Button() { Content = "FlowPerformance" };
+            var wrapPanelPerformanceBt = new Button() { Content = "WrapPanelPerformance" };
+            var groupBt = new Button() { Content = "Group" };
+            var placeholderBt = new Button() { Content = "Placeholder" };
+            var sizeBt = new Button() { Content = "Size" };
+            var nestedConstraintLayoutBt = new Button() { Content = "NestedConstraintLayout" };
+            buttonList.Children.Add(baseAlignBt);
+            buttonList.Children.Add(baselineBt);
+            buttonList.Children.Add(guidelineBt);
+            buttonList.Children.Add(barrierBt);
+            buttonList.Children.Add(visibilityBt);
+            buttonList.Children.Add(flowBt);
+            buttonList.Children.Add(platformLayoutInConstraintLayoutBt);
+            buttonList.Children.Add(constraintLayoutInScrollViewBt);
+            buttonList.Children.Add(constraintLayoutInListViewBt);
 
-            //BaseAlignTest(this);
-            //BaselineTest(this); //bug:first time not align baseline
-            GuidelineTest(this);
-            //BarrierTest(this);//bug:text box have false length
-            //VisibilityTest(this);//bug:invisiable not correct
-            //FlowTest(this);
-            //NestedConstraintLayoutTest(this);
-            //CircleConstraintTest(this);
-            //PlatformLayoutInConstraintLayoutTest(this);//OK
-            //FlowPerformanceTest(this);
-            //WrapPanelPerformanceTest(this);
-            //GroupTest(this);
-            //PlaceholderTest(this);
-            //SizeTest(this);
-            //ConstraintLayoutInScrollViewTest(this);
+            buttonList.Children.Add(circleConstraintBt);
+            buttonList.Children.Add(flowPerformanceBt);
+            buttonList.Children.Add(wrapPanelPerformanceBt);
+            buttonList.Children.Add(groupBt);
+            buttonList.Children.Add(placeholderBt);
+            buttonList.Children.Add(sizeBt);
+            buttonList.Children.Add(nestedConstraintLayoutBt);
+
+            var scroll = new ScrollViewer() { Content = buttonList, HorizontalScrollMode = ScrollMode.Enabled, VerticalScrollMode = ScrollMode.Disabled, HorizontalScrollBarVisibility = ScrollBarVisibility.Auto };
+            var layout = new ConstraintLayout();
+            this.AddElement(scroll);
+            this.AddElement(layout);
+            using (var set = new FluentConstraintSet())
+            {
+                set.Clone(this);
+                set.Select(scroll).TopToTop().LeftToLeft().RightToRight().Width(FluentConstraintSet.SizeBehavier.MatchConstraint)
+                    .Select(layout).TopToBottom(scroll).BottomToBottom().EdgesXTo().Height(FluentConstraintSet.SizeBehavier.MatchConstraint)
+                    ;
+                set.ApplyTo(this);
+            }
+            baseAlignBt.Click += (sender, e) =>
+            {
+                layout.RemoveAllElements();
+                BaseAlignTest(layout);
+            };
+            baselineBt.Click += (sender, e) =>
+            {
+                layout.RemoveAllElements();
+                BaselineTest(layout);
+            };
+            guidelineBt.Click += (sender, e) =>
+            {
+                layout.RemoveAllElements();
+                GuidelineTest(layout);
+            };
+            barrierBt.Click += (sender, e) =>
+            {
+                layout.RemoveAllElements();
+                BarrierTest(layout);
+            };
+            visibilityBt.Click += (sender, e) =>
+            {
+                layout.RemoveAllElements();
+                VisibilityTest(layout);
+            };
+            flowBt.Click += (sender, e) =>
+            {
+                layout.RemoveAllElements();
+                FlowTest(layout);
+            };
+            platformLayoutInConstraintLayoutBt.Click += (sender, e) =>
+            {
+                layout.RemoveAllElements();
+                PlatformLayoutInConstraintLayoutTest(layout);
+            };
+            constraintLayoutInScrollViewBt.Click += (sender, e) =>
+            {
+                layout.RemoveAllElements();
+                ConstraintLayoutInScrollViewTest(layout);
+            };
+            constraintLayoutInListViewBt.Click += (sender, e) =>
+            {
+                layout.RemoveAllElements();
+                ConstraintLayoutInListViewTest(layout);
+            };
+            circleConstraintBt.Click += (sender, e) =>
+            {
+                layout.RemoveAllElements();
+                CircleConstraintTest(layout);
+            };
+            flowPerformanceBt.Click += (sender, e) =>
+            {
+                layout.RemoveAllElements();
+                FlowPerformanceTest(layout);
+            };
+            wrapPanelPerformanceBt.Click += (sender, e) =>
+            {
+                layout.RemoveAllElements();
+                WrapPanelPerformanceTest(layout);
+            };
+            groupBt.Click += (sender, e) =>
+            {
+                layout.RemoveAllElements();
+                GroupTest(layout);
+            };
+            placeholderBt.Click += (sender, e) =>
+            {
+                layout.RemoveAllElements();
+                PlaceholderTest(layout);
+            };
+            sizeBt.Click += (sender, e) =>
+            {
+                layout.RemoveAllElements();
+                SizeTest(layout);
+            };
+            nestedConstraintLayoutBt.Click += (sender, e) =>
+            {
+                layout.RemoveAllElements();
+                NestedConstraintLayoutTest(layout);
+            };
+
         }
 
         void ConstraintLayoutInScrollViewTest(ConstraintLayout page)
         {
+            (Button FirstButton, Button SecondButton, Canvas ThirdCanvas, TextBlock FouthTextBlock, TextBox FifthTextBox, RichTextBlock SixthRichTextBlock) = CreateControls();
             var scrollView = new ScrollViewer()
             {
                 Background = new SolidColorBrush(Colors.White),
@@ -165,51 +270,51 @@ namespace SharpConstraintLayout.Maui.Native.Example
                 ConstrainPaddingBottom = 10,
             };
         }
-        private void createControls()
+        private (Button FirstButton, Button SecondButton, Canvas ThirdCanvas, TextBlock FouthTextBlock, TextBox FifthTextBox, RichTextBlock SixthRichTextBlock) CreateControls()
         {
-            FirstButton = new Button()
+            var FirstButton = new Button()
             {
-                Tag = nameof(FirstButton),
+                Tag = "FirstButton",
                 ClickMode = ClickMode.Press,
                 Content = "FirstButton",
                 Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.Red)
             };
 
-            SecondButton = new Button()
+            var SecondButton = new Button()
             {
                 //Width = 100,Height = 100,
-                Tag = nameof(SecondButton),
+                Tag = "SecondButton",
                 Content = "SecondBotton",
                 Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.Black)
             };
 
-            ThirdCanvas = new Canvas()
+            var ThirdCanvas = new Canvas()
             {
-                Tag = nameof(ThirdCanvas),
+                Tag = "ThirdCanvas",
                 //Width = 100,
                 //Height = 100,
                 Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.LightGreen)
             };
 
-            FouthTextBlock = new TextBlock()
+            var FouthTextBlock = new TextBlock()
             {
-                Tag = nameof(FouthTextBlock),
+                Tag = "FouthTextBlock",
                 Text = "FourthTextBlock",
                 TextAlignment = TextAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
             };
 
-            FifthTextBox = new TextBox()
+            var FifthTextBox = new TextBox()
             {
-                Tag = nameof(FifthTextBox),
+                Tag = "FifthTextBox",
                 Text = "FifthTextBox",
                 AcceptsReturn = true
             };
 
             //https://stackoverflow.com/questions/35710355/uwpc-adding-text-to-richtextblock
-            SixthRichTextBlock = new RichTextBlock()
+            var SixthRichTextBlock = new RichTextBlock()
             {
-                Tag = nameof(SixthRichTextBlock),
+                Tag = "SixthRichTextBlock",
                 IsTextSelectionEnabled = true,
                 TextWrapping = TextWrapping.Wrap
             };
@@ -223,7 +328,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             };
             paragraph.Inlines.Add(run);
             SixthRichTextBlock.Blocks.Add(paragraph);
-
+            return (FirstButton, SecondButton, ThirdCanvas, FouthTextBlock, FifthTextBox, SixthRichTextBlock);
         }
 
         private void MainButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)

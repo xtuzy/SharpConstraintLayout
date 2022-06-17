@@ -1,4 +1,5 @@
 using SharpConstraintLayout.Maui.Widget;
+using System.Diagnostics;
 using static SharpConstraintLayout.Maui.Widget.FluentConstraintSet;
 
 namespace SharpConstraintLayout.Maui.Example.Pages
@@ -32,16 +33,32 @@ namespace SharpConstraintLayout.Maui.Example.Pages
             startset.ApplyTo(layout);
 
         }
-
+#if WINDOWS || __ANDROID__ ||__IOS__
+        BlogFrameRate.FrameRateCalculator fr;
+#endif
         bool isExpaned = true;
         private void Button2_Clicked(object sender, EventArgs e)
         {
+#if WINDOWS|| __ANDROID__||__IOS__
+            /*if (_frameRateCalculateTimer == null)
+                FrameRate();*/
+            if (fr == null)
+            {
+                fr = new BlogFrameRate.FrameRateCalculator();
+                fr.FrameRateUpdated += (value) =>
+                {
+                    this.Dispatcher.Dispatch(() => button1.Text = value.Frames.ToString());
+                };
+                fr.Start();
+            }
+#endif
             layout.AbortAnimation("ConstrainTo");
+            //layout.AbortAnimation("ConstrainTo");
             if (isExpaned)//ÐèÒªÊÕËõ
             {
                 var finish = new FluentConstraintSet();
                 finish.Clone(layout);
-                finish.Select(backgroundView).Clear().TopToTop().LeftToLeft().Height(20).Width(SizeBehavier.MatchParent)
+                finish.Select(backgroundView).Clear().TopToTop().LeftToLeft().Height(50).MinHeight(20).Width(SizeBehavier.MatchParent)
                     .Select(button2).Clear().BottomToBottom(null, 20).RightToRight(null, 20);
                 layout.LayoutToWithAnim(finish, "ConstrainTo", 16, 1200, Easing.SpringOut);
             }
@@ -66,5 +83,35 @@ namespace SharpConstraintLayout.Maui.Example.Pages
             finish.Select(button1).Clear().CenterYTo().RightToRight();
             layout.LayoutToWithAnim(finish, "ConstrainTo", 16, 1200, Easing.SpringOut, (v, b) => { start.ApplyTo(layout); });
         }
+#if WINDOWS
+        private uint _counter = 0;
+        private uint _previousCounter = 0;
+        private readonly Stopwatch _frameRateStopwatch = new Stopwatch();
+        private readonly Timer _frameRateCalculateTimer;
+        void FrameRate()
+        {
+
+            var _frameRateCalculateTimer = new Timer(CalculateFrameRate);
+            _frameRateStopwatch.Start();
+            _frameRateCalculateTimer.Change(1000, 1000);
+            Microsoft.UI.Xaml.Media.CompositionTarget.Rendering += CompositionTarget_Rendering;
+
+        }
+
+        private void CompositionTarget_Rendering(object sender, object e)
+        {
+            _counter++;
+        }
+
+        private void CalculateFrameRate(object state)
+        {
+            var frameCount = _counter - _previousCounter;
+            _previousCounter = _counter;
+            var fps = ((double)frameCount / _frameRateStopwatch.ElapsedMilliseconds) * 1000;
+            System.Diagnostics.Debug.WriteLine($"FPS:{fps}");
+            _frameRateStopwatch.Restart();
+            this.Dispatcher.Dispatch(() => button1.Text = fps.ToString());
+        }
+#endif
     }
 }

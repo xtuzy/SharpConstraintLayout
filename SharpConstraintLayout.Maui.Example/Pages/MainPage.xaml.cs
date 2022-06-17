@@ -15,7 +15,7 @@ public partial class MainPage : ContentPage
         InitializeComponent();
 
         //ConstraintLayout.DEBUG = true;
-        //ConstraintLayout.MEASURE_MEASURELAYOUT = true;
+        ConstraintLayout.MEASURE_MEASURELAYOUT = true;
         this.SizeChanged += (sender, e) =>
         {
             System.Diagnostics.Debug.WriteLine("MainPage: Width=" + (sender as Page).Bounds.Width);
@@ -213,6 +213,26 @@ public partial class MainPage : ContentPage
         gridLayout.RemoveAt(gridLayout.Count - 1);
         var contentView = new ShowAnimationView();
         gridLayout.Add(contentView);
+    }
+
+    private void Group_Clicked(object sender, EventArgs e)
+    {
+        var content = CreateConstraintLayout();
+        GroupTest(content);
+    }
+
+    private void ConstraintLayoutInScrollView_Clicked(object sender, EventArgs e)
+    {
+        gridLayout.RemoveAt(gridLayout.Count - 1);
+        var scrollView = new ScrollView();
+        gridLayout.Add(scrollView);
+        ConstraintLayoutInScrollViewTest(scrollView);
+    }
+
+    private void RemoveAndAdd_Clicked(object sender, EventArgs e)
+    {
+        var content = CreateConstraintLayout();
+        RemoveAndAddTest(content);
     }
 }
 

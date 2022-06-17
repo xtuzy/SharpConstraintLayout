@@ -17,11 +17,11 @@ namespace SharpConstraintLayout.Maui.Widget
             init();
         }
 
-        #region Add And Remove
+#region Add And Remove
         public override void AddView(UIElement element)
         {
+            OnAddedView(element);//安卓添加View进视觉树时,会调用OnAttachedToWindow,导致调用C对应的Constraint,因此需要在之前生成
             base.AddView(element);
-            OnAddedView(element);
         }
         /// <summary>
         /// Same as <see cref="AddView(UIElement)"/>
@@ -34,8 +34,8 @@ namespace SharpConstraintLayout.Maui.Widget
 
         public override void RemoveView(UIElement element)
         {
-            base.RemoveView(element);
             OnRemovedView(element);
+            base.RemoveView(element);
         }
 
         /// <summary>
@@ -50,11 +50,10 @@ namespace SharpConstraintLayout.Maui.Widget
         public override void RemoveAllViews()
         {
             int childCount = ChildCount;
-            for (var i = 0; i < childCount; i++)
+            for (var i = childCount - 1; i >= 0; i--)
             {
                 View currentChild = this.GetChildAt(i);
                 this.RemoveView(currentChild);
-                break;
             }
         }
 
@@ -66,9 +65,9 @@ namespace SharpConstraintLayout.Maui.Widget
             this.RemoveAllViews();
         }
 
-        #endregion
+#endregion
 
-        #region Measure And Layout
+#region Measure And Layout
 
         /// <summary>
         /// Android中不使用
@@ -99,7 +98,7 @@ namespace SharpConstraintLayout.Maui.Widget
             element.Layout(x, y, x + w, y + h);
         }
 
-        #endregion
+#endregion
     }
 }
 #endif

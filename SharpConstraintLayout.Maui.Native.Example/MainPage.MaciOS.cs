@@ -16,14 +16,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
 {
     public partial class MainPage
     {
-        private ConstraintLayout layout;
         public ConstraintLayout Page;
-        private UIButton FirstButton;
-        private UIButton SecondButton;
-        private UIView ThirdCanvas;
-        private UITextView FouthTextBlock;
-        private UITextField FifthTextBox;
-        private UITextView SixthRichTextBlock;
 
         public MainPage(CGRect frame)
         {
@@ -38,28 +31,113 @@ namespace SharpConstraintLayout.Maui.Native.Example
                 AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight,
                 BackgroundColor = UIColor.SystemGray
             };
+            var buttonList = new UIStackView();
+            var baseAlignBt = new UIButton(); baseAlignBt.SetTitle("BaseAlign", UIControlState.Normal);
+            var baselineBt = new UIButton(); baselineBt.SetTitle("Baseline", UIControlState.Normal);
+            var guidelineBt = new UIButton(); guidelineBt.SetTitle("Guideline", UIControlState.Normal);
+            var barrierBt = new UIButton(); barrierBt.SetTitle("Barrier", UIControlState.Normal);
+            var visibilityBt = new UIButton(); visibilityBt.SetTitle("Visibility", UIControlState.Normal);
+            var flowBt = new UIButton(); flowBt.SetTitle("Flow", UIControlState.Normal);
+            var platformLayoutInConstraintLayoutBt = new UIButton(); platformLayoutInConstraintLayoutBt.SetTitle("PlatformLayoutInConstraintLayout", UIControlState.Normal);
+            var constraintLayoutInScrollViewBt = new UIButton(); constraintLayoutInScrollViewBt.SetTitle("ConstraintLayoutInScrollView", UIControlState.Normal);
+            var circleConstraintBt = new UIButton(); circleConstraintBt.SetTitle("CircleConstraint", UIControlState.Normal);
+            var flowPerformance = new UIButton(); flowPerformance.SetTitle("FlowPerformance", UIControlState.Normal);
+            var wrapPanelPerformance = new UIButton(); wrapPanelPerformance.SetTitle("WrapPanelPerformance", UIControlState.Normal);
+            var group = new UIButton(); group.SetTitle("Group", UIControlState.Normal);
+            var placeholder = new UIButton(); placeholder.SetTitle("Placeholder", UIControlState.Normal);
+            var size = new UIButton(); size.SetTitle("Size", UIControlState.Normal);
+            buttonList.Add(baseAlignBt);
+            buttonList.Add(baselineBt);
+            buttonList.Add(guidelineBt);
+            buttonList.Add(barrierBt);
+            buttonList.Add(visibilityBt);
+            buttonList.Add(flowBt);
+            buttonList.Add(platformLayoutInConstraintLayoutBt);
+            buttonList.Add(constraintLayoutInScrollViewBt);
+            buttonList.Add(circleConstraintBt);
+            buttonList.Add(flowPerformance);
+            buttonList.Add(wrapPanelPerformance);
+            buttonList.Add(group);
+            buttonList.Add(placeholder);
+            buttonList.Add(size);
 
-            createControls();
+            var scroll = new UIScrollView();
+            scroll.Add(buttonList);
+            var layout = new ConstraintLayout();
+            Page.AddElement(scroll);
+            Page.AddElement(layout);
+            using (var set = new FluentConstraintSet())
+            {
+                set.Clone(Page);
+                set.Select(scroll).TopToTop().LeftToLeft().RightToRight().Width(FluentConstraintSet.SizeBehavier.MatchConstraint)
+                    .Select(layout).TopToBottom(scroll).BottomToBottom().EdgesXTo().Height(FluentConstraintSet.SizeBehavier.MatchConstraint)
+                    ;
+                set.ApplyTo(Page);
+            }
 
-            //BaseAlignTest(Page);
-            //BaselineTest(Page);
-            //GuidelineTest(Page);//OK
-            //BarrierTest(Page);//OK
-            //VisibilityTest(Page);//OK
-            //FlowTest(Page);
-            //PlatformLayoutInConstraintLayoutTest(Page);//Bug
-            //ConstraintLayoutInPlatformLayoutTest(Page);
-            //CircleConstraintTest(Page);
-            //FlowPerformanceTest(Page);//Bad performance,need 16~20ms.
-            //WrapPanelPerformanceTest(Page);//bug, cant click
-            //GroupTest(Page);
-            //PlaceholderTest(Page);
-            //SizeTest(Page);
-            NestedConstraintLayoutTest(Page);
+            baseAlignBt.TouchUpInside += (sender, e) =>
+            {
+                BaseAlignTest(layout);
+            };
+            baselineBt.TouchUpInside += (sender, e) =>
+            {
+                BaselineTest(layout);
+            };
+            guidelineBt.TouchUpInside += (sender, e) =>
+            {
+                GuidelineTest(layout);
+            };
+            barrierBt.TouchUpInside += (sender, e) =>
+            {
+                BarrierTest(layout);
+            };
+            visibilityBt.TouchUpInside += (sender, e) =>
+            {
+                VisibilityTest(layout);
+            };
+            flowBt.TouchUpInside += (sender, e) =>
+            {
+                FlowTest(layout);
+            };
+            platformLayoutInConstraintLayoutBt.TouchUpInside += (sender, e) =>
+            {
+                PlatformLayoutInConstraintLayoutTest(layout);
+            };
+            constraintLayoutInScrollViewBt.TouchUpInside += (sender, e) =>
+            {
+                ConstraintLayoutInScrollViewTest(layout);
+            };
+            circleConstraintBt.TouchUpInside += (sender, e) =>
+            {
+                CircleConstraintTest(layout);
+            };
+            flowPerformance.TouchUpInside += (sender, e) =>
+            {
+                FlowPerformanceTest(layout);
+            };
+            wrapPanelPerformance.TouchUpInside += (sender, e) =>
+            {
+                WrapPanelPerformanceTest(layout);
+            };
+            group.TouchUpInside += (sender, e) =>
+            {
+                GroupTest(layout);
+            };
+            placeholder.TouchUpInside += (sender, e) =>
+            {
+                PlaceholderTest(layout);
+            };
+            size.TouchUpInside += (sender, e) =>
+            {
+                SizeTest(layout);
+            };
+
+            //NestedConstraintLayoutTest(Page);
         }
 
-        void ConstraintLayoutInPlatformLayoutTest(ConstraintLayout page)
+        void ConstraintLayoutInScrollViewTest(ConstraintLayout page)
         {
+            (UIButton FirstButton, UIButton SecondButton, UIView ThirdCanvas, UITextView FouthTextBlock, UITextField FifthTextBox, UITextView SixthRichTextBlock) = CreateControls();
             page.ConstrainPaddingLeft = 10;
             page.ConstrainPaddingRight = 10;
             page.ConstrainPaddingTop = 10;
@@ -148,28 +226,27 @@ namespace SharpConstraintLayout.Maui.Native.Example
                   });
         }
 
-        private void createControls()
+        private (UIButton FirstButton, UIButton SecondButton, UIView ThirdCanvas, UITextView FouthTextBlock, UITextField FifthTextBox, UITextView SixthRichTextBlock) CreateControls()
         {
-            FirstButton = new UIButton()
+            var FirstButton = new UIButton()
             {
                 BackgroundColor = UIColor.Red
             };
             FirstButton.SetTitle("FirstButton", UIControlState.Normal);
             FirstButton.TouchUpInside += FirstButton_Click;
 
-            SecondButton = new UIButton()
+            var SecondButton = new UIButton()
             {
                 BackgroundColor = UIColor.Black
             };
             SecondButton.SetTitle("SecondButton", UIControlState.Normal);
-            SecondButton.TouchUpInside += SecondButton_Click;
 
-            ThirdCanvas = new UIView()
+            var ThirdCanvas = new UIView()
             {
                 BackgroundColor = UIColor.Green
             };
 
-            FouthTextBlock = new UITextView()
+            var FouthTextBlock = new UITextView()
             {
                 ScrollEnabled = false,
                 Text = "FouthTextBlock",
@@ -181,7 +258,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
                 FouthTextBlock.Superview.SetNeedsLayout();
             };
 
-            FifthTextBox = new UITextField()
+            var FifthTextBox = new UITextField()
             {
                 Enabled = true,
                 EnablesReturnKeyAutomatically = true,
@@ -195,7 +272,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             };
 
             //https://stackoverflow.com/questions/35710355/uwpc-adding-text-to-richtextblock
-            SixthRichTextBlock = new UITextView()
+            var SixthRichTextBlock = new UITextView()
             {
                 ScrollEnabled = false,
                 AttributedText = new NSAttributedString("RichTextBlock咩咩咩咩咩咩咩", UIFont.SystemFontOfSize(14))
@@ -205,17 +282,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
                 SixthRichTextBlock.InvalidateIntrinsicContentSize();
                 SixthRichTextBlock.Superview.SetNeedsLayout();
             };
-
-        }
-
-        private void SecondButton_Click(object sender, EventArgs e)
-        {
-            /*Stopwatch sw = new Stopwatch();
-            sw.Start();*/
-            var size = FifthTextBox.IntrinsicContentSize;
-
-            /*sw.Stop();
-            SimpleDebug.WriteLine($"IntrinsicContentSize Spend: {sw.Elapsed.TotalMilliseconds}");*/
+            return (FirstButton, SecondButton, ThirdCanvas, FouthTextBlock, FifthTextBox, SixthRichTextBlock);
         }
 
         private void FirstButton_Click(object sender, EventArgs e)

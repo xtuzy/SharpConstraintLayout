@@ -13,7 +13,7 @@ namespace SharpConstraintLayout.Maui.DebugTool
     /// </summary>
     public class SimpleDebug
     {
-        static MessageClient client = new MessageClient("192.168.112.1", 399);
+        static MessageClient client = new MessageClient("192.168.0.144", 399);
 
         public static void WriteLine(string message)
         {

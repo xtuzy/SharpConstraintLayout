@@ -16,6 +16,42 @@ namespace SharpConstraintLayout.Maui.Example
 {
     public partial class MainPage
     {
+        void GroupTest(ConstraintLayout page)
+        {
+            (Button FirstButton, Button SecondButton, ContentView ThirdCanvas, Label FouthTextBlock, Entry FifthTextBox, Editor SixthRichTextBlock) = CreateControls();
+
+            var group = new Group();
+            var layout = page;
+            layout.AddElement(group, FirstButton, SecondButton, FouthTextBlock, FifthTextBox, SixthRichTextBlock);
+            group.ReferenceElement(FirstButton, FouthTextBlock);
+            using (var set = new FluentConstraintSet())
+            {
+                set.Clone(layout);
+                set.Select(SecondButton).CenterTo()
+                    .Select(FirstButton).RightToLeft(SecondButton).CenterYTo(SecondButton)
+                    .Select(FouthTextBlock).LeftToRight(SecondButton).CenterYTo(SecondButton)
+                    .Select(FifthTextBox).LeftToRight(FouthTextBlock).CenterYTo(FouthTextBlock)
+                    .Select(SixthRichTextBlock).RightToLeft(FirstButton).CenterYTo(FirstButton)
+                    ;
+                set.ApplyTo(layout);
+
+            }
+            SecondButton.Clicked += (sender, e) =>
+            {
+                if (group.ConstrainVisibility == ConstraintSet.Gone)
+                {
+                    group.ConstrainVisibility = ConstraintSet.Visible;
+                }
+                else if (group.ConstrainVisibility == ConstraintSet.Visible)
+                {
+                    group.ConstrainVisibility = ConstraintSet.Invisible;
+                }
+                else//Invisible
+                {
+                    group.ConstrainVisibility = ConstraintSet.Gone;
+                }
+            };
+        }
         void FlowPerformanceTest(ConstraintLayout page)
         {
             (Button FirstButton, Button SecondButton, ContentView ThirdCanvas, Label FouthTextBlock, Entry FifthTextBox, Editor SixthRichTextBlock) = CreateControls();
@@ -659,9 +695,54 @@ namespace SharpConstraintLayout.Maui.Example
             listView.ItemsSource = listViewViewModel.News;
         }
 
-        private void ConstraintLayoutInScrollViewTest(ListView listView)
+        private void ConstraintLayoutInScrollViewTest(ScrollView listView)
         {
+            listView.Orientation = ScrollOrientation.Vertical;
+            (Button FirstButton, Button SecondButton, ContentView ThirdCanvas, Label FouthTextBlock, Entry FifthTextBox, Editor SixthRichTextBlock) = CreateControls();
+            var constraintlayout = new ConstraintLayout() { ConstrainWidth = ConstraintSet.MatchParent, ConstrainHeight = ConstraintSet.WrapContent };
+            listView.Content = constraintlayout;
+            constraintlayout.AddElement(FirstButton, SecondButton, ThirdCanvas);
+            using (var set = new FluentConstraintSet())
+            {
+                set.Clone(constraintlayout);
+                set.Select(FirstButton).CenterXTo().TopToTop()
+                    .Select(ThirdCanvas).CenterXTo().TopToBottom(FirstButton).Width(60).Height(1000)
+                    .Select(SecondButton).CenterXTo().TopToBottom(ThirdCanvas);
+                set.ApplyTo(constraintlayout);
+            }
+        }
 
+        private void RemoveAndAddTest(ConstraintLayout content)
+        {
+            (Button FirstButton, Button SecondButton, ContentView ThirdCanvas, Label FouthTextBlock, Entry FifthTextBox, Editor SixthRichTextBlock) = CreateControls();
+            content.AddElement(FirstButton, SecondButton, ThirdCanvas);
+            using (var set = new FluentConstraintSet())
+            {
+                set.Clone(content);
+                set.Select(FirstButton).CenterXTo().TopToTop()
+                    .Select(ThirdCanvas).CenterXTo().TopToBottom(FirstButton).Width(60).Height(60)
+                    .Select(SecondButton).CenterXTo().TopToBottom(ThirdCanvas);
+                set.ApplyTo(content);
+            }
+            FirstButton.Clicked += (sender, e) =>
+            {
+                content.RemoveElement(ThirdCanvas);
+            };
+            SecondButton.Clicked += (sender, e) =>
+            {
+                if (content.Contains(ThirdCanvas))
+                    return;
+                content.AddElement(ThirdCanvas);
+                using (var set = new FluentConstraintSet())
+                {
+                    set.Clone(content);
+                    set//.Select(FirstButton).CenterXTo().TopToTop()
+                        .Select(ThirdCanvas).CenterXTo().TopToBottom(FirstButton).Width(60).Height(60)
+                        //.Select(SecondButton).CenterXTo().TopToBottom(ThirdCanvas)
+                        ;
+                    set.ApplyTo(content);
+                }
+            };
         }
     }
 }
