@@ -13,7 +13,7 @@
     <SupportedOSPlatformVersion Condition="$(TargetFramework.Contains('-windows'))">10.0.17763.0</SupportedOSPlatformVersion>
     <TargetPlatformMinVersion Condition="$(TargetFramework.Contains('-windows'))">10.0.17763.0</TargetPlatformMinVersion>
     <RootNamespace>SharpConstraintLayout.Maui</RootNamespace>
-    <Version>2.1.1.2</Version>
+    <Version>2.1.1.3</Version>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Authors>zhouyang</Authors>
     <Description>crossplatform constraintlayout at dotnet(android,ios ,windows)</Description>
