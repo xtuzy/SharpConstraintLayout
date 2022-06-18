@@ -45,7 +45,7 @@ public partial class MainPage : ContentPage
 
         var FouthTextBlock = new Label()
         {
-            Text = "FourthTextBlock",
+            Text = "FourthLabel",
             TextColor = Colors.White,
             HorizontalTextAlignment = TextAlignment.Center,
             VerticalTextAlignment = TextAlignment.Center,
@@ -54,12 +54,14 @@ public partial class MainPage : ContentPage
 
         var FifthTextBox = new Entry()
         {
-            Text = "FifthTextBox",
+            Text = "FifthEntry",
+            HorizontalOptions = LayoutOptions.CenterAndExpand
         };
         //https://stackoverflow.com/questions/35710355/uwpc-adding-text-to-richtextblock
         var SixthRichTextBlock = new Editor()
         {
-            Text = "SixthRichTextBlock",
+            Text = "SixthEditor",
+            AutoSize = EditorAutoSizeOption.TextChanges
         };
 
         return (FirstButton, SecondButton, ThirdCanvas, FouthTextBlock, FifthTextBox, SixthRichTextBlock);
@@ -103,13 +105,15 @@ public partial class MainPage : ContentPage
             Text = "Entryfj",
             FontSize = 30,
             TextColor = Colors.White,
-            BackgroundColor = Colors.Black
+            BackgroundColor = Colors.Black,
+            HorizontalOptions = LayoutOptions.CenterAndExpand
         };
         var editor = new Editor()
         {
             Text = "Editorfj",
             TextColor = Colors.White,
-            BackgroundColor = Colors.Black
+            BackgroundColor = Colors.Black,
+            AutoSize = EditorAutoSizeOption.TextChanges
         };
         var searchBar = new SearchBar()
         {
@@ -121,7 +125,7 @@ public partial class MainPage : ContentPage
         content.AddElement(label, entry, editor, searchBar);
         var set = new FluentConstraintSet();
         set.Clone(content);
-        set.Select(label).CenterTo()
+        set.Select(label).CenterYTo().LeftToLeft()
             .Select(entry).BaselineToBaseline(label).LeftToRight(label, 5)
             .Select(editor).BaselineToBaseline(entry).LeftToRight(entry, 5)
             .Select(searchBar).BaselineToBaseline(editor).LeftToRight(editor, 5);

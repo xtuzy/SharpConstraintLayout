@@ -268,11 +268,12 @@ namespace SharpConstraintLayout.Maui.Widget
             int w;
             int h;
 #if __MAUI__
+            Size sizeRequest = default;
             w = MeasureSpec.GetSize(horizontalSpec);
             h = MeasureSpec.GetSize(verticalSpec);
-            var sizeRequest = (element as IView).Measure(w, h);
-            w = GetDefaultSize((int)sizeRequest.Width, horizontalSpec);
-            h = GetDefaultSize((int)sizeRequest.Height, verticalSpec);
+            sizeRequest = (element as IView).Measure(w, h);
+            w = GetDefaultSize((int)(sizeRequest.Width + 1), horizontalSpec);
+            h = GetDefaultSize((int)(sizeRequest.Height + 1), verticalSpec);
 #elif WINDOWS
             w = MeasureSpec.GetSize(horizontalSpec);
             h = MeasureSpec.GetSize(verticalSpec);
