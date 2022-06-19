@@ -13,9 +13,11 @@ namespace SharpConstraintLayout.Maui.Widget
         public Size Size;
         public double TranlateX;
         public double TranlateY;
+        public double Scale;
         public double ScaleX;
         public double ScaleY;
         public double Alpha;
+        public double Rotation;
         public double RotationX;
         public double RotationY;
     }

@@ -501,8 +501,8 @@ namespace SharpConstraintLayout.Maui.Example
                 .Select(SecondButton).RightToRight(FirstButton).TopToBottom(FirstButton)
                 .Select(ThirdCanvas).LeftToRight(FirstButton).RightToRight().EdgesYTo()
                 .Select(FouthTextBlock).RightToRight(SecondButton, 20).TopToBottom(SecondButton, 20)
-                .Select(FifthTextBox).RightToLeft(FouthTextBlock, 20).BaselineToBaseline(FouthTextBlock)
-                .Select(SixthRichTextBlock).RightToLeft(FifthTextBox, 20).BaselineToBaseline(FifthTextBox);
+                .Select(FifthTextBox).RightToLeft(FouthTextBlock, 20).CenterYTo(FouthTextBlock)
+                .Select(SixthRichTextBlock).RightToLeft(FifthTextBox, 20).CenterYTo(FifthTextBox);
             layoutSet.ApplyTo(layout);
 
             Task.Run(async () =>
@@ -617,16 +617,16 @@ namespace SharpConstraintLayout.Maui.Example
                 var layout = new ConstraintLayout() { ConstrainWidth = ConstraintSet.MatchParent, ConstrainHeight = ConstraintSet.WrapContent, BackgroundColor = Color.FromRgb(66, 66, 66) };
                 var title = new Label() { TextColor = Colors.White, FontSize = 30, FontAttributes = FontAttributes.Bold };
                 title.SetBinding(Label.TextProperty, nameof(Models.MicrosoftNews.Title));
-                //var image = new Image();
-                //image.SetBinding(Image.SourceProperty, nameof(Models.MicrosoftNews.ImageUrl));
+                var image = new Image();
+                image.SetBinding(Image.SourceProperty, nameof(Models.MicrosoftNews.ImageUrl));
                 var sourceFrom = new Label() { TextColor = Color.FromRgb(175, 165, 136), FontSize = 12, FontAttributes = FontAttributes.Bold };
                 sourceFrom.SetBinding(Label.TextProperty, nameof(Models.MicrosoftNews.SourceForm));
-                //var sourceFromeImage = new Image();
-                //sourceFromeImage.SetBinding(Image.SourceProperty, nameof(Models.MicrosoftNews.SourceForm));
+                var sourceFromeImage = new Image();
+                sourceFromeImage.SetBinding(Image.SourceProperty, nameof(Models.MicrosoftNews.SourceForm));
                 layout.AddElement(
-                    //image, 
+                    image,
                     title,
-                    //sourceFromeImage, 
+                    sourceFromeImage,
                     sourceFrom);
 
                 var guideLine = new Guideline() { };
@@ -636,24 +636,24 @@ namespace SharpConstraintLayout.Maui.Example
                 littleWindow.Clone(layout);
                 littleWindow
                 .Select(guideLine,
-                //image, sourceFromeImage, 
+                image, sourceFromeImage,
                 sourceFrom, title).Clear()//需要移除之前的约束
                 .Select(guideLine).GuidelineOrientation(Orientation.X).GuidelinePercent(0.6f)
-                //.Select(image).EdgesXTo().BottomToTop(guideLine).Width(SizeBehavier.MatchParent).Height(SizeBehavier.WrapContent)
-                //.Select(sourceFromeImage).LeftToLeft(null, 20).BottomToTop(title, 20).Width(SizeBehavier.WrapContent).Height(SizeBehavier.WrapContent)
-                .Select(sourceFrom)//.LeftToRight(sourceFromeImage, 20).CenterYTo(sourceFromeImage)
+                .Select(image).EdgesXTo().BottomToTop(guideLine).Width(SizeBehavier.MatchParent).Height(SizeBehavier.WrapContent)
+                .Select(sourceFromeImage).LeftToLeft(null, 20).BottomToTop(title, 20).Width(SizeBehavier.WrapContent).Height(SizeBehavier.WrapContent)
+                .Select(sourceFrom).LeftToRight(sourceFromeImage, 20).CenterYTo(sourceFromeImage)
                 .Select(title).LeftToLeft(null, 20).RightToRight(null, 20).BottomToBottom(null, 20).Width(SizeBehavier.MatchConstraint);
 
                 var bigWindow = new FluentConstraintSet();
                 bigWindow.Clone(layout);
                 bigWindow
                 .Select(guideLine,
-                //image, sourceFromeImage, 
+                image, sourceFromeImage,
                 sourceFrom, title).Clear()//需要移除之前的约束
-                                          //.Select(image).RightToRight(null, 20).TopToTop(null, 20).Width(140).Height(140)
-                                          //.Select(sourceFromeImage).LeftToLeft(null, 20).TopToTop(image).Width(SizeBehavier.WrapContent).Height(SizeBehavier.WrapContent)
-                .Select(sourceFrom)//.LeftToRight(sourceFromeImage, 20).CenterYTo(sourceFromeImage)
-                .Select(title).LeftToLeft(null, 20)//.RightToLeft(image, 20).TopToBottom(sourceFromeImage, 20).Width(SizeBehavier.MatchConstraint);
+                                          .Select(image).RightToRight(null, 20).TopToTop(null, 20).Width(140).Height(140)
+                                          .Select(sourceFromeImage).LeftToLeft(null, 20).TopToTop(image).Width(SizeBehavier.WrapContent).Height(SizeBehavier.WrapContent)
+                .Select(sourceFrom).LeftToRight(sourceFromeImage, 20).CenterYTo(sourceFromeImage)
+                .Select(title).LeftToLeft(null, 20).RightToLeft(image, 20).TopToBottom(sourceFromeImage, 20).Width(SizeBehavier.MatchConstraint);
                 ;
                 double oldValue = -1;
                 layout.SizeChanged += (sender, e) =>
