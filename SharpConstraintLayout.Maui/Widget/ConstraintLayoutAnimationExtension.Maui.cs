@@ -63,9 +63,11 @@ namespace SharpConstraintLayout.Maui.Widget
                         return new Rect(x, y, w, h);
                     };
                     view.Layout(computeBounds(v));*/
+                    view.Rotation = startInfo.Rotation + (finishInfo.Rotation - startInfo.Rotation) * v;
                     view.RotationX = startInfo.RotationX + (finishInfo.RotationX - startInfo.RotationX) * v;
                     view.RotationY = startInfo.RotationY + (finishInfo.RotationY - startInfo.RotationY) * v;
                     //view.RotationZ = (finishInfo.RotationZ - startInfo.RotationZ) * v;
+                    view.Scale = startInfo.Scale + (finishInfo.Scale - startInfo.Scale) * v;
                     view.ScaleX = startInfo.ScaleX + (finishInfo.ScaleX - startInfo.ScaleX) * v;
                     view.ScaleY = startInfo.ScaleY + (finishInfo.ScaleY - startInfo.ScaleY) * v;
                     view.Opacity = startInfo.Alpha + (finishInfo.Alpha - startInfo.Alpha) * v;

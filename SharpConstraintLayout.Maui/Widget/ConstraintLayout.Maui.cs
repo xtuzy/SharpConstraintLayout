@@ -107,7 +107,7 @@ namespace SharpConstraintLayout.Maui.Widget
             {
                 var view = item.Value;
                 var widget = GetOrAddWidgetById(item.Key);
-                var info = new ViewInfo() { X = widget.X, Y = widget.Y, Size = new Size(widget.Width, widget.Height), TranlateX = view.TranslationX, TranlateY = view.TranslationY, ScaleX = view.ScaleX, ScaleY = view.ScaleY, Alpha = view.Opacity, RotationX = view.RotationX, RotationY = view.RotationY };
+                var info = new ViewInfo() { X = widget.X, Y = widget.Y, Size = new Size(widget.Width, widget.Height), TranlateX = view.TranslationX, TranlateY = view.TranslationY, Scale = view.Scale, ScaleX = view.ScaleX, ScaleY = view.ScaleY, Alpha = view.Opacity, Rotation = view.Rotation, RotationX = view.RotationX, RotationY = view.RotationY };
                 dic.Add(item.Key, info);
             }
             return dic;
