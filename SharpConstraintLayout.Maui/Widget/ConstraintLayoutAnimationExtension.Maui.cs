@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace SharpConstraintLayout.Maui.Widget
 {
+    /// <summary>
+    /// If you need more complex animation, you can learn form here.
+    /// </summary>
     public static class ConstraintLayoutAnimationExtension
     {
         public static void LayoutToWithAnim(this ConstraintLayout layout, ConstraintSet finishSet, string animName, uint rate = 16, uint length = 250, Easing easing = null, Action<double, bool> finished = null, Func<bool> repeat = null)
@@ -20,19 +23,22 @@ namespace SharpConstraintLayout.Maui.Widget
 
         public static Animation CreateAnimation(this ConstraintLayout layout, ConstraintSet finish, Easing easing)
         {
-            var startLayoutTreeInfo = layout.CaptureLayoutTreeInfo();
+            var startLayoutTreeInfo = layout.CaptureLayoutTreeInfo(true);
             finish.ApplyToForAnim(layout);
             var finfishLayoutTreeInfo = layout.CaptureLayoutTreeInfo(true);
-            return GenerateAnimation(layout, startLayoutTreeInfo, finfishLayoutTreeInfo, easing);
+            var anim = GenerateAnimation(layout, startLayoutTreeInfo, finfishLayoutTreeInfo, easing);
+            return anim;
         }
 
-        public static Animation CreateAnimation(this ConstraintLayout layout, ConstraintSet start, ConstraintSet finish)
+        public static Animation CreateAnimation(this ConstraintLayout layout, ConstraintSet start, ConstraintSet finish, Easing easing)
         {
             start.ApplyToForAnim(layout);
             var startLayoutTreeInfo = layout.CaptureLayoutTreeInfo(true);
             finish.ApplyToForAnim(layout);
             var finfishLayoutTreeInfo = layout.CaptureLayoutTreeInfo(true);
-            return GenerateAnimation(layout, startLayoutTreeInfo, finfishLayoutTreeInfo);
+            var anim = GenerateAnimation(layout, startLayoutTreeInfo, finfishLayoutTreeInfo, easing);
+            //start.ApplyToForAnim(layout);//restore start state
+            return anim;
         }
 
         static Animation GenerateAnimation(ConstraintLayout layout, Dictionary<int, ViewInfo> startLayoutTreeInfo, Dictionary<int, ViewInfo> finfishLayoutTreeInfo, Easing easing = null)
@@ -43,34 +49,40 @@ namespace SharpConstraintLayout.Maui.Widget
                 var view = layout.FindElementById(item.Key);
                 var startInfo = item.Value;
                 var finishInfo = finfishLayoutTreeInfo[item.Key];
+                if (startInfo.Equals(finishInfo)) continue;
+                var diffInfo = startInfo.Diff(finishInfo);
                 animation.Add(0, 1, new Animation((v) =>
                 {
-                    var rect = new Rect((startInfo.X + (finishInfo.X - startInfo.X) * v),
-                        (startInfo.Y + (finishInfo.Y - startInfo.Y) * v),
-                         (startInfo.Size.Width + (finishInfo.Size.Width - startInfo.Size.Width) * v),
-                         (startInfo.Size.Height + (finishInfo.Size.Height - startInfo.Size.Height) * v));
-                    layout.LayoutChild(view, (int)rect.X, (int)rect.Y, (int)rect.Width, (int)rect.Height);
-                    //view.Layout(rect);
-                    view.TranslationX = (finishInfo.TranlateX - startInfo.TranlateX) * v;
-                    view.TranslationY = (finishInfo.TranlateY - startInfo.TranlateY) * v;
-                    /*Func<double, Rect> computeBounds = progress =>
+                    if (diffInfo.X != 0 || diffInfo.Y != 0 || diffInfo.Size.Width != 0 || diffInfo.Size.Height != 0)
                     {
-                        double x = startInfo.X + (finishInfo.X - startInfo.X) * progress;
-                        double y = startInfo.Y + (finishInfo.Y - startInfo.Y) * progress;
-                        double w = startInfo.Size.Width + (finishInfo.Size.Width - finishInfo.Size.Width) * progress;
-                        double h = startInfo.Size.Height + (finishInfo.Size.Height - finishInfo.Size.Height) * progress;
+                        var rect = new Rect((startInfo.X + diffInfo.X * v),
+                        (startInfo.Y + diffInfo.Y * v),
+                         (startInfo.Size.Width + diffInfo.Size.Width * v),
+                         (startInfo.Size.Height + diffInfo.Size.Height * v));
+                        layout.LayoutChild(view, (int)rect.X, (int)rect.Y, (int)rect.Width, (int)rect.Height);
+                    }
 
-                        return new Rect(x, y, w, h);
-                    };
-                    view.Layout(computeBounds(v));*/
-                    view.Rotation = startInfo.Rotation + (finishInfo.Rotation - startInfo.Rotation) * v;
-                    view.RotationX = startInfo.RotationX + (finishInfo.RotationX - startInfo.RotationX) * v;
-                    view.RotationY = startInfo.RotationY + (finishInfo.RotationY - startInfo.RotationY) * v;
+                    if (diffInfo.TranlateX != 0)
+                        view.TranslationX = diffInfo.TranlateX * v;
+                    if (diffInfo.TranlateY != 0)
+                        view.TranslationY = diffInfo.TranlateY * v;
+                    if (diffInfo.Rotation != 0)
+                        view.Rotation = startInfo.Rotation + diffInfo.Rotation * v;
+                    if (diffInfo.RotationX != 0)
+                        view.RotationX = startInfo.RotationX + diffInfo.RotationX * v;
+                    if (diffInfo.RotationY != 0)
+                        view.RotationY = startInfo.RotationY + diffInfo.RotationY * v;
                     //view.RotationZ = (finishInfo.RotationZ - startInfo.RotationZ) * v;
-                    view.Scale = startInfo.Scale + (finishInfo.Scale - startInfo.Scale) * v;
-                    view.ScaleX = startInfo.ScaleX + (finishInfo.ScaleX - startInfo.ScaleX) * v;
-                    view.ScaleY = startInfo.ScaleY + (finishInfo.ScaleY - startInfo.ScaleY) * v;
-                    view.Opacity = startInfo.Alpha + (finishInfo.Alpha - startInfo.Alpha) * v;
+
+                    if (diffInfo.Scale != 0)
+                        view.Scale = startInfo.Scale + diffInfo.Scale * v;
+                    if (diffInfo.ScaleX != 0)
+                        view.ScaleX = startInfo.ScaleX + diffInfo.ScaleX * v;
+                    if (diffInfo.ScaleY != 0)
+                        view.ScaleY = startInfo.ScaleY + diffInfo.ScaleY * v;
+
+                    if (diffInfo.Alpha != 0)
+                        view.Opacity = startInfo.Alpha + diffInfo.Alpha * v;
                 }, 0, 1, easing));
             }
             return animation;

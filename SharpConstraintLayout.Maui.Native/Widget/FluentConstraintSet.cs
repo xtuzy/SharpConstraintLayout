@@ -32,7 +32,7 @@ namespace SharpConstraintLayout.Maui.Widget
         {
             using (var c = new FluentConstraintSet())
             {
-                c.Clone(null);
+                // c.Clone(null);
                 c.Select(null).LeftToLeft(null).LeftToRight(null)
                 .Select(null).RightToLeft(null).RightToRight(null)
                 .Select(null).TopToTop(null).TopToBottom(null)
