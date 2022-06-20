@@ -45,8 +45,6 @@ namespace SharpConstraintLayout.Maui.Example.Pages
         private void Button2_Clicked(object sender, EventArgs e)
         {
 #if WINDOWS|| __ANDROID__||__IOS__
-            /*if (_frameRateCalculateTimer == null)
-                FrameRate();*/
             if (fr == null)
             {
                 fr = new BlogFrameRate.FrameRateCalculator();
@@ -58,26 +56,47 @@ namespace SharpConstraintLayout.Maui.Example.Pages
             }
 #endif
             layout.AbortAnimation("ConstrainTo");
-            //layout.AbortAnimation("ConstrainTo");
             if (isExpaned)//ÐèÒªÊÕËõ
             {
-                var finish = new FluentConstraintSet();
-                finish.Clone(layout);
-                finish.Select(backgroundView).Clear().TopToTop().LeftToLeft().Height(50).MinHeight(20).Width(SizeBehavier.MatchParent)
+                var beginState = new FluentConstraintSet();
+                beginState.Clone(layout);
+
+                var button1FinishState = new FluentConstraintSet();
+                button1FinishState.Clone(layout);
+                button1FinishState.Select(button1).Clear().CenterYTo().RightToRight();
+
+                var button23FinishState = new FluentConstraintSet();
+                button23FinishState.Clone(layout);
+                button23FinishState.Select(backgroundView).Clear().TopToTop().LeftToLeft().Height(50).MinHeight(20).Width(SizeBehavier.MatchParent)
                     .Select(button2).Clear().BottomToBottom(null, 20).RightToRight(null, 20)
                     .Select(button3).Clear().CenterYTo(button2).RightToLeft(button2, 50).Rotation(-90).Scale(2).Alpha(0.3f)
                     ;
-                layout.LayoutToWithAnim(finish, "ConstrainTo", 16, 1200, Easing.SpringOut);
+
+                var button1Anim = layout.CreateAnimation(beginState, button1FinishState, Easing.Linear);
+
+                var button2Anim = layout.CreateAnimation(beginState, button23FinishState, Easing.Linear);
+
+                var allAnim = new Animation()
+                {
+                    { 0, 1, button2Anim },
+                    { 0.5, 1, button1Anim }
+                };
+                allAnim.Commit(layout, "ConstrainTo", 16, 3000, Easing.Linear, (v, b) =>
+                {
+                    //When finish,we need combine all button state
+                    button23FinishState.Clone(new KeyValuePair<int, ConstraintSet.Constraint>(button1.GetId(), button1FinishState.GetConstraint(button1.GetId())));
+                    button23FinishState.ApplyTo(layout);
+                });
             }
             else
             {
-                var start = new FluentConstraintSet();
-                start.Clone(layout);
-                start.Select(backgroundView).Clear().TopToTop().EdgesXTo().Width(SizeBehavier.MatchConstraint).PercentHeight(0.5f).Height(SizeBehavier.MatchConstraint)
+                var button23FinishState = new FluentConstraintSet();
+                button23FinishState.Clone(layout);
+                button23FinishState.Select(backgroundView).Clear().TopToTop().EdgesXTo().Width(SizeBehavier.MatchConstraint).PercentHeight(0.5f).Height(SizeBehavier.MatchConstraint)
                     .Select(button2).Clear().BottomToBottom(backgroundView, 20).RightToRight(backgroundView, 20)
                     .Select(button3).Clear().BottomToTop(button2, 20).CenterXTo(button2).Rotation(0)
                     ;
-                layout.LayoutToWithAnim(start, "ConstrainTo", 8, 3000, Easing.SpringOut);
+                layout.LayoutToWithAnim(button23FinishState, "ConstrainTo", 16, 3000, Easing.SpringOut);
             }
             isExpaned = !isExpaned;
         }
@@ -92,35 +111,5 @@ namespace SharpConstraintLayout.Maui.Example.Pages
             finish.Select(button1).Clear().CenterYTo().RightToRight();
             layout.LayoutToWithAnim(finish, "ConstrainTo", 16, 1200, Easing.SpringOut, (v, b) => { start.ApplyTo(layout); });
         }
-#if WINDOWS
-        private uint _counter = 0;
-        private uint _previousCounter = 0;
-        private readonly Stopwatch _frameRateStopwatch = new Stopwatch();
-        private readonly Timer _frameRateCalculateTimer;
-        void FrameRate()
-        {
-
-            var _frameRateCalculateTimer = new Timer(CalculateFrameRate);
-            _frameRateStopwatch.Start();
-            _frameRateCalculateTimer.Change(1000, 1000);
-            Microsoft.UI.Xaml.Media.CompositionTarget.Rendering += CompositionTarget_Rendering;
-
-        }
-
-        private void CompositionTarget_Rendering(object sender, object e)
-        {
-            _counter++;
-        }
-
-        private void CalculateFrameRate(object state)
-        {
-            var frameCount = _counter - _previousCounter;
-            _previousCounter = _counter;
-            var fps = ((double)frameCount / _frameRateStopwatch.ElapsedMilliseconds) * 1000;
-            System.Diagnostics.Debug.WriteLine($"FPS:{fps}");
-            _frameRateStopwatch.Restart();
-            this.Dispatcher.Dispatch(() => button1.Text = fps.ToString());
-        }
-#endif
     }
 }

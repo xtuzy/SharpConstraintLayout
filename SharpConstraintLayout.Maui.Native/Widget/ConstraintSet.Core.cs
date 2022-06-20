@@ -42,6 +42,38 @@ namespace SharpConstraintLayout.Maui.Widget
             return get(mId);
         }
 
+        public virtual void Clone(params KeyValuePair<int, Constraint>[] constraints)
+        {
+            foreach (var keyValuePair in constraints)
+            {
+                if (keyValuePair.Value == null)
+                {
+                    continue;
+                }
+                if (mConstraints.ContainsKey(keyValuePair.Key))
+                {
+                    mConstraints[keyValuePair.Key] = keyValuePair.Value.Clone();
+                }
+                else
+                {
+                    mConstraints.Add(keyValuePair.Key, keyValuePair.Value.Clone());
+                }
+            }
+        }
+
+        public virtual void Clone(ConstraintSet set)
+        {
+            mConstraints.Clear();
+            foreach (var keyValuePair in set.mConstraints)
+            {
+                if (keyValuePair.Value == null)
+                {
+                    continue;
+                }
+                mConstraints.Add(keyValuePair.Key, keyValuePair.Value.Clone());
+            }
+        }
+
         /// <summary>
         /// 该方案是和Android的思路一样,在ConstraintLayout中存储一份不变的Constraints去替代LayoutParams,
         /// LayoutParams是不变的,因此模仿Android思路Constraints也是不变的字典,不在字典中创建新的Constraint替换,只是改原有的属性
