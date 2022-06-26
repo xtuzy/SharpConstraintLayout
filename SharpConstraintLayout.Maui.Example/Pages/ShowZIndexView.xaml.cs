@@ -9,10 +9,6 @@ using static SharpConstraintLayout.Maui.Widget.FluentConstraintSet;
 
 public partial class ShowZIndexView : ContentView
 {
-
-#if WINDOWS || __ANDROID__ || __IOS__
-    BlogFrameRate.FrameRateCalculator fr;
-#endif
     public ShowZIndexView()
     {
         InitializeComponent();
@@ -21,7 +17,6 @@ public partial class ShowZIndexView : ContentView
         defaultSet.Select(guideline).GuidelineOrientation(Orientation.X).GuidelinePercent(0.7f)
             .Select(box).CenterYTo().Visibility(Visibility.Invisible)
             .Select(box1, rect1, rect2).Height(200).CenterXTo()
-            .Select(fpsLabel).CenterYTo().LeftToLeft(null,5)
            ;
         foreach (var view in layout.Children)
         {
@@ -38,19 +33,6 @@ public partial class ShowZIndexView : ContentView
         //rect2.GestureRecognizers.Add(leftSwipeGesture);
 
         MauiGestures.Gesture.SetPanPointCommand(layout, PanPointCommand);
-
-
-#if WINDOWS || __ANDROID__ || __IOS__
-        if (fr == null)
-        {
-            fr = new BlogFrameRate.FrameRateCalculator();
-            fr.FrameRateUpdated += (value) =>
-            {
-                this.Dispatcher.Dispatch(() => fpsLabel.Text = value.Frames.ToString());
-            };
-            fr.Start();
-        }
-#endif
     }
 
     public ICommand PanPointCommand => new Command<PanEventArgs>(args =>

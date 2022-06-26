@@ -29,7 +29,7 @@ namespace SharpConstraintLayout.Maui.Example.Pages
 
             startset = new FluentConstraintSet();
             startset.Clone(layout);
-            startset.Select(button1).CenterYTo().LeftToLeft().Width(50)
+            startset.Select(button1).CenterYTo().LeftToLeft()
                 .Select(backgroundView).TopToTop().EdgesXTo().Width(SizeBehavier.MatchConstraint).PercentHeight(0.5f).Height(SizeBehavier.MatchConstraint)
                 .Select(button2).BottomToBottom(backgroundView, 20).RightToRight(backgroundView, 20)
                 .Select(button3).BottomToTop(button2, 20).CenterXTo(button2).Rotation(0)
@@ -38,25 +38,11 @@ namespace SharpConstraintLayout.Maui.Example.Pages
 
         }
 
-#if WINDOWS || __ANDROID__ || __IOS__
-        BlogFrameRate.FrameRateCalculator fr;
-#endif
         bool isExpaned = true;
         private FluentConstraintSet startset;
 
         private void Button2_Clicked(object sender, EventArgs e)
         {
-#if WINDOWS|| __ANDROID__||__IOS__
-            if (fr == null)
-            {
-                fr = new BlogFrameRate.FrameRateCalculator();
-                fr.FrameRateUpdated += (value) =>
-                {
-                    this.Dispatcher.Dispatch(() => button1.Text = value.Frames.ToString());
-                };
-                fr.Start();
-            }
-#endif
             layout.AbortAnimation("ConstrainTo");
             if (isExpaned)//–Ë“™ ’Àı
             {

@@ -10,6 +10,10 @@ namespace SharpConstraintLayout.Maui.Example;
 
 public partial class MainPage : ContentPage
 {
+
+#if WINDOWS || __ANDROID__ || __IOS__
+    BlogFrameRate.FrameRateCalculator fr;
+#endif
     public MainPage()
     {
         InitializeComponent();
@@ -22,6 +26,18 @@ public partial class MainPage : ContentPage
             App.WindowWidth = (int)(sender as Page).Bounds.Width;
         };
         TempButton_Clicked(null, null);
+
+#if WINDOWS || __ANDROID__ || __IOS__
+        if (fr == null)
+        {
+            fr = new BlogFrameRate.FrameRateCalculator();
+            fr.FrameRateUpdated += (value) =>
+            {
+                this.Dispatcher.Dispatch(() => fpsLabel.Text = value.Frames.ToString());
+            };
+            fr.Start();
+        }
+#endif
     }
 
     private (Button FirstButton, Button SecondButton, ContentView ThirdCanvas, Label FouthTextBlock, Entry FifthTextBox, Editor SixthRichTextBlock) CreateControls()
