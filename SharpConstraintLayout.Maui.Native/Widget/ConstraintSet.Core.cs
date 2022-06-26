@@ -18,13 +18,12 @@ using androidx.constraintlayout.core.widgets;
 using SharpConstraintLayout.Maui.Widget.Interface;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 #if __MAUI__
+
 using View = Microsoft.Maui.Controls.View;
+
 #elif WINDOWS
 using View = Microsoft.UI.Xaml.UIElement;
 #elif __IOS__
@@ -40,6 +39,22 @@ namespace SharpConstraintLayout.Maui.Widget
         public virtual Constraint GetParameters(int mId)
         {
             return get(mId);
+        }
+
+        public virtual void Clone(ConstraintSet sourceSet,params View[] views)
+        {
+            foreach (var view in views)
+            {
+                var id = view.GetId();
+                if (mConstraints.ContainsKey(id))
+                {
+                    mConstraints[id] = sourceSet.GetConstraint(id).Clone();
+                }
+                else
+                {
+                    mConstraints.Add(id, sourceSet.GetConstraint(id).Clone());
+                }
+            }
         }
 
         public virtual void Clone(params KeyValuePair<int, Constraint>[] constraints)
@@ -154,10 +169,9 @@ namespace SharpConstraintLayout.Maui.Widget
         }
 
         /// <summary>
-        /// Used to set constraints when used by constraint layout.
-        /// 再Clone后新的ConstraintSet有新的约束字典,把这些约束更新到旧字典上去. 注意:这里还用到了统一替换PARENT_ID
+        /// Apply ConstraintSet to ConstraintLayout, when layout tree load Measure method next time, these constraint will be calculate and ConstraintLayout according it to layout.
         /// </summary>
-        public virtual void ApplyTo(ConstraintLayout constraintLayout)
+        public virtual void ApplyTo(ConstraintLayout constraintLayout, bool isForAnim = false,bool isImmediateTranform = true)
         {
             int parentID = constraintLayout.GetId();
 
@@ -238,6 +252,13 @@ namespace SharpConstraintLayout.Maui.Widget
                         ConstraintAttribute.setAttributes(view, constraint.mCustomConstraints);
                     }*/
 
+                    /* 
+                     * @zhouyang 2022/6/23
+                     * 动画需要tansform数据,之前从View属性获得,但多个动画重叠时,后面的动画可能获得的是前面动画正在运行的属性
+                     */
+                    param.propertySet.copyFrom(constraint.propertySet);
+                    param.transform.copyFrom(constraint.transform);
+
                     if (constraint.propertySet.mVisibilityMode == VisibilityModeNormal)
                     {
                         //view.Visibility = constraint.propertySet.visibility;
@@ -245,8 +266,15 @@ namespace SharpConstraintLayout.Maui.Widget
                         view.SetViewVisibility(constraint.propertySet.visibility);
                     }
                     if (constraint.propertySet.visibility != ConstraintSet.Invisible)//在可见性为Invisible时,设置可见性时会将Alpha设置为0,再设置Alpha会造成冲突
-                        view.SetAlphaProperty(constraint.propertySet);
-                    view.SetTransform(constraint.transform);
+                    {
+                        view.SetAlpha(constraint.propertySet.alpha);
+                    }
+                    /* 
+                    * @zhouyang 2022/6/23
+                    * 动画需要tansform数据,但直接修改View属性会造成不同动画间冲突,因此动画时不修改View,只修改constraint
+                    */
+                    if (isImmediateTranform)
+                        view.SetTransform(constraint.transform);
                 }
                 else
                 {
@@ -306,12 +334,18 @@ namespace SharpConstraintLayout.Maui.Widget
             }
 
             constraintLayout.mConstraintSet.IsChanged = true;
-            constraintLayout.mConstraintSet.IsForAnimation = false;
+            if (isForAnim)
+                constraintLayout.mConstraintSet.IsForAnimation = true;
+            else
+                constraintLayout.mConstraintSet.IsForAnimation = false;
 
-            UIThread.Invoke(() =>
+            if (!isForAnim)//Animation不需要视觉树刷新,当需要获取布局信息时我们可以直接调用Measure
             {
-                constraintLayout.RequestReLayout();
-            }, constraintLayout);
+                UIThread.Invoke(() =>
+                {
+                    constraintLayout.RequestReLayout();
+                }, constraintLayout);
+            }  
         }
 
         /// <summary>
@@ -322,8 +356,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <exception cref="NotImplementedException"></exception>
         public virtual void ApplyToForAnim(ConstraintLayout constraintLayout)
         {
-            ApplyTo(constraintLayout);
-            constraintLayout.mConstraintSet.IsForAnimation = true;
+            ApplyTo(constraintLayout, true,false);
         }
 
         /// <summary>
@@ -1103,6 +1136,37 @@ namespace SharpConstraintLayout.Maui.Widget
                     constraint.layout.endMargin = value;
                     break;
 
+                default:
+                    throw new System.ArgumentException("unknown constraint");
+            }
+        }
+
+        /// <summary>
+        /// Gets the margin.
+        /// </summary>
+        /// <param name="viewId">ID of view to adjust the margin on</param>
+        /// <param name="anchor">The side to adjust the margin on</param>
+        /// <returns>The new value for the margin</returns>
+        /// <exception cref="System.ArgumentException"></exception>
+        public virtual int GetMargin(int viewId, int anchor)
+        {
+            Constraint constraint = get(viewId);
+            switch (anchor)
+            {
+                case Left:
+                    return  constraint.layout.leftMargin ;
+                case Right:
+                    return constraint.layout.rightMargin ;
+                case Top:
+                    return constraint.layout.topMargin ;
+                case Bottom:
+                    return constraint.layout.bottomMargin ;
+                case Baseline:
+                    return constraint.layout.baselineMargin;
+                case Start:
+                    return constraint.layout.startMargin ;
+                case End:
+                    return constraint.layout.endMargin ;
                 default:
                     throw new System.ArgumentException("unknown constraint");
             }

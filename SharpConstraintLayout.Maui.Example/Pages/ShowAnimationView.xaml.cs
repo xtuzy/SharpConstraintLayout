@@ -27,9 +27,9 @@ namespace SharpConstraintLayout.Maui.Example.Pages
             button3 = new Button() { Text = "Button3", WidthRequest = 20, HeightRequest = 20 };
             layout.AddElement(backgroundView, button1, button2, button3);
 
-            var startset = new FluentConstraintSet();
+            startset = new FluentConstraintSet();
             startset.Clone(layout);
-            startset.Select(button1).CenterYTo().LeftToLeft()
+            startset.Select(button1).CenterYTo().LeftToLeft().Width(50)
                 .Select(backgroundView).TopToTop().EdgesXTo().Width(SizeBehavier.MatchConstraint).PercentHeight(0.5f).Height(SizeBehavier.MatchConstraint)
                 .Select(button2).BottomToBottom(backgroundView, 20).RightToRight(backgroundView, 20)
                 .Select(button3).BottomToTop(button2, 20).CenterXTo(button2).Rotation(0)
@@ -42,6 +42,8 @@ namespace SharpConstraintLayout.Maui.Example.Pages
         BlogFrameRate.FrameRateCalculator fr;
 #endif
         bool isExpaned = true;
+        private FluentConstraintSet startset;
+
         private void Button2_Clicked(object sender, EventArgs e)
         {
 #if WINDOWS|| __ANDROID__||__IOS__
@@ -59,14 +61,14 @@ namespace SharpConstraintLayout.Maui.Example.Pages
             if (isExpaned)//ÐèÒªÊÕËõ
             {
                 var beginState = new FluentConstraintSet();
-                beginState.Clone(layout);
+                beginState.Clone(startset);
 
                 var button1FinishState = new FluentConstraintSet();
-                button1FinishState.Clone(layout);
-                button1FinishState.Select(button1).Clear().CenterYTo().RightToRight();
+                button1FinishState.Clone(startset);
+                button1FinishState.Select(button1).Clear().CenterYTo().RightToRight().Width(50);
 
                 var button23FinishState = new FluentConstraintSet();
-                button23FinishState.Clone(layout);
+                button23FinishState.Clone(startset);
                 button23FinishState.Select(backgroundView).Clear().TopToTop().LeftToLeft().Height(50).MinHeight(20).Width(SizeBehavier.MatchParent)
                     .Select(button2).Clear().BottomToBottom(null, 20).RightToRight(null, 20)
                     .Select(button3).Clear().CenterYTo(button2).RightToLeft(button2, 50).Rotation(-90).Scale(2).Alpha(0.3f)
@@ -104,12 +106,15 @@ namespace SharpConstraintLayout.Maui.Example.Pages
         private void Button1_Clicked(object sender, EventArgs e)
         {
             var start = new FluentConstraintSet();
-            start.Clone(layout);
-            start.Select(button1).Clear().CenterYTo().LeftToLeft();
+            start.Clone(startset);
+            start.Select(button1).Clear().CenterYTo().LeftToLeft().Width(50);
             var finish = new FluentConstraintSet();
-            finish.Clone(layout);
-            finish.Select(button1).Clear().CenterYTo().RightToRight();
-            layout.LayoutToWithAnim(finish, "ConstrainTo", 16, 1200, Easing.SpringOut, (v, b) => { start.ApplyTo(layout); });
+            finish.Clone(startset);
+            finish.Select(button1).Clear().CenterYTo().RightToRight().Width(50);
+            layout.LayoutToWithAnim(finish, "ConstrainTo", 16, 1200, Easing.SpringOut, 
+                (v, b) => { 
+                    start.ApplyTo(layout); 
+                });
         }
     }
 }

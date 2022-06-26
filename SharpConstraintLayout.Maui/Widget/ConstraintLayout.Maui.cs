@@ -1,11 +1,5 @@
 ﻿#if __MAUI__
 using Microsoft.Maui.Layouts;
-using SharpConstraintLayout.Maui.Widget;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UIElement = Microsoft.Maui.Controls.View;
 namespace SharpConstraintLayout.Maui.Widget
 {
@@ -90,9 +84,10 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <summary>
         /// 获取ConstraintLayout所有子View信息,这是为动画特别提供的
         /// </summary>
+        /// <param name="views">if is null, will capture layout info for all view. if not null, only capture info for these view</param>
         /// <param name="isNeedMeasure">没有测量过的可能需要测量才能获得到正确的信息</param>
         /// <returns></returns>
-        public Dictionary<int, ViewInfo> CaptureLayoutTreeInfo(bool isNeedMeasure = false)
+        public Dictionary<int, ViewInfo> CaptureLayoutTreeInfo(List<View> views = null, bool isNeedMeasure = false)
         {
             //Try强制Measure
             if (isNeedMeasure)
@@ -103,12 +98,57 @@ namespace SharpConstraintLayout.Maui.Widget
             }
 
             var dic = new Dictionary<int, ViewInfo>();
-            foreach (var item in idToViews)
+            if (views == null)
             {
-                var view = item.Value;
-                var widget = GetOrAddWidgetById(item.Key);
-                var info = new ViewInfo() { X = widget.X, Y = widget.Y, Size = new Size(widget.Width, widget.Height), TranlateX = view.TranslationX, TranlateY = view.TranslationY, Scale = view.Scale, ScaleX = view.ScaleX, ScaleY = view.ScaleY, Alpha = view.Opacity, Rotation = view.Rotation, RotationX = view.RotationX, RotationY = view.RotationY };
-                dic.Add(item.Key, info);
+                foreach (var item in idToViews)
+                {
+                    var view = item.Value;
+                    var widget = GetOrAddWidgetById(item.Key);
+                    var constraint = mConstraintSet.GetConstraint(item.Key);
+                    var info = new ViewInfo()
+                    {
+                        X = widget.X,
+                        Y = widget.Y,
+                        Width = widget.Width, 
+                        Height =  widget.Height,
+                        TranlateX = constraint.transform.translationX,
+                        TranlateY = constraint.transform.translationY,
+                        //Scale = constraint.transform.scale., 
+                        ScaleX = constraint.transform.scaleX,
+                        ScaleY = constraint.transform.scaleY,
+                        Alpha = constraint.propertySet.alpha,
+                        Rotation = constraint.transform.rotation,
+                        RotationX = constraint.transform.rotationX,
+                        RotationY = constraint.transform.rotationY
+                    };
+                    dic.Add(item.Key, info);
+                }
+            }
+            else
+            {
+                foreach (var item in views)
+                {
+                    var id = item.GetId();
+                    var widget = GetOrAddWidgetById(id);
+                    var constraint = mConstraintSet.GetConstraint(id);
+                    var info = new ViewInfo()
+                    {
+                        X = widget.X,
+                        Y = widget.Y,
+                        Width = widget.Width,
+                        Height = widget.Height,
+                        TranlateX = constraint.transform.translationX,
+                        TranlateY = constraint.transform.translationY,
+                        //Scale = constraint.transform.scale., 
+                        ScaleX = constraint.transform.scaleX,
+                        ScaleY = constraint.transform.scaleY,
+                        Alpha = constraint.propertySet.alpha,
+                        Rotation = constraint.transform.rotation,
+                        RotationX = constraint.transform.rotationX,
+                        RotationY = constraint.transform.rotationY
+                    };
+                    dic.Add(id, info);
+                }
             }
             return dic;
         }

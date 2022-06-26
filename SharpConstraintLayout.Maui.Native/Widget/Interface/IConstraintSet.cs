@@ -21,7 +21,7 @@ namespace SharpConstraintLayout.Maui.Widget.Interface
         void AddToVerticalChain(int viewId, int topId, int bottomId);
         //void ApplyCustomAttributes(ConstraintLayout constraintLayout);
         //void ApplyDeltaFrom(ConstraintSet cs);
-        void ApplyTo(ConstraintLayout constraintLayout);
+        void ApplyTo(ConstraintLayout constraintLayout,bool isForAnim,bool isImmediateTransform);
         //void ApplyToHelper(ConstraintHelper helper, ConstraintWidget child, ConstraintSet.Constraint layoutParams, Dictionary<int,ConstraintWidget> mapIdToWidget);
         //void ApplyToLayoutParams(int id, ConstraintLayout.LayoutParams layoutParams);
         //void ApplyToWithoutCustom(ConstraintLayout constraintLayout);
