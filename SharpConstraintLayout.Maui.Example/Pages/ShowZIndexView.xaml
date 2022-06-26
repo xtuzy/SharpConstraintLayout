@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView
+    x:Class="SharpConstraintLayout.Maui.Example.Pages.ShowZIndexView"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:constraint="clr-namespace:SharpConstraintLayout.Maui.Widget;assembly=SharpConstraintLayout.Maui">
+    <constraint:ConstraintLayout x:Name="layout" BackgroundColor="AliceBlue">
+        <constraint:Guideline x:Name="guideline" ZIndex="1" />
+        <Rectangle
+            x:Name="box"
+            BackgroundColor="Red"
+            HeightRequest="200"
+            WidthRequest="200"
+            
+            ZIndex="1" />
+        <Rectangle
+            x:Name="box1"
+            BackgroundColor="LightGray"
+            HeightRequest="200"
+            WidthRequest="200"
+            RadiusX="5"
+            RadiusY="5"
+            ZIndex="2" />
+        <Rectangle
+            x:Name="rect1"
+            BackgroundColor="HotPink"
+            HeightRequest="200"
+            WidthRequest="200"
+            RadiusX="5"
+            RadiusY="5"
+            ZIndex="3" />
+        <Rectangle
+            x:Name="rect2"
+            BackgroundColor="Pink"
+            HeightRequest="200"
+            WidthRequest="200"
+            RadiusX="5"
+            RadiusY="5"
+            ZIndex="4">
+        </Rectangle>
+        <Label x:Name="fpsLabel" Text="FPS" BackgroundColor="Brown"></Label>
+    </constraint:ConstraintLayout>
+</ContentView>

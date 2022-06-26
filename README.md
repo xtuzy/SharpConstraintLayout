@@ -9,15 +9,15 @@ This is a C# port of [ConstraintLayout](https://github.com/androidx/constraintla
 [![NuGet version(SharpConstraintLayout.Maui)](https://img.shields.io/nuget/v/SharpConstraintLayout.Maui?label=SharpConstraintLayout.Maui)](https://www.nuget.org/packages/SharpConstraintLayout.Maui/), it contain layout for Maui, ConstraintLayout is powerful, you can use it instead other layout
 
 
-## Using ConstraintLayout
+## Using SharpConstraintLayout
 
-### ⬇️ Installation
+[![Maui SharpConstraintLayout Example](https://youtube-md.vercel.app/d5nUq7CQuck/640/360)](https://www.youtube.com/watch?v=d5nUq7CQuck)
+
+**Installation**
 
 Search and install nuget **SharpConstraintLayout.Maui** (For Maui) or  **SharpConstraintLayout.Maui.Native** (For net6-android,net6-ios,WinUI3)
 
-### ✨🤩📱 Key Features
-
-**Notice**: 
+**Notice**
 1. Now you create constraint only by code.
 2. Here all example use Maui
 3. Run example app, you can find more example
@@ -50,26 +50,28 @@ using(var set = FluentConstraintSet())
 }
 ```
 
+## Current Features
+- [x] Align Left,Right,Top,Bottom,Center
+- [x] **Ratio of Width with Height**
+Ratio defines one dimension of a widget as a ratio of the other one. If both `width` and `height` are set to `0dp` the system sets the largest dimensions that satisfy all constraints while maintaining the aspect ratio.
 
-📐 **Ratio of Width with Height** defines one dimension of a widget as a ratio of the other one. If both `width` and `height` are set to `0dp` the system sets the largest dimensions that satisfy all constraints while maintaining the aspect ratio.
+- [x] **Chains** 
+Chains provide group-like behavior in a single axis (horizontally or vertically). The other axis can be constrained independently.
 
-⛓️ **Chains** provide group-like behavior in a single axis (horizontally or vertically). The other axis can be constrained independently.
+- [x] **Guideline** 
+Guideline allow reactive layout behavior with fixed or percentage based positioning for multiple widgets.
 
-🦮 **Guideline** allow reactive layout behavior with fixed or percentage based positioning for multiple widgets.
+- [x] **Barrier** 
+Barrier references multiple widgets to create a virtual guideline based on the most extreme widget on the specified side.
 
-🚧 **Barrier** references multiple widgets to create a virtual guideline based on the most extreme widget on the specified side.
+- [x] **Flow** 
+Flow is a VirtualLayout that allows positioning of referenced widgets horizontally or vertically similar to a Chain. If the referenced elements do not fit within the given bounds it has the ability to wrap them and create multiple chains.
+- [x] **Group** 
+Group can control visibility of multiple views.
+- [ ] RTL
+- [ ] Align Baseline
 
-🌊 **Flow** is a VirtualLayout that allows positioning of referenced widgets horizontally or vertically similar to a Chain. If the referenced elements do not fit within the given bounds it has the ability to wrap them and create multiple chains.
-
-**Group** allow manage multiple controls visibility.
-
-**Animation** you can use constraintlayout create flexible animation
-
-## 🤝 Contributing
-
-If you'd like to get involved and contribute please read [CONTRIBUTING](CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
-
-## 💻 Authors
+## 💻 Authors of ConstraintLayout
 
 - **John Hoford** : MotionLayout ([jafu888](https://github.com/jafu888))
 - **Nicolas Roard** : ConstraintLayout ([camaelon](https://github.com/camaelon))

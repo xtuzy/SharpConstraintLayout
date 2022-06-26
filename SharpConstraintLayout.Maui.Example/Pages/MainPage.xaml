@@ -71,7 +71,11 @@
                 <Button
                     x:Name="Animation"
                     Clicked="Animation_Clicked"
-                    Text="Animation" />
+                    Text="Animation" /> 
+                <Button
+                    x:Name="ZIndex"
+                    Clicked="ZIndex_Clicked"
+                    Text="ZIndex" />
                 <Button
                     x:Name="Group"
                     Clicked="Group_Clicked"

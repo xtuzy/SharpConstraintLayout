@@ -1,4 +1,5 @@
-﻿using SharpConstraintLayout.Maui.Widget;
+﻿using MauiGestures;
+using SharpConstraintLayout.Maui.Widget;
 
 namespace SharpConstraintLayout.Maui.Example;
 
@@ -17,7 +18,8 @@ public static class MauiProgram
             .ConfigureMauiHandlers(handler =>
             {
                 //handler.AddHandler(typeof(ConstraintLayout), typeof(Microsoft.Maui.Handlers.LayoutHandler));
-            });
+            })
+            .AddAdvancedGestures();
 
         return builder.Build();
     }

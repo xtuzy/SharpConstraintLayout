@@ -50,7 +50,7 @@ public partial class App : Application
             }
 
         };
-        HotReload.Instance.Init("192.168.0.144", 100);
+        HotReload.Instance.Init("192.168.0.144");
 #endif
     }
 }

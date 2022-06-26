@@ -51,6 +51,7 @@
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0-preview3" />
     <PackageReference Include="ReloadPreview" Version="3.0.6" />
+    <PackageReference Include="Vapolia.MauiGesture" Version="1.0.0-ci2501125632" />
   </ItemGroup>
 
   <ItemGroup>
@@ -62,6 +63,9 @@
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
     <MauiXaml Update="Pages\ShowAnimationView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </MauiXaml>
+    <MauiXaml Update="Pages\ShowZIndexView.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
     <MauiXaml Update="Pages\TestContentView.xaml">

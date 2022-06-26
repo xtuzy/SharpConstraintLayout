@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-#if __MAUI__
-using UIElement = Microsoft.Maui.Controls.View;
+﻿#if __MAUI__
 using FrameworkElement = Microsoft.Maui.Controls.View;
+using UIElement = Microsoft.Maui.Controls.View;
 
 #elif WINDOWS
 using Microsoft.UI.Xaml;
@@ -346,6 +341,7 @@ namespace SharpConstraintLayout.Maui.Widget
             return element.Parent as UIElement;
 #endif
         }
+
 #if __MAUI__
         internal static void SetWidth(this UIElement element, int width)
         {
@@ -458,6 +454,44 @@ namespace SharpConstraintLayout.Maui.Widget
 #endif
         }
 
+#if __MAUI__
+
+        internal static void SetScaleX(this UIElement element, float scaleX)
+        {
+            element.ScaleX = scaleX;
+        }
+
+        internal static void SetScaleY(this UIElement element, float scaleY)
+        {
+            element.ScaleY = scaleY;
+        }
+
+        internal static void SetRotation(this UIElement element, float rotation)
+        {
+            element.Rotation = rotation;
+        }
+
+        internal static void SetRotationX(this UIElement element, float rotationX)
+        {
+            element.RotationX = rotationX;
+        }
+
+        internal static void SetRotationY(this UIElement element, float rotationY)
+        {
+            element.RotationY = rotationY;
+        }
+
+        internal static void SetTranslationX(this UIElement element, float translationX)
+        {
+            element.TranslationX = translationX;
+        }
+
+        internal static void SetTranslationY(this UIElement element, float translationY)
+        {
+            element.TranslationY = translationY;
+        }
+#endif
+
         internal static void SetTransform(this UIElement element, ConstraintSet.Transform transform)
         {
             if (transform == null)
@@ -543,25 +577,23 @@ namespace SharpConstraintLayout.Maui.Widget
 #endif
         }
 
-        internal static void SetAlphaProperty(this UIElement element, ConstraintSet.PropertySet propertySet)
+        internal static void SetAlpha(this UIElement element, float alpha)
         {
-            if (propertySet == null)
-                return;
 #if __MAUI__
-            (element as VisualElement).Opacity = propertySet.alpha;
+            element.Opacity = alpha;
 #elif __ANDROID__
             //Copy from ConstraintSet
-            element.Alpha = propertySet.alpha;
+            element.Alpha = alpha;
 #elif WINDOWS
             //https://docs.microsoft.com/en-us/dotnet/api/system.windows.uielement.opacity?view=windowsdesktop-6.0
-            element.Opacity = propertySet.alpha;
+            element.Opacity = alpha;
 #elif __IOS__
             //https://stackoverflow.com/questions/15381436/is-the-opacity-and-alpha-the-same-thing-for-uiview
-            element.Alpha = propertySet.alpha;
+            element.Alpha = alpha;
 #endif
         }
 
-        public static string GetViewLayoutInfo(this UIElement element)
+        internal static string GetViewLayoutInfo(this UIElement element)
         {
 #if __MAUI__
             return $"{element.GetType().FullName} IsVisible={element.IsVisible} Position=({element.X},{element.Y}) DesiredSize={element.DesiredSize} WidthxHeight=({element.Width}x{element.Height})";
