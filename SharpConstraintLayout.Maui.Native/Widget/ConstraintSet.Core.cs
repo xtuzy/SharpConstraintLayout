@@ -41,7 +41,7 @@ namespace SharpConstraintLayout.Maui.Widget
             return get(mId);
         }
 
-        public virtual void Clone(ConstraintSet sourceSet,params View[] views)
+        public virtual void Clone(ConstraintSet sourceSet, params View[] views)
         {
             foreach (var view in views)
             {
@@ -57,21 +57,35 @@ namespace SharpConstraintLayout.Maui.Widget
             }
         }
 
-        public virtual void Clone(params KeyValuePair<int, Constraint>[] constraints)
+#if __MAUI__
+        public virtual void Clone(params (View view, ConstraintSet fromSet)[] constraints)
         {
             foreach (var keyValuePair in constraints)
             {
-                if (keyValuePair.Value == null)
+                var id = keyValuePair.view.GetId();
+                if (mConstraints.ContainsKey(id))
                 {
-                    continue;
-                }
-                if (mConstraints.ContainsKey(keyValuePair.Key))
-                {
-                    mConstraints[keyValuePair.Key] = keyValuePair.Value.Clone();
+                    mConstraints[id] = keyValuePair.fromSet.GetConstraint(id).Clone();
                 }
                 else
                 {
-                    mConstraints.Add(keyValuePair.Key, keyValuePair.Value.Clone());
+                    mConstraints.Add(id, keyValuePair.fromSet.GetConstraint(id).Clone());
+                }
+            }
+        }
+#endif
+
+        public virtual void Clone(params (int id, Constraint constraint)[] constraints)
+        {
+            foreach (var keyValuePair in constraints)
+            {
+                if (mConstraints.ContainsKey(keyValuePair.id))
+                {
+                    mConstraints[keyValuePair.id] = keyValuePair.constraint.Clone();
+                }
+                else
+                {
+                    mConstraints.Add(keyValuePair.id, keyValuePair.constraint.Clone());
                 }
             }
         }
@@ -171,7 +185,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <summary>
         /// Apply ConstraintSet to ConstraintLayout, when layout tree load Measure method next time, these constraint will be calculate and ConstraintLayout according it to layout.
         /// </summary>
-        public virtual void ApplyTo(ConstraintLayout constraintLayout, bool isForAnim = false,bool isImmediateTranform = true)
+        public virtual void ApplyTo(ConstraintLayout constraintLayout, bool isForAnim = false, bool isImmediateTranform = true)
         {
             int parentID = constraintLayout.GetId();
 
@@ -263,11 +277,24 @@ namespace SharpConstraintLayout.Maui.Widget
                     {
                         //view.Visibility = constraint.propertySet.visibility;
                         param.propertySet.visibility = constraint.propertySet.visibility;//这里我变成设置constraint
-                        view.SetViewVisibility(constraint.propertySet.visibility);
+                        if (!isForAnim)
+                        {
+                            view.SetViewVisibility(constraint.propertySet.visibility);
+                        }
+                        else
+                        {
+#if __MAUI__
+                            if(constraint.propertySet.visibility != Gone)
+                            {
+                                view.IsVisible = true;//需要可见时才能测量到大小
+                            }
+#endif
+                        }
                     }
                     if (constraint.propertySet.visibility != ConstraintSet.Invisible)//在可见性为Invisible时,设置可见性时会将Alpha设置为0,再设置Alpha会造成冲突
                     {
-                        view.SetAlpha(constraint.propertySet.alpha);
+                        if (!isForAnim)
+                            view.SetAlpha(constraint.propertySet.alpha);
                     }
                     /* 
                     * @zhouyang 2022/6/23
@@ -345,7 +372,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 {
                     constraintLayout.RequestReLayout();
                 }, constraintLayout);
-            }  
+            }
         }
 
         /// <summary>
@@ -356,7 +383,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <exception cref="NotImplementedException"></exception>
         public virtual void ApplyToForAnim(ConstraintLayout constraintLayout)
         {
-            ApplyTo(constraintLayout, true,false);
+            ApplyTo(constraintLayout, true, false);
         }
 
         /// <summary>
@@ -1154,19 +1181,19 @@ namespace SharpConstraintLayout.Maui.Widget
             switch (anchor)
             {
                 case Left:
-                    return  constraint.layout.leftMargin ;
+                    return constraint.layout.leftMargin;
                 case Right:
-                    return constraint.layout.rightMargin ;
+                    return constraint.layout.rightMargin;
                 case Top:
-                    return constraint.layout.topMargin ;
+                    return constraint.layout.topMargin;
                 case Bottom:
-                    return constraint.layout.bottomMargin ;
+                    return constraint.layout.bottomMargin;
                 case Baseline:
                     return constraint.layout.baselineMargin;
                 case Start:
-                    return constraint.layout.startMargin ;
+                    return constraint.layout.startMargin;
                 case End:
-                    return constraint.layout.endMargin ;
+                    return constraint.layout.endMargin;
                 default:
                     throw new System.ArgumentException("unknown constraint");
             }
