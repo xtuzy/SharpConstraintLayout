@@ -160,7 +160,13 @@ namespace SharpConstraintLayout.Maui.Widget
             //                view.Id = UIElement.GenerateViewId();
             //            return view.Id;
             //#else
+#if __MAUI__
+            if (element.StyleId == null)
+               return element.GetHashCode();
+            return element.StyleId.GetHashCode();
+#else
             return element.GetHashCode();
+#endif
             //#endif
         }
 

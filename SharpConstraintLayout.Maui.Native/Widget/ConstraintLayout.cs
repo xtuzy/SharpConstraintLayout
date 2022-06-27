@@ -118,7 +118,7 @@ namespace SharpConstraintLayout.Maui.Widget
             rootConstraint.layout.mHeight = ConstraintSet.MatchParent;
 
             mConstraintSet.Constraints.Add(ConstraintSet.ParentId, rootConstraint);
-            mConstraintSet.Constraints.Add(this.GetId(), rootConstraint);
+            //mConstraintSet.Constraints.Add(this.GetId(), rootConstraint); //@zhouyang 2022/6/27 为了Maui中使用StyleId, 需要推迟GetId,将其移动到了OnAddedView中
 
             mLayout.Measurer = mMeasurer = new MeasurerAnonymousInnerClass(this);
 
@@ -129,6 +129,9 @@ namespace SharpConstraintLayout.Maui.Widget
 
         protected void OnAddedView(UIElement element)
         {
+            if(!mConstraintSet.Constraints.ContainsKey(this.GetId()))
+                mConstraintSet.Constraints.Add(this.GetId(), mConstraintSet.Constraints[ConstraintSet.ParentId]);
+
             if (element == null)
             {
                 return;
