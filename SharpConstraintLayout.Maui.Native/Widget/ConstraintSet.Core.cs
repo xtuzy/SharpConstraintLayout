@@ -185,7 +185,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <summary>
         /// Apply ConstraintSet to ConstraintLayout, when layout tree load Measure method next time, these constraint will be calculate and ConstraintLayout according it to layout.
         /// </summary>
-        public virtual void ApplyTo(ConstraintLayout constraintLayout, bool isForAnim = false, bool isImmediateTranform = true)
+        public virtual void ApplyTo(ConstraintLayout constraintLayout, bool isImmediateTranform = true, bool isForAnim = false)
         {
             int parentID = constraintLayout.GetId();
 
@@ -284,7 +284,7 @@ namespace SharpConstraintLayout.Maui.Widget
                         else
                         {
 #if __MAUI__
-                            if(constraint.propertySet.visibility != Gone)
+                            if (constraint.propertySet.visibility != Gone)
                             {
                                 view.IsVisible = true;//需要可见时才能测量到大小
                             }
@@ -313,8 +313,13 @@ namespace SharpConstraintLayout.Maui.Widget
             {
                 if (id == ConstraintSet.ParentId || id == constraintLayout.GetId())//还要处理下layout
                     mConstraints[id].ApplyTo(constraintLayout.mConstraintSet.Constraints[id].layout);
-                else
+#if __MAUI__
+                //@zhouyang 2022/06/28 Maui使用StyleId处理Id后,和Android的Id能力一样,
+                //TODO:可以将ConstraintSet作用到同名布局,这还需要添加未匹配的View的处理逻辑
+#else
+                else 
                     throw new NotImplementedException("如果还有约束身下而且是重要的,那么需要新建View插入原来的布局中,那么但是id怎么办,新建的有新的哈希,而约束是相对旧的哈希.");
+#endif
                 /*Constraint constraint = mConstraints[id];
                 if (constraint == null)
                 {
@@ -383,7 +388,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <exception cref="NotImplementedException"></exception>
         public virtual void ApplyToForAnim(ConstraintLayout constraintLayout)
         {
-            ApplyTo(constraintLayout, true, false);
+            ApplyTo(constraintLayout, false, true);
         }
 
         /// <summary>
