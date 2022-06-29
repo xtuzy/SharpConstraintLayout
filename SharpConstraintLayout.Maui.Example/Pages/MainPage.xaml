@@ -12,6 +12,7 @@
         </Grid.RowDefinitions>
         <ScrollView Grid.Row="0" Orientation="Horizontal">
             <HorizontalStackLayout>
+                <Label x:Name="fpsLabel" Text="FPS" WidthRequest="50" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" BackgroundColor="Brown"></Label>
                 <Button
                     x:Name="BaseAlign"
                     Clicked="BaseAlign_Clicked"

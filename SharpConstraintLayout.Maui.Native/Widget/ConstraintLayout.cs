@@ -118,7 +118,7 @@ namespace SharpConstraintLayout.Maui.Widget
             rootConstraint.layout.mHeight = ConstraintSet.MatchParent;
 
             mConstraintSet.Constraints.Add(ConstraintSet.ParentId, rootConstraint);
-            mConstraintSet.Constraints.Add(this.GetId(), rootConstraint);
+            //mConstraintSet.Constraints.Add(this.GetId(), rootConstraint); //@zhouyang 2022/6/27 为了Maui中使用StyleId, 需要推迟GetId,将其移动到了OnAddedView中
 
             mLayout.Measurer = mMeasurer = new MeasurerAnonymousInnerClass(this);
 
@@ -129,6 +129,9 @@ namespace SharpConstraintLayout.Maui.Widget
 
         protected void OnAddedView(UIElement element)
         {
+            if(!mConstraintSet.Constraints.ContainsKey(this.GetId()))
+                mConstraintSet.Constraints.Add(this.GetId(), mConstraintSet.Constraints[ConstraintSet.ParentId]);
+
             if (element == null)
             {
                 return;
@@ -346,7 +349,7 @@ namespace SharpConstraintLayout.Maui.Widget
         {
             get
             {
-                return this.mConstraintSet.GetConstraint(this.GetId()).layout.mHeight;
+                return this.mConstraintSet.GetConstraint(ConstraintSet.ParentId).layout.mHeight;
             }
             set
             {
@@ -358,7 +361,7 @@ namespace SharpConstraintLayout.Maui.Widget
                     this.SetSizeAndMargin(0, value, 0, 0, 0, 0, 0, 0, 0, 0);
 #endif
                 }
-                this.mConstraintSet.GetConstraint(this.GetId()).layout.mHeight = value;
+                this.mConstraintSet.GetConstraint(ConstraintSet.ParentId).layout.mHeight = value;
                 this.mConstraintSet.IsChanged = true;
             }
         }
@@ -372,7 +375,7 @@ namespace SharpConstraintLayout.Maui.Widget
         {
             get
             {
-                return this.mConstraintSet.GetConstraint(this.GetId()).layout.mWidth;
+                return this.mConstraintSet.GetConstraint(ConstraintSet.ParentId).layout.mWidth;
             }
             set
             {
@@ -385,7 +388,7 @@ namespace SharpConstraintLayout.Maui.Widget
 #endif
 
                 }
-                this.mConstraintSet.GetConstraint(this.GetId()).layout.mWidth = value;
+                this.mConstraintSet.GetConstraint(ConstraintSet.ParentId).layout.mWidth = value;
                 this.mConstraintSet.IsChanged = true;
             }
         }
@@ -409,8 +412,8 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <returns></returns>
         public (int horizontalSpec, int verticalSpec) MakeSpec(ConstraintLayout layout, Size availableSize)
         {
-            var constrainWidth = this.mConstraintSet.GetConstraint(this.GetId()).layout.mWidth;
-            var constrainHeight = this.mConstraintSet.GetConstraint(this.GetId()).layout.mHeight;
+            var constrainWidth = this.mConstraintSet.GetConstraint(ConstraintSet.ParentId).layout.mWidth;
+            var constrainHeight = this.mConstraintSet.GetConstraint(ConstraintSet.ParentId).layout.mHeight;
             int horizontalSpec = 0;
             int verticalSpec = 0;
             (bool isInfinityAvailabelWidth, bool isInfinityAvailabelHeight) = IsInfinitable(this, constrainWidth, constrainHeight, availableSize);
@@ -569,7 +572,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 }
 
                 //update widget of Container layout
-                var constraint = mConstraintSet.Constraints[this.GetId()];
+                var constraint = mConstraintSet.Constraints[ConstraintSet.ParentId];
                 applyConstraintsFromLayoutParams(false, this, MLayoutWidget, constraint, idsToConstraintWidgets);
 
                 mConstraintSet.IsChanged = false;

@@ -1,4 +1,5 @@
 ﻿using System;
+using static SharpConstraintLayout.Maui.Widget.FluentConstraintSet;
 using static SharpConstraintLayout.Maui.Widget.FluentConstraintSet.Element;
 
 #if __MAUI__
@@ -67,6 +68,24 @@ namespace SharpConstraintLayout.Maui.Widget
             Baseline = ConstraintSet.Baseline,
             Start = ConstraintSet.Start,
             End = ConstraintSet.End,
+        }
+
+        public enum ConstrainedEdge
+        {
+            /// <summary>
+            /// such as <see cref="Element.LeftToLeft(UIElement, int)"/> and <see cref="Element.LeftToRight(UIElement, int)"/>
+            /// </summary>
+            Left = ConstraintSet.Left,
+            Right = ConstraintSet.Right,
+            Top = ConstraintSet.Top,
+            Bottom = ConstraintSet.Bottom,
+            Baseline = ConstraintSet.Baseline,
+            Start = ConstraintSet.Start,
+            End = ConstraintSet.End,
+            Clrcle = ConstraintSet.CircleReference,
+            Center = 9,
+            CenterX = 10,
+            CenterY = 11,
         }
 
         /// <summary>
@@ -484,11 +503,11 @@ namespace SharpConstraintLayout.Maui.Widget
 
             /// <summary>
             /// Set views at centerView's Circle.
-            /// Notice:The angle is not same as <see cref="ConstraintSet.ConstrainCircle(int, int, int, float)"/>.
+            /// See <see cref="ConstraintSet.ConstrainCircle(int, int, int, float)"/>.
             /// </summary>
             /// <param name="centerView"></param>
             /// <param name="radius"></param>
-            /// <param name="angles">center of centerView is origin, the angle is positive value when rotate with a clockwise from x-axis. This is not same as ConstraintSet.ConstraintCirle</param>
+            /// <param name="angles">center of centerView is origin, the angle is positive value when rotate with a clockwise from y-axis. That means at top of centerView, angle is 0, at right of centerView angle is 90</param>
             /// <returns></returns>
             /// <exception cref="ArgumentException">radius' and angles' count must be equal to View's count</exception>
             public Element CircleTo(UIElement centerView, int[] radius, float[] angles)
@@ -1030,11 +1049,41 @@ namespace SharpConstraintLayout.Maui.Widget
                 return this;
             }
 
-            public Element Clear(Edge edge)
+            public Element Clear(ConstrainedEdge type)
             {
                 setReference.TryGetTarget(out var set);
                 foreach (var id in ids)
-                    set?.Clear(id, (int)edge);
+                {
+                    switch (type)
+                    {
+                        case ConstrainedEdge.Left:
+                        case ConstrainedEdge.Right:
+                        case ConstrainedEdge.Top:
+                        case ConstrainedEdge.Bottom:
+                        case ConstrainedEdge.Baseline:
+                        case ConstrainedEdge.Start:
+                        case ConstrainedEdge.End:
+                        case ConstrainedEdge.Clrcle:
+                            set?.Clear(id, (int)type);
+                            break;
+                        case ConstrainedEdge.Center:
+                            Clear(ConstrainedEdge.CenterX);
+                            Clear(ConstrainedEdge.CenterY);
+                            break;
+                        case ConstrainedEdge.CenterX:
+                            set?.Clear(id, (int)ConstrainedEdge.Left);
+                            set?.Clear(id, (int)ConstrainedEdge.Right);
+                            set?.Clear(id, (int)ConstrainedEdge.Start);
+                            set?.Clear(id, (int)ConstrainedEdge.End);
+                            break;
+                        case ConstrainedEdge.CenterY:
+                            set?.Clear(id, (int)ConstrainedEdge.Top);
+                            set?.Clear(id, (int)ConstrainedEdge.Bottom);
+                            break;
+                        default:
+                            break;
+                    }
+                }
                 return this;
             }
 

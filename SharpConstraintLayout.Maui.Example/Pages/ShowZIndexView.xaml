@@ -38,6 +38,5 @@
             RadiusY="5"
             ZIndex="4">
         </Rectangle>
-        <Label x:Name="fpsLabel" Text="FPS" BackgroundColor="Brown"></Label>
     </constraint:ConstraintLayout>
 </ContentView>

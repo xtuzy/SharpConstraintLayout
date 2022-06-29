@@ -109,18 +109,22 @@ namespace SharpConstraintLayout.Maui.Widget
                     {
                         X = widget.X,
                         Y = widget.Y,
-                        Width = widget.Width, 
-                        Height =  widget.Height,
+                        Width = widget.Width,
+                        Height = widget.Height,
                         TranlateX = constraint.transform.translationX,
                         TranlateY = constraint.transform.translationY,
                         //Scale = constraint.transform.scale., 
                         ScaleX = constraint.transform.scaleX,
                         ScaleY = constraint.transform.scaleY,
-                        Alpha = constraint.propertySet.alpha,
                         Rotation = constraint.transform.rotation,
                         RotationX = constraint.transform.rotationX,
                         RotationY = constraint.transform.rotationY
                     };
+                    //这里处理Visibility与Alpha的冲突. 不可见时Alpha都是0, 可见时使用正确的Alpha
+                    if (constraint.propertySet.visibility == ConstraintSet.Invisible || constraint.propertySet.visibility == ConstraintSet.Gone)
+                        info.Alpha = 0;
+                    else
+                        info.Alpha = constraint.propertySet.alpha;
                     dic.Add(item.Key, info);
                 }
             }
@@ -142,11 +146,15 @@ namespace SharpConstraintLayout.Maui.Widget
                         //Scale = constraint.transform.scale., 
                         ScaleX = constraint.transform.scaleX,
                         ScaleY = constraint.transform.scaleY,
-                        Alpha = constraint.propertySet.alpha,
                         Rotation = constraint.transform.rotation,
                         RotationX = constraint.transform.rotationX,
                         RotationY = constraint.transform.rotationY
                     };
+                    //这里处理Visibility与Alpha的冲突. 不可见时Alpha都是0, 可见时使用正确的Alpha
+                    if (constraint.propertySet.visibility == ConstraintSet.Invisible || constraint.propertySet.visibility == ConstraintSet.Gone)
+                        info.Alpha = 0;
+                    else
+                        info.Alpha = constraint.propertySet.alpha;
                     dic.Add(id, info);
                 }
             }

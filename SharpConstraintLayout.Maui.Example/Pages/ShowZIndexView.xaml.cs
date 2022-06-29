@@ -9,10 +9,6 @@ using static SharpConstraintLayout.Maui.Widget.FluentConstraintSet;
 
 public partial class ShowZIndexView : ContentView
 {
-
-#if WINDOWS || __ANDROID__ || __IOS__
-    BlogFrameRate.FrameRateCalculator fr;
-#endif
     public ShowZIndexView()
     {
         InitializeComponent();
@@ -21,7 +17,6 @@ public partial class ShowZIndexView : ContentView
         defaultSet.Select(guideline).GuidelineOrientation(Orientation.X).GuidelinePercent(0.7f)
             .Select(box).CenterYTo().Visibility(Visibility.Invisible)
             .Select(box1, rect1, rect2).Height(200).CenterXTo()
-            .Select(fpsLabel).CenterYTo().LeftToLeft(null,5)
            ;
         foreach (var view in layout.Children)
         {
@@ -38,19 +33,6 @@ public partial class ShowZIndexView : ContentView
         //rect2.GestureRecognizers.Add(leftSwipeGesture);
 
         MauiGestures.Gesture.SetPanPointCommand(layout, PanPointCommand);
-
-
-#if WINDOWS || __ANDROID__ || __IOS__
-        if (fr == null)
-        {
-            fr = new BlogFrameRate.FrameRateCalculator();
-            fr.FrameRateUpdated += (value) =>
-            {
-                this.Dispatcher.Dispatch(() => fpsLabel.Text = value.Frames.ToString());
-            };
-            fr.Start();
-        }
-#endif
     }
 
     public ICommand PanPointCommand => new Command<PanEventArgs>(args =>
@@ -120,7 +102,7 @@ public partial class ShowZIndexView : ContentView
                     var startMargin = startStateSet.GetMargin(firstView.GetId(), ConstraintSet.Bottom);
                     topStateSet.Select(firstView)
                         .BottomToTop(guideline, startMargin + offsetOfTop)
-                        .Rotation(firstView.Rotation >0? 360:-360);
+                        .Rotation(firstView.Rotation > 0 ? 360 : -360);
                     //移动下面的View大小和位置
                     List<View> goUpViews = new List<View>();
                     foreach (var view in layout.Children)
@@ -136,7 +118,7 @@ public partial class ShowZIndexView : ContentView
                         }
                     }
 
-                    var goUpAnim = layout.CreateAnimation(startStateSet, topStateSet, Easing.Linear);
+                    var goUpAnim = layout.CreateAnimation(startStateSet, topStateSet, default, Easing.Linear);
 
                     //other view go up one ZIndex
                     View newFirstView = null;
@@ -160,7 +142,7 @@ public partial class ShowZIndexView : ContentView
                     finishStateSet.Clone(topStateSet);
                     finishStateSet.Select(firstView).Clear().CenterXTo().Width(200 - 10 * (4 - 2)).Height(200).BottomToTop(guideline, 10 * (4 - 2)).Rotation(firstView.Rotation > 0 ? 720 : -720);
 
-                    var goDownAnim = layout.CreateAnimation(topStateSet, finishStateSet, Easing.Linear, new List<View> { firstView });
+                    var goDownAnim = layout.CreateAnimation(topStateSet, finishStateSet, new List<View> { firstView }, Easing.Linear);
                     var allAnim = new Animation()
                     {
                         {0,0.5, goUpAnim},
@@ -210,7 +192,7 @@ public partial class ShowZIndexView : ContentView
         set.Clone(layout);
         set.Select(firstView).Clear().Width(200).Height(200).RightToLeft(secondView).BottomToTop(guideline, 10 * (4 - firstView.ZIndex))//.Rotation(-60)
            ;
-        var firstViewGoLeftAnim = layout.CreateAnimation(set, Easing.SpringIn, new List<View> { firstView });
+        var firstViewGoLeftAnim = layout.CreateAnimation(set, new List<View> { firstView }, Easing.SpringIn);
 
         View newFirstView = null;
         //other view go up one ZIndex
@@ -246,13 +228,13 @@ public partial class ShowZIndexView : ContentView
                 }
             }
         }
-        var otherViewGoUpAnim = layout.CreateAnimation(otherViewGoUpFinishStateSet, Easing.SpringOut, goUpViews);
+        var otherViewGoUpAnim = layout.CreateAnimation(otherViewGoUpFinishStateSet, goUpViews, Easing.SpringOut);
         var finishStateSet = new FluentConstraintSet();
         finishStateSet.Clone(layout);
         finishStateSet.Select(firstView).Clear().CenterXTo().Width(200 - 10 * (4 - 2)).Height(200).BottomToTop(guideline, 10 * (4 - 2)); ;
         finishStateSet.Clone(otherViewGoUpFinishStateSet, goUpViews.ToArray());
 
-        var finishAnim = layout.CreateAnimation(finishStateSet, Easing.SpringOut, new List<View> { firstView });
+        var finishAnim = layout.CreateAnimation(finishStateSet, new List<View> { firstView }, Easing.SpringOut);
         var allAnim = new Animation()
         {
             {0,0.5,firstViewGoLeftAnim },

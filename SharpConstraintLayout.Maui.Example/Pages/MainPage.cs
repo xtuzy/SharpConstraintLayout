@@ -95,15 +95,22 @@ namespace SharpConstraintLayout.Maui.Example
         void CircleConstraintTest(ConstraintLayout page)
         {
             (Button FirstButton, Button SecondButton, ContentView ThirdCanvas, Label FouthTextBlock, Entry FifthTextBox, Editor SixthRichTextBlock) = CreateControls();
-
+            FirstButton.Text = "0°";
+            SecondButton.Text = "60°";
+            FouthTextBlock.Text = "180°";
+            FifthTextBox.Text = "240°";
+            SixthRichTextBlock.Text = "300°";
+            var centerButton = new Button() { Text = "Center" };
             var layout = page;
-            layout.AddElement(FirstButton, SecondButton, FouthTextBlock);
+            layout.AddElement(centerButton,FirstButton, SecondButton,ThirdCanvas, FouthTextBlock,FifthTextBox,SixthRichTextBlock);
             using (var layoutSet = new FluentConstraintSet())
             {
                 layoutSet.Clone(layout);
-                layoutSet.Select(FirstButton).CenterTo()
-                    .Select(SecondButton, FouthTextBlock)
-                .CircleTo(FirstButton, new[] { 100, 100 }, new[] { 60f, 240 });
+                layoutSet.Select(centerButton).CenterTo()
+                    .Select(FirstButton,SecondButton, ThirdCanvas, FouthTextBlock, FifthTextBox, SixthRichTextBlock)
+                .CircleTo(centerButton, new[] { 100, 120,140,160,180,200 }, new[] { 0f,60, 120,180,240,300})
+                .Select(ThirdCanvas).Width(30).Height(30)
+                ;
                 layoutSet.ApplyTo(layout);
             }
 
@@ -116,9 +123,9 @@ namespace SharpConstraintLayout.Maui.Example
                     UIThread.Invoke(() =>
                     {
                         //The distance between SecondButton center and FirstButton center should equal to 50
-                        SimpleTest.AreEqual(Math.Abs(SecondButton.GetBounds().Center.Y - FirstButton.GetBounds().Center.Y) * 2, 100, nameof(CircleConstraintTest), "The distence between SecondButton center and FirstButton center should equal to 100");
+                        SimpleTest.AreEqual(Math.Abs(SecondButton.GetBounds().Center.Y - centerButton.GetBounds().Center.Y) * 2, 100, nameof(CircleConstraintTest));
                         //The distance between FouthTextBlock center and FirstButton center should equal to 50
-                        SimpleTest.AreEqual(Math.Abs(FouthTextBlock.GetBounds().Center.Y - FirstButton.GetBounds().Center.Y) * 2, 100, nameof(CircleConstraintTest), "The distence between FouthTextBlock center and FirstButton center should equal to 100");
+                        SimpleTest.AreEqual(Math.Abs(FouthTextBlock.GetBounds().Center.Y - centerButton.GetBounds().Center.Y) * 2, 180, nameof(CircleConstraintTest));
                     }, page);
 
                     index++;
