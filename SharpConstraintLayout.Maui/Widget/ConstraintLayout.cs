@@ -581,10 +581,10 @@ namespace SharpConstraintLayout.Maui.Widget
             if (MEASURE_MEASURELAYOUT)
             {
                 updateHierarchySW.Stop();
-                Logger.LogInformation($"{this} updateHierarchy time: {updateHierarchySW.Elapsed.TotalMilliseconds.ToString("0.000")} ms");
+                Logger?.LogInformation($"{this} updateHierarchy time: {updateHierarchySW.Elapsed.TotalMilliseconds.ToString("0.000")} ms");
             }
 
-            if (DEBUG) Logger.LogDebug($"{nameof(MeasureLayout)} {this.GetType().FullName} {availableSize} Spec=({AndroidMeasureSpec.ToString(horizontalSpec)} x {AndroidMeasureSpec.ToString(verticalSpec)})");
+            if (DEBUG) Logger?.LogDebug($"{nameof(MeasureLayout)} {this.GetType().FullName} {availableSize} Spec=({AndroidMeasureSpec.ToString(horizontalSpec)} x {AndroidMeasureSpec.ToString(verticalSpec)})");
 
             MLayoutWidget.Rtl = isRtl();
 
@@ -601,7 +601,7 @@ namespace SharpConstraintLayout.Maui.Widget
             if (MEASURE_MEASURELAYOUT)
             {
                 resolveSystemSW.Stop();
-                Logger.LogInformation($"{this} resolveSystem time: {resolveSystemSW.Elapsed.TotalMilliseconds.ToString("0.000")} ms");
+                Logger?.LogInformation($"{this} resolveSystem time: {resolveSystemSW.Elapsed.TotalMilliseconds.ToString("0.000")} ms");
             }
 
             resolveMeasuredDimension(horizontalSpec, verticalSpec, MLayoutWidget.Width, MLayoutWidget.Height,
@@ -820,7 +820,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 if (component != null)
                 {
                     LayoutChild(component, child.X, child.Y, child.Width, child.Height);
-                    if (DEBUG && ChildCount < 10) Logger.LogDebug($"{nameof(ArrangeLayout)} {component.GetViewLayoutInfo()} Widget={new Rect(child.X, child.Y, child.Width, child.Height)}");
+                    if (DEBUG && ChildCount < 10) Logger?.LogDebug($"{nameof(ArrangeLayout)} {component.GetViewLayoutInfo()} Widget={new Rect(child.X, child.Y, child.Width, child.Height)}");
                 }
 
                 if (component is Placeholder)
@@ -879,7 +879,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 if (MEASUREEVERYWIDGET)
                 {
                     sw.Stop();
-                    outerInstance.Logger.LogInformation($"{widget.CompanionWidget} widget measure time: {sw.Elapsed.TotalMilliseconds.ToString("0.000")} ms");
+                    outerInstance.Logger?.LogInformation($"{widget.CompanionWidget} widget measure time: {sw.Elapsed.TotalMilliseconds.ToString("0.000")} ms");
                 }
             }
 
@@ -962,7 +962,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 if (MEASUREEVERYCHILD)
                 {
                     sw.Stop();
-                    outerInstance.Logger.LogInformation($"{widget.CompanionWidget} measure time: {sw.Elapsed.TotalMilliseconds.ToString("0.000")} ms");
+                    outerInstance.Logger?.LogInformation($"{widget.CompanionWidget} measure time: {sw.Elapsed.TotalMilliseconds.ToString("0.000")} ms");
                 }
 
                 switch (horizontalBehavior)
@@ -1123,9 +1123,9 @@ namespace SharpConstraintLayout.Maui.Widget
                     if (child is VirtualLayout && widget is androidx.constraintlayout.core.widgets.VirtualLayout)
                     {
                         androidx.constraintlayout.core.widgets.VirtualLayout layout = (androidx.constraintlayout.core.widgets.VirtualLayout)widget;
-                        if (DEBUG) outerInstance.Logger.LogDebug($"{child.GetType().FullName} before onMeasure: widget={widget},spec=({MeasureSpec.GetSize(horizontalSpec)} x {MeasureSpec.GetSize(verticalSpec)})");
+                        if (DEBUG) outerInstance.Logger?.LogDebug($"{child.GetType().FullName} before onMeasure: widget={widget},spec=({MeasureSpec.GetSize(horizontalSpec)} x {MeasureSpec.GetSize(verticalSpec)})");
                         ((VirtualLayout)child).onMeasure(layout, horizontalSpec, verticalSpec);
-                        if (DEBUG) outerInstance.Logger.LogDebug($"{child.GetType().FullName}  after onMeasure: widget={widget},control={child.GetViewLayoutInfo()}");
+                        if (DEBUG) outerInstance.Logger?.LogDebug($"{child.GetType().FullName}  after onMeasure: widget={widget},control={child.GetViewLayoutInfo()}");
 #if __MAUI__
                         //(w, h) = ((int)child.WidthRequest, (int)child.HeightRequest);
                         var size = (child as VirtualLayout).MeasuredSize;
@@ -1140,13 +1140,13 @@ namespace SharpConstraintLayout.Maui.Widget
                     }
                     else
                     {
-                        if (DEBUG) outerInstance.Logger.LogDebug($"{child.GetType().FullName}  before onMeasure: widget={widget},control={child.GetWrapContentSize()},spec=({AndroidMeasureSpec.GetSize(horizontalSpec)} x {AndroidMeasureSpec.GetSize(verticalSpec)})");
+                        if (DEBUG) outerInstance.Logger?.LogDebug($"{child.GetType().FullName}  before onMeasure: widget={widget},control={child.GetWrapContentSize()},spec=({AndroidMeasureSpec.GetSize(horizontalSpec)} x {AndroidMeasureSpec.GetSize(verticalSpec)})");
 #if __IOS__ && !__MAUI__
                         (w, h) = (UIElementExtension.GetDefaultSize(childCurrentPlatformMeasuredSize.Width, horizontalSpec), UIElementExtension.GetDefaultSize(childCurrentPlatformMeasuredSize.Height, verticalSpec));//iOS没有Measure函数,只需要使用当前的测量值即可
 #else
                         (w, h) = child.MeasureSelf(horizontalSpec, verticalSpec);
 #endif
-                        if (DEBUG) outerInstance.Logger.LogDebug($"{child.GetType().FullName}  after onMeasure: widget={widget},control={child.GetWrapContentSize()},measured=({w} x {h})");
+                        if (DEBUG) outerInstance.Logger?.LogDebug($"{child.GetType().FullName}  after onMeasure: widget={widget},control={child.GetWrapContentSize()},measured=({w} x {h})");
                     }
                     widget.setLastMeasureSpec(horizontalSpec, verticalSpec);
 
@@ -1162,7 +1162,7 @@ namespace SharpConstraintLayout.Maui.Widget
                     if (DEBUG)
                     {
                         string measurement = $"spec ({AndroidMeasureSpec.ToString(horizontalSpec)} x {AndroidMeasureSpec.ToString(verticalSpec)}) => ({width} {height})";
-                        outerInstance.Logger.LogDebug($"{child.GetType().FullName} platform measure result: {measurement}");
+                        outerInstance.Logger?.LogDebug($"{child.GetType().FullName} platform measure result: {measurement}");
                     }
 
                     if (widget.mMatchConstraintMinWidth > 0)
@@ -1219,7 +1219,7 @@ namespace SharpConstraintLayout.Maui.Widget
                         if (DEBUG)
                         {
                             string measurement2 = AndroidMeasureSpec.ToString(horizontalSpec) + " x " + AndroidMeasureSpec.ToString(verticalSpec) + " => " + width + " x " + height;
-                            outerInstance.Logger.LogDebug("measure (b) " + widget.DebugName + " : " + measurement2);
+                            outerInstance.Logger?.LogDebug("measure (b) " + widget.DebugName + " : " + measurement2);
                         }
                     }
 #endif
