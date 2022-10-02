@@ -7,10 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpConstraintLayout.Core"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpConstraintLayoutTests", "SharpConstraintLayoutTests\SharpConstraintLayoutTests.csproj", "{198A30AE-DB7E-410F-BEC7-58666F09C36E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpConstraintLayout.Maui.Native", "SharpConstraintLayout.Maui.Native\SharpConstraintLayout.Maui.Native.csproj", "{15CC422F-38F2-4DF8-8DA6-A04FD0D348B2}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpConstraintLayout.Maui.Native.Example", "SharpConstraintLayout.Maui.Native.Example\SharpConstraintLayout.Maui.Native.Example.csproj", "{4FA26200-D3B3-4E8C-8832-54D50CEBAEEA}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpConstraintLayout.Core.Benchmark", "SharpConstraintLayout.Core.Benchmark\SharpConstraintLayout.Core.Benchmark.csproj", "{C3B8ED1C-2CD7-49BB-B2D1-EE0978F54243}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpConstraintLayout.Core.Console", "SharpConstraintLayout.Core.Console\SharpConstraintLayout.Core.Console.csproj", "{D3ADEB5B-971E-4283-BD84-B7B799D9B5B1}"
@@ -33,16 +29,6 @@ Global
 		{198A30AE-DB7E-410F-BEC7-58666F09C36E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{198A30AE-DB7E-410F-BEC7-58666F09C36E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{198A30AE-DB7E-410F-BEC7-58666F09C36E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{15CC422F-38F2-4DF8-8DA6-A04FD0D348B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{15CC422F-38F2-4DF8-8DA6-A04FD0D348B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{15CC422F-38F2-4DF8-8DA6-A04FD0D348B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{15CC422F-38F2-4DF8-8DA6-A04FD0D348B2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4FA26200-D3B3-4E8C-8832-54D50CEBAEEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4FA26200-D3B3-4E8C-8832-54D50CEBAEEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4FA26200-D3B3-4E8C-8832-54D50CEBAEEA}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{4FA26200-D3B3-4E8C-8832-54D50CEBAEEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4FA26200-D3B3-4E8C-8832-54D50CEBAEEA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4FA26200-D3B3-4E8C-8832-54D50CEBAEEA}.Release|Any CPU.Deploy.0 = Release|Any CPU
 		{C3B8ED1C-2CD7-49BB-B2D1-EE0978F54243}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C3B8ED1C-2CD7-49BB-B2D1-EE0978F54243}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C3B8ED1C-2CD7-49BB-B2D1-EE0978F54243}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
