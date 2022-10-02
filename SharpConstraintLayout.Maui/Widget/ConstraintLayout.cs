@@ -341,8 +341,8 @@ namespace SharpConstraintLayout.Maui.Widget
         }
 
         /// <summary>
-        /// 该属性约束自身的高度,其值可以是固定数值,或者<see cref="ConstraintSet.WrapContent"/>,<see cref="ConstraintSet.MatchConstraint"/>,<see cref="ConstraintSet.MatchParent"/>,
-        /// 当依赖Parent给与的高度时,使用<see cref="ConstraintSet.MatchParent"/>,其为默认;当依赖自身Child的大小时,使用其它.
+        /// 该属性约束自身的高度,其值可以是固定数值,或者<see cref="SizeBehavier.WrapContent"/>,<see cref="SizeBehavier.MatchConstraint"/>,<see cref="ConstraintSet.MatchParent"/>,
+        /// 当依赖Parent给与的高度时,使用<see cref="SizeBehavier.MatchParent"/>,其为默认;当依赖自身Child的大小时,使用其它.
         /// (因为父布局的行为不能确定,因此可能会与父布局产生冲突,请多加尝试)
         /// </summary>
         public int ConstrainHeight
@@ -367,8 +367,8 @@ namespace SharpConstraintLayout.Maui.Widget
         }
 
         /// <summary>
-        /// 该属性约束自身的宽度,其值可以是固定数值,或者<see cref="ConstraintSet.WrapContent"/>,<see cref="ConstraintSet.MatchConstraint"/>,<see cref="ConstraintSet.MatchParent"/>,
-        /// 当依赖Parent给与的宽度时,使用<see cref="ConstraintSet.MatchParent"/>,其为默认;当依赖自身Child的大小时,使用其它.
+        /// 该属性约束自身的宽度,其值可以是固定数值,或者<see cref="SizeBehavier.WrapContent"/>,<see cref="SizeBehavier.MatchConstraint"/>,<see cref="ConstraintSet.MatchParent"/>,
+        /// 当依赖Parent给与的宽度时,使用<see cref="SizeBehavier.MatchParent"/>,其为默认;当依赖自身Child的大小时,使用其它.
         /// (因为父布局的行为不能确定,因此可能会与父布局产生冲突,请多加尝试)
         /// </summary>
         public int ConstrainWidth

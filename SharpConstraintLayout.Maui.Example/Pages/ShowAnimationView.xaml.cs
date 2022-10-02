@@ -135,8 +135,8 @@ namespace SharpConstraintLayout.Maui.Example.Pages
                 buttonFinishState.Select(backgroundView).Clear().TopToTop().LeftToLeft().Height(50).MinHeight(20).Width(SizeBehavier.MatchParent)
                     .Select(button2).Clear().BottomToBottom(null, 20).RightToRight(null, 20)
                     .Select(button3).Clear().CenterYTo(button2).RightToLeft(button2, 50).Rotation(-90).Scale(2).Alpha(0.3f)
-                    .Select(button4).Visibility(FluentConstraintSet.Visibility.Invisible)
-                    .Select(button5).Visibility(FluentConstraintSet.Visibility.Gone);
+                    .Select(button4).Visibility(Widget.Visibility.Invisible)
+                    .Select(button5).Visibility(Widget.Visibility.Gone);
 
                 var button1Anim = layout.CreateAnimation(beginState, button1FinishState, default, Easing.Linear);
 
@@ -172,8 +172,8 @@ namespace SharpConstraintLayout.Maui.Example.Pages
                     .Select(backgroundView).Clear().TopToTop().EdgesXTo().Width(SizeBehavier.MatchConstraint).PercentHeight(0.5f).Height(SizeBehavier.MatchConstraint)
                     .Select(button2).Clear().BottomToBottom(backgroundView, 20).RightToRight(backgroundView, 20)
                     .Select(button3).Clear().BottomToTop(button2, 20).CenterXTo(button2).Rotation(0)
-                    .Select(button4).Visibility(FluentConstraintSet.Visibility.Visible)
-                    .Select(button5).Visibility(FluentConstraintSet.Visibility.Visible)
+                    .Select(button4).Visibility(Widget.Visibility.Visible)
+                    .Select(button5).Visibility(Widget.Visibility.Visible)
                     ;
                 var restoreAnim = layout.CreateAnimation(button123FinishState, new List<View>() { button1, backgroundView, button2, button3, button6 }, Easing.Linear);
                 var visibility4Anim = CreateVisibilityAnimation(layout, button4, startState, button123FinishState, Easing.Linear);

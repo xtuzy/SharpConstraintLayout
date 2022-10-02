@@ -378,7 +378,7 @@ namespace SharpConstraintLayout.Maui.Example
             {
                 if (index == 1)
                 {
-                    layoutSet.Select(SecondButton).Visibility(FluentConstraintSet.Visibility.Visible);
+                    layoutSet.Select(SecondButton).Visibility(Widget.Visibility.Visible);
                     index++;
                     Task.Run(async () =>
                     {
@@ -391,7 +391,7 @@ namespace SharpConstraintLayout.Maui.Example
                 }
                 else if (index == 2)
                 {
-                    layoutSet.Select(SecondButton).Visibility(FluentConstraintSet.Visibility.Invisible);
+                    layoutSet.Select(SecondButton).Visibility(Widget.Visibility.Invisible);
                     index++;
                     Task.Run(async () =>
                     {
@@ -404,7 +404,7 @@ namespace SharpConstraintLayout.Maui.Example
                 }
                 else if (index == 3)
                 {
-                    layoutSet.Select(SecondButton).Visibility(FluentConstraintSet.Visibility.Gone);
+                    layoutSet.Select(SecondButton).Visibility(Widget.Visibility.Gone);
                     index = 1;
                     Task.Run(async () =>
                     {
@@ -470,7 +470,7 @@ namespace SharpConstraintLayout.Maui.Example
 
             var pageSet = new FluentConstraintSet();
             pageSet.Clone(page);
-            pageSet.Select(guide).GuidelineOrientation(FluentConstraintSet.Orientation.Y).GuidelinePercent(0.5f)
+            pageSet.Select(guide).GuidelineOrientation(Orientation.Y).GuidelinePercent(0.5f)
             .Select(layout).LeftToRight(guide).RightToRight(page).TopToTop(page).BottomToBottom(page)
             .Width(SizeBehavier.MatchConstraint)
             .Height(SizeBehavier.MatchConstraint);
