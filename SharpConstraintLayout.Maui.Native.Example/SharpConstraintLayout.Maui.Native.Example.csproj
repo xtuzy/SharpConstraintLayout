@@ -123,7 +123,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MauiWrapPanel\MauiWrapPanel.csproj" />
     <ProjectReference Include="..\SharpConstraintLayout.Maui.Native\SharpConstraintLayout.Maui.Native.csproj" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net6.0-android'">
