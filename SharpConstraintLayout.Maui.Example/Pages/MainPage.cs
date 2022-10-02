@@ -1,5 +1,4 @@
-﻿using SharpConstraintLayout.Maui.Native.Example.Tool;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,9 +7,9 @@ using SharpConstraintLayout.Maui.Example.Tool;
 using SharpConstraintLayout.Maui.Widget;
 using static SharpConstraintLayout.Maui.Widget.FluentConstraintSet;
 using SharpConstraintLayout.Maui.Helper.Widget;
-using SharpConstraintLayout.Maui.DebugTool;
 using SharpConstraintLayout.Maui.Example.Models;
 using SharpConstraintLayout.Maui.Example.ViewModels;
+using SharpConstraintLayout.Maui.Native.Example.Tool;
 
 namespace SharpConstraintLayout.Maui.Example
 {
@@ -482,7 +481,7 @@ namespace SharpConstraintLayout.Maui.Example
                 await Task.Delay(3000);//wait ui show
                 UIThread.Invoke(() =>
                 {
-                    SimpleDebug.WriteLine($"{page} position={page.GetBounds()}");
+                    System.Diagnostics.Trace.WriteLine($"{page} position={page.GetBounds()}");
                     SimpleTest.AreEqual(page.GetSize().Width / 2, layout.GetBounds().X, nameof(GuidelineTest), "Horiable guideline should at center");
                 }, page);
             });

@@ -1,5 +1,4 @@
 ﻿using ReloadPreview;
-using SharpConstraintLayout.Maui.DebugTool;
 
 namespace SharpConstraintLayout.Maui.Example;
 
@@ -40,13 +39,13 @@ public partial class App : Application
                 {
                     var view = HotReload.Instance.ReloadClass<AppShell>() as Page;
                     MainPage = view;
-                    SimpleDebug.WriteLine($"HotReload:{view} " + view.GetHashCode());
+                     System.Diagnostics.Trace.WriteLine($"HotReload:{view} " + view.GetHashCode());
                 });
 
             }
             catch (Exception ex)
             {
-                SimpleDebug.WriteLine(ex.ToString());
+                 System.Diagnostics.Trace.WriteLine(ex.ToString());
             }
 
         };

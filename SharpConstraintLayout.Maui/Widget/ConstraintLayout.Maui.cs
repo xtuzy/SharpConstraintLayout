@@ -1,12 +1,20 @@
 ﻿#if __MAUI__
+using Microsoft.Extensions.Logging;
 using Microsoft.Maui.Layouts;
 using UIElement = Microsoft.Maui.Controls.View;
 namespace SharpConstraintLayout.Maui.Widget
 {
     public partial class ConstraintLayout : IMauiConstraintLayout
     {
+        ILogger Logger { get; set; }
         public ConstraintLayout()
         {
+            init();
+        }
+        
+        public ConstraintLayout(ILogger logger)
+        {
+            Logger = logger;
             init();
         }
 

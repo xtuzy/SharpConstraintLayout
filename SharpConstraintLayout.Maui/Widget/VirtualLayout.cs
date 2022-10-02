@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 #if __MAUI__
+using Microsoft.Extensions.Logging;
 using SharpConstraintLayout.Maui.Widget.Interface;
 using FrameworkElement = Microsoft.Maui.Controls.View;
 using UIElement = Microsoft.Maui.Controls.View;
@@ -44,6 +45,7 @@ namespace SharpConstraintLayout.Maui.Widget
     /// </summary>
     public abstract class VirtualLayout : ConstraintHelper, IVirtualLayout
     {
+        protected ILogger Logger {  get; set; }
         private bool mApplyVisibilityOnAttach;
         private bool mApplyElevationOnAttach;
 
@@ -77,7 +79,7 @@ namespace SharpConstraintLayout.Maui.Widget
             if (mApplyVisibilityOnAttach || mApplyElevationOnAttach)
             {
                 var parent = this.GetParent();
-                if (parent == null) Debug.WriteLine(this.GetType().Name, "Parent is null, maybe something is false.");
+                if (parent == null) Logger?.LogInformation(this.GetType().Name, "Parent is null, maybe something is false.");
 
                 if (parent is ConstraintLayout)
                 {

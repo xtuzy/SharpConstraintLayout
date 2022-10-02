@@ -132,32 +132,32 @@ namespace SharpConstraintLayout.Maui.Widget
                     }
                 }
 
-                internal virtual void PrintDelta(string tag)
-                {
-                    Debug.WriteLine(tag, "int");
+                //internal virtual void PrintDelta(string tag)
+                //{
+                //    Debug.WriteLine(tag, "int");
 
-                    for (int i = 0; i < mCountInt; i++)
-                    {
-                        Debug.WriteLine(tag, mTypeInt[i] + " = " + mValueInt[i]);
-                    }
-                    Debug.WriteLine(tag, "float");
+                //    for (int i = 0; i < mCountInt; i++)
+                //    {
+                //        Debug.WriteLine(tag, mTypeInt[i] + " = " + mValueInt[i]);
+                //    }
+                //    Debug.WriteLine(tag, "float");
 
-                    for (int i = 0; i < mCountFloat; i++)
-                    {
-                        Debug.WriteLine(tag, mTypeFloat[i] + " = " + mValueFloat[i]);
-                    }
-                    Debug.WriteLine(tag, "strings");
+                //    for (int i = 0; i < mCountFloat; i++)
+                //    {
+                //        Debug.WriteLine(tag, mTypeFloat[i] + " = " + mValueFloat[i]);
+                //    }
+                //    Debug.WriteLine(tag, "strings");
 
-                    for (int i = 0; i < mCountString; i++)
-                    {
-                        Debug.WriteLine(tag, mTypeString[i] + " = " + mValueString[i]);
-                    }
-                    Debug.WriteLine(tag, "boolean");
-                    for (int i = 0; i < mCountBoolean; i++)
-                    {
-                        Debug.WriteLine(tag, mTypeBoolean[i] + " = " + mValueBoolean[i]);
-                    }
-                }
+                //    for (int i = 0; i < mCountString; i++)
+                //    {
+                //        Debug.WriteLine(tag, mTypeString[i] + " = " + mValueString[i]);
+                //    }
+                //    Debug.WriteLine(tag, "boolean");
+                //    for (int i = 0; i < mCountBoolean; i++)
+                //    {
+                //        Debug.WriteLine(tag, mTypeBoolean[i] + " = " + mValueBoolean[i]);
+                //    }
+                //}
             }
 
             public virtual void ApplyDelta(Constraint c)
@@ -168,18 +168,18 @@ namespace SharpConstraintLayout.Maui.Widget
                 }
             }
 
-            public virtual void PrintDelta(string tag)
-            {
-                if (mDelta != null)
-                {
-                    mDelta.PrintDelta(tag);
-                }
-                else
-                {
-                    //Debug.WriteLine(tag, "DELTA IS NULL");
-                    Debug.WriteLine(tag, "DELTA IS NULL");
-                }
-            }
+            //public virtual void PrintDelta(string tag)
+            //{
+            //    if (mDelta != null)
+            //    {
+            //        mDelta.PrintDelta(tag);
+            //    }
+            //    else
+            //    {
+            //        Debug.WriteLine(tag, "DELTA IS NULL");
+            //        Debug.WriteLine(tag, "DELTA IS NULL");
+            //    }
+            //}
 
             public virtual Constraint Clone()
             {

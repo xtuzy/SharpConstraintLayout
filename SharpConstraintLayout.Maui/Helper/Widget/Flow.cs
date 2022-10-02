@@ -23,6 +23,7 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
     using HelperWidget = androidx.constraintlayout.core.widgets.HelperWidget;
     using AndroidMeasureSpec = SharpConstraintLayout.Maui.Widget.MeasureSpec;
     using SharpConstraintLayout.Maui.Helper.Widget.Interface;
+    using Microsoft.Extensions.Logging;
 
     /// <summary>
     /// Flow VirtualLayout. <b>Added in 2.0</b>
@@ -182,7 +183,7 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
 
             if (layout != null)
             {
-                if (ConstraintLayout.DEBUG) Debug.WriteLine(TAG, $"widthMode {widthMode}, widthSize {widthSize}, heightMode {heightMode}, heightSize {heightSize}");
+                if (ConstraintLayout.DEBUG) Logger?.LogInformation(TAG, $"widthMode {widthMode}, widthSize {widthSize}, heightMode {heightMode}, heightSize {heightSize}");
                 layout.measure(widthMode, widthSize, heightMode, heightSize);
 #if __MAUI__
                 //this.WidthRequest = layout.Width;

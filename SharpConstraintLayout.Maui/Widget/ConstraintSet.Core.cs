@@ -15,6 +15,7 @@
 */
 
 using androidx.constraintlayout.core.widgets;
+using Microsoft.Extensions.Logging;
 using SharpConstraintLayout.Maui.Widget.Interface;
 using System;
 using System.Collections.Generic;
@@ -36,6 +37,16 @@ namespace SharpConstraintLayout.Maui.Widget
 {
     public partial class ConstraintSet : IConstraintSet
     {
+        ILogger Logger { get; set; }
+        public ConstraintSet()
+        {
+
+        }
+        public ConstraintSet(ILogger logger)
+        {
+            Logger = logger;
+        }
+
         public virtual Constraint GetParameters(int mId)
         {
             return get(mId);
@@ -191,7 +202,7 @@ namespace SharpConstraintLayout.Maui.Widget
 
             int count = constraintLayout.ChildCount;
             List<int> used = mConstraints.Keys.ToList();//已经设置了约束的id
-            if (count != used.Count) Debug.WriteLine("The count of ConstraintLayout children is not equal to temprary constraints list, maybe you not use clone.", TAG);
+            if (count != used.Count) Logger.LogInformation("The count of ConstraintLayout children is not equal to temprary constraints list, maybe you not use clone.", TAG);
             for (int i = 0; i < count; i++)//查看layout的child
             {
                 View view = constraintLayout.GetChildAt(i);
@@ -199,7 +210,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 int id = view.GetId();
                 if (!mConstraints.ContainsKey(id))
                 {
-                    Debug.WriteLine($"id unknown {view}", TAG);
+                    Logger.LogError($"id unknown {view}", TAG);
                     continue;
                 }
 
@@ -305,7 +316,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 }
                 else
                 {
-                    Debug.WriteLine(TAG, "WARNING NO CONSTRAINTS for view " + id);
+                    Logger.LogWarning(TAG, "WARNING NO CONSTRAINTS for view " + id);
                 }
             }
 
@@ -2175,7 +2186,7 @@ namespace SharpConstraintLayout.Maui.Widget
                     break;
 
                 default:
-                    Debug.WriteLine(TAG, "Unknown attribute 0x");
+                    System.Diagnostics.Trace.WriteLine(TAG, "Unknown attribute 0x");
                     break;
             }
         }
@@ -2368,7 +2379,7 @@ namespace SharpConstraintLayout.Maui.Widget
                     break;
 
                 default:
-                    Debug.WriteLine(TAG, "Unknown attribute 0x");
+                    System.Diagnostics.Trace.WriteLine(TAG, "Unknown attribute 0x");
                     break;
             }
         }
@@ -2403,7 +2414,7 @@ namespace SharpConstraintLayout.Maui.Widget
                     break;
 
                 default:
-                    Debug.WriteLine(TAG, "Unknown attribute 0x");
+                    System.Diagnostics.Trace.WriteLine(TAG, "Unknown attribute 0x");
                     break;
             }
         }
@@ -2432,7 +2443,7 @@ namespace SharpConstraintLayout.Maui.Widget
                     break;
 
                 default:
-                    Debug.WriteLine(TAG, "Unknown attribute 0x");
+                    System.Diagnostics.Trace.WriteLine(TAG, "Unknown attribute 0x");
                     break;
             }
         }
