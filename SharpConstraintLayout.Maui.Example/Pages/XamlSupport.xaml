@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView
+    x:Class="SharpConstraintLayout.Maui.Example.Pages.XamlSupport"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:constrain="clr-namespace:SharpConstraintLayout.Maui.Widget;assembly=SharpConstraintLayout.Maui">
+    <constrain:ConstraintLayout
+        x:Name="layout"
+        BackgroundColor="AliceBlue"
+        ConstrainHeight="{x:Static constrain:ConstraintSet.WrapContent}"
+        SizeChanged="layout_SizeChanged">
+        <Label
+            x:Name="first"
+            BackgroundColor="Pink"
+            Text="First" />
+    </constrain:ConstraintLayout>
+</ContentView>

@@ -12,7 +12,13 @@
         </Grid.RowDefinitions>
         <ScrollView Grid.Row="0" Orientation="Horizontal">
             <HorizontalStackLayout>
-                <Label x:Name="fpsLabel" Text="FPS" WidthRequest="50" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" BackgroundColor="Brown"></Label>
+                <Label
+                    x:Name="fpsLabel"
+                    BackgroundColor="Brown"
+                    HorizontalTextAlignment="Center"
+                    Text="FPS"
+                    VerticalTextAlignment="Center"
+                    WidthRequest="50" />
                 <Button
                     x:Name="BaseAlign"
                     Clicked="BaseAlign_Clicked"
@@ -72,7 +78,7 @@
                 <Button
                     x:Name="Animation"
                     Clicked="Animation_Clicked"
-                    Text="Animation" /> 
+                    Text="Animation" />
                 <Button
                     x:Name="ZIndex"
                     Clicked="ZIndex_Clicked"
@@ -85,6 +91,10 @@
                     x:Name="RemoveAndAdd"
                     Clicked="RemoveAndAdd_Clicked"
                     Text="RemoveAndAdd" />
+                <Button
+                    x:Name="XamlSupport"
+                    Clicked="XamlSupport_Clicked"
+                    Text="XamlSupport" />
             </HorizontalStackLayout>
         </ScrollView>
         <Grid

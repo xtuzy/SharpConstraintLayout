@@ -260,5 +260,11 @@ public partial class MainPage : ContentPage
         var content = CreateConstraintLayout();
         RemoveAndAddTest(content);
     }
+
+    private void XamlSupport_Clicked(object sender, EventArgs e)
+    {
+        gridLayout.RemoveAt(gridLayout.Count - 1);
+        gridLayout.Add(new XamlSupport());
+    }
 }
 
