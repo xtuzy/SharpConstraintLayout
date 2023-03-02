@@ -9,14 +9,13 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using SharpConstraintLayout.Maui.Helper.Widget;
 using SharpConstraintLayout.Maui.Native.Example.Tool;
-using MauiWrapPanel.WrapPanel;
 using SharpConstraintLayout.Maui.DebugTool;
 #if __ANDROID__
 using Android.Views;
 using Android.Widget;
 #elif __IOS__
 using UIKit;
-#elif WINDOWS
+#else
 using Microsoft.UI;
 using Microsoft.UI.Xaml.Controls;
 #endif
@@ -60,9 +59,9 @@ namespace SharpConstraintLayout.Maui.Native.Example
             group = new Group(page.Context);
 #endif
             page.AddElement(FirstButton, group, SecondButton, ThirdCanvas, FouthTextBlock);
-            group.ReferenceElement(SecondButton);
-            group.ReferenceElement(ThirdCanvas);
-            group.ReferenceElement(FouthTextBlock);
+            group.RefElement(SecondButton);
+            group.RefElement(ThirdCanvas);
+            group.RefElement(FouthTextBlock);
             using (var constraintSet = new FluentConstraintSet())
             {
                 constraintSet.Clone(page);
@@ -108,7 +107,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             page.AddElement(flow);
 
             page.AddElement(FifthTextBox);
-            flow.ReferenceElement(FifthTextBox);
+            flow.RefElement(FifthTextBox);
             //Generate 1000 Button,all add to page
 #if WINDOWS
             var buttonList = new List<Button>();
@@ -118,7 +117,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
                 button.Content = "Button" + i;
                 buttonList.Add(button);
                 page.AddElement(button);
-                flow.ReferenceElement(button);
+                flow.RefElement(button);
             }
 #elif __ANDROID__
             var buttonList = new List<Button>();
@@ -128,7 +127,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
                 button.Text = "Button" + i;
                 buttonList.Add(button);
                 page.AddElement(button);
-                flow.ReferenceElement(button);
+                flow.RefElement(button);
             }
 #elif __IOS__
             var buttonList = new List<UIButton>();
@@ -138,7 +137,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
                 button.SetTitle("Button" + i, UIControlState.Normal);
                 buttonList.Add(button);
                 page.AddElement(button);
-                flow.ReferenceElement(button);
+                flow.RefElement(button);
             }
 #endif
             using (var layoutSet = new FluentConstraintSet())
@@ -155,7 +154,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
 
         void WrapPanelPerformanceTest(ConstraintLayout page)
         {
-            (var FirstButton, var SecondButton, var ThirdCanvas, var FouthTextBlock, var FifthTextBox, var SixthRichTextBlock) = CreateControls();
+          /*  (var FirstButton, var SecondButton, var ThirdCanvas, var FouthTextBlock, var FifthTextBox, var SixthRichTextBlock) = CreateControls();
 
             ConstraintLayout.MEASURE_MEASURELAYOUT = false;
             //WrapPanel.DEBUG = true;
@@ -210,7 +209,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
                 buttonList.Add(button);
                 wrapPanel.AddElement(button);
             }
-#endif
+#endif*/
         }
 
         void CircleConstraintTest(ConstraintLayout page)
@@ -255,43 +254,8 @@ namespace SharpConstraintLayout.Maui.Native.Example
             page.ConstrainPaddingBottom = 10;
             page.ConstrainPaddingLeft = 10;
             page.ConstrainPaddingRight = 10;
-#if WINDOWS
-            var stackPanel = new StackPanel()
-            {
-                Orientation = Microsoft.UI.Xaml.Controls.Orientation.Horizontal,
-                Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.Coral),
-                VerticalAlignment = Microsoft.UI.Xaml.VerticalAlignment.Center,
-            };
-            page.AddElement(stackPanel);
-            stackPanel.Children.Add(new Button() { Content = "InStackPanel" });
-            stackPanel.Children.Add(new Button() { Content = "InStackPanel" });
-            stackPanel.Children.Add(new TextBlock() { Text = "InStackPanel" });
-            stackPanel.Children.Add(new TextBox() { Text = "InStackPanel" });
 
-            var grid = new Grid();
-            page.AddElement(grid);
-            grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new Microsoft.UI.Xaml.GridLength(1, Microsoft.UI.Xaml.GridUnitType.Star) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new Microsoft.UI.Xaml.GridLength(1, Microsoft.UI.Xaml.GridUnitType.Star) });
-            var textblock = new TextBlock() { Text = "InGrid" };
-            var textbox = new TextBox() { Text = "InGrid" };
-            textblock.SetValue(Grid.ColumnProperty, 0);//https://stackoverflow.com/a/27756061/13254773
-            textbox.SetValue(Grid.ColumnProperty, 1);//https://stackoverflow.com/a/27756061/13254773
-            grid.Children.Add(textblock);
-            grid.Children.Add(textbox);
-
-            var scrollView = new ScrollViewer();
-            page.AddElement(scrollView);
-            scrollView.Content = new StackPanel()
-            {
-                Orientation = Microsoft.UI.Xaml.Controls.Orientation.Vertical,
-                Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.Coral),
-            };
-            (scrollView.Content as StackPanel).Children.Add(new Button() { Content = "InScrollViewer" });
-            (scrollView.Content as StackPanel).Children.Add(new Button() { Content = "InScrollViewer" });
-            (scrollView.Content as StackPanel).Children.Add(new TextBlock() { Text = "InScrollViewer" });
-            (scrollView.Content as StackPanel).Children.Add(new TextBox() { Text = "InScrollViewer" });
-
-#elif ANDROID
+#if ANDROID
             var stackPanel = new LinearLayout(page.Context)
             {
                 Orientation = Android.Widget.Orientation.Horizontal,
@@ -398,6 +362,42 @@ namespace SharpConstraintLayout.Maui.Native.Example
                     DebugTool.SimpleDebug.WriteLine("scrollView.ContentSize:" + scrollView.ContentSize);
                 }, page);
             });
+#else
+            var stackPanel = new StackPanel()
+            {
+                Orientation = Microsoft.UI.Xaml.Controls.Orientation.Horizontal,
+                Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.Coral),
+                VerticalAlignment = Microsoft.UI.Xaml.VerticalAlignment.Center,
+            };
+            page.AddElement(stackPanel);
+            stackPanel.Children.Add(new Button() { Content = "InStackPanel" });
+            stackPanel.Children.Add(new Button() { Content = "InStackPanel" });
+            stackPanel.Children.Add(new TextBlock() { Text = "InStackPanel" });
+            stackPanel.Children.Add(new TextBox() { Text = "InStackPanel" });
+
+            var grid = new Grid();
+            page.AddElement(grid);
+            grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new Microsoft.UI.Xaml.GridLength(1, Microsoft.UI.Xaml.GridUnitType.Star) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new Microsoft.UI.Xaml.GridLength(1, Microsoft.UI.Xaml.GridUnitType.Star) });
+            var textblock = new TextBlock() { Text = "InGrid" };
+            var textbox = new TextBox() { Text = "InGrid" };
+            textblock.SetValue(Grid.ColumnProperty, 0);//https://stackoverflow.com/a/27756061/13254773
+            textbox.SetValue(Grid.ColumnProperty, 1);//https://stackoverflow.com/a/27756061/13254773
+            grid.Children.Add(textblock);
+            grid.Children.Add(textbox);
+
+            var scrollView = new ScrollViewer();
+            page.AddElement(scrollView);
+            scrollView.Content = new StackPanel()
+            {
+                Orientation = Microsoft.UI.Xaml.Controls.Orientation.Vertical,
+                Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.Coral),
+            };
+            (scrollView.Content as StackPanel).Children.Add(new Button() { Content = "InScrollViewer" });
+            (scrollView.Content as StackPanel).Children.Add(new Button() { Content = "InScrollViewer" });
+            (scrollView.Content as StackPanel).Children.Add(new TextBlock() { Text = "InScrollViewer" });
+            (scrollView.Content as StackPanel).Children.Add(new TextBox() { Text = "InScrollViewer" });
+
 #endif
             using (var layoutSet = new FluentConstraintSet())
             {
@@ -459,7 +459,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
                 int newValue = (int)e.Animation.AnimatedValue;
                 // Apply this new value to the object being animated.
                 pageSet.Select(guide)
-                    .GuidelineOrientation(FluentConstraintSet.Orientation.X)
+                    .GuidelineOrientation(Widget.Orientation.X)
                     .GuidelinePercent(newValue / 100f)
                      .Select(layout).LeftToRight(guide).RightToRight(page).TopToTop(page).BottomToBottom(page)
                      .Width(SizeBehavier.MatchConstraint)
@@ -618,7 +618,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             flow.SetHorizontalStyle(Flow.ChainSpreadInside);
             ConstraintLayout layout = page;
             layout.AddElement(flow, ThirdCanvas, FirstButton, SecondButton, FouthTextBlock, FifthTextBox, SixthRichTextBlock);
-            flow.ReferenceElement(FirstButton, SecondButton, FouthTextBlock, FifthTextBox, SixthRichTextBlock);
+            flow.RefElement(FirstButton, SecondButton, FouthTextBlock, FifthTextBox, SixthRichTextBlock);
 
             using (var layoutSet = new FluentConstraintSet())
             {
@@ -687,7 +687,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             {
                 if (index == 1)
                 {
-                    layoutSet.Select(SecondButton).Visibility(FluentConstraintSet.Visibility.Visible);
+                    layoutSet.Select(SecondButton).Visibility(Widget.Visibility.Visible);
                     index++;
                     Task.Run(async () =>
                     {
@@ -700,7 +700,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
                 }
                 else if (index == 2)
                 {
-                    layoutSet.Select(SecondButton).Visibility(FluentConstraintSet.Visibility.Invisible);
+                    layoutSet.Select(SecondButton).Visibility(Widget.Visibility.Invisible);
                     index++;
                     Task.Run(async () =>
                     {
@@ -713,7 +713,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
                 }
                 else if (index == 3)
                 {
-                    layoutSet.Select(SecondButton).Visibility(FluentConstraintSet.Visibility.Gone);
+                    layoutSet.Select(SecondButton).Visibility(Widget.Visibility.Gone);
                     index = 1;
                     Task.Run(async () =>
                     {
@@ -807,7 +807,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
 
             var pageSet = new FluentConstraintSet();
             pageSet.Clone(page);
-            pageSet.Select(guide).GuidelineOrientation(FluentConstraintSet.Orientation.Y).GuidelinePercent(0.5f)
+            pageSet.Select(guide).GuidelineOrientation(Widget.Orientation.Y).GuidelinePercent(0.5f)
             .Select(layout).LeftToRight(guide).RightToRight(page).TopToTop(page).BottomToBottom(page)
             .Width(SizeBehavier.MatchConstraint)
             .Height(SizeBehavier.MatchConstraint);

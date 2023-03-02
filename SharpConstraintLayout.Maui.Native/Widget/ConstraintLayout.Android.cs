@@ -1,6 +1,7 @@
 ﻿#if __ANDROID__ && !__MAUI__
 using Android.Content;
 using Android.Views;
+using Microsoft.Extensions.Logging;
 using Microsoft.Maui.Graphics;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,12 @@ namespace SharpConstraintLayout.Maui.Widget
     {
         public ConstraintLayout(Context context) : base(context)
         {
+            init();
+        }
+        
+        public ConstraintLayout(Context context, ILogger logger) : base(context)
+        {
+            Logger = logger;
             init();
         }
 

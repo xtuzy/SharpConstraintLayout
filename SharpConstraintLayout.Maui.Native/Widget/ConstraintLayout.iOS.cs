@@ -13,6 +13,8 @@ using Microsoft.Maui.Graphics;
 using UIKit;
 using androidx.constraintlayout.core.widgets;
 using AndroidMeasureSpec = SharpConstraintLayout.Maui.Widget.MeasureSpec;
+using Microsoft.Extensions.Logging;
+
 namespace SharpConstraintLayout.Maui.Widget
 {
     /// <summary>
@@ -22,6 +24,12 @@ namespace SharpConstraintLayout.Maui.Widget
     {
         public ConstraintLayout()
         {
+            init();
+        }
+
+        public ConstraintLayout(ILogger logger)
+        {
+            Logger = logger;
             init();
         }
 

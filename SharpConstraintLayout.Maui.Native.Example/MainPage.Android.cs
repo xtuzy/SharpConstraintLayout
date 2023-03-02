@@ -12,6 +12,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Orientation = SharpConstraintLayout.Maui.Widget.Orientation;
+
 namespace SharpConstraintLayout.Maui.Native.Example
 {
     public partial class MainPage : ConstraintLayout
@@ -23,7 +25,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             Id = View.GenerateViewId();
             this.LayoutParameters = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent);
             this.SetBackgroundColor(Color.HotPink);
-            var buttonList = new LinearLayout(context) { Orientation = Orientation.Horizontal, LayoutParameters = new LayoutParams(LayoutParams.WrapContent, LayoutParams.WrapContent) };
+            var buttonList = new LinearLayout(context) { Orientation = Android.Widget.Orientation.Horizontal, LayoutParameters = new LayoutParams(LayoutParams.WrapContent, LayoutParams.WrapContent) };
             var baseAlignBt = new Button(context) { Text = "BaseAlign" };
             var baselineBt = new Button(context) { Text = "Baseline" };
             var guidelineBt = new Button(context) { Text = "Guideline" };
@@ -65,9 +67,9 @@ namespace SharpConstraintLayout.Maui.Native.Example
             using (var set = new FluentConstraintSet())
             {
                 set.Clone(this);
-                set.Select(scroll).TopToTop().LeftToLeft().RightToRight().Width(FluentConstraintSet.SizeBehavier.MatchConstraint)
-                    .Select(layout).TopToBottom(scroll).BottomToBottom().EdgesXTo().Height(FluentConstraintSet.SizeBehavier.MatchConstraint)
-                    .Width(FluentConstraintSet.SizeBehavier.MatchConstraint)
+                set.Select(scroll).TopToTop().LeftToLeft().RightToRight().Width(SizeBehavier.MatchConstraint)
+                    .Select(layout).TopToBottom(scroll).BottomToBottom().EdgesXTo().Height(SizeBehavier.MatchConstraint)
+                    .Width(SizeBehavier.MatchConstraint)
                     ;
                 set.ApplyTo(this);
             }
@@ -156,7 +158,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             (Button FirstButton, Button SecondButton, View ThirdCanvas, TextView FouthTextBlock, EditText FifthTextBox, TextView SixthRichTextBlock) = CreateControls();
             var linerlayout = new LinearLayout(page.Context)
             {
-                Orientation = Orientation.Vertical,
+                Orientation = Android.Widget.Orientation.Vertical,
             };
             linerlayout.SetBackgroundColor(Color.Green);
             linerlayout.AddView(new Button(page.Context) { Text = "Button1" });
@@ -179,12 +181,12 @@ namespace SharpConstraintLayout.Maui.Native.Example
                 set.Clone(page);
                 set.Select(linerlayout)
                     .TopToTop().LeftToLeft()
-                    .Width(FluentConstraintSet.SizeBehavier.MatchParent)
+                    .Width(SizeBehavier.MatchParent)
                     .Height(200)
                     .Select(scrollView)
                     .LeftToLeft().TopToBottom(linerlayout)
-                    .Width(FluentConstraintSet.SizeBehavier.MatchParent)
-                    .Height(FluentConstraintSet.SizeBehavier.MatchParent);
+                    .Width(SizeBehavier.MatchParent)
+                    .Height(SizeBehavier.MatchParent);
                 set.ApplyTo(page);
             }
 
@@ -217,13 +219,13 @@ namespace SharpConstraintLayout.Maui.Native.Example
                     .TopToTop().CenterXTo()
                     .Select(SecondButton).TopToBottom(FirstButton).CenterXTo()
                     .Select(ThirdCanvas).TopToBottom(SecondButton).CenterXTo()
-                    .Height(1300).Width(FluentConstraintSet.SizeBehavier.MatchConstraint)
+                    .Height(1300).Width(SizeBehavier.MatchConstraint)
                     .Select(FouthTextBlock).TopToBottom(ThirdCanvas).CenterXTo()
                     .Select(FifthTextBox).TopToBottom(FouthTextBlock).CenterXTo()
                     .Select(SixthRichTextBlock).TopToBottom(FifthTextBox).CenterXTo().BottomToBottom()
                     .Select(FirstButton, SecondButton, FouthTextBlock, FifthTextBox, SixthRichTextBlock)
-                    .Width(FluentConstraintSet.SizeBehavier.WrapContent)
-                    .Height(FluentConstraintSet.SizeBehavier.WrapContent);
+                    .Width(SizeBehavier.WrapContent)
+                    .Height(SizeBehavier.WrapContent);
                 set.ApplyTo(firstConstraintLayoutPage);
             }
 

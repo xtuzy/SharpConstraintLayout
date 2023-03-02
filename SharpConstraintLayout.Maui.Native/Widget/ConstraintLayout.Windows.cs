@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Windows.Foundation;
@@ -14,6 +15,12 @@ namespace SharpConstraintLayout.Maui.Widget
     {
         public ConstraintLayout()
         {
+            init();
+        }
+
+        public ConstraintLayout(ILogger logger)
+        {
+            Logger = logger;
             init();
         }
 

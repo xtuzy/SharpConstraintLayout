@@ -28,7 +28,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             //ConstraintLayout.MEASUREEVERYCHILD = true;
 
             this.Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.HotPink);
-            var buttonList = new StackPanel() { Orientation = Orientation.Horizontal };
+            var buttonList = new StackPanel() { Orientation = Microsoft.UI.Xaml.Controls.Orientation.Horizontal };
             var baseAlignBt = new Button() { Content = "BaseAlign" };
             var baselineBt = new Button() { Content = "Baseline" };
             var guidelineBt = new Button() { Content = "Guideline" };
@@ -70,8 +70,8 @@ namespace SharpConstraintLayout.Maui.Native.Example
             using (var set = new FluentConstraintSet())
             {
                 set.Clone(this);
-                set.Select(scroll).TopToTop().LeftToLeft().RightToRight().Width(FluentConstraintSet.SizeBehavier.MatchConstraint)
-                    .Select(layout).TopToBottom(scroll).BottomToBottom().EdgesXTo().Height(FluentConstraintSet.SizeBehavier.MatchConstraint)
+                set.Select(scroll).TopToTop().LeftToLeft().RightToRight().Width(SizeBehavier.MatchConstraint)
+                    .Select(layout).TopToBottom(scroll).BottomToBottom().EdgesXTo().Height(SizeBehavier.MatchConstraint)
                     ;
                 set.ApplyTo(this);
             }
@@ -172,8 +172,8 @@ namespace SharpConstraintLayout.Maui.Native.Example
                 set.Clone(page);
                 set.Select(scrollView)
                     .LeftToLeft().TopToTop()
-                    .Width(FluentConstraintSet.SizeBehavier.MatchParent)
-                    .Height(FluentConstraintSet.SizeBehavier.MatchParent);
+                    .Width(SizeBehavier.MatchParent)
+                    .Height(SizeBehavier.MatchParent);
                 set.ApplyTo(page);
             }
 
@@ -211,18 +211,18 @@ namespace SharpConstraintLayout.Maui.Native.Example
                     .TopToTop().CenterXTo()
                     .Select(SecondButton).TopToBottom(FirstButton).CenterXTo()
                     .Select(ThirdCanvas).TopToBottom(SecondButton).CenterXTo()
-                    .Width(FluentConstraintSet.SizeBehavier.MatchParent)
+                    .Width(SizeBehavier.MatchParent)
                     .Height(1000)
                     .Select(FouthTextBlock).TopToBottom(ThirdCanvas).CenterXTo()
                     .Select(FifthTextBox).TopToBottom(FouthTextBlock).CenterXTo()
                     .Select(SixthRichTextBlock).TopToBottom(FifthTextBox).CenterXTo()
                     .Select(FirstButton, SecondButton, FouthTextBlock, FifthTextBox, SixthRichTextBlock)
-                    .Width(FluentConstraintSet.SizeBehavier.WrapContent)
-                    .Height(FluentConstraintSet.SizeBehavier.WrapContent)
+                    .Width(SizeBehavier.WrapContent)
+                    .Height(SizeBehavier.WrapContent)
                     .Select(firstConstraintLayoutPageBackground)
                     .EdgesTo()
-                    .Width(FluentConstraintSet.SizeBehavier.MatchConstraint)
-                    .Height(FluentConstraintSet.SizeBehavier.MatchConstraint);
+                    .Width(SizeBehavier.MatchConstraint)
+                    .Height(SizeBehavier.MatchConstraint);
                 set.ApplyTo(firstConstraintLayoutPage);
             }
 
@@ -252,8 +252,8 @@ namespace SharpConstraintLayout.Maui.Native.Example
                 set.Clone(page);
                 set.Select(listView)
                     .LeftToLeft().TopToTop()
-                    .Width(FluentConstraintSet.SizeBehavier.MatchParent)
-                    .Height(FluentConstraintSet.SizeBehavier.MatchParent);
+                    .Width(SizeBehavier.MatchParent)
+                    .Height(SizeBehavier.MatchParent);
                 set.ApplyTo(page);
             }
 

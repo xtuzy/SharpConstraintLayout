@@ -75,16 +75,32 @@
     <None Include="**\Windows\**\*.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Platforms\Android\" />
-    <Folder Include="Platforms\iOS\" />
-    <Folder Include="Platforms\MacCatalyst\" />
-    <Folder Include="Platforms\Windows\" />
+    <BundleResource Remove="Platforms\**" />
+    <Compile Remove="Platforms\**" />
+    <EmbeddedResource Remove="Platforms\**" />
+    <ImageAsset Remove="Platforms\**" />
+    <InterfaceDefinition Remove="Platforms\**" />
+    <MauiCss Remove="Platforms\**" />
+    <MauiXaml Remove="Platforms\**" />
+    <None Remove="Platforms\**" />
+    <SceneKitAsset Remove="Platforms\**" />
   </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Walterlv.WeakEvents" Version="7.2.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SharpConstraintLayout.Core\SharpConstraintLayout.Core.csproj" />
   </ItemGroup>
-
+  <ItemGroup>
+    <Compile Include="..\SharpConstraintLayout.Maui\DebugTool\**\*.*">
+      <Link>DebugTool\%(RecursiveDir)%(FileName)%(Extension)</Link>
+    </Compile>
+    <Compile Include="..\SharpConstraintLayout.Maui\Helper\**\*.*">
+      <Link>Helper\%(RecursiveDir)%(FileName)%(Extension)</Link>
+    </Compile>
+    <Compile Include="..\SharpConstraintLayout.Maui\Widget\**\*.*">
+      <Link>Widget\%(RecursiveDir)%(FileName)%(Extension)</Link>
+    </Compile>
+  </ItemGroup>
 </Project>

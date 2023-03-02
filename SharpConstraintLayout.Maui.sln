@@ -15,6 +15,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpConstraintLayout.Maui"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpConstraintLayout.Maui.Example", "SharpConstraintLayout.Maui.Example\SharpConstraintLayout.Maui.Example.csproj", "{525BA216-EEE8-4329-8CC5-95A30B2E2833}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpConstraintLayout.Maui.Native", "SharpConstraintLayout.Maui.Native\SharpConstraintLayout.Maui.Native.csproj", "{67257B50-571C-4DCA-BC97-84F48302D2DC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpConstraintLayout.Maui.Native.Example", "SharpConstraintLayout.Maui.Native.Example\SharpConstraintLayout.Maui.Native.Example.csproj", "{D0BEAE63-38B0-497F-A8EA-C8F0391E3C09}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +53,16 @@ Global
 		{525BA216-EEE8-4329-8CC5-95A30B2E2833}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{525BA216-EEE8-4329-8CC5-95A30B2E2833}.Release|Any CPU.Build.0 = Release|Any CPU
 		{525BA216-EEE8-4329-8CC5-95A30B2E2833}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{67257B50-571C-4DCA-BC97-84F48302D2DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67257B50-571C-4DCA-BC97-84F48302D2DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67257B50-571C-4DCA-BC97-84F48302D2DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{67257B50-571C-4DCA-BC97-84F48302D2DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D0BEAE63-38B0-497F-A8EA-C8F0391E3C09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0BEAE63-38B0-497F-A8EA-C8F0391E3C09}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0BEAE63-38B0-497F-A8EA-C8F0391E3C09}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{D0BEAE63-38B0-497F-A8EA-C8F0391E3C09}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0BEAE63-38B0-497F-A8EA-C8F0391E3C09}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D0BEAE63-38B0-497F-A8EA-C8F0391E3C09}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
