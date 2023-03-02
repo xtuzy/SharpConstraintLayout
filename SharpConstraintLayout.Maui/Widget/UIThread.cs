@@ -18,7 +18,7 @@ namespace SharpConstraintLayout.Maui.Widget
 #elif WINDOWS
             if (constraintLayout.DispatcherQueue == null)
             {
-                SimpleDebug.WriteLine("UIThread.Invoke: ConstraintLayout.DispatcherQueue == null");
+                throw new Exception("UIThread.Invoke: ConstraintLayout.DispatcherQueue == null");
             }
             else
             {

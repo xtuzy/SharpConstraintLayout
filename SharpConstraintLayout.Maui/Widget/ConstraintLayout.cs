@@ -80,6 +80,11 @@ namespace SharpConstraintLayout.Maui.Widget
         public static bool DEBUG = false;
         public string DebugName;
         /// <summary>
+        /// 从Maui引入, Debug用它
+        /// </summary>
+        ILogger Logger { get; set; }
+
+        /// <summary>
         /// if is true,will print time of measure spend.
         /// </summary>
         public static bool MEASURE_MEASURELAYOUT = false;
@@ -1083,7 +1088,7 @@ namespace SharpConstraintLayout.Maui.Widget
                                     // if the dimensions of the solver widget are already the same as the real view, no need to remeasure.
                                     if (DEBUG)
                                     {
-                                        SimpleDebug.WriteLine("SKIPPED " + child.GetType().FullName + widget);
+                                        outerInstance.Logger?.LogDebug("SKIPPED " + child.GetType().FullName + widget);
                                     }
                                     return;
                                 }

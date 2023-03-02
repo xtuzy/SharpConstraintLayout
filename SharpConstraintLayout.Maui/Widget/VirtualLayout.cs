@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 #if __MAUI__
-using Microsoft.Extensions.Logging;
 using SharpConstraintLayout.Maui.Widget.Interface;
 using FrameworkElement = Microsoft.Maui.Controls.View;
 using UIElement = Microsoft.Maui.Controls.View;
-
 #elif WINDOWS
 using Microsoft.UI.Xaml;
 using SharpConstraintLayout.Maui.Widget.Interface;
@@ -34,6 +32,7 @@ using Android.Content;
 using SharpConstraintLayout.Maui.Widget.Interface;
 using FrameworkElement = Android.Views.View;
 #endif
+using Microsoft.Extensions.Logging;
 namespace SharpConstraintLayout.Maui.Widget
 {
 

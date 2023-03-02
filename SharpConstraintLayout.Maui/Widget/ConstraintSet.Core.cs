@@ -202,7 +202,7 @@ namespace SharpConstraintLayout.Maui.Widget
 
             int count = constraintLayout.ChildCount;
             List<int> used = mConstraints.Keys.ToList();//已经设置了约束的id
-            if (count != used.Count) Logger.LogInformation("The count of ConstraintLayout children is not equal to temprary constraints list, maybe you not use clone.", TAG);
+            if (count != used.Count) Logger?.LogInformation("The count of ConstraintLayout children is not equal to temprary constraints list, maybe you not use clone.", TAG);
             for (int i = 0; i < count; i++)//查看layout的child
             {
                 View view = constraintLayout.GetChildAt(i);
@@ -210,7 +210,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 int id = view.GetId();
                 if (!mConstraints.ContainsKey(id))
                 {
-                    Logger.LogError($"id unknown {view}", TAG);
+                    Logger?.LogError($"id unknown {view}", TAG);
                     continue;
                 }
 
@@ -316,7 +316,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 }
                 else
                 {
-                    Logger.LogWarning(TAG, "WARNING NO CONSTRAINTS for view " + id);
+                    Logger?.LogWarning(TAG, "WARNING NO CONSTRAINTS for view " + id);
                 }
             }
 

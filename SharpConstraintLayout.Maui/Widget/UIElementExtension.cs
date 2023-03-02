@@ -599,7 +599,7 @@ namespace SharpConstraintLayout.Maui.Widget
 #endif
         }
 
-        internal static string GetViewLayoutInfo(this UIElement element)
+        public static string GetViewLayoutInfo(this UIElement element)
         {
 #if __MAUI__
             return $"{element.GetType().FullName} IsVisible={element.IsVisible} Position=({element.X},{element.Y}) DesiredSize={element.DesiredSize} WidthxHeight=({element.Width}x{element.Height})";

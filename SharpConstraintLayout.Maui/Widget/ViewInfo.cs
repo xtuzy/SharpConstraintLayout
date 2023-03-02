@@ -1,4 +1,6 @@
-﻿namespace SharpConstraintLayout.Maui.Widget
+﻿using System;
+
+namespace SharpConstraintLayout.Maui.Widget
 {
     public enum ViewInfoType
     {

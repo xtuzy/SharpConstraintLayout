@@ -96,7 +96,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// The view also need to have its id set in order to be added.
         /// </summary>
         /// <param name="view"> </param>
-        public virtual void ReferenceElement(FrameworkElement view)
+        public virtual void RefElement(FrameworkElement view)
         {
 
             if (view == this)
@@ -121,7 +121,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// </summary>
         /// <param name="view"> </param>
         /// <returns> index of view removed </returns>
-        public virtual int RemoveElement(FrameworkElement view)
+        public virtual int RemoveRefElement(FrameworkElement view)
         {
             int index = -1;
             //int id = view.Id;

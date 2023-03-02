@@ -22,7 +22,7 @@ namespace SharpConstraintLayout.Maui.Example
             var group = new Group();
             var layout = page;
             layout.AddElement(group, FirstButton, SecondButton, FouthTextBlock, FifthTextBox, SixthRichTextBlock);
-            group.ReferenceElement(FirstButton, FouthTextBlock);
+            group.RefElement(FirstButton, FouthTextBlock);
             using (var set = new FluentConstraintSet())
             {
                 set.Clone(layout);
@@ -65,7 +65,7 @@ namespace SharpConstraintLayout.Maui.Example
             page.AddElement(flow);
 
             page.AddElement(FifthTextBox);
-            flow.ReferenceElement(FifthTextBox);
+            flow.RefElement(FifthTextBox);
             //Generate 1000 Button,all add to page
 
             var buttonList = new List<Button>();
@@ -76,7 +76,7 @@ namespace SharpConstraintLayout.Maui.Example
                 button.Text = "Button" + i;
                 buttonList.Add(button);
                 page.AddElement(button);
-                flow.ReferenceElement(button);
+                flow.RefElement(button);
             }
 
             using (var layoutSet = new FluentConstraintSet())
@@ -312,7 +312,7 @@ namespace SharpConstraintLayout.Maui.Example
             flow.SetHorizontalStyle(SharpConstraintLayout.Maui.Helper.Widget.Flow.ChainSpreadInside);
             var layout = page;
             layout.AddElement(ThirdCanvas, FirstButton, SecondButton, FouthTextBlock, FifthTextBox, SixthRichTextBlock, flow);
-            flow.ReferenceElement(FirstButton, SecondButton, FouthTextBlock, FifthTextBox, SixthRichTextBlock);
+            flow.RefElement(FirstButton, SecondButton, FouthTextBlock, FifthTextBox, SixthRichTextBlock);
 
             using (var layoutSet = new FluentConstraintSet())
             {

@@ -24,14 +24,14 @@ namespace SharpConstraintLayout.Maui.Widget.Interface
     {
         //JniPeerMembers JniPeerMembers { get; }
 
-        void ReferenceElement(View view);
+        void RefElement(View view);
         bool ContainsId(int id);
         //int[] GetReferencedIds();
         int IndexFromId(int id);
         //void LoadParameters(ConstraintSet.Constraint constraint, HelperWidget child, ConstraintLayout.LayoutParams layoutParams ,Dictionary<int,ConstraintWidget> mapIdToWidget);
         void LoadParameters(ConstraintSet.Constraint constraint, HelperWidget child, Dictionary<int, ConstraintWidget> mapIdToWidget);
         //void OnDraw(Canvas canvas);
-        int RemoveElement(View view);
+        int RemoveRefElement(View view);
         void ResolveRtl(ConstraintWidget widget, bool isRtl);
         //void SetReferencedIds(int[] ids);
         int[] ReferencedIds { set; get; }

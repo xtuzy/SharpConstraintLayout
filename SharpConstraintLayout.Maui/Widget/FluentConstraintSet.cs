@@ -1111,26 +1111,26 @@ namespace SharpConstraintLayout.Maui.Widget
     public static class FluentConstraintHelperExtension
     {
 #if WINDOWS && !__MAUI__
-        public static void ReferenceElement(this ConstraintHelper helper, params FrameworkElement[] views)
+        public static void RefElement(this ConstraintHelper helper, params FrameworkElement[] views)
 #else
-        public static void ReferenceElement(this ConstraintHelper helper, params UIElement[] views)
+        public static void RefElement(this ConstraintHelper helper, params UIElement[] views)
 #endif
         {
             foreach (var view in views)
             {
-                helper.ReferenceElement(view);
+                helper.RefElement(view);
             }
         }
 
 #if WINDOWS && !__MAUI__
-        public static void RemoveElement(this ConstraintHelper helper, params FrameworkElement[] views)
+        public static void RemoveRefElement(this ConstraintHelper helper, params FrameworkElement[] views)
 #else
-        public static void RemoveElement(this ConstraintHelper helper, params UIElement[] views)
+        public static void RemoveRefElement(this ConstraintHelper helper, params UIElement[] views)
 #endif
         {
             foreach (var view in views)
             {
-                helper.RemoveElement(view);
+                helper.RemoveRefElement(view);
             }
         }
     }
