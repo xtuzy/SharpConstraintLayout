@@ -161,9 +161,9 @@ namespace SharpConstraintLayout.Maui.Widget
             return element.Id;
 #endif
 #if __MAUI__
-            if (element.StyleId == null)
-                return element.GetHashCode();
-            return element.StyleId.GetHashCode();
+            //if (element.Id == null)
+            //    return element.GetHashCode();
+            return element.Id.GetHashCode();
 #else
             return element.GetHashCode();
 #endif
