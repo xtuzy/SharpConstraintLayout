@@ -1,21 +1,37 @@
 ﻿using CoreGraphics;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UIKit;
-using SharpConstraintLayout.Maui.Widget;
 using Foundation;
+using Microsoft.Extensions.Logging;
 using Microsoft.Maui.Storage;
 using SharpConstraintLayout.Maui.DebugTool;
 using SharpConstraintLayout.Maui.Native.Example.Tool;
+using SharpConstraintLayout.Maui.Widget;
+using System;
+using System.Diagnostics;
+using System.Threading.Tasks;
+using UIKit;
 
 namespace SharpConstraintLayout.Maui.Native.Example
 {
     public partial class MainPage
     {
+        class Log : ILogger
+        {
+            public IDisposable BeginScope<TState>(TState state)
+            {
+                throw new NotImplementedException();
+            }
+
+            public bool IsEnabled(LogLevel logLevel)
+            {
+                throw new NotImplementedException();
+            }
+
+            void ILogger.Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
+            {
+                Debug.WriteLine(formatter.Invoke(state, exception));
+            }
+        }
+
         public ConstraintLayout Page;
 
         public MainPage(CGRect frame)
@@ -23,13 +39,13 @@ namespace SharpConstraintLayout.Maui.Native.Example
             ConstraintLayout.DEBUG = false;
             ConstraintLayout.MEASURE_MEASURELAYOUT = true;
             //ConstraintLayout.MEASUREEVERYWIDGET = true;
-            //ConstraintLayout.MEASUREEVERYCHILD = true;
+            ConstraintLayout.MEASUREEVERYCHILD = true;
 
-            Page = new ConstraintLayout()
+            Page = new ConstraintLayout(new Log())
             {
                 AutosizesSubviews = true,
                 AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight,
-                BackgroundColor = UIColor.SystemGray
+                BackgroundColor = UIColor.Red
             };
             var buttonList = new UIStackView();
             var baseAlignBt = new UIButton(); baseAlignBt.SetTitle("BaseAlign", UIControlState.Normal);

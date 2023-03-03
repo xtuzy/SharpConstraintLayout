@@ -1,4 +1,6 @@
-﻿using Microsoft.Maui.Storage;
+﻿using BlogFrameRate;
+using Microsoft.Maui.ApplicationModel;
+using Microsoft.Maui.Storage;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -26,6 +28,13 @@ namespace SharpConstraintLayout.Maui.Native.Example
             ConstraintLayout.MEASURE_MEASURELAYOUT = true;
             //ConstraintLayout.MEASUREEVERYWIDGET = true;
             //ConstraintLayout.MEASUREEVERYCHILD = true;
+            var textview = new TextBlock();
+            var fr = new FrameRateCalculator();
+            fr.FrameRateUpdated += (value) =>
+            {
+                MainThread.BeginInvokeOnMainThread(() => textview.Text = value.Frames.ToString());
+            };
+            fr.Start();
 
             this.Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.HotPink);
             var buttonList = new StackPanel() { Orientation = Microsoft.UI.Xaml.Controls.Orientation.Horizontal };
@@ -45,6 +54,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             var placeholderBt = new Button() { Content = "Placeholder" };
             var sizeBt = new Button() { Content = "Size" };
             var nestedConstraintLayoutBt = new Button() { Content = "NestedConstraintLayout" };
+            buttonList.Children.Add(textview);
             buttonList.Children.Add(baseAlignBt);
             buttonList.Children.Add(baselineBt);
             buttonList.Children.Add(guidelineBt);

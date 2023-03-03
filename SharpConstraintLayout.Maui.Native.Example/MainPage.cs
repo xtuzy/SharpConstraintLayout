@@ -91,8 +91,24 @@ namespace SharpConstraintLayout.Maui.Native.Example
                         };
         }
 
-        void FlowPerformanceTest(ConstraintLayout page)
+        void FlowPerformanceTest(ConstraintLayout rootPage)
         {
+#if ANDROID
+            var page = new ConstraintLayout(rootPage.Context);
+#else
+            var page = new ConstraintLayout();
+#endif
+            rootPage.AddElement(page);
+            using(var rootSet = new FluentConstraintSet())
+            {
+                rootSet.Clone(rootPage);
+                rootSet.Select(page)
+                    .Width(SizeBehavier.MatchParent)
+                    .Height(SizeBehavier.MatchParent);
+                rootSet.ApplyTo(rootPage);
+            }
+            page.ConstrainWidth = (int)SizeBehavier.MatchParent;
+            page.ConstrainHeight = (int)SizeBehavier.MatchParent;
             (var FirstButton, var SecondButton, var ThirdCanvas, var FouthTextBlock, var FifthTextBox, var SixthRichTextBlock) = CreateControls();
 
             int buttonCount = 50;

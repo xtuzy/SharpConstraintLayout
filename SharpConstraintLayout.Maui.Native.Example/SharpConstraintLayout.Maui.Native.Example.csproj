@@ -126,6 +126,11 @@
 
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\SharpConstraintLayout.Maui.Example\Tool\FrameRateCalculator.Android.cs" Link="Tool\FrameRateCalculator.Android.cs" />
+    <Compile Include="..\SharpConstraintLayout.Maui.Example\Tool\FrameRateCalculator.iOS.cs" Link="Tool\FrameRateCalculator.iOS.cs" />
+    <Compile Include="..\SharpConstraintLayout.Maui.Example\Tool\FrameRateCalculator.Windows.cs" Link="Tool\FrameRateCalculator.Windows.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\SharpConstraintLayout.Maui.Native\SharpConstraintLayout.Maui.Native.csproj" />
   </ItemGroup>
 </Project>

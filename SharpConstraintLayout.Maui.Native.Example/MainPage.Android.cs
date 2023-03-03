@@ -2,17 +2,15 @@
 using Android.Graphics;
 using Android.Views;
 using Android.Widget;
+using Microsoft.Maui.ApplicationModel;
 using Microsoft.Maui.Storage;
 using SharpConstraintLayout.Maui.DebugTool;
 using SharpConstraintLayout.Maui.Native.Example.Tool;
 using SharpConstraintLayout.Maui.Widget;
-using SharpConstraintLayout.Maui.Helper.Widget;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Orientation = SharpConstraintLayout.Maui.Widget.Orientation;
 
 namespace SharpConstraintLayout.Maui.Native.Example
 {
@@ -25,6 +23,14 @@ namespace SharpConstraintLayout.Maui.Native.Example
             Id = View.GenerateViewId();
             this.LayoutParameters = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent);
             this.SetBackgroundColor(Color.HotPink);
+            var textview = new TextView(context);
+            var fr = new BlogFrameRate.FrameRateCalculator();
+            fr.FrameRateUpdated += (value) =>
+            {
+                MainThread.BeginInvokeOnMainThread(() => textview.Text = value.Frames.ToString());
+            };
+            fr.Start();
+
             var buttonList = new LinearLayout(context) { Orientation = Android.Widget.Orientation.Horizontal, LayoutParameters = new LayoutParams(LayoutParams.WrapContent, LayoutParams.WrapContent) };
             var baseAlignBt = new Button(context) { Text = "BaseAlign" };
             var baselineBt = new Button(context) { Text = "Baseline" };
@@ -36,11 +42,13 @@ namespace SharpConstraintLayout.Maui.Native.Example
             var constraintLayoutInScrollViewBt = new Button(context) { Text = "ConstraintLayoutInScrollView" };
             var circleConstraintBt = new Button(context) { Text = "CircleConstraint" };
             var flowPerformanceBt = new Button(context) { Text = "FlowPerformance" };
+            var flowOfAndroidPerformanceBt = new Button(context) { Text = "AndroidFlowPerformance" };
             var wrapPanelPerformanceBt = new Button(context) { Text = "WrapPanelPerformance" };
             var groupBt = new Button(context) { Text = "Group" };
             var placeholderBt = new Button(context) { Text = "Placeholder" };
             var sizeBt = new Button(context) { Text = "Size" };
             var nestedConstraintLayoutBt = new Button(context) { Text = "NestedConstraintLayout" };
+            buttonList.AddView(textview);
             buttonList.AddView(baseAlignBt);
             buttonList.AddView(baselineBt);
             buttonList.AddView(guidelineBt);
@@ -51,6 +59,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             buttonList.AddView(constraintLayoutInScrollViewBt);
             buttonList.AddView(circleConstraintBt);
             buttonList.AddView(flowPerformanceBt);
+            buttonList.AddView(flowOfAndroidPerformanceBt);
             buttonList.AddView(wrapPanelPerformanceBt);
             buttonList.AddView(groupBt);
             buttonList.AddView(placeholderBt);
@@ -124,6 +133,11 @@ namespace SharpConstraintLayout.Maui.Native.Example
                 layout.RemoveAllElements();
                 FlowPerformanceTest(layout);
             };
+            flowOfAndroidPerformanceBt.Click += (sender, e) =>
+            {
+                layout.RemoveAllElements();
+                AndroidFlowPerformanceTest(layout);
+            };
             wrapPanelPerformanceBt.Click += (sender, e) =>
             {
                 layout.RemoveAllElements();
@@ -151,6 +165,57 @@ namespace SharpConstraintLayout.Maui.Native.Example
             };
 
             //ConstraintLayoutInScrollViewTest(this);
+        }
+
+        private void AndroidFlowPerformanceTest(ConstraintLayout page)
+        {
+            var platformLayout = new AndroidX.ConstraintLayout.Widget.ConstraintLayout(page.Context);
+            page.AddElement(platformLayout);
+            using (var layoutSet = new FluentConstraintSet())
+            {
+                layoutSet.Clone(page);
+                layoutSet
+                    .Select(platformLayout)
+                    .TopToTop().BottomToBottom().LeftToLeft()
+                    .Width(SizeBehavier.MatchParent)
+                    .Height(SizeBehavier.MatchParent);
+                layoutSet.ApplyTo(page);
+            }
+
+            (var FirstButton, var SecondButton, var ThirdCanvas, var FouthTextBlock, var FifthTextBox, var SixthRichTextBlock) = CreateControls();
+
+            int buttonCount = 50;
+            var flow = new AndroidX.ConstraintLayout.Helper.Widget.Flow(page.Context) { };
+            flow.Id = View.GenerateViewId();
+            flow.SetOrientation(AndroidX.ConstraintLayout.Helper.Widget.Flow.Horizontal);
+            flow.SetWrapMode(AndroidX.ConstraintLayout.Helper.Widget.Flow.WrapChain);
+            flow.SetHorizontalStyle(AndroidX.ConstraintLayout.Helper.Widget.Flow.ChainPacked);
+            platformLayout.AddView(flow);
+
+            platformLayout.AddView(FifthTextBox);
+            //Generate 1000 Button,all add to page
+            var buttonList = new List<Button>();
+            List<int> ids = new List<int>();
+            ids.Add(FifthTextBox.Id);
+            for (int i = 0; i < buttonCount; i++)
+            {
+                var button = new Button(page.Context);
+                button.Id = View.GenerateViewId();
+                button.Text = "Button" + i;
+                buttonList.Add(button);
+                platformLayout.AddView(button);
+                ids.Add(button.Id);
+            }
+            flow.SetReferencedIds(ids.ToArray());
+            var set = new AndroidX.ConstraintLayout.Widget.ConstraintSet();
+            set.Clone(platformLayout);
+            set.Connect(flow.Id, AndroidX.ConstraintLayout.Widget.ConstraintSet.Left, platformLayout.Id, AndroidX.ConstraintLayout.Widget.ConstraintSet.Left);
+            set.Connect(flow.Id, AndroidX.ConstraintLayout.Widget.ConstraintSet.Top, platformLayout.Id, AndroidX.ConstraintLayout.Widget.ConstraintSet.Top);
+            set.Connect(flow.Id, AndroidX.ConstraintLayout.Widget.ConstraintSet.Right, platformLayout.Id, AndroidX.ConstraintLayout.Widget.ConstraintSet.Right);
+            set.Connect(flow.Id, AndroidX.ConstraintLayout.Widget.ConstraintSet.Bottom, platformLayout.Id, AndroidX.ConstraintLayout.Widget.ConstraintSet.Bottom);
+            set.ConstrainWidth(flow.Id, AndroidX.ConstraintLayout.Widget.ConstraintLayout.LayoutParams.MatchConstraint);
+            set.ConstrainWidth(flow.Id, AndroidX.ConstraintLayout.Widget.ConstraintLayout.LayoutParams.MatchConstraint);
+            set.ApplyTo(platformLayout);
         }
 
         void ConstraintLayoutInScrollViewTest(ConstraintLayout page)

@@ -13,10 +13,10 @@ using Panel = UIKit.UIView;
 using UIKit;
 using CoreGraphics;
 #elif __ANDROID__
-using UIElement = Android.Views.View;
-using FrameworkElement = Android.Views.View;
-using AndroidX.ConstraintLayout.Widget;
 using Android.Views;
+using AndroidX.ConstraintLayout.Widget;
+using FrameworkElement = Android.Views.View;
+using UIElement = Android.Views.View;
 #endif
 namespace SharpConstraintLayout.Maui.Widget
 {
@@ -155,14 +155,14 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <returns></returns>
         public static int GetId(this UIElement element)
         {
-            //#if __ANDROID__
-            //            if (view.Id == UIElement.NoId)
-            //                view.Id = UIElement.GenerateViewId();
-            //            return view.Id;
-            //#else
+#if __ANDROID__ && !__MAUI__
+            if (element.Id == UIElement.NoId)
+                element.Id = UIElement.GenerateViewId();
+            return element.Id;
+#endif
 #if __MAUI__
             if (element.StyleId == null)
-               return element.GetHashCode();
+                return element.GetHashCode();
             return element.StyleId.GetHashCode();
 #else
             return element.GetHashCode();
