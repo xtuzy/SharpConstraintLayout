@@ -51,13 +51,32 @@ namespace SharpConstraintLayout.Maui.Example
                 }
             };
         }
-        void FlowPerformanceTest(ConstraintLayout page)
+        void FlowPerformanceTest(ConstraintLayout rootpage)
         {
+            var page = new ConstraintLayout(new Log());
+            rootpage.AddElement(page);
+            page.ConstrainWidth = ConstraintSet.MatchParent;
+            page.ConstrainHeight = ConstraintSet.MatchParent;
+            using(var rootSet = new FluentConstraintSet())
+            {
+                rootSet.Clone(rootpage);
+                rootSet.Select(page).EdgesTo(rootpage).Width(SizeBehavier.MatchParent).Height(SizeBehavier.MatchParent);
+                rootSet.ApplyTo(rootpage);
+            }
             (Button FirstButton, Button SecondButton, ContentView ThirdCanvas, Label FouthTextBlock, Entry FifthTextBox, Editor SixthRichTextBlock) = CreateControls();
 
             int buttonCount = 50;
 
             var flow = new Flow() { };
+            page.AddElement(FirstButton);
+            FirstButton.Clicked += (sender, e) =>
+            {
+                var newbutton = new Button();
+                newbutton.Text = flow.ReferencedIds.Length.ToString();
+                newbutton.BackgroundColor = Colors.Gray;
+                page.AddElement(newbutton);
+                flow.RefElement(newbutton);
+            };
 
             flow.SetOrientation(SharpConstraintLayout.Maui.Helper.Widget.Flow.Horizontal);
             flow.SetWrapMode(SharpConstraintLayout.Maui.Helper.Widget.Flow.WrapChain);
@@ -86,7 +105,8 @@ namespace SharpConstraintLayout.Maui.Example
                     .Select(flow)
                     .TopToTop().BottomToBottom().LeftToLeft()
                     .Width(SizeBehavier.WrapContent)
-                    .Height(SizeBehavier.WrapContent);
+                    .Height(SizeBehavier.WrapContent)
+                    .Select(FirstButton).EdgesXTo();
                 layoutSet.ApplyTo(page);
             }
         }

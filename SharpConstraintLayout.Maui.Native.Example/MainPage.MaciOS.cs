@@ -3,6 +3,7 @@ using Foundation;
 using Microsoft.Extensions.Logging;
 using Microsoft.Maui.Storage;
 using SharpConstraintLayout.Maui.DebugTool;
+using SharpConstraintLayout.Maui.Example.Tool;
 using SharpConstraintLayout.Maui.Native.Example.Tool;
 using SharpConstraintLayout.Maui.Widget;
 using System;
@@ -14,24 +15,6 @@ namespace SharpConstraintLayout.Maui.Native.Example
 {
     public partial class MainPage
     {
-        class Log : ILogger
-        {
-            public IDisposable BeginScope<TState>(TState state)
-            {
-                throw new NotImplementedException();
-            }
-
-            public bool IsEnabled(LogLevel logLevel)
-            {
-                throw new NotImplementedException();
-            }
-
-            void ILogger.Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
-            {
-                Debug.WriteLine(formatter.Invoke(state, exception));
-            }
-        }
-
         public ConstraintLayout Page;
 
         public MainPage(CGRect frame)

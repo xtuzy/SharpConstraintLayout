@@ -190,8 +190,20 @@ namespace SharpConstraintLayout.Maui.Native.Example
             flow.SetOrientation(AndroidX.ConstraintLayout.Helper.Widget.Flow.Horizontal);
             flow.SetWrapMode(AndroidX.ConstraintLayout.Helper.Widget.Flow.WrapChain);
             flow.SetHorizontalStyle(AndroidX.ConstraintLayout.Helper.Widget.Flow.ChainPacked);
+            
+            platformLayout.AddView(FirstButton);
+            FirstButton.Click += (o, e) =>
+            {
+                var newbutton = new Button(platformLayout.Context);
+                newbutton.Text = flow.GetReferencedIds().Length.ToString();
+                newbutton.Id = View.GenerateViewId();
+                platformLayout.AddView(newbutton);
+                var newids = new List<int>();
+                newids.AddRange(flow.GetReferencedIds());
+                newids.Add(newbutton.Id);
+                flow.SetReferencedIds(newids.ToArray());
+            };
             platformLayout.AddView(flow);
-
             platformLayout.AddView(FifthTextBox);
             //Generate 1000 Button,all add to page
             var buttonList = new List<Button>();
@@ -213,8 +225,10 @@ namespace SharpConstraintLayout.Maui.Native.Example
             set.Connect(flow.Id, AndroidX.ConstraintLayout.Widget.ConstraintSet.Top, platformLayout.Id, AndroidX.ConstraintLayout.Widget.ConstraintSet.Top);
             set.Connect(flow.Id, AndroidX.ConstraintLayout.Widget.ConstraintSet.Right, platformLayout.Id, AndroidX.ConstraintLayout.Widget.ConstraintSet.Right);
             set.Connect(flow.Id, AndroidX.ConstraintLayout.Widget.ConstraintSet.Bottom, platformLayout.Id, AndroidX.ConstraintLayout.Widget.ConstraintSet.Bottom);
-            set.ConstrainWidth(flow.Id, AndroidX.ConstraintLayout.Widget.ConstraintLayout.LayoutParams.MatchConstraint);
-            set.ConstrainWidth(flow.Id, AndroidX.ConstraintLayout.Widget.ConstraintLayout.LayoutParams.MatchConstraint);
+            set.ConstrainWidth(flow.Id, AndroidX.ConstraintLayout.Widget.ConstraintLayout.LayoutParams.WrapContent);
+            set.ConstrainHeight(flow.Id, AndroidX.ConstraintLayout.Widget.ConstraintLayout.LayoutParams.WrapContent);
+            set.Connect(FirstButton.Id, AndroidX.ConstraintLayout.Widget.ConstraintSet.Left, platformLayout.Id, AndroidX.ConstraintLayout.Widget.ConstraintSet.Left);
+            set.Connect(FirstButton.Id, AndroidX.ConstraintLayout.Widget.ConstraintSet.Right, platformLayout.Id, AndroidX.ConstraintLayout.Widget.ConstraintSet.Right);
             set.ApplyTo(platformLayout);
         }
 
@@ -337,6 +351,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
                 Tag = "FouthTextBlock",
                 Text = "TextBlock"
             };
+            FouthTextBlock.SetBackgroundColor(Color.Black);
 
             var FifthTextBox = new EditText(this.Context)
             {
@@ -344,6 +359,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
                 Tag = "FifthTextBox",
                 Text = "TextBox",
             };
+            FifthTextBox.SetBackgroundColor(Color.Black);
 
             var SixthRichTextBlock = new TextView(this.Context)
             {
@@ -351,6 +367,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
                 Text = "RichTextBlock",
                 TextSize = 18,
             };
+            SixthRichTextBlock.SetBackgroundColor(Color.Black);
 
             return (FirstButton, SecondButton, ThirdCanvas, FouthTextBlock, FifthTextBox, SixthRichTextBlock);
         }

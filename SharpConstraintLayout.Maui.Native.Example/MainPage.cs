@@ -114,6 +114,15 @@ namespace SharpConstraintLayout.Maui.Native.Example
             int buttonCount = 50;
 #if __ANDROID__
             var flow = new Flow(page.Context) { };
+            page.AddElement(FirstButton);
+            FirstButton.Click += (o, e) =>
+            {
+                var newbutton = new Button(page.Context);
+                newbutton.Text = flow.ReferencedIds.Length.ToString();
+                newbutton.SetBackgroundColor(Android.Graphics.Color.Gray);
+                page.AddElement(newbutton);
+                flow.RefElement(newbutton);
+            };
 #else
             var flow = new Flow() { };
 #endif
@@ -161,9 +170,13 @@ namespace SharpConstraintLayout.Maui.Native.Example
                 layoutSet.Clone(page);
                 layoutSet
                     .Select(flow)
-                    .TopToTop().BottomToBottom().LeftToLeft()
+                    .TopToTop().BottomToBottom().LeftToLeft().RightToRight()
                     .Width(SizeBehavier.WrapContent)
-                    .Height(SizeBehavier.WrapContent);
+                    .Height(SizeBehavier.WrapContent)
+#if ANDROID
+                    .Select(FirstButton).CenterXTo()
+#endif
+                    ;
                 layoutSet.ApplyTo(page);
             }
         }
