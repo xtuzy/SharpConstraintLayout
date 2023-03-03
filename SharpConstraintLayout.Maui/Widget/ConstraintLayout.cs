@@ -1496,7 +1496,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 // Circular constraint
                 if (layoutParams.layout.circleConstraint != Unset)
                 {
-                    ConstraintWidget target = idToWidget[layoutParams.layout.circleConstraint];
+                    idToWidget.TryGetValue(layoutParams.layout.circleConstraint, out ConstraintWidget target);
                     if (target != null)
                     {
                         widget.connectCircularConstraint(target, layoutParams.layout.circleAngle, layoutParams.layout.circleRadius);
@@ -1507,7 +1507,7 @@ namespace SharpConstraintLayout.Maui.Widget
                     // Left constraint
                     if (resolvedLeftToLeft != Unset)
                     {
-                        ConstraintWidget target = idToWidget[resolvedLeftToLeft];
+                        idToWidget.TryGetValue(resolvedLeftToLeft, out ConstraintWidget target);
                         if (target != null)
                         {
                             widget.immediateConnect(ConstraintAnchor.Type.LEFT, target, ConstraintAnchor.Type.LEFT, layoutParams.layout.leftMargin, resolveGoneLeftMargin);
@@ -1515,7 +1515,7 @@ namespace SharpConstraintLayout.Maui.Widget
                     }
                     else if (resolvedLeftToRight != Unset)
                     {
-                        ConstraintWidget target = idToWidget[resolvedLeftToRight];
+                        idToWidget.TryGetValue(resolvedLeftToRight, out ConstraintWidget target);
                         if (target != null)
                         {
                             widget.immediateConnect(ConstraintAnchor.Type.LEFT, target, ConstraintAnchor.Type.RIGHT, layoutParams.layout.leftMargin, resolveGoneLeftMargin);
@@ -1525,7 +1525,7 @@ namespace SharpConstraintLayout.Maui.Widget
                     // Right constraint
                     if (resolvedRightToLeft != Unset)
                     {
-                        ConstraintWidget target = idToWidget[resolvedRightToLeft];
+                        idToWidget.TryGetValue(resolvedRightToLeft, out ConstraintWidget target);
                         if (target != null)
                         {
                             widget.immediateConnect(ConstraintAnchor.Type.RIGHT, target, ConstraintAnchor.Type.LEFT, layoutParams.layout.rightMargin, resolveGoneRightMargin);
@@ -1533,7 +1533,7 @@ namespace SharpConstraintLayout.Maui.Widget
                     }
                     else if (resolvedRightToRight != Unset)
                     {
-                        ConstraintWidget target = idToWidget[resolvedRightToRight];
+                        idToWidget.TryGetValue(resolvedRightToRight, out ConstraintWidget target);
                         if (target != null)
                         {
                             widget.immediateConnect(ConstraintAnchor.Type.RIGHT, target, ConstraintAnchor.Type.RIGHT, layoutParams.layout.rightMargin, resolveGoneRightMargin);
@@ -1543,7 +1543,7 @@ namespace SharpConstraintLayout.Maui.Widget
                     // Top constraint
                     if (layoutParams.layout.topToTop != Unset)
                     {
-                        ConstraintWidget target = idToWidget[layoutParams.layout.topToTop];
+                        idToWidget.TryGetValue(layoutParams.layout.topToTop, out ConstraintWidget target);
                         if (target != null)
                         {
                             widget.immediateConnect(ConstraintAnchor.Type.TOP, target, ConstraintAnchor.Type.TOP, layoutParams.layout.topMargin, layoutParams.layout.goneTopMargin);
@@ -1551,7 +1551,7 @@ namespace SharpConstraintLayout.Maui.Widget
                     }
                     else if (layoutParams.layout.topToBottom != Unset)
                     {
-                        ConstraintWidget target = idToWidget[layoutParams.layout.topToBottom];
+                        idToWidget.TryGetValue(layoutParams.layout.topToBottom, out ConstraintWidget target);
                         if (target != null)
                         {
                             widget.immediateConnect(ConstraintAnchor.Type.TOP, target, ConstraintAnchor.Type.BOTTOM, layoutParams.layout.topMargin, layoutParams.layout.goneTopMargin);
@@ -1561,7 +1561,7 @@ namespace SharpConstraintLayout.Maui.Widget
                     // Bottom constraint
                     if (layoutParams.layout.bottomToTop != Unset)
                     {
-                        ConstraintWidget target = idToWidget[layoutParams.layout.bottomToTop];
+                        idToWidget.TryGetValue(layoutParams.layout.bottomToTop, out ConstraintWidget target);
                         if (target != null)
                         {
                             widget.immediateConnect(ConstraintAnchor.Type.BOTTOM, target, ConstraintAnchor.Type.TOP, layoutParams.layout.bottomMargin, layoutParams.layout.goneBottomMargin);
@@ -1569,7 +1569,7 @@ namespace SharpConstraintLayout.Maui.Widget
                     }
                     else if (layoutParams.layout.bottomToBottom != Unset)
                     {
-                        ConstraintWidget target = idToWidget[layoutParams.layout.bottomToBottom];
+                        idToWidget.TryGetValue(layoutParams.layout.bottomToBottom, out ConstraintWidget target);
                         if (target != null)
                         {
                             widget.immediateConnect(ConstraintAnchor.Type.BOTTOM, target, ConstraintAnchor.Type.BOTTOM, layoutParams.layout.bottomMargin, layoutParams.layout.goneBottomMargin);
