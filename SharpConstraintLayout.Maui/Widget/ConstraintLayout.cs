@@ -133,14 +133,18 @@ namespace SharpConstraintLayout.Maui.Widget
         #region Add And Remove
 
         protected void OnAddedView(UIElement element)
-        {
-            if(!mConstraintSet.Constraints.ContainsKey(this.GetId()))
-                mConstraintSet.Constraints.Add(this.GetId(), mConstraintSet.Constraints[ConstraintSet.ParentId]);
-
+        {            
             if (element == null)
             {
                 return;
             }
+
+            if (!mConstraintSet.Constraints.ContainsKey(this.GetId()))
+                mConstraintSet.Constraints.Add(this.GetId(), mConstraintSet.Constraints[ConstraintSet.ParentId]);
+
+            //Add to flow, not change set dirrectly, so it not change, we need it change to recreate constrain
+            if (mConstraintSet.IsChanged == false)
+                mConstraintSet.IsChanged = true;
 
             var id = element.GetId();
 
@@ -178,6 +182,9 @@ namespace SharpConstraintLayout.Maui.Widget
             {
                 return;
             }
+            //Remove form flow, not change set dirrectly, so it not change, we need it change to recreate constrain
+            if (mConstraintSet.IsChanged == false)
+                mConstraintSet.IsChanged = true;
 
             var id = element.GetId();
             idToViews.Remove(id);//从存储View的字典中移除
