@@ -23,6 +23,7 @@
     <PackageReleaseNotes>first preview version for maui</PackageReleaseNotes>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
 
   </PropertyGroup>
 
