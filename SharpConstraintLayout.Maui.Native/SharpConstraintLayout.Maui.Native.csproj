@@ -13,7 +13,7 @@
     <SupportedOSPlatformVersion Condition="$(TargetFramework.Contains('-windows'))">10.0.17763.0</SupportedOSPlatformVersion>
     <TargetPlatformMinVersion Condition="$(TargetFramework.Contains('-windows'))">10.0.17763.0</TargetPlatformMinVersion>
     <RootNamespace>SharpConstraintLayout.Maui</RootNamespace>
-    <Version>2.1.1.3</Version>
+    <Version>2.1.3</Version>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Authors>zhouyang</Authors>
     <Description>crossplatform constraintlayout at dotnet(android,ios ,windows)</Description>
@@ -23,6 +23,7 @@
     <PackageTags>constraintlayout;MAUI;android;ios;WinUI3</PackageTags>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageReleaseNotes>some optimist for native view</PackageReleaseNotes>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
   <!--only ios and maccatalyst have these-->
   <ItemGroup Condition="'$(TargetFramework)'!= 'net6.0-ios' and '$(TargetFramework)' != 'net6.0-maccatalyst'">

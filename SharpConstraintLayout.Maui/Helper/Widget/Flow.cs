@@ -230,9 +230,8 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
         }
 
         /// <summary>
-        /// Set the orientation of the layout
+        /// Set the orientation of the layout. Can be: <see cref="Horizontal"/>, or <see cref="Vertical"/>
         /// </summary>
-        /// <param name="orientation">either Flow.HORIZONTAL or FLow.VERTICAL</param>
         public virtual void SetOrientation(int orientation)
         {
             mFlow.Orientation = orientation;
@@ -290,11 +289,8 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
         }
 
         /// <summary>
-        /// Set the style of the last Horizontal column.
+        /// Set the style of the last Horizontal column. Can be: <see cref="ChainSpread"/>, <see cref="ChainSpreadInside"/>, or <see cref="ChainPacked"/>.
         /// </summary>
-        /// <param name="style">
-        /// Flow.CHAIN_SPREAD, Flow.CHAIN_SPREAD_INSIDE, or Flow.CHAIN_PACKED
-        /// </param>
         public virtual void SetLastHorizontalStyle(int style)
         {
             mFlow.LastHorizontalStyle = style;
@@ -302,11 +298,8 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
         }
 
         /// <summary>
-        /// Set the style of the last vertical row.
+        /// Set the style of the last vertical row. Can be: <see cref="ChainSpread"/>, <see cref="ChainSpreadInside"/>, or <see cref="ChainPacked"/>.
         /// </summary>
-        /// <param name="style">
-        /// Flow.CHAIN_SPREAD, Flow.CHAIN_SPREAD_INSIDE, or Flow.CHAIN_PACKED
-        /// </param>
         public virtual void SetLastVerticalStyle(int style)
         {
             mFlow.LastVerticalStyle = style;
@@ -335,11 +328,9 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
 
         /// <summary>
         /// Set wrap mode for the layout. Can be:
-        ///
-        /// Flow.WRAP_NONE (default) -- no wrap behavior, create a single chain Flow.WRAP_CHAIN --
-        /// if not enough space to fit the referenced elements, will create additional chains after
-        /// the first one Flow.WRAP_ALIGNED -- if not enough space to fit the referenced elements,
-        /// will wrap the elements, keeping them aligned (like a table)
+        /// <see cref="WrapNone"/> (default) -- no wrap behavior, create a single chain. 
+        /// <see cref="WrapChain"/> -- if not enough space to fit the referenced elements, will create additional chains after the first one.
+        /// <see cref="WrapAligned"/> -- if not enough space to fit the referenced elements, will wrap the elements, keeping them aligned (like a table).
         /// </summary>
         /// <param name="mode"></param>
         public virtual void SetWrapMode(int value)
@@ -349,9 +340,7 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
         }
 
         /// <summary>
-        /// Set horizontal chain style. Can be:
-        ///
-        /// Flow.CHAIN_SPREAD Flow.CHAIN_SPREAD_INSIDE Flow.CHAIN_PACKED
+        /// Set horizontal chain style. Can be: <see cref="ChainSpread"/>, <see cref="ChainSpreadInside"/>, <see cref="ChainPacked"/>.
         /// </summary>
         /// <param name="style"></param>
         public virtual void SetHorizontalStyle(int value)
@@ -361,9 +350,7 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
         }
 
         /// <summary>
-        /// Set vertical chain style. Can be:
-        ///
-        /// Flow.CHAIN_SPREAD Flow.CHAIN_SPREAD_INSIDE Flow.CHAIN_PACKED
+        /// Set vertical chain style. Can be: <see cref="ChainSpread"/>, <see cref="ChainSpreadInside"/>, <see cref="ChainPacked"/>.
         /// </summary>
         /// <param name="style"></param>
         public virtual void SetVerticalStyle(int value)
@@ -393,7 +380,7 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
         }
 
         /// <summary>
-        /// Similar to setHorizontalStyle(), but only applies to the first chain.
+        /// Similar to <see cref="SetHorizontalStyle"/>, but only applies to the first chain.
         /// </summary>
         /// <param name="style"></param>
         public virtual void SetFirstHorizontalStyle(int value)
@@ -403,7 +390,7 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
         }
 
         /// <summary>
-        /// Similar to setVerticalStyle(), but only applies to the first chain.
+        /// Similar to <see cref="SetVerticalStyle"/>, but only applies to the first chain.
         /// </summary>
         /// <param name="style"></param>
         public virtual void SetFirstVerticalStyle(int value)
@@ -413,7 +400,7 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
         }
 
         /// <summary>
-        /// Similar to setHorizontalBias(), but only applied to the first chain.
+        /// Similar to <see cref="SetHorizontalBias"/>, but only applied to the first chain.
         /// </summary>
         /// <param name="bias"></param>
         public virtual void SetFirstHorizontalBias(float value)
@@ -423,7 +410,7 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
         }
 
         /// <summary>
-        /// Similar to setVerticalBias(), but only applied to the first chain.
+        /// Similar to <see cref="SetVerticalBias"/>, but only applied to the first chain.
         /// </summary>
         /// <param name="bias"></param>
         public virtual void SetFirstVerticalBias(float value)
@@ -433,11 +420,10 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
         }
 
         /// <summary>
-        /// Set up the horizontal alignment of the elements in the layout, if the layout orientation
-        /// is set to Flow.VERTICAL
+        /// Set up the horizontal alignment of the elements in the layout, if the layout <see cref="SetOrientation(int)"/>
+        /// is set to <see cref="Vertical"/>.
         ///
-        /// Can be either: Flow.HORIZONTAL_ALIGN_START Flow.HORIZONTAL_ALIGN_END
-        /// Flow.HORIZONTAL_ALIGN_CENTER
+        /// Can be either: <see cref="HorizontalAlignStart"/>, <see cref="HorizontalAlignEnd"/>, <see cref="HorizontalAlignCenter"/>.
         /// </summary>
         /// <param name="align"></param>
         public virtual void SetHorizontalAlign(int value)
@@ -447,11 +433,10 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
         }
 
         /// <summary>
-        /// Set up the vertical alignment of the elements in the layout, if the layout orientation
-        /// is set to Flow.HORIZONTAL
+        /// Set up the vertical alignment of the elements in the layout, if the layout <see cref="SetOrientation(int)"/>
+        /// is set to <see cref="Horizontal"/>.
         ///
-        /// Can be either: Flow.VERTICAL_ALIGN_TOP Flow.VERTICAL_ALIGN_BOTTOM
-        /// Flow.VERTICAL_ALIGN_CENTER Flow.VERTICAL_ALIGN_BASELINE
+        /// Can be either: <see cref="VerticalAlignTop"/>, <see cref="VerticalAlignBottom"/>, <see cref="VerticalAlignCenter"/>, <see cref="VerticalAlignBaseline"/>.
         /// </summary>
         /// <param name="align"></param>
         public virtual void SetVerticalAlign(int value)
