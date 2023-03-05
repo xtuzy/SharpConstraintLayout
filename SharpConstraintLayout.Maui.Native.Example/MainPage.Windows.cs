@@ -1,5 +1,4 @@
-﻿using BlogFrameRate;
-using Microsoft.Maui.ApplicationModel;
+﻿using Microsoft.Maui.ApplicationModel;
 using Microsoft.Maui.Storage;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
@@ -29,13 +28,14 @@ namespace SharpConstraintLayout.Maui.Native.Example
             //ConstraintLayout.MEASUREEVERYWIDGET = true;
             //ConstraintLayout.MEASUREEVERYCHILD = true;
             var textview = new TextBlock();
-            var fr = new FrameRateCalculator();
+#if WINDOWS
+            var fr = new BlogFrameRate.FrameRateCalculator();
             fr.FrameRateUpdated += (value) =>
             {
-                MainThread.BeginInvokeOnMainThread(() => textview.Text = value.Frames.ToString());
+                this.DispatcherQueue.TryEnqueue(() => textview.Text = value.Frames.ToString());
             };
             fr.Start();
-
+#endif
             this.Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.HotPink);
             var buttonList = new StackPanel() { Orientation = Microsoft.UI.Xaml.Controls.Orientation.Horizontal };
             var baseAlignBt = new Button() { Content = "BaseAlign" };

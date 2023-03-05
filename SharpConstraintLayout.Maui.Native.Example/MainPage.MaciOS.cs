@@ -1,6 +1,8 @@
-﻿using CoreGraphics;
+﻿using BlogFrameRate;
+using CoreGraphics;
 using Foundation;
 using Microsoft.Extensions.Logging;
+using Microsoft.Maui.ApplicationModel;
 using Microsoft.Maui.Storage;
 using SharpConstraintLayout.Maui.DebugTool;
 using SharpConstraintLayout.Maui.Example.Tool;
@@ -29,7 +31,16 @@ namespace SharpConstraintLayout.Maui.Native.Example
                 AutosizesSubviews = true,
                 AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight,
                 BackgroundColor = UIColor.Red
+            }; 
+            
+            var textview = new UILabel();
+            var fr = new FrameRateCalculator();
+            fr.FrameRateUpdated += (value) =>
+            {
+                MainThread.BeginInvokeOnMainThread(() => textview.Text = value.Frames.ToString());
             };
+            fr.Start();
+
             var buttonList = new UIStackView();
             var baseAlignBt = new UIButton(); baseAlignBt.SetTitle("BaseAlign", UIControlState.Normal);
             var baselineBt = new UIButton(); baselineBt.SetTitle("Baseline", UIControlState.Normal);
@@ -45,6 +56,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
             var group = new UIButton(); group.SetTitle("Group", UIControlState.Normal);
             var placeholder = new UIButton(); placeholder.SetTitle("Placeholder", UIControlState.Normal);
             var size = new UIButton(); size.SetTitle("Size", UIControlState.Normal);
+            buttonList.Add(textview);
             buttonList.Add(baseAlignBt);
             buttonList.Add(baselineBt);
             buttonList.Add(guidelineBt);

@@ -123,8 +123,28 @@ namespace SharpConstraintLayout.Maui.Native.Example
                 page.AddElement(newbutton);
                 flow.RefElement(newbutton);
             };
+#elif IOS || MACCATALYST
+            var flow = new Flow() { };
+            page.AddElement(FirstButton);
+            FirstButton.TouchUpInside += (o, e) =>
+            {
+                var newbutton = new UIButton();
+                newbutton.SetTitle(flow.ReferencedIds.Length.ToString(),UIControlState.Normal);
+                newbutton.BackgroundColor = UIKit.UIColor.Gray;
+                page.AddElement(newbutton);
+                flow.RefElement(newbutton);
+            };
 #else
             var flow = new Flow() { };
+            page.AddElement(FirstButton);
+            FirstButton.Click += (o, e) =>
+            {
+                var newbutton = new Button();
+                newbutton.Content = flow.ReferencedIds.Length.ToString();
+                newbutton.Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.Gray);
+                page.AddElement(newbutton);
+                flow.RefElement(newbutton);
+            };
 #endif
             flow.SetOrientation(Flow.Horizontal);
             flow.SetWrapMode(Flow.WrapChain);
