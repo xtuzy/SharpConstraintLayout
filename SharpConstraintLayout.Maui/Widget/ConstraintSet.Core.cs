@@ -35,6 +35,11 @@ using View = Android.Views.View;
 
 namespace SharpConstraintLayout.Maui.Widget
 {
+    /// <summary>
+    /// ConstraintSet is a description about all Constraint.
+    /// After you create a ConstraintSet, you need <see cref="Clone(ConstraintLayout)"/> old ConstraintSet from ConstraintLayout, it contain controls info, 
+    /// then add constraints to they, finnaly, use <see cref="ApplyTo(ConstraintLayout, bool, bool)"/> to instead old ConstraintSet in ConstraintLayout.
+    /// </summary>
     public partial class ConstraintSet : IConstraintSet
     {
         ILogger Logger { get; set; }
@@ -42,6 +47,7 @@ namespace SharpConstraintLayout.Maui.Widget
         {
 
         }
+
         public ConstraintSet(ILogger logger)
         {
             Logger = logger;
@@ -115,8 +121,7 @@ namespace SharpConstraintLayout.Maui.Widget
         }
 
         /// <summary>
-        /// 该方案是和Android的思路一样,在ConstraintLayout中存储一份不变的Constraints去替代LayoutParams,
-        /// LayoutParams是不变的,因此模仿Android思路Constraints也是不变的字典,不在字典中创建新的Constraint替换,只是改原有的属性
+        /// It clone ConstraintSet data in ConstraintLayout, that contains information of all controls and constraint information of previous ConstraintSet, new ConstraintSet need to be based on they. 
         /// </summary>
         /// <param name="constraintLayout"></param>
         /// <exception cref="Exception"></exception>
@@ -392,11 +397,11 @@ namespace SharpConstraintLayout.Maui.Widget
         }
 
         /// <summary>
-        /// 为动画获得坐标,不造成重新Layout
+        /// We know ConstraintLayout according to Constraints to calculate position then layout, so if we can use it to only calculate position and not layout.
+        /// From <see cref="ConstraintLayout.Get"/>
+        /// Current only support Maui.
         /// </summary>
         /// <param name="constraintLayout"></param>
-        /// <exception cref="Exception"></exception>
-        /// <exception cref="NotImplementedException"></exception>
         public virtual void ApplyToForAnim(ConstraintLayout constraintLayout)
         {
             ApplyTo(constraintLayout, false, true);
@@ -470,8 +475,8 @@ namespace SharpConstraintLayout.Maui.Widget
 
         /// <summary>
         /// Centers the widget horizontally to the left and right side on another widgets sides.
-        /// (for sides see: {@link #START, <seealso cref="#END"/>, {@link #LEFT, <seealso
-        /// cref="#RIGHT"/>)
+        /// (for sides see: <see cref="Start"/> <seealso cref="End"/>, <see cref="Left"/>, <seealso
+        /// cref="Right"/>)
         /// </summary>
         /// <param name="centerID">ID of widget to be centered</param>
         /// <param name="leftId">The Id of the widget on the left side</param>
@@ -496,8 +501,8 @@ namespace SharpConstraintLayout.Maui.Widget
 
         /// <summary>
         /// Centers the widgets horizontally to the left and right side on another widgets sides.
-        /// (for sides see: <seealso cref="#START"/>, <seealso cref="#END"/>, <seealso
-        /// cref="#LEFT"/>, <seealso cref="#RIGHT"/>)
+        /// (for sides see: <seealso cref="Start"/>, <seealso cref="End"/>, <seealso
+        /// cref="Left"/>, <seealso cref="Right"/>)
         /// </summary>
         /// <param name="centerID">ID of widget to be centered</param>
         /// <param name="startId">
@@ -526,7 +531,7 @@ namespace SharpConstraintLayout.Maui.Widget
 
         /// <summary>
         /// Centers the widgets vertically to the top and bottom side on another widgets sides. (for
-        /// sides see: {@link #TOP, <seealso cref="#BOTTOM"/>)
+        /// sides see: <see cref="Top"/>, <seealso cref="Bottom"/>)
         /// </summary>
         /// <param name="centerID">ID of widget to be centered</param>
         /// <param name="topId">The Id of the widget on the top side</param>
@@ -552,7 +557,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <summary>
         /// Spaces a set of widgets vertically between the view topId and bottomId. Widgets can be
         /// spaced with weights. This operation sets all the related margins to 0.
-        /// <para>(for sides see: {@link #TOP, <seealso cref="#BOTTOM"/>)</para>
+        /// <para>(for sides see: <see cref="Top"/>, <seealso cref="Bottom"/>)</para>
         /// </summary>
         /// <param name="topId">The id of the widget to connect to or PARENT_ID</param>
         /// <param name="topSide">the side of the start to connect to</param>
@@ -595,8 +600,8 @@ namespace SharpConstraintLayout.Maui.Widget
         /// Spaces a set of widgets horizontally between the view startID and endId. Widgets can be
         /// spaced with weights. This operation sets all the related margins to 0.
         /// <para>
-        /// (for sides see: {@link #START, <seealso cref="#END"/>, {@link #LEFT, <seealso
-        /// cref="#RIGHT"/>
+        /// (for sides see: <see cref="Start"/>, <seealso cref="End"/>, <see cref="Left"/>, <seealso
+        /// cref="Right"/>
         /// </para>
         /// </summary>
         /// <param name="leftId">The id of the widget to connect to or PARENT_ID</param>
@@ -613,8 +618,7 @@ namespace SharpConstraintLayout.Maui.Widget
 
         /// <summary>
         /// Spaces a set of widgets horizontal between the view startID and endId. Widgets can be
-        /// spaced with weights. (for sides see: {@link #START, <seealso cref="#END"/>, {@link
-        /// #LEFT, <seealso cref="#RIGHT"/>)
+        /// spaced with weights. (for sides see: <see cref="Start"/>, <seealso cref="End"/>, <see cref="Left"/>, <seealso cref="Right"/>)
         /// </summary>
         /// <param name="startId">The id of the widget to connect to or PARENT_ID</param>
         /// <param name="startSide">the side of the start to connect to</param>
@@ -659,8 +663,8 @@ namespace SharpConstraintLayout.Maui.Widget
         }
 
         /// <summary>
-        /// Create a constraint between two widgets. (for sides see: {@link #TOP, <seealso
-        /// cref="Bottom"/>, {@link #START, <seealso cref="End"/>, {@link #LEFT, <seealso
+        /// Create a constraint between two widgets. (for sides see: <see cref="Top"/>, <seealso
+        /// cref="Bottom"/>, <see cref="Start"/>, <seealso cref="End"/>, <see cref="Left"/>, <seealso
         /// cref="Right"/>, <seealso cref="Baseline"/>)
         /// </summary>
         /// <param name="startID">the ID of the widget to be constrained</param>
@@ -834,9 +838,9 @@ namespace SharpConstraintLayout.Maui.Widget
         }
 
         /// <summary>
-        /// Create a constraint between two widgets. (for sides see: {@link #TOP, <seealso
-        /// cref="#BOTTOM"/>, {@link #START, <seealso cref="#END"/>, {@link #LEFT, <seealso
-        /// cref="#RIGHT"/>, <seealso cref="#BASELINE"/>)
+        /// Create a constraint between two widgets. (for sides see: <see cref="Top"/>, <seealso
+        /// cref="Bottom"/>, <see cref="Start"/>, <seealso cref="End"/>, <see cref="Left"/>, <seealso
+        /// cref="Right"/>, <seealso cref="Baseline"/>)
         /// </summary>
         /// <param name="startID">the ID of the widget to be constrained</param>
         /// <param name="startSide">the side of the widget to constrain</param>
@@ -2030,8 +2034,7 @@ namespace SharpConstraintLayout.Maui.Widget
         }
 
         /// <summary>
-        /// set the barrier type (Barrier.LEFT, Barrier.TOP, Barrier.RIGHT, Barrier.BOTTOM,
-        /// Barrier.END, Barrier.START)
+        /// set the barrier type (<see cref="Barrier.LEFT"/>, <see cref="Barrier.TOP"/>, <see cref="Barrier.RIGHT"/>, <see cref="Barrier.BOTTOM"/>, <see cref="Barrier.End"/>, <see cref="Barrier.Start"/>)
         /// </summary>
         /// <param name="id"></param>
         /// <param name="type"></param>

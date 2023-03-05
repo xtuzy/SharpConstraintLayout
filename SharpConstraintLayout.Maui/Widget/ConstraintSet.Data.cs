@@ -24,9 +24,13 @@ namespace SharpConstraintLayout.Maui.Widget
     public partial class ConstraintSet : IDisposable
     {
         /// <summary>
-        /// 只对ConstraintLayout中的有效,用户设置中使用的ConstraintSet不使用该Tag
+        /// If true, it tell ConstraintLayout contraint have change, need recreate contraint for widgets.
         /// </summary>
         public bool IsChanged = false;
+
+        /// <summary>
+        /// If true, it tell ConstraintLayout not layout, <see cref="ApplyToForAnim(ConstraintLayout)"/> use it.
+        /// </summary>
         public bool IsForAnimation = false;
 
         private const string TAG = "ConstraintSet";

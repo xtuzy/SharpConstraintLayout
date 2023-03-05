@@ -187,10 +187,6 @@ namespace SharpConstraintLayout.Maui.Widget
             mCount++;
         }
 
-        /*public override void onDraw(Canvas canvas)
-        {
-            // Nothing
-        }*/
 #if __ANDROID__ && !__MAUI__
         /// <summary>
         /// @suppress
@@ -222,79 +218,6 @@ namespace SharpConstraintLayout.Maui.Widget
             if (idsToConstraintWidgets != null && idsToConstraintWidgets.ContainsKey(this.GetId()))
                 idsToConstraintWidgets[this.GetId()] = (ConstraintWidget)mHelperWidget;
         }
-
-        /*private void addTag(string tagString)
-        {
-            if (string.ReferenceEquals(tagString, null) || tagString.Length == 0)
-            {
-                return;
-            }
-            if (myContext == null)
-            {
-                return;
-            }
-
-            tagString = tagString.Trim();
-
-            ConstraintLayout parent = null;
-            if (Parent is ConstraintLayout)
-            {
-                parent = (ConstraintLayout)Parent;
-            }
-            if (parent == null)
-            {
-                Debug.WriteLine("ConstraintHelper", "Parent not a ConstraintLayout");
-                return;
-            }
-            int count = parent.ChildCount;
-            for (int i = 0; i < count; i++)
-            {
-                View v = parent.getViewAt(i);
-                ViewGroup.LayoutParams @params = v.LayoutParams;
-                if (@params is ConstraintLayout.LayoutParams)
-                {
-                    ConstraintLayout.LayoutParams lp = (ConstraintLayout.LayoutParams)@params;
-                    if (tagString.Equals(lp.constraintTag))
-                    {
-                        if (v.Id == AndroidView.NO_ID)
-                        {
-                            Log.w("ConstraintHelper", "to use ConstraintTag view " + v.GetType().Name + " must have an ID");
-                        }
-                        else
-                        {
-                            //addRscID(v.Id);
-                            addRscID(v.GetHashCode());
-                        }
-                    }
-                }
-
-            }
-        }*/
-
-        /*protected internal virtual string ReferenceTags
-        {
-            set
-            {
-                mReferenceTags = value;
-                if (string.ReferenceEquals(value, null))
-                {
-                    return;
-                }
-                int begin = 0;
-                mCount = 0;
-                while (true)
-                {
-                    int end = value.IndexOf(',', begin);
-                    if (end == -1)
-                    {
-                        addTag(value.Substring(begin));
-                        break;
-                    }
-                    addTag(value.Substring(begin, end - begin));
-                    begin = end + 1;
-                }
-            }
-        }*/
 
         protected internal virtual void applyLayoutFeatures(ConstraintLayout container)
         {
@@ -376,7 +299,6 @@ namespace SharpConstraintLayout.Maui.Widget
             for (int i = 0; i < mCount; i++)
             {
                 int id = mIds[i];
-                //helper.add(map.get(id));
                 helper.add(map[id]);
             }
         }
@@ -465,16 +387,6 @@ namespace SharpConstraintLayout.Maui.Widget
             // nothing here
         }
 
-        /*public override void setTag(int key, object tag)
-        {
-            base.setTag(key, tag);
-            if (tag == null && string.ReferenceEquals(mReferenceIds, null))
-            {
-                addRscID(key);
-            }
-        }*/
-
-        //ORIGINAL LINE: public boolean containsId(final int id)
         public virtual bool ContainsId(int id)
         {
             bool result = false;
@@ -489,7 +401,11 @@ namespace SharpConstraintLayout.Maui.Widget
             return result;
         }
 
-        //ORIGINAL LINE: public int indexFromId(final int id)
+        /// <summary>
+        /// get index about element of this id in helper.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public virtual int IndexFromId(int id)
         {
             int index = -1;
@@ -505,12 +421,13 @@ namespace SharpConstraintLayout.Maui.Widget
         }
 
         /// <summary>
-        /// ConstraintSet.VISIBLE,GONE,INVISIBLE
+        /// <see cref="ConstraintSet.Visible"/>, <see cref="ConstraintSet.Gone"/>, <see cref="ConstraintSet.Invisible"/>
         /// </summary>
         int visible;
 
         /// <summary>
-        /// 替代平台的Visibility和Hiden.请在设置ConstraintSet后使用.
+        /// Instead of Visibility and Hiden action of Native and Maui, because they are different in Native and Maui.But must use it after use ConstraintSet, because it use <see cref="ConstraintLayout.mConstraintSet"/>.
+        /// Value is <see cref="ConstraintSet.Visible"/>, <see cref="ConstraintSet.Gone"/>, <see cref="ConstraintSet.Invisible"/>
         /// </summary>
         public virtual int ConstrainVisibility
         {

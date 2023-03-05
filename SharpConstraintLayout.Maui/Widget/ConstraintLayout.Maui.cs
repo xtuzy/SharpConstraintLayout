@@ -75,6 +75,7 @@ namespace SharpConstraintLayout.Maui.Widget
             }
             return (isInfinityAvailabelWidth, isInfinityAvailabelHeight);
         }
+
         protected override ILayoutManager CreateLayoutManager()
         {
             return new ConstraintLayoutManager(this);

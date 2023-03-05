@@ -119,7 +119,7 @@ namespace SharpConstraintLayout.Maui.Widget
             //ConstraintSet.Constraints.Add(ConstraintSet.PARENT_ID, new ConstraintSet.Constraint());//对于Layout,都用ParentID代替GetHashCode,这是因为Layout可以在ApplyTo时替换
             //这里换种思路,不管是ParentId还是HashCode对应的应该都是同一个约束,修改也是同一个
             var rootConstraint = new ConstraintSet.Constraint();
-            rootConstraint.layout.mWidth = ConstraintSet.MatchParent;//@zhouyang Add:Default set WrapContent,it is more useful
+            rootConstraint.layout.mWidth = ConstraintSet.MatchParent;//@zhouyang Add:Default set MatchParent, it is more useful, because it always as root layout.
             rootConstraint.layout.mHeight = ConstraintSet.MatchParent;
 
             mConstraintSet.Constraints.Add(ConstraintSet.ParentId, rootConstraint);
@@ -353,9 +353,11 @@ namespace SharpConstraintLayout.Maui.Widget
         }
 
         /// <summary>
-        /// 该属性约束自身的高度,其值可以是固定数值,或者<see cref="ConstraintSet.WrapContent"/>,<see cref="ConstraintSet.MatchConstraint"/>,<see cref="ConstraintSet.MatchParent"/>,
-        /// 当依赖Parent给与的高度时,使用<see cref="ConstraintSet.MatchParent"/>,其为默认;当依赖自身Child的大小时,使用其它.
-        /// (因为父布局的行为不能确定,因此可能会与父布局产生冲突,请多加尝试);在Xaml中可通过ConstrainHeight="{x:Static constrain:ConstraintSet.WrapContent}"来设置
+        /// set this ConstraintLayout how to deal with own size. size of this ConstraintLayout is determined by this property and parent.
+        /// Value of this property is fixed value, or <see cref="ConstraintSet.WrapContent"/>, or <see cref="ConstraintSet.MatchConstraint"/>, or <see cref="ConstraintSet.MatchParent"/>.
+        /// When you want it same as parent, use <see cref="ConstraintSet.MatchParent"/>, it is default.
+        /// When you want it is determined by children, use <see cref="ConstraintSet.WrapContent"/> or <see cref="ConstraintSet.MatchConstraint"/>.
+        /// Notice this property should match parent, such as if parent is scrollview, scrollview will give child a infinite size, if you set this property is <see cref="ConstraintSet.MatchParent"/>, that mean this ConstraintLayout have infifnite size and generate error.
         /// </summary>
         public int ConstrainHeight
         {
@@ -379,9 +381,7 @@ namespace SharpConstraintLayout.Maui.Widget
         }
 
         /// <summary>
-        /// 该属性约束自身的宽度,其值可以是固定数值,或者<see cref="ConstraintSet.WrapContent"/>,<see cref="ConstraintSet.MatchConstraint"/>,<see cref="ConstraintSet.MatchParent"/>,
-        /// 当依赖Parent给与的宽度时,使用<see cref="ConstraintSet.MatchParent"/>,其为默认;当依赖自身Child的大小时,使用其它.
-        /// (因为父布局的行为不能确定,因此可能会与父布局产生冲突,请多加尝试)；在Xaml中可通过ConstrainWidth="{x:Static constrain:ConstraintSet.WrapContent}"来设置
+        /// see doc of <see cref="ConstrainHeight"/>.
         /// </summary>
         public int ConstrainWidth
         {
@@ -1283,16 +1283,19 @@ namespace SharpConstraintLayout.Maui.Widget
 
         #region Apply Contrants to Widget
 
+        /// <summary>
+        /// <see cref="MeasureLayout(Size, int, int)"/> Will load it to recreate constrain for all widget when ConstraintSet is changed.
+        /// </summary>
+        /// <returns></returns>
         private bool updateHierarchy()
         {
             //int count = ChildCount;
 
-            //Android中的逻辑是只要有一个布局变了,就需要调用setChildrenConstraints,其也是更新全部的内容,所以这里我直接标记为重新计算
+            //Android中的逻辑是只要有一个布局变了, 就需要调用setChildrenConstraints更新全部的内容, Maui中没有布局请求的Tag, 所以这里我直接标记为重新计算
             //bool recompute = false;
             bool recompute = true;
             /*for (int i = 0; i < count; i++)
             {
-                //ORIGINAL LINE: final android.view.View child = getChildAt(i);
                 UIElement child = Children[i];
                 if (child.LayoutRequested)
                 {
@@ -1315,7 +1318,7 @@ namespace SharpConstraintLayout.Maui.Widget
 
             int count = ChildCount;
 
-            // Make sure everything is fully reset before anything else.重置W全部idget，之后再设置需要的
+            // Make sure everything is fully reset before anything else.重置全部widget，之后再设置需要的
             for (int i = 0; i < count; i++)
             {
                 UIElement child = GetChildAt(i);
@@ -1331,9 +1334,8 @@ namespace SharpConstraintLayout.Maui.Widget
             {
                 for (int i = 0; i < count; i++)
                 {
-                    //ORIGINAL LINE: final android.view.View child = getChildAt(i);
                     View child = (View)Children[i];
-                    if (child.GetHashCode() == mConstraintSetId && child is Constraints)
+                    if (child.GetHashCode() == mConstraintSetId && child is Constraints)//不理解view为什么是Constraints
                     {
                         mConstraintSet = ((Constraints)child).ConstraintSet;
                     }
