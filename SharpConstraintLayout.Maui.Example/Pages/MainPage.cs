@@ -208,23 +208,23 @@ namespace SharpConstraintLayout.Maui.Example
 
         void StackLayoutInConstraintLayoutTest(ConstraintLayout page)
         {
-
+            
             var stackPanel = new HorizontalStackLayout()
             {
                 Background = new SolidColorBrush(Colors.Aqua),
             };
             page.AddElement(stackPanel);
-            stackPanel.Add(new Button() { Text = "InStackPanel" });
-            stackPanel.Add(new Label() { Text = "InStackPanel" });
-            stackPanel.Add(new Editor() { Text = "InStackPanel" });
+            stackPanel.Add(new Button() { Text = "InHorizontalStackPanel" });
+            stackPanel.Add(new Label() { Text = "InHorizontalStackPanel" });
+            stackPanel.Add(new Editor() { Text = "InHorizontalStackPanel" });
 
             var grid = new Grid();
             page.AddElement(grid);
             var normalStackLayout = new HorizontalStackLayout();
             grid.Add(normalStackLayout);
-            normalStackLayout.Add(new Button() { Text = "InStackPanel" });
-            normalStackLayout.Add(new Label() { Text = "InStackPanel" });
-            normalStackLayout.Add(new Editor() { Text = "InStackPanel" });
+            normalStackLayout.Add(new Button() { Text = "InHorizontalStackPanel" });
+            normalStackLayout.Add(new Label() { Text = "InHorizontalStackPanel" });
+            normalStackLayout.Add(new Editor() { Text = "InHorizontalStackPanel" });
 
             using (var layoutSet = new FluentConstraintSet())
             {
@@ -232,7 +232,8 @@ namespace SharpConstraintLayout.Maui.Example
                 layoutSet.Select(stackPanel)
                     .TopToTop().LeftToLeft()
                     .Width(SizeBehavier.WrapContent)
-                    .Height(SizeBehavier.WrapContent)
+                    //.Height(SizeBehavier.WrapContent)//HorizontalStackLayout's height be decide by parent, WrapContent will let it as big as possible
+                    .Height(SizeBehavier.MatchConstraint)
                     .Select(grid)
                     .LeftToLeft().TopToBottom(stackPanel).RightToRight().BottomToBottom()
                     .Width(SizeBehavier.MatchConstraint).Height(SizeBehavier.MatchConstraint);
@@ -528,7 +529,7 @@ namespace SharpConstraintLayout.Maui.Example
                 .Select(ThirdCanvas).LeftToRight(FirstButton).RightToRight().EdgesYTo()
                 .Select(FouthTextBlock).RightToRight(SecondButton, 20).TopToBottom(SecondButton, 20)
                 .Select(FifthTextBox).RightToLeft(FouthTextBlock, 20).CenterYTo(FouthTextBlock)
-                .Select(SixthRichTextBlock).RightToLeft(FifthTextBox, 20).CenterYTo(FifthTextBox);
+                .Select(SixthRichTextBlock).LeftToLeft(FifthTextBox).TopToBottom(FifthTextBox);
             layoutSet.ApplyTo(layout);
 
             Task.Run(async () =>

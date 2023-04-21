@@ -3,7 +3,6 @@
     x:Class="SharpConstraintLayout.Maui.Example.MainPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:my="clr-namespace:SharpConstraintLayout.Maui.Widget;assembly=SharpConstraintLayout.Maui"
     x:Name="Page">
     <Grid>
         <Grid.RowDefinitions>
@@ -101,16 +100,12 @@
             x:Name="gridLayout"
             Grid.Row="1"
             BackgroundColor="Coral">
-            <my:ConstraintLayout
-                x:Name="TempConstraintLayout"
-                BackgroundColor="AliceBlue"
-                HeightRequest="200"
-                WidthRequest="200">
-                <Button
-                    x:Name="TempButton"
-                    Clicked="TempButton_Clicked"
-                    Text="45" />
-            </my:ConstraintLayout>
+            <Grid x:Name="compareWithGridLayout">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+            </Grid>
         </Grid>
     </Grid>
 </ContentPage>

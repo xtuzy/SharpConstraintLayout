@@ -1,6 +1,8 @@
-﻿using Microsoft.Maui.Controls.Shapes;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.Maui.Controls.Shapes;
 using SharpConstraintLayout.Maui.Example.Models;
 using SharpConstraintLayout.Maui.Example.Pages;
+using SharpConstraintLayout.Maui.Example.Tool;
 using SharpConstraintLayout.Maui.Example.ViewModels;
 using SharpConstraintLayout.Maui.Widget;
 using static SharpConstraintLayout.Maui.Widget.FluentConstraintSet;
@@ -17,15 +19,29 @@ public partial class MainPage : ContentPage
     {
         InitializeComponent();
 
-        //ConstraintLayout.DEBUG = true;
+        ConstraintLayout.DEBUG = true;
         //ConstraintLayout.MEASURE_MEASURELAYOUT = true;
         this.SizeChanged += (sender, e) =>
         {
             System.Diagnostics.Debug.WriteLine("MainPage: Width=" + (sender as Page).Bounds.Width);
             App.WindowWidth = (int)(sender as Page).Bounds.Width;
         };
-        TempButton_Clicked(null, null);
-
+        
+        var myHorizontalStackLayout = new MyHorizontalStackLayout();
+        var myConstraintLayout = new ConstraintLayout(new Log());
+        compareWithGridLayout.Add(myHorizontalStackLayout);
+        compareWithGridLayout.Add(myConstraintLayout);
+        Grid.SetRow(myHorizontalStackLayout, 0);
+        Grid.SetRow(myConstraintLayout, 1);
+        myHorizontalStackLayout.Add(new Entry() { Text = "In MyHorizontalStackLayout", VerticalOptions = LayoutOptions.Center });
+        var entry = new Entry() { Text = "In ConstraintLayout" };
+        myConstraintLayout.Add(entry);
+        using(var set = new FluentConstraintSet())
+        {
+            set.Clone(myConstraintLayout);
+            set.Select(entry).CenterYTo();
+            set.ApplyTo(myConstraintLayout);
+        }
 #if WINDOWS || __ANDROID__ || __IOS__
         if (fr == null)
         {
@@ -37,6 +53,24 @@ public partial class MainPage : ContentPage
             fr.Start();
         }
 #endif
+    }
+
+    /// <summary>
+    /// For know official layout measure times
+    /// </summary>
+    public class MyHorizontalStackLayout : HorizontalStackLayout
+    {
+        protected override Size MeasureOverride(double widthConstraint, double heightConstraint)
+        {
+            System.Diagnostics.Debug.WriteLine("MyHorizontalStackLayout MeasureOverride");
+            return base.MeasureOverride(widthConstraint, heightConstraint);
+        }
+
+        protected override Size ArrangeOverride(Rect bounds)
+        {
+            System.Diagnostics.Debug.WriteLine("MyHorizontalStackLayout ArrangeOverride");
+            return base.ArrangeOverride(bounds);
+        }
     }
 
     private (Button FirstButton, Button SecondButton, ContentView ThirdCanvas, Label FouthTextBlock, Entry FifthTextBox, Editor SixthRichTextBlock) CreateControls()
@@ -72,6 +106,11 @@ public partial class MainPage : ContentPage
             Text = "FifthEntry",
             HorizontalOptions = LayoutOptions.CenterAndExpand
         };
+        FifthTextBox.TextChanged += (sender, e) =>
+        {
+            (FifthTextBox.Parent as ConstraintLayout)?.RequestReLayout();
+        };
+
         //https://stackoverflow.com/questions/35710355/uwpc-adding-text-to-richtextblock
         var SixthRichTextBlock = new Editor()
         {
@@ -82,9 +121,9 @@ public partial class MainPage : ContentPage
         return (FirstButton, SecondButton, ThirdCanvas, FouthTextBlock, FifthTextBox, SixthRichTextBlock);
     }
 
-    ConstraintLayout CreateConstraintLayout()
+    ConstraintLayout CreateConstraintLayout(ILogger log = null)
     {
-        var content = new ConstraintLayout()
+        var content = new ConstraintLayout(log)
         {
             ConstrainPaddingTop = 10,
             ConstrainPaddingBottom = 10,
@@ -185,7 +224,7 @@ public partial class MainPage : ContentPage
 
     private void StackLayoutInConstraintLayout_Clicked(object sender, EventArgs e)
     {
-        var content = CreateConstraintLayout();
+        var content = CreateConstraintLayout(new Log());
         StackLayoutInConstraintLayoutTest(content);
     }
 
@@ -208,16 +247,6 @@ public partial class MainPage : ContentPage
         listView = new ListView();
         gridLayout.Add(listView);
         ConstraintLayoutInListViewTest(listView);
-    }
-
-    private void TempButton_Clicked(object sender, EventArgs e)
-    {
-        using (var set = new FluentConstraintSet())
-        {
-            set.Clone(TempConstraintLayout);
-            set.Select(TempButton).CenterXTo();
-            set.ApplyTo(TempConstraintLayout);
-        }
     }
 
     private void ConstraintLayoutInContentView_Clicked(object sender, EventArgs e)
