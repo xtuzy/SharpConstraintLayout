@@ -192,7 +192,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// </summary>
         public override void LayoutSubviews()
         {
-            if (DEBUG) Debug.WriteLine($"{this.GetType().FullName} {nameof(LayoutSubviews)} Start: Frame={this.Frame} Parent={Superview.GetType().FullName} Parents' Frame={this.Superview?.Frame}");
+            if (DEBUG) Debug.WriteLine($"{this.GetType().Name} {nameof(LayoutSubviews)} Start: Frame={this.Frame} Parent={Superview.GetType().Name} Parents' Frame={this.Superview?.Frame}");
 
             base.LayoutSubviews();
 
@@ -207,7 +207,7 @@ namespace SharpConstraintLayout.Maui.Widget
 
             ArrangeLayout();
 
-            if (DEBUG) Debug.WriteLine($"{this.GetType().FullName} {nameof(LayoutSubviews)} Finish: Frame={this.Frame} Bounds={this.Bounds} Widget={this.MLayoutWidget.ToString()}");
+            if (DEBUG) Debug.WriteLine($"{this.GetType().Name} {nameof(LayoutSubviews)} Finish: Frame={this.Frame} Bounds={this.Bounds} Widget={this.MLayoutWidget.ToString()}");
         }
 
         private void LayoutChild(UIElement element, int x, int y, int w, int h)

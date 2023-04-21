@@ -602,14 +602,14 @@ namespace SharpConstraintLayout.Maui.Widget
         public static string GetViewLayoutInfo(this UIElement element)
         {
 #if __MAUI__
-            return $"{element.GetType().FullName} IsVisible={element.IsVisible} Position=({element.X},{element.Y}) DesiredSize={element.DesiredSize} WidthxHeight=({element.Width}x{element.Height})";
+            return $"{element.GetType().Name} IsVisible={element.IsVisible} Position=({element.X},{element.Y}) DesiredSize={element.DesiredSize} WidthxHeight=({element.Width}x{element.Height})";
 
 #elif WINDOWS
-            return $"{element.GetType().FullName} Visibility={element.Visibility} Position={element.ActualOffset} DesiredSize={element.DesiredSize} ActualSize={element.ActualSize}";
+            return $"{element.GetType().Name} Visibility={element.Visibility} Position={element.ActualOffset} DesiredSize={element.DesiredSize} ActualSize={element.ActualSize}";
 #elif __IOS__
-            return $"{element.GetType().FullName} IsHiden={element.Hidden} Frame={element.Frame} Bounds={element.Bounds} IntrinsicContentSize={element.IntrinsicContentSize}";
+            return $"{element.GetType().Name} IsHiden={element.Hidden} Frame={element.Frame} Bounds={element.Bounds} IntrinsicContentSize={element.IntrinsicContentSize}";
 #elif __ANDROID__
-            return $"{element.GetType().FullName} Visibility={element.Visibility} Position={element.GetX()}x{element.GetY()} Size={element.Width}x{element.Height} MeasuredSize={element.MeasuredWidth}x{element.MeasuredHeight}";
+            return $"{element.GetType().Name} Visibility={element.Visibility} Position={element.GetX()}x{element.GetY()} Size={element.Width}x{element.Height} MeasuredSize={element.MeasuredWidth}x{element.MeasuredHeight}";
 #endif
         }
     }
