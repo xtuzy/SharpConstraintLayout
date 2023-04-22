@@ -21,6 +21,7 @@ public partial class MainPage : ContentPage
         InitializeComponent();
 
         ConstraintLayout.DEBUGCONSTRAINTLAYOUTPROCESS = true;
+        ConstraintLayout.DEBUGCHILDLAYOUTROCESS = true;
         //ConstraintLayout.MEASURE_MEASURELAYOUT = true;
         this.SizeChanged += (sender, e) =>
         {
@@ -177,13 +178,13 @@ public partial class MainPage : ContentPage
 
     private void BaseAlign_Clicked(object sender, EventArgs e)
     {
-        var content = CreateConstraintLayout();
+        var content = CreateConstraintLayout(new Log());
         BaseAlignTest(content);
     }
 
     private void Baseline_Clicked(object sender, EventArgs e)
     {
-        var content = CreateConstraintLayout();
+        var content = CreateConstraintLayout(new Log());
         var label = new Label()
         {
             Text = "Labelfj",
@@ -232,25 +233,25 @@ public partial class MainPage : ContentPage
 
     private void Barrier_Clicked(object sender, EventArgs e)
     {
-        var content = CreateConstraintLayout();
+        var content = CreateConstraintLayout(new Log());
         BarrierTest(content);
     }
 
     private void Visibility_Clicked(object sender, EventArgs e)
     {
-        var content = CreateConstraintLayout();
+        var content = CreateConstraintLayout(new Log());
         VisibilityTest(content);
     }
 
     private void Flow_Clicked(object sender, EventArgs e)
     {
-        var content = CreateConstraintLayout();
+        var content = CreateConstraintLayout(new Log());
         FlowTest(content);
     }
 
     private void CircleConstraint_Clicked(object sender, EventArgs e)
     {
-        var content = CreateConstraintLayout();
+        var content = CreateConstraintLayout(new Log());
         CircleConstraintTest(content);
     }
 
@@ -268,7 +269,7 @@ public partial class MainPage : ContentPage
 
     private void ScrollViewInConstraintLayout_Clicked(object sender, EventArgs e)
     {
-        var content = CreateConstraintLayout();
+        var content = CreateConstraintLayout(new Log());
         ScrollViewInConstraintLayoutTest(content);
     }
 
@@ -310,7 +311,7 @@ public partial class MainPage : ContentPage
 
     private void Group_Clicked(object sender, EventArgs e)
     {
-        var content = CreateConstraintLayout();
+        var content = CreateConstraintLayout(new Log());
         GroupTest(content);
     }
 
@@ -324,7 +325,7 @@ public partial class MainPage : ContentPage
 
     private void RemoveAndAdd_Clicked(object sender, EventArgs e)
     {
-        var content = CreateConstraintLayout();
+        var content = CreateConstraintLayout(new Log());
         RemoveAndAddTest(content);
     }
 

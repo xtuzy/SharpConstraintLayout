@@ -814,7 +814,7 @@ namespace SharpConstraintLayout.Maui.Widget
 
         public void ArrangeLayout()
         {
-            if (DEBUGCONSTRAINTLAYOUTPROCESS) Logger?.LogInformation($"{nameof(ArrangeLayout)} View={nameof(ConstraintLayout)} Id={this.GetId()}");
+            if (DEBUGCONSTRAINTLAYOUTPROCESS) Logger?.LogInformation($"{nameof(ArrangeLayout)} View={nameof(ConstraintLayout)} Id={this.GetId()} Size={this.Bounds.Size}");
             //layout child
             foreach (ConstraintWidget child in mLayout.Children)
             {
@@ -835,7 +835,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 if (component != null)
                 {
                     LayoutChild(component, child.X, child.Y, child.Width, child.Height);
-                    //if (DEBUG && ChildCount < 10) Logger?.LogDebug($"{nameof(ArrangeLayout)} {component.GetViewLayoutInfo()} Widget={new Rect(child.X, child.Y, child.Width, child.Height)}");
+                    if (DEBUGCHILDLAYOUTROCESS && ChildCount < 10) Logger?.LogDebug($"{nameof(ArrangeLayout)} {component.GetViewLayoutInfo()} Widget={new Rect(child.X, child.Y, child.Width, child.Height)}");
                 }
 
                 if (component is Placeholder)
