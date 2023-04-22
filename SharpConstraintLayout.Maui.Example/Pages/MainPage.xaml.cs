@@ -4,6 +4,7 @@ using SharpConstraintLayout.Maui.Example.Models;
 using SharpConstraintLayout.Maui.Example.Pages;
 using SharpConstraintLayout.Maui.Example.Tool;
 using SharpConstraintLayout.Maui.Example.ViewModels;
+using SharpConstraintLayout.Maui.Native.Example.Tool;
 using SharpConstraintLayout.Maui.Widget;
 using static SharpConstraintLayout.Maui.Widget.FluentConstraintSet;
 
@@ -26,22 +27,9 @@ public partial class MainPage : ContentPage
             System.Diagnostics.Debug.WriteLine("MainPage: Width=" + (sender as Page).Bounds.Width);
             App.WindowWidth = (int)(sender as Page).Bounds.Width;
         };
-        
-        var myHorizontalStackLayout = new MyHorizontalStackLayout();
-        var myConstraintLayout = new ConstraintLayout(new Log());
-        compareWithGridLayout.Add(myHorizontalStackLayout);
-        compareWithGridLayout.Add(myConstraintLayout);
-        Grid.SetRow(myHorizontalStackLayout, 0);
-        Grid.SetRow(myConstraintLayout, 1);
-        myHorizontalStackLayout.Add(new Entry() { Text = "In MyHorizontalStackLayout", VerticalOptions = LayoutOptions.Center });
-        var entry = new Entry() { Text = "In ConstraintLayout" };
-        myConstraintLayout.Add(entry);
-        using(var set = new FluentConstraintSet())
-        {
-            set.Clone(myConstraintLayout);
-            set.Select(entry).CenterYTo();
-            set.ApplyTo(myConstraintLayout);
-        }
+
+        FitGridTest();
+
 #if WINDOWS || __ANDROID__ || __IOS__
         if (fr == null)
         {
@@ -53,6 +41,56 @@ public partial class MainPage : ContentPage
             fr.Start();
         }
 #endif
+    }
+
+    /// <summary>
+    /// ConstraintLayout use int in internal, so need double to int, here we test it if will get error.
+    /// </summary>
+    void FitGridTest()
+    {
+        var myHorizontalStackLayout = new MyHorizontalStackLayout();
+        var myConstraintLayout = new ConstraintLayout(new Log());
+        compareWithGridLayout.Add(myHorizontalStackLayout);
+        compareWithGridLayout.Add(myConstraintLayout);
+        Grid.SetRow(myHorizontalStackLayout, 0);
+        Grid.SetRow(myConstraintLayout, 1);
+        myHorizontalStackLayout.Add(new Entry() { Text = "In MyHorizontalStackLayout", VerticalOptions = LayoutOptions.Center });
+        var entry = new Entry() { Text = "In ConstraintLayout" };
+        myConstraintLayout.Add(entry);
+        using (var set = new FluentConstraintSet())
+        {
+            set.Clone(myConstraintLayout);
+            set.Select(entry).CenterYTo();
+            set.ApplyTo(myConstraintLayout);
+        }
+
+        var testMessage = "HorizontalStackLayout should have same height with ConstraintLayout";
+        var addRowTask = new Task(() =>
+        {
+            UIThread.Invoke(() =>
+            {
+                compareWithGridLayout.AddRowDefinition(new RowDefinition() { Height = GridLength.Star });
+            }, myConstraintLayout);
+            Task.Run(async () =>
+            {
+                await Task.Delay(3000);//wait UI change or show
+                UIThread.Invoke(() =>
+                {
+                    SimpleTest.AreEqual(myHorizontalStackLayout.GetSize().Height, myConstraintLayout.GetSize().Height, nameof(FitGridTest));
+                }, myConstraintLayout);
+            });
+        });
+        Task.Run(async () =>
+        {
+            await Task.Delay(3000);//wait UI change or show
+            UIThread.Invoke(() =>
+            {
+                SimpleTest.AreEqual(myHorizontalStackLayout.GetSize().Height, myConstraintLayout.GetSize().Height, nameof(FitGridTest));
+            }, myConstraintLayout);
+        }).ContinueWith((t) =>
+        {
+            addRowTask.Start();
+        });
     }
 
     /// <summary>
