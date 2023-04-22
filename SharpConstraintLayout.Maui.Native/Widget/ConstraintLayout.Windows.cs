@@ -91,7 +91,7 @@ namespace SharpConstraintLayout.Maui.Widget
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            if (DEBUG) Debug.WriteLine($"{nameof(ArrangeOverride)} {this} {finalSize}");
+            if (DEBUGCONSTRAINTLAYOUTPROCESS) Debug.WriteLine($"{nameof(ArrangeOverride)} {this} {finalSize}");
 
             //参考:https://github.com/CommunityToolkit/WindowsCommunityToolkit/blob/main/Microsoft.Toolkit.Uwp.UI.Controls.Primitives/WrapPanel/WrapPanel.cs
             if (finalSize.Width != mLastMeasureWidth || finalSize.Height != mLastMeasureHeight)

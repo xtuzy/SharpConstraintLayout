@@ -111,7 +111,7 @@ namespace SharpConstraintLayout.Maui.Widget
                     isFirstTimeMeasure = false;
                     this.Bounds = new CGRect(this.Bounds.Location, MeasureSubviews());
                 }
-                if (DEBUG) Debug.WriteLine($"{Superview} Load ConstraintLayout IntrinsicContentSize: Bounds={this.Bounds} Widget={MLayoutWidget}");
+                if (DEBUGCONSTRAINTLAYOUTPROCESS) Debug.WriteLine($"{Superview} Load ConstraintLayout IntrinsicContentSize: Bounds={this.Bounds} Widget={MLayoutWidget}");
                 return this.Bounds.Size;
             }
         }
@@ -123,7 +123,7 @@ namespace SharpConstraintLayout.Maui.Widget
             {
                 //作为ConstraintLayout的子ConstraintLayout是肯定有大小的,而作为根布局也有大小
                 availableSize = this.Frame.Size;
-                if (DEBUG) Debug.WriteLine($"{this.GetType().Name} MeasureSubviews: Use Frame Size={availableSize}");
+                if (DEBUGCONSTRAINTLAYOUTPROCESS) Debug.WriteLine($"{this.GetType().Name} MeasureSubviews: Use Frame Size={availableSize}");
             }
             else
             {
@@ -142,10 +142,10 @@ namespace SharpConstraintLayout.Maui.Widget
                         }
                         superview = superview.Superview;
                     }
-                    if (DEBUG) Debug.WriteLine($"{this.GetType().Name} MeasureSubviews: Use Parent={superview} Size={availableSize}");
+                    if (DEBUGCONSTRAINTLAYOUTPROCESS) Debug.WriteLine($"{this.GetType().Name} MeasureSubviews: Use Parent={superview} Size={availableSize}");
                 }
                 else
-                    if (DEBUG) Debug.WriteLine($"{this.GetType().Name} MeasureSubviews: Use SystemLayoutSizeFittingSize Size={availableSize}");
+                    if (DEBUGCONSTRAINTLAYOUTPROCESS) Debug.WriteLine($"{this.GetType().Name} MeasureSubviews: Use SystemLayoutSizeFittingSize Size={availableSize}");
 
             }
 
@@ -192,7 +192,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// </summary>
         public override void LayoutSubviews()
         {
-            if (DEBUG) Debug.WriteLine($"{this.GetType().Name} {nameof(LayoutSubviews)} Start: Frame={this.Frame} Parent={Superview.GetType().Name} Parents' Frame={this.Superview?.Frame}");
+            if (DEBUGCONSTRAINTLAYOUTPROCESS) Debug.WriteLine($"{this.GetType().Name} {nameof(LayoutSubviews)} Start: Frame={this.Frame} Parent={Superview.GetType().Name} Parents' Frame={this.Superview?.Frame}");
 
             base.LayoutSubviews();
 
@@ -207,7 +207,7 @@ namespace SharpConstraintLayout.Maui.Widget
 
             ArrangeLayout();
 
-            if (DEBUG) Debug.WriteLine($"{this.GetType().Name} {nameof(LayoutSubviews)} Finish: Frame={this.Frame} Bounds={this.Bounds} Widget={this.MLayoutWidget.ToString()}");
+            if (DEBUGCONSTRAINTLAYOUTPROCESS) Debug.WriteLine($"{this.GetType().Name} {nameof(LayoutSubviews)} Finish: Frame={this.Frame} Bounds={this.Bounds} Widget={this.MLayoutWidget.ToString()}");
         }
 
         private void LayoutChild(UIElement element, int x, int y, int w, int h)

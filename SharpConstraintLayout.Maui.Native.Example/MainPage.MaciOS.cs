@@ -21,7 +21,7 @@ namespace SharpConstraintLayout.Maui.Native.Example
 
         public MainPage(CGRect frame)
         {
-            ConstraintLayout.DEBUG = false;
+            ConstraintLayout.DEBUGCONSTRAINTLAYOUTPROCESS = false;
             ConstraintLayout.MEASURE_MEASURELAYOUT = true;
             //ConstraintLayout.MEASUREEVERYWIDGET = true;
             ConstraintLayout.MEASUREEVERYCHILD = true;

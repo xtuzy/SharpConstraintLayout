@@ -183,7 +183,7 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
 
             if (layout != null)
             {
-                if (ConstraintLayout.DEBUG) Logger?.LogInformation(TAG, $"widthMode {widthMode}, widthSize {widthSize}, heightMode {heightMode}, heightSize {heightSize}");
+                if (ConstraintLayout.DEBUGCONSTRAINTLAYOUTPROCESS) Logger?.LogInformation(TAG, $"widthMode {widthMode}, widthSize {widthSize}, heightMode {heightMode}, heightSize {heightSize}");
                 layout.measure(widthMode, widthSize, heightMode, heightSize);
 #if __MAUI__
                 //this.WidthRequest = layout.Width;
