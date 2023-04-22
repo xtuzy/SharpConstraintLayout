@@ -442,8 +442,8 @@ namespace SharpConstraintLayout.Maui.Widget
                 throw new InvalidOperationException(errorStr);
             }
 
-            int availableWidth = (int)availableSize.Width;
-            int availableHeight = (int)availableSize.Height;
+            int availableWidth = (int)(availableSize.Width + 0.5);
+            int availableHeight = (int)(availableSize.Height + 0.5);
 
             if (isInfinityAvailabelWidth)
             {

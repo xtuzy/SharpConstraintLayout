@@ -231,7 +231,7 @@ namespace SharpConstraintLayout.Maui.Widget
         public static (int Width, int Height) GetWrapContentSize(this UIElement element)
         {
 #if __MAUI__
-            return ((int)element.DesiredSize.Width, (int)element.DesiredSize.Height);
+            return ((int)(element.DesiredSize.Width + 0.5), (int)(element.DesiredSize.Height + 0.5));
 #elif WINDOWS
             return ((int)element.DesiredSize.Width, (int)element.DesiredSize.Height);
 #elif __IOS__
@@ -273,8 +273,8 @@ namespace SharpConstraintLayout.Maui.Widget
             w = MeasureSpec.GetSize(horizontalSpec);
             h = MeasureSpec.GetSize(verticalSpec);
             sizeRequest = (element as IView).Measure(w, h);
-            w = GetDefaultSize((int)(sizeRequest.Width + 1), horizontalSpec);
-            h = GetDefaultSize((int)(sizeRequest.Height + 1), verticalSpec);
+            w = GetDefaultSize((int)(sizeRequest.Width + 0.5), horizontalSpec);
+            h = GetDefaultSize((int)(sizeRequest.Height + 0.5), verticalSpec);
 #elif WINDOWS
             w = MeasureSpec.GetSize(horizontalSpec);
             h = MeasureSpec.GetSize(verticalSpec);
