@@ -103,6 +103,16 @@ namespace SharpConstraintLayout.Maui.Widget
     /// </summary>
     public class FluentConstraintSet : ConstraintSet
     {
+        double density;
+        public double Density
+        {
+            get{
+                if(density == 0)
+                    density = DeviceDisplay.MainDisplayInfo.Density;
+                return density;
+            }
+        }
+
         public Element Select(params UIElement[] views)
         {
             ElementType type;
@@ -183,12 +193,20 @@ namespace SharpConstraintLayout.Maui.Widget
                     throw new ArgumentException($"You select a {type} ui element as ConstraintHelper");
             }
 
+            int Dp2Px(float value)
+            {
+                if (value == 0)
+                    return 0;
+                return (int)(value * density + 0.5);
+            }
+
             WeakReference<ConstraintSet> setReference;
             private int[] ids;
             private ElementType type;
-
-            internal Element(ConstraintSet set, params UIElement[] views)
+            double density;
+            internal Element(FluentConstraintSet set, params UIElement[] views)
             {
+                density = set.Density;
                 setReference = new WeakReference<ConstraintSet>(set);
                 Select(views);
             }
@@ -231,157 +249,157 @@ namespace SharpConstraintLayout.Maui.Widget
 
             #region Position
 
-            protected Element LeftToLeft(int secondView, int margin = 0)
+            protected Element LeftToLeft(int secondView, float margin = 0)
             {
                 setReference.TryGetTarget(out var set);
                 foreach (var id in ids)
-                    set?.Connect(id, ConstraintSet.Left, secondView, ConstraintSet.Left, margin);
+                    set?.Connect(id, ConstraintSet.Left, secondView, ConstraintSet.Left, Dp2Px(margin));
                 return this;
             }
 
-            public Element LeftToLeft(UIElement secondView = null, int margin = 0)
+            public Element LeftToLeft(UIElement secondView = null, float margin = 0)
             {
                 if (secondView == null)
                 {
-                    return this.LeftToLeft(ConstraintSet.ParentId, margin);
+                    return this.LeftToLeft(ConstraintSet.ParentId, Dp2Px(margin));
                 }
-                return this.LeftToLeft(secondView.GetId(), margin);
+                return this.LeftToLeft(secondView.GetId(), Dp2Px(margin));
             }
 
-            protected Element LeftToRight(int secondView, int margin = 0)
+            protected Element LeftToRight(int secondView, float margin = 0)
             {
                 setReference.TryGetTarget(out var set);
                 foreach (var id in ids)
-                    set?.Connect(id, ConstraintSet.Left, secondView, ConstraintSet.Right, margin);
+                    set?.Connect(id, ConstraintSet.Left, secondView, ConstraintSet.Right, Dp2Px(margin));
                 return this;
             }
 
-            public Element LeftToRight(UIElement secondView = null, int margin = 0)
+            public Element LeftToRight(UIElement secondView = null, float margin = 0)
             {
                 if (secondView == null)
                 {
-                    return this.LeftToRight(ConstraintSet.ParentId, margin);
+                    return this.LeftToRight(ConstraintSet.ParentId, Dp2Px(margin));
                 }
-                return this.LeftToRight(secondView.GetId(), margin);
+                return this.LeftToRight(secondView.GetId(), Dp2Px(margin));
             }
 
-            protected Element TopToTop(int secondView, int margin = 0)
+            protected Element TopToTop(int secondView, float margin = 0)
             {
                 setReference.TryGetTarget(out var set);
                 foreach (var id in ids)
-                    set?.Connect(id, ConstraintSet.Top, secondView, ConstraintSet.Top, margin);
+                    set?.Connect(id, ConstraintSet.Top, secondView, ConstraintSet.Top, Dp2Px(margin));
                 return this;
             }
 
-            public Element TopToTop(UIElement secondView = null, int margin = 0)
+            public Element TopToTop(UIElement secondView = null, float margin = 0)
             {
                 if (secondView == null)
                 {
-                    return this.TopToTop(ConstraintSet.ParentId, margin);
+                    return this.TopToTop(ConstraintSet.ParentId, Dp2Px(margin));
                 }
-                return this.TopToTop(secondView.GetId(), margin);
+                return this.TopToTop(secondView.GetId(), Dp2Px(margin));
             }
 
-            protected Element TopToBottom(int secondView, int margin = 0)
+            protected Element TopToBottom(int secondView, float margin = 0)
             {
                 setReference.TryGetTarget(out var set);
                 foreach (var id in ids)
-                    set?.Connect(id, ConstraintSet.Top, secondView, ConstraintSet.Bottom, margin);
+                    set?.Connect(id, ConstraintSet.Top, secondView, ConstraintSet.Bottom, Dp2Px(margin));
                 return this;
             }
 
-            public Element TopToBottom(UIElement secondView = null, int margin = 0)
+            public Element TopToBottom(UIElement secondView = null, float margin = 0)
             {
                 if (secondView == null)
                 {
-                    return this.TopToBottom(ConstraintSet.ParentId, margin);
+                    return this.TopToBottom(ConstraintSet.ParentId, Dp2Px(margin));
                 }
-                return this.TopToBottom(secondView.GetId(), margin);
+                return this.TopToBottom(secondView.GetId(), Dp2Px(margin));
             }
 
-            protected Element RightToLeft(int secondView, int margin = 0)
+            protected Element RightToLeft(int secondView, float margin = 0)
             {
                 setReference.TryGetTarget(out var set);
                 foreach (var id in ids)
-                    set?.Connect(id, ConstraintSet.Right, secondView, ConstraintSet.Left, margin);
+                    set?.Connect(id, ConstraintSet.Right, secondView, ConstraintSet.Left, Dp2Px(margin));
                 return this;
             }
 
-            public Element RightToLeft(UIElement secondView = null, int margin = 0)
+            public Element RightToLeft(UIElement secondView = null, float margin = 0)
             {
                 if (secondView == null)
                 {
-                    return this.RightToLeft(ConstraintSet.ParentId, margin);
+                    return this.RightToLeft(ConstraintSet.ParentId, Dp2Px(margin));
                 }
-                return this.RightToLeft(secondView.GetId(), margin);
+                return this.RightToLeft(secondView.GetId(), Dp2Px(margin));
             }
 
-            protected Element RightToRight(int secondView, int margin = 0)
+            protected Element RightToRight(int secondView, float margin = 0)
             {
                 setReference.TryGetTarget(out var set);
                 foreach (var id in ids)
-                    set?.Connect(id, ConstraintSet.Right, secondView, ConstraintSet.Right, margin);
+                    set?.Connect(id, ConstraintSet.Right, secondView, ConstraintSet.Right, Dp2Px(margin));
                 return this;
             }
 
-            public Element RightToRight(UIElement secondView = null, int margin = 0)
+            public Element RightToRight(UIElement secondView = null, float margin = 0)
             {
                 if (secondView == null)
                 {
-                    return this.RightToRight(ConstraintSet.ParentId, margin);
+                    return this.RightToRight(ConstraintSet.ParentId, Dp2Px(margin));
                 }
-                return this.RightToRight(secondView.GetId(), margin);
+                return this.RightToRight(secondView.GetId(), Dp2Px(margin));
             }
 
-            protected Element BottomToTop(int secondView, int margin = 0)
+            protected Element BottomToTop(int secondView, float margin = 0)
             {
                 setReference.TryGetTarget(out var set);
                 foreach (var id in ids)
-                    set?.Connect(id, ConstraintSet.Bottom, secondView, ConstraintSet.Top, margin);
+                    set?.Connect(id, ConstraintSet.Bottom, secondView, ConstraintSet.Top, Dp2Px(margin));
                 return this;
             }
 
-            public Element BottomToTop(UIElement secondView = null, int margin = 0)
+            public Element BottomToTop(UIElement secondView = null, float margin = 0)
             {
                 if (secondView == null)
                 {
-                    return this.BottomToTop(ConstraintSet.ParentId, margin);
+                    return this.BottomToTop(ConstraintSet.ParentId, Dp2Px(margin));
                 }
-                return this.BottomToTop(secondView.GetId(), margin);
+                return this.BottomToTop(secondView.GetId(), Dp2Px(margin));
             }
 
-            protected Element BottomToBottom(int secondView, int margin = 0)
+            protected Element BottomToBottom(int secondView, float margin = 0)
             {
                 setReference.TryGetTarget(out var set);
                 foreach (var id in ids)
-                    set?.Connect(id, ConstraintSet.Bottom, secondView, ConstraintSet.Bottom, margin);
+                    set?.Connect(id, ConstraintSet.Bottom, secondView, ConstraintSet.Bottom, Dp2Px(margin));
                 return this;
             }
 
-            public Element BottomToBottom(UIElement secondView = null, int margin = 0)
+            public Element BottomToBottom(UIElement secondView = null, float margin = 0)
             {
                 if (secondView == null)
                 {
-                    return this.BottomToBottom(ConstraintSet.ParentId, margin);
+                    return this.BottomToBottom(ConstraintSet.ParentId, Dp2Px(margin));
                 }
-                return this.BottomToBottom(secondView.GetId(), margin);
+                return this.BottomToBottom(secondView.GetId(), Dp2Px(margin));
             }
 
-            protected Element BaselineToBaseline(int secondView, int margin = 0)
+            protected Element BaselineToBaseline(int secondView, float margin = 0)
             {
                 setReference.TryGetTarget(out var set);
                 foreach (var id in ids)
-                    set?.Connect(id, ConstraintSet.Baseline, secondView, ConstraintSet.Baseline, margin);
+                    set?.Connect(id, ConstraintSet.Baseline, secondView, ConstraintSet.Baseline, Dp2Px(margin));
                 return this;
             }
 
-            public Element BaselineToBaseline(UIElement secondView = null, int margin = 0)
+            public Element BaselineToBaseline(UIElement secondView = null, float margin = 0)
             {
                 if (secondView == null)
                 {
-                    return this.BaselineToBaseline(ConstraintSet.ParentId, margin);
+                    return this.BaselineToBaseline(ConstraintSet.ParentId, Dp2Px(margin));
                 }
-                return this.BaselineToBaseline(secondView.GetId(), margin);
+                return this.BaselineToBaseline(secondView.GetId(), Dp2Px(margin));
             }
 
             public Element CenterTo(UIElement secondView = null)
@@ -414,7 +432,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 return this.TopToTop(secondView).BottomToBottom(secondView);
             }
 
-            public Element EdgesTo(UIElement secondView = null, int xmargin = 0, int ymargin = 0)
+            public Element EdgesTo(UIElement secondView = null, float xmargin = 0, float ymargin = 0)
             {
                 if (secondView == null)
                 {
@@ -426,7 +444,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 return this.EdgesXTo(secondView, xmargin).EdgesYTo(secondView, ymargin);
             }
 
-            public Element EdgesXTo(UIElement secondView = null, int xmargin = 0)
+            public Element EdgesXTo(UIElement secondView = null, float xmargin = 0)
             {
                 if (secondView == null)
                 {
@@ -435,7 +453,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 return this.LeftToLeft(secondView, xmargin).RightToRight(secondView, xmargin);
             }
 
-            public Element EdgesYTo(UIElement secondView = null, int ymargin = 0)
+            public Element EdgesYTo(UIElement secondView = null, float ymargin = 0)
             {
                 if (secondView == null)
                 {
@@ -450,11 +468,11 @@ namespace SharpConstraintLayout.Maui.Widget
             /// <param name="edge"></param>
             /// <param name="margin"></param>
             /// <returns></returns>
-            public Element Margin(Edge edge, int margin)
+            public Element Margin(Edge edge, float margin)
             {
                 setReference.TryGetTarget(out var set);
                 foreach (var id in ids)
-                    set?.SetMargin(id, (int)edge, margin);
+                    set?.SetMargin(id, (int)edge, Dp2Px(margin));
                 return this;
             }
 
@@ -464,11 +482,11 @@ namespace SharpConstraintLayout.Maui.Widget
             /// <param name="edge"></param>
             /// <param name="margin"></param>
             /// <returns></returns>
-            public Element GoneMargin(Edge edge, int margin)
+            public Element GoneMargin(Edge edge, float margin)
             {
                 setReference.TryGetTarget(out var set);
                 foreach (var id in ids)
-                    set?.SetGoneMargin(id, (int)edge, margin);
+                    set?.SetGoneMargin(id, (int)edge, Dp2Px(margin));
                 return this;
             }
 
@@ -493,11 +511,11 @@ namespace SharpConstraintLayout.Maui.Widget
             /// <param name="endSide"></param>
             /// <param name="margin"></param>
             /// <returns></returns>
-            public Element EdgeTo(Edge startSide, UIElement endView, Edge endSide, int margin = 0)
+            public Element EdgeTo(Edge startSide, UIElement endView, Edge endSide, float margin = 0)
             {
                 setReference.TryGetTarget(out var set);
                 foreach (var id in ids)
-                    set?.Connect(id, (int)startSide, endView.GetId(), (int)endSide, margin);
+                    set?.Connect(id, (int)startSide, endView.GetId(), (int)endSide, Dp2Px(margin));
                 return this;
             }
 
@@ -519,7 +537,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 setReference.TryGetTarget(out var set);
                 for (var index = 0; index < ids.Length; index++)
                 {
-                    set?.ConstrainCircle(ids[index], centerView.GetId(), radius[index], angles[index]);
+                    set?.ConstrainCircle(ids[index], centerView.GetId(), Dp2Px(radius[index]), angles[index]);
                 }
                 return this;
             }
@@ -583,11 +601,11 @@ namespace SharpConstraintLayout.Maui.Widget
             /// </summary>
             /// <param name="height"></param>
             /// <returns></returns>
-            public Element Height(int height)
+            public Element Height(float height)
             {
                 setReference.TryGetTarget(out var set);
                 foreach (var id in ids)
-                    set?.ConstrainHeight(id, height);
+                    set?.ConstrainHeight(id, Dp2Px(height));
                 return this;
             }
 
@@ -598,22 +616,25 @@ namespace SharpConstraintLayout.Maui.Widget
             /// <returns></returns>
             public Element Height(SizeBehavier behavier)
             {
-                return this.Height((int)behavier);
-            }
-
-            public Element MaxHeight(int height)
-            {
                 setReference.TryGetTarget(out var set);
                 foreach (var id in ids)
-                    set?.ConstrainMaxHeight(id, height);
+                    set?.ConstrainHeight(id, (int)behavier);
                 return this;
             }
 
-            public Element MinHeight(int height)
+            public Element MaxHeight(float height)
             {
                 setReference.TryGetTarget(out var set);
                 foreach (var id in ids)
-                    set?.ConstrainMinHeight(id, height);
+                    set?.ConstrainMaxHeight(id, Dp2Px(height));
+                return this;
+            }
+
+            public Element MinHeight(float height)
+            {
+                setReference.TryGetTarget(out var set);
+                foreach (var id in ids)
+                    set?.ConstrainMinHeight(id, Dp2Px(height));
                 return this;
             }
 
@@ -648,11 +669,11 @@ namespace SharpConstraintLayout.Maui.Widget
             /// </summary>
             /// <param name="width"></param>
             /// <returns></returns>
-            public Element Width(int width)
+            public Element Width(float width)
             {
                 setReference.TryGetTarget(out var set);
                 foreach (var id in ids)
-                    set?.ConstrainWidth(id, width);
+                    set?.ConstrainWidth(id, Dp2Px(width));
                 return this;
             }
 
@@ -663,22 +684,25 @@ namespace SharpConstraintLayout.Maui.Widget
             /// <returns></returns>
             public Element Width(SizeBehavier behavier)
             {
-                return this.Width((int)behavier);
-            }
-
-            public Element MaxWidth(int width)
-            {
                 setReference.TryGetTarget(out var set);
                 foreach (var id in ids)
-                    set?.ConstrainMaxWidth(id, width);
+                    set?.ConstrainWidth(id, (int)behavier);
                 return this;
             }
 
-            public Element MinWidth(int width)
+            public Element MaxWidth(float width)
             {
                 setReference.TryGetTarget(out var set);
                 foreach (var id in ids)
-                    set?.ConstrainMinWidth(id, width);
+                    set?.ConstrainMaxWidth(id, Dp2Px(width));
+                return this;
+            }
+
+            public Element MinWidth(float width)
+            {
+                setReference.TryGetTarget(out var set);
+                foreach (var id in ids)
+                    set?.ConstrainMinWidth(id, Dp2Px(width));
                 return this;
             }
 
@@ -754,13 +778,13 @@ namespace SharpConstraintLayout.Maui.Widget
             /// </summary>
             /// <param name="value"></param>
             /// <returns></returns>
-            public Element GuidelineBegin(int value)
+            public Element GuidelineBegin(float value)
             {
                 ValidateGuideline();
 
                 setReference.TryGetTarget(out var set);
                 foreach (var id in ids)
-                    set?.SetGuidelineBegin(id, value);
+                    set?.SetGuidelineBegin(id, Dp2Px(value));
                 return this;
             }
 
@@ -769,13 +793,13 @@ namespace SharpConstraintLayout.Maui.Widget
             /// </summary>
             /// <param name="value"></param>
             /// <returns></returns>
-            public Element GuidelineEnd(int value)
+            public Element GuidelineEnd(float value)
             {
                 ValidateGuideline();
 
                 setReference.TryGetTarget(out var set);
                 foreach (var id in ids)
-                    set?.SetGuidelineEnd(id, value);
+                    set?.SetGuidelineEnd(id, Dp2Px(value));
                 return this;
             }
 
@@ -786,13 +810,13 @@ namespace SharpConstraintLayout.Maui.Widget
             /// <param name="margin"></param>
             /// <param name="referenced"></param>
             /// <returns></returns>
-            public Element Barrier(Direction direction, int margin, params int[] referenced)
+            public Element Barrier(Direction direction, float margin, params int[] referenced)
             {
                 ValidateBarrier();
 
                 setReference.TryGetTarget(out var set);
                 foreach (var id in ids)
-                    set?.CreateBarrier(id, (int)direction, margin, referenced);
+                    set?.CreateBarrier(id, (int)direction, Dp2Px(margin), referenced);
                 return this;
             }
 
@@ -803,7 +827,7 @@ namespace SharpConstraintLayout.Maui.Widget
             /// <param name="margin"></param>
             /// <param name="referenced"></param>
             /// <returns></returns>
-            public Element Barrier(Direction direction, int margin, params UIElement[] referenced)
+            public Element Barrier(Direction direction, float margin, params UIElement[] referenced)
             {
                 ValidateBarrier();
 
@@ -814,7 +838,7 @@ namespace SharpConstraintLayout.Maui.Widget
                     referencedIds[index] = referenced[index].GetId();
                 }
                 foreach (var id in ids)
-                    set?.CreateBarrier(id, (int)direction, margin, referencedIds);
+                    set?.CreateBarrier(id, (int)direction, Dp2Px(margin), referencedIds);
                 return this;
             }
 

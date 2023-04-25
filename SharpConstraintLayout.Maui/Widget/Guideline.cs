@@ -89,16 +89,25 @@ namespace SharpConstraintLayout.Maui.Widget
             SetMeasuredDimension(0, 0);
         }
 #endif
-
+        /// <summary>
+        /// doc see <see cref="SetGuidelineBegin"/>
+        /// </summary>
+        /// <param name="value">unit is dp</param>
+        public virtual void SetGuidelineBeginDp(int value) => SetGuidelineBegin((int)(value * DeviceDisplay.MainDisplayInfo.Density + 0.5));
         /// <summary>
         /// Set the guideline's distance from the top or left edge.
         /// </summary>
-        /// <param name="margin"> the distance to the top or left edge </param>
+        /// <param name="margin"> the distance to the top or left edge, unit is pixel </param>
         public virtual void SetGuidelineBegin(int value)
         {
             mGuideline.GuideBegin = value;
         }
 
+        /// <summary>
+        /// doc see <see cref="SetGuidelineEnd"/>
+        /// </summary>
+        /// <param name="value">unit is dp</param>
+        public virtual void SetGuidelineEndDp(int value) => SetGuidelineEnd((int)(value * DeviceDisplay.MainDisplayInfo.Density + 0.5));
         /// <summary>
         /// Set a guideline's distance to end.
         /// </summary>

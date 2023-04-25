@@ -83,7 +83,7 @@ namespace SharpConstraintLayout.Maui.Widget
 
         public void LayoutChild(UIElement element, int x, int y, int w, int h)
         {
-            (element as IView).Arrange(new Rect(x, y, w, h));
+            (element as IView).Arrange(new Rect(x / this.density, y / this.density, w / this.density, h / this.density));//px to maui's dp
         }
         #endregion
 
@@ -178,19 +178,19 @@ namespace SharpConstraintLayout.Maui.Widget
 
         public override Size Measure(double widthConstraint, double heightConstraint)
         {
-            var availableSize = new Size(widthConstraint, heightConstraint);
             var layout = Layout as ConstraintLayout;
+            var availableSize = new Size(widthConstraint * layout.Density, heightConstraint * layout.Density);//maui's dp to px
             (int horizontalSpec, int verticalSpec) = layout.MakeSpec(layout, availableSize);
 
             var finalSize = layout.MeasureLayout(availableSize, horizontalSpec, verticalSpec);
 
-            return finalSize;
+            return new Size(finalSize.Width / layout.density, finalSize.Height / layout.density);//px to maui's dp
         }
 
         public override Size ArrangeChildren(Rect bounds)
         {
-            Size finalSize = bounds.Size;
             var layout = Layout as ConstraintLayout;
+            Size finalSize = new Size((int)(bounds.Size.Width * layout.density + 0.5), (int)(bounds.Height * layout.density + 0.5));//maui's dp to px, when measure, MakeSpec will add 0.5
             if (layout.mConstraintSet.IsForAnimation)
             {
                 //如果是动画,那么此时计算布局完毕,但我们不能让其布局,因此直接返回.另外如果给WidthRequest等赋固定值,会造成下次的控件显示大小为固定值,因此需要重置
@@ -202,24 +202,23 @@ namespace SharpConstraintLayout.Maui.Widget
                     if (view.HeightRequest > 0)
                         view.SetHeight(ConstraintSet.Unset);
                 }
-                return finalSize;
+                return bounds.Size;
             }
-            var lastMeasureSize = layout.GetLastMeasureSize();
-            if (finalSize.Width != lastMeasureSize.Width || finalSize.Height != lastMeasureSize.Height)
+            var lastMeasureSize = layout.GetLastMeasureSize();// will get int
+            if (Math.Abs(finalSize.Width - lastMeasureSize.Width) > 1 || Math.Abs(finalSize.Height - lastMeasureSize.Height) > 1)//re measure when difference > 1 pixel
             {
                 // We haven't received our desired size. We need to refresh the rows.
                 (int horizontalSpec, int verticalSpec) = layout.MakeSpec(layout as ConstraintLayout, finalSize);
-                finalSize = layout.MeasureLayout(finalSize, horizontalSpec, verticalSpec);
+                finalSize = layout.MeasureLayout(finalSize, horizontalSpec, verticalSpec).ToSize();
             }
-
             layout.ArrangeLayout();
-            return finalSize;
+            return new Size(finalSize.Width / layout.density, finalSize.Height / layout.density);//px to maui's dp
         }
     }
 
     public interface IMauiConstraintLayout : Microsoft.Maui.ILayout
     {
-        Size MeasureLayout(Size availableSize, int horizontalSpec = 0, int verticalSpec = 0);
+        SizeI MeasureLayout(Size availableSize, int horizontalSpec = 0, int verticalSpec = 0);
         void ArrangeLayout();
 
         Size GetLastMeasureSize();

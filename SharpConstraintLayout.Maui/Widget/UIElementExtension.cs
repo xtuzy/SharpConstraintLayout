@@ -227,11 +227,11 @@ namespace SharpConstraintLayout.Maui.Widget
         /// 获取控件自身测量的大小,这个大小是控件的内容大小或者平台的原生布局赋予的大小,由平台自身去计算
         /// </summary>
         /// <param name="element"></param>
-        /// <returns></returns>
-        public static (int Width, int Height) GetWrapContentSize(this UIElement element)
+        /// <returns>unit is pixel</returns>
+        public static (int Width, int Height) GetWrapContentSize(this UIElement element, double density)
         {
 #if __MAUI__
-            return ((int)(element.DesiredSize.Width + 0.5), (int)(element.DesiredSize.Height + 0.5));
+            return ((int)(element.DesiredSize.Width * density + 0.5), (int)(element.DesiredSize.Height * density + 0.5));
 #elif WINDOWS
             return ((int)element.DesiredSize.Width, (int)element.DesiredSize.Height);
 #elif __IOS__
@@ -264,17 +264,17 @@ namespace SharpConstraintLayout.Maui.Widget
 #endif
         }
 
-        public static (int measuredWidth, int measureWidth) MeasureSelf(this UIElement element, int horizontalSpec, int verticalSpec)
+        public static (int measuredWidth, int measureWidth) MeasureSelf(this UIElement element, int horizontalSpec, int verticalSpec, double density)
         {
             int w;
             int h;
 #if __MAUI__
             Size sizeRequest = default;
-            w = MeasureSpec.GetSize(horizontalSpec);
+            w = MeasureSpec.GetSize(horizontalSpec);//px
             h = MeasureSpec.GetSize(verticalSpec);
-            sizeRequest = (element as IView).Measure(w, h);
-            w = GetDefaultSize((int)(sizeRequest.Width + 0.5), horizontalSpec);
-            h = GetDefaultSize((int)(sizeRequest.Height + 0.5), verticalSpec);
+            sizeRequest = (element as IView).Measure(w/density, h/density);//px to dp
+            w = GetDefaultSize((int)(sizeRequest.Width * density+ 0.5), horizontalSpec);
+            h = GetDefaultSize((int)(sizeRequest.Height * density + 0.5), verticalSpec);
 #elif WINDOWS
             w = MeasureSpec.GetSize(horizontalSpec);
             h = MeasureSpec.GetSize(verticalSpec);
@@ -349,7 +349,7 @@ namespace SharpConstraintLayout.Maui.Widget
         }
 
 #if __MAUI__
-        internal static void SetWidth(this UIElement element, int width)
+        internal static void SetWidth(this UIElement element, double width)
         {
             if (width > 0)
                 element.WidthRequest = width;
@@ -357,7 +357,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 element.WidthRequest = ConstraintSet.Unset;
         }
 
-        internal static void SetHeight(this UIElement element, int height)
+        internal static void SetHeight(this UIElement element, double height)
         {
             if (height > 0)
                 element.HeightRequest = height;
@@ -365,7 +365,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 element.HeightRequest = ConstraintSet.Unset;
         }
 
-        internal static void SetMinWidth(this UIElement element, int minWidth)
+        internal static void SetMinWidth(this UIElement element, double minWidth)
         {
             if (minWidth > 0)
                 element.MinimumWidthRequest = minWidth;
@@ -373,7 +373,7 @@ namespace SharpConstraintLayout.Maui.Widget
             //element.MinimumWidthRequest = ConstraintSet.Unset;
         }
 
-        internal static void SetMinHeight(this UIElement element, int minHeight)
+        internal static void SetMinHeight(this UIElement element, double minHeight)
         {
             if (minHeight > 0)
                 element.MinimumHeightRequest = minHeight;
@@ -381,7 +381,7 @@ namespace SharpConstraintLayout.Maui.Widget
             //element.MinimumHeightRequest = ConstraintSet.Unset;
         }
 
-        internal static void SetMaxWidth(this UIElement element, int maxWidth)
+        internal static void SetMaxWidth(this UIElement element, double maxWidth)
         {
             if (maxWidth > 0)
                 element.MaximumWidthRequest = maxWidth;
@@ -389,7 +389,7 @@ namespace SharpConstraintLayout.Maui.Widget
             //element.MaximumWidthRequest = double.PositiveInfinity;
         }
 
-        internal static void SetMaxHeight(this UIElement element, int maxHeight)
+        internal static void SetMaxHeight(this UIElement element, double maxHeight)
         {
             if (maxHeight > 0)
                 element.MaximumHeightRequest = maxHeight;

@@ -8,6 +8,6 @@ namespace SharpConstraintLayout.Maui.Widget.Interface
         //JniPeerMembers JniPeerMembers { get; }
         int ConstrainMargin { get; set; }
         int ConstrainType { get; set; }
-        void SetDpMargin(int margin);
+        void SetMarginDp(int margin);
     }
 }

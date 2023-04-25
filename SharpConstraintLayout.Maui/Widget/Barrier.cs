@@ -196,7 +196,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// Set a margin on the barrier
         /// </summary>
         /// <param name="margin"> in dp </param>
-        public virtual void SetDpMargin(int margin)
+        public virtual void SetMarginDp(int margin)
         {
             //float density = Resources.DisplayMetrics.density;
             float density = (float)Microsoft.Maui.Devices.DeviceDisplay.MainDisplayInfo.Density;
