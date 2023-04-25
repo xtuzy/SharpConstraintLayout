@@ -385,6 +385,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 return this.BottomToBottom(secondView.GetId(), Dp2Px(margin));
             }
 
+            [Obsolete("Maui have a complex text align, generate bug easily, so i avoid use baseline")]
             protected Element BaselineToBaseline(int secondView, float margin = 0)
             {
                 setReference.TryGetTarget(out var set);
@@ -393,6 +394,7 @@ namespace SharpConstraintLayout.Maui.Widget
                 return this;
             }
 
+            [Obsolete("Maui have a complex text align, generate bug easily, so i avoid use baseline")]
             public Element BaselineToBaseline(UIElement secondView = null, float margin = 0)
             {
                 if (secondView == null)

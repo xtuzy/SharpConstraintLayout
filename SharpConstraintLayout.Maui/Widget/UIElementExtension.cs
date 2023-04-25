@@ -34,6 +34,8 @@ namespace SharpConstraintLayout.Maui.Widget
         public static int GetBaseline(this UIElement element, int elementHeight = 0)
         {
 #if __MAUI__
+            return ConstraintSet.Unset;//Maui baseline have too many bug, because different Alignment have different position, Editor also have different autosize behavior, so i not support it
+
             if (element is IBaseline)
             {
                 return (element as IBaseline).GetBaseline();
