@@ -178,6 +178,7 @@ public partial class MainPage : ContentPage
         BaseAlignTest(content);
     }
 
+    [Obsolete("Maui have a complex text align, generate bug easily, so i avoid use baseline")]
     private void Baseline_Clicked(object sender, EventArgs e)
     {
         var content = CreateConstraintLayout(new Log());
