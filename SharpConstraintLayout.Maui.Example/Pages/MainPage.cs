@@ -69,6 +69,9 @@ namespace SharpConstraintLayout.Maui.Example
 
             var flow = new Flow() { };
             page.AddElement(FirstButton);
+            page.AddElement(SecondButton);
+
+            FirstButton.Text = "Add Button";
             FirstButton.Clicked += (sender, e) =>
             {
                 var newbutton = new Button();
@@ -83,8 +86,8 @@ namespace SharpConstraintLayout.Maui.Example
             flow.SetHorizontalStyle(SharpConstraintLayout.Maui.Helper.Widget.Flow.ChainPacked);
             page.AddElement(flow);
 
-            page.AddElement(FifthTextBox);
-            flow.RefElement(FifthTextBox);
+            //page.AddElement(FifthTextBox);
+            //flow.RefElement(FifthTextBox);
             //Generate 1000 Button,all add to page
 
             var buttonList = new List<Button>();
@@ -98,6 +101,12 @@ namespace SharpConstraintLayout.Maui.Example
                 flow.RefElement(button);
             }
 
+            SecondButton.Text = "Add Char";
+            SecondButton.Clicked += (sender, e) =>
+            {
+                buttonList[0].Text = buttonList[0].Text + "A";//not use entry to add char, because entry will measure twice
+            };
+
             using (var layoutSet = new FluentConstraintSet())
             {
                 layoutSet.Clone(page);
@@ -106,7 +115,9 @@ namespace SharpConstraintLayout.Maui.Example
                     .TopToTop().BottomToBottom().LeftToLeft()
                     .Width(SizeBehavier.WrapContent)
                     .Height(SizeBehavier.WrapContent)
-                    .Select(FirstButton).EdgesXTo();
+                    .Select(FirstButton).EdgesXTo()
+                    .Select(SecondButton).CenterYTo(FirstButton).LeftToRight(FirstButton)
+                    ;
                 layoutSet.ApplyTo(page);
             }
         }
@@ -247,20 +258,20 @@ namespace SharpConstraintLayout.Maui.Example
 
             var leftLayout = new ConstraintLayout()
             {
-                ConstrainPaddingTop = 10,
-                ConstrainPaddingBottom = 10,
-                ConstrainPaddingLeft = 10,
-                ConstrainPaddingRight = 10,
+                ConstrainPaddingTopDp = 10,
+                ConstrainPaddingBottomDp = 10,
+                ConstrainPaddingLeftDp = 10,
+                ConstrainPaddingRightDp = 10,
                 DebugName = "left",
                 Background = new SolidColorBrush(Colors.Red)
             };
 
             var rightLayout = new ConstraintLayout()
             {
-                ConstrainPaddingTop = 10,
-                ConstrainPaddingBottom = 10,
-                ConstrainPaddingLeft = 10,
-                ConstrainPaddingRight = 10,
+                ConstrainPaddingTopDp = 10,
+                ConstrainPaddingBottomDp = 10,
+                ConstrainPaddingLeftDp = 10,
+                ConstrainPaddingRightDp = 10,
                 DebugName = "right",
                 Background = new SolidColorBrush(Colors.Green)
             };
@@ -325,7 +336,8 @@ namespace SharpConstraintLayout.Maui.Example
         void FlowTest(ConstraintLayout page)
         {
             (Button FirstButton, Button SecondButton, ContentView ThirdCanvas, Label FouthTextBlock, Entry FifthTextBox, Editor SixthRichTextBlock) = CreateControls();
-
+            FifthTextBox.BackgroundColor = Colors.Red;
+            SixthRichTextBlock.BackgroundColor = Colors.Green;
             var flow = new Flow();
 
             flow.SetOrientation(SharpConstraintLayout.Maui.Helper.Widget.Flow.Vertical);
@@ -511,8 +523,12 @@ namespace SharpConstraintLayout.Maui.Example
         private void BaseAlignTest(ConstraintLayout page)
         {
             (Button FirstButton, Button SecondButton, ContentView ThirdCanvas, Label FouthTextBlock, Entry FifthTextBox, Editor SixthRichTextBlock) = CreateControls();
-            FifthTextBox.FontSize = 20;
 
+            FirstButton.Text = "CenterTo";
+            SecondButton.Text = "RightToRight & TopToBottom";
+            FouthTextBlock.Text = "LeftToLeft & BottomToTop";
+            FifthTextBox.Text = "LeftToLeft & CenterYTo";
+            SixthRichTextBlock.Text = "CenterXTo & TopToBottom";
             var layout = page;
 
             layout.AddElement(FirstButton, SecondButton, ThirdCanvas, FouthTextBlock, FifthTextBox, SixthRichTextBlock);
@@ -521,15 +537,15 @@ namespace SharpConstraintLayout.Maui.Example
             layoutSet.Clone(layout);
             layoutSet
                 .Select(FirstButton).CenterTo()
-                .Select(FirstButton, SecondButton, FouthTextBlock, FifthTextBox, SixthRichTextBlock)
+                .Select(FirstButton, SecondButton)
                 .Width(SizeBehavier.WrapContent)
                 .Height(SizeBehavier.WrapContent)
                 .Select(ThirdCanvas).Width(SizeBehavier.MatchConstraint).Height(SizeBehavier.MatchConstraint)
                 .Select(SecondButton).RightToRight(FirstButton).TopToBottom(FirstButton)
                 .Select(ThirdCanvas).LeftToRight(FirstButton).RightToRight().EdgesYTo()
-                .Select(FouthTextBlock).RightToRight(SecondButton, 20).TopToBottom(SecondButton, 20)
-                .Select(FifthTextBox).RightToLeft(FouthTextBlock, 20).CenterYTo(FouthTextBlock)
-                .Select(SixthRichTextBlock).LeftToLeft(FifthTextBox).TopToBottom(FifthTextBox);
+                .Select(FouthTextBlock).CenterXTo().BottomToTop(FirstButton).Width(SizeBehavier.MatchConstraint)
+                .Select(FifthTextBox).CenterXTo().TopToBottom(SecondButton).Width(SizeBehavier.MatchConstraint)
+                .Select(SixthRichTextBlock).CenterXTo().TopToBottom(FifthTextBox).Width(SizeBehavier.MatchConstraint);
             layoutSet.ApplyTo(layout);
 
             Task.Run(async () =>
@@ -641,7 +657,7 @@ namespace SharpConstraintLayout.Maui.Example
             var dataTemplate = new DataTemplate(() =>
             {
                 var viewCell = new ViewCell();
-                var layout = new ConstraintLayout() { ConstrainWidth = ConstraintSet.MatchParent, ConstrainHeight = ConstraintSet.WrapContent, BackgroundColor = Color.FromRgb(66, 66, 66) };
+                var layout = new ConstraintLayout(new Log()) { ConstrainWidth = ConstraintSet.MatchParent, ConstrainHeight = ConstraintSet.WrapContent, BackgroundColor = Color.FromRgb(66, 66, 66) };
                 var title = new Label() { TextColor = Colors.White, FontSize = 30, FontAttributes = FontAttributes.Bold };
                 title.SetBinding(Label.TextProperty, nameof(Models.MicrosoftNews.Title));
                 var image = new Image();
@@ -722,21 +738,45 @@ namespace SharpConstraintLayout.Maui.Example
             listView.ItemsSource = listViewViewModel.News;
         }
 
-        private void ConstraintLayoutInScrollViewTest(ScrollView listView)
+        private void ConstraintLayoutInScrollViewTest(ScrollView scrollViewForConstraintLayout, ScrollView scrollViewForVerticalStackLayout)
         {
-            listView.Orientation = ScrollOrientation.Vertical;
-            (Button FirstButton, Button SecondButton, ContentView ThirdCanvas, Label FouthTextBlock, Entry FifthTextBox, Editor SixthRichTextBlock) = CreateControls();
-            var constraintlayout = new ConstraintLayout() { ConstrainWidth = ConstraintSet.MatchParent, ConstrainHeight = ConstraintSet.WrapContent };
-            listView.Content = constraintlayout;
-            constraintlayout.AddElement(FirstButton, SecondButton, ThirdCanvas);
-            using (var set = new FluentConstraintSet())
+            void buildUIForConstraintLayout()
             {
-                set.Clone(constraintlayout);
-                set.Select(FirstButton).CenterXTo().TopToTop()
-                    .Select(ThirdCanvas).CenterXTo().TopToBottom(FirstButton).Width(60).Height(1000)
-                    .Select(SecondButton).CenterXTo().TopToBottom(ThirdCanvas);
-                set.ApplyTo(constraintlayout);
+                scrollViewForConstraintLayout.Orientation = ScrollOrientation.Vertical;
+                (Button FirstButton, Button SecondButton, ContentView ThirdCanvas, Label FouthTextBlock, Entry FifthTextBox, Editor SixthRichTextBlock) = CreateControls();
+                FirstButton.Text = "ConstraintLayout InScrollView";
+                var constraintlayout = new ConstraintLayout(new Log()) { ConstrainWidth = ConstraintSet.MatchParent, ConstrainHeight = ConstraintSet.WrapContent, BackgroundColor = Colors.Pink };
+                scrollViewForConstraintLayout.Content = constraintlayout;
+                constraintlayout.AddElement(FirstButton, SecondButton, ThirdCanvas);
+                using (var set = new FluentConstraintSet())
+                {
+                    set.Clone(constraintlayout);
+                    set.Select(FirstButton).CenterXTo().TopToTop()
+                        .Select(ThirdCanvas).CenterXTo().TopToBottom(FirstButton).Width(60).Height(300)
+                        .Select(SecondButton).CenterXTo().TopToBottom(ThirdCanvas);
+                    set.ApplyTo(constraintlayout);
+                }
             }
+
+            void buildUIForVerticalStackLayout()
+            {
+                scrollViewForVerticalStackLayout.Orientation = ScrollOrientation.Vertical;
+                (Button FirstButton, Button SecondButton, ContentView ThirdCanvas, Label FouthTextBlock, Entry FifthTextBox, Editor SixthRichTextBlock) = CreateControls();
+                FirstButton.Text = "VerticalStackLayout InScrollView";
+                var verticalStackLayout = new VerticalStackLayout() { BackgroundColor = Colors.DeepPink };
+                scrollViewForVerticalStackLayout.Content = verticalStackLayout;
+                verticalStackLayout.Add(FirstButton);
+                verticalStackLayout.Add(ThirdCanvas);
+                verticalStackLayout.Add(SecondButton);
+                FirstButton.HorizontalOptions = LayoutOptions.Center;
+                ThirdCanvas.HorizontalOptions = LayoutOptions.Center;
+                SecondButton.HorizontalOptions = LayoutOptions.Center;
+                ThirdCanvas.WidthRequest = 60;
+                ThirdCanvas.HeightRequest = 300;
+            }
+
+            buildUIForConstraintLayout();
+            buildUIForVerticalStackLayout();
         }
 
         private void RemoveAndAddTest(ConstraintLayout content)

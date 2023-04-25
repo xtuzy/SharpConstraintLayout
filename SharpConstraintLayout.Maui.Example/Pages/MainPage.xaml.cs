@@ -1,12 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
-using Microsoft.Maui.Controls.Shapes;
-using SharpConstraintLayout.Maui.Example.Models;
 using SharpConstraintLayout.Maui.Example.Pages;
 using SharpConstraintLayout.Maui.Example.Tool;
-using SharpConstraintLayout.Maui.Example.ViewModels;
 using SharpConstraintLayout.Maui.Native.Example.Tool;
 using SharpConstraintLayout.Maui.Widget;
-using static SharpConstraintLayout.Maui.Widget.FluentConstraintSet;
 
 namespace SharpConstraintLayout.Maui.Example;
 
@@ -21,7 +17,7 @@ public partial class MainPage : ContentPage
         InitializeComponent();
 
         ConstraintLayout.DEBUGCONSTRAINTLAYOUTPROCESS = true;
-        ConstraintLayout.DEBUGCHILDLAYOUTROCESS = true;
+        //ConstraintLayout.DEBUGCHILDLAYOUTROCESS = true;
         //ConstraintLayout.MEASURE_MEASURELAYOUT = true;
         this.SizeChanged += (sender, e) =>
         {
@@ -123,7 +119,7 @@ public partial class MainPage : ContentPage
         var SecondButton = new Button()
         {
             Text = "SecondBotton",
-            Background = new SolidColorBrush(Colors.Black)
+            //Background = new SolidColorBrush(Colors.Black)
         };
 
         var ThirdCanvas = new ContentView()
@@ -143,11 +139,11 @@ public partial class MainPage : ContentPage
         var FifthTextBox = new Entry()
         {
             Text = "FifthEntry",
-            HorizontalOptions = LayoutOptions.CenterAndExpand
+            //HorizontalOptions = LayoutOptions.CenterAndExpand
         };
         FifthTextBox.TextChanged += (sender, e) =>
         {
-            (FifthTextBox.Parent as ConstraintLayout)?.RequestReLayout();
+            //(FifthTextBox.Parent as ConstraintLayout)?.RequestReLayout();
         };
 
         //https://stackoverflow.com/questions/35710355/uwpc-adding-text-to-richtextblock
@@ -164,10 +160,10 @@ public partial class MainPage : ContentPage
     {
         var content = new ConstraintLayout(log)
         {
-            ConstrainPaddingTop = 10,
-            ConstrainPaddingBottom = 10,
-            ConstrainPaddingLeft = 10,
-            ConstrainPaddingRight = 10,
+            ConstrainPaddingTopDp = 10,
+            ConstrainPaddingBottomDp = 10,
+            ConstrainPaddingLeftDp = 10,
+            ConstrainPaddingRightDp = 10,
             DebugName = "Root",
             Background = new SolidColorBrush(Colors.HotPink),
         };
@@ -227,7 +223,7 @@ public partial class MainPage : ContentPage
 
     private void Guideline_Clicked(object sender, EventArgs e)
     {
-        var content = CreateConstraintLayout();
+        var content = CreateConstraintLayout(new Log());
         GuidelineTest(content);
     }
 
@@ -318,9 +314,20 @@ public partial class MainPage : ContentPage
     private void ConstraintLayoutInScrollView_Clicked(object sender, EventArgs e)
     {
         gridLayout.RemoveAt(gridLayout.Count - 1);
-        var scrollView = new ScrollView();
-        gridLayout.Add(scrollView);
-        ConstraintLayoutInScrollViewTest(scrollView);
+        var twoColumn = new Grid();
+        gridLayout.Add(twoColumn);
+        twoColumn.ColumnDefinitions = new ColumnDefinitionCollection()
+        {
+            new ColumnDefinition(){Width = GridLength.Star},
+            new ColumnDefinition(){Width = GridLength.Star}
+        };
+        var scrollViewForConstraintLayout = new ScrollView();
+        var scrollViewForVerticalStackLayout = new ScrollView();
+        twoColumn.Add(scrollViewForConstraintLayout);
+        twoColumn.Add(scrollViewForVerticalStackLayout);
+        Grid.SetColumn(scrollViewForConstraintLayout, 0);
+        Grid.SetColumn(scrollViewForVerticalStackLayout, 1);
+        ConstraintLayoutInScrollViewTest(scrollViewForConstraintLayout, scrollViewForVerticalStackLayout);
     }
 
     private void RemoveAndAdd_Clicked(object sender, EventArgs e)
