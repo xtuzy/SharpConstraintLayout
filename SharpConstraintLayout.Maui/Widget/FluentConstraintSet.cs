@@ -261,9 +261,9 @@ namespace SharpConstraintLayout.Maui.Widget
             {
                 if (secondView == null)
                 {
-                    return this.LeftToLeft(ConstraintSet.ParentId, Dp2Px(margin));
+                    return this.LeftToLeft(ConstraintSet.ParentId, (margin));
                 }
-                return this.LeftToLeft(secondView.GetId(), Dp2Px(margin));
+                return this.LeftToLeft(secondView.GetId(), (margin));
             }
 
             protected Element LeftToRight(int secondView, float margin = 0)
@@ -278,9 +278,9 @@ namespace SharpConstraintLayout.Maui.Widget
             {
                 if (secondView == null)
                 {
-                    return this.LeftToRight(ConstraintSet.ParentId, Dp2Px(margin));
+                    return this.LeftToRight(ConstraintSet.ParentId, (margin));
                 }
-                return this.LeftToRight(secondView.GetId(), Dp2Px(margin));
+                return this.LeftToRight(secondView.GetId(), (margin));
             }
 
             protected Element TopToTop(int secondView, float margin = 0)
@@ -295,9 +295,9 @@ namespace SharpConstraintLayout.Maui.Widget
             {
                 if (secondView == null)
                 {
-                    return this.TopToTop(ConstraintSet.ParentId, Dp2Px(margin));
+                    return this.TopToTop(ConstraintSet.ParentId, (margin));
                 }
-                return this.TopToTop(secondView.GetId(), Dp2Px(margin));
+                return this.TopToTop(secondView.GetId(), (margin));
             }
 
             protected Element TopToBottom(int secondView, float margin = 0)
@@ -312,9 +312,9 @@ namespace SharpConstraintLayout.Maui.Widget
             {
                 if (secondView == null)
                 {
-                    return this.TopToBottom(ConstraintSet.ParentId, Dp2Px(margin));
+                    return this.TopToBottom(ConstraintSet.ParentId, (margin));
                 }
-                return this.TopToBottom(secondView.GetId(), Dp2Px(margin));
+                return this.TopToBottom(secondView.GetId(), (margin));
             }
 
             protected Element RightToLeft(int secondView, float margin = 0)
@@ -329,9 +329,9 @@ namespace SharpConstraintLayout.Maui.Widget
             {
                 if (secondView == null)
                 {
-                    return this.RightToLeft(ConstraintSet.ParentId, Dp2Px(margin));
+                    return this.RightToLeft(ConstraintSet.ParentId, (margin));
                 }
-                return this.RightToLeft(secondView.GetId(), Dp2Px(margin));
+                return this.RightToLeft(secondView.GetId(), (margin));
             }
 
             protected Element RightToRight(int secondView, float margin = 0)
@@ -346,9 +346,9 @@ namespace SharpConstraintLayout.Maui.Widget
             {
                 if (secondView == null)
                 {
-                    return this.RightToRight(ConstraintSet.ParentId, Dp2Px(margin));
+                    return this.RightToRight(ConstraintSet.ParentId, (margin));
                 }
-                return this.RightToRight(secondView.GetId(), Dp2Px(margin));
+                return this.RightToRight(secondView.GetId(), (margin));
             }
 
             protected Element BottomToTop(int secondView, float margin = 0)
@@ -363,9 +363,9 @@ namespace SharpConstraintLayout.Maui.Widget
             {
                 if (secondView == null)
                 {
-                    return this.BottomToTop(ConstraintSet.ParentId, Dp2Px(margin));
+                    return this.BottomToTop(ConstraintSet.ParentId, (margin));
                 }
-                return this.BottomToTop(secondView.GetId(), Dp2Px(margin));
+                return this.BottomToTop(secondView.GetId(), (margin));
             }
 
             protected Element BottomToBottom(int secondView, float margin = 0)
@@ -380,9 +380,9 @@ namespace SharpConstraintLayout.Maui.Widget
             {
                 if (secondView == null)
                 {
-                    return this.BottomToBottom(ConstraintSet.ParentId, Dp2Px(margin));
+                    return this.BottomToBottom(ConstraintSet.ParentId, (margin));
                 }
-                return this.BottomToBottom(secondView.GetId(), Dp2Px(margin));
+                return this.BottomToBottom(secondView.GetId(), (margin));
             }
 
             [Obsolete("Maui have a complex text align, generate bug easily, so i avoid use baseline")]
@@ -399,9 +399,9 @@ namespace SharpConstraintLayout.Maui.Widget
             {
                 if (secondView == null)
                 {
-                    return this.BaselineToBaseline(ConstraintSet.ParentId, Dp2Px(margin));
+                    return this.BaselineToBaseline(ConstraintSet.ParentId, (margin));
                 }
-                return this.BaselineToBaseline(secondView.GetId(), Dp2Px(margin));
+                return this.BaselineToBaseline(secondView.GetId(), (margin));
             }
 
             public Element CenterTo(UIElement secondView = null)

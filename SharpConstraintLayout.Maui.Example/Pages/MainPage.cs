@@ -524,9 +524,9 @@ namespace SharpConstraintLayout.Maui.Example
         {
             (Button FirstButton, Button SecondButton, ContentView ThirdCanvas, Label FouthTextBlock, Entry FifthTextBox, Editor SixthRichTextBlock) = CreateControls();
 
-            FirstButton.Text = "CenterTo";
+            FirstButton.Text = "CenterTo Width=100";
             SecondButton.Text = "RightToRight & TopToBottom";
-            FouthTextBlock.Text = "CenterXTo & BottomToTop";
+            FouthTextBlock.Text = "CenterXTo & BottomToTop(100)";
             FifthTextBox.Text = "CenterXTo & TopToBottom";
             SixthRichTextBlock.Text = "CenterXTo & TopToBottom";
             var layout = page;
@@ -540,7 +540,7 @@ namespace SharpConstraintLayout.Maui.Example
                 .Select(ThirdCanvas).Width(SizeBehavier.MatchConstraint).Height(SizeBehavier.MatchConstraint)
                 .Select(SecondButton).RightToRight(FirstButton).TopToBottom(FirstButton)
                 .Select(ThirdCanvas).LeftToRight(FirstButton).RightToRight().EdgesYTo()
-                .Select(FouthTextBlock).CenterXTo().BottomToTop(FirstButton).Width(SizeBehavier.MatchConstraint)
+                .Select(FouthTextBlock).CenterXTo().BottomToTop(FirstButton, 100).Width(SizeBehavier.MatchConstraint)
                 .Select(FifthTextBox).CenterXTo().TopToBottom(SecondButton).Width(SizeBehavier.MatchConstraint)
                 .Select(SixthRichTextBlock).CenterXTo().TopToBottom(FifthTextBox).Width(SizeBehavier.MatchConstraint);
             layoutSet.ApplyTo(layout);

@@ -113,6 +113,7 @@ public partial class MainPage : ContentPage
         var FirstButton = new Button()
         {
             Text = "FirstButton",
+            WidthRequest = 100
             //Background = new SolidColorBrush(Colors.Red)
         };
 
