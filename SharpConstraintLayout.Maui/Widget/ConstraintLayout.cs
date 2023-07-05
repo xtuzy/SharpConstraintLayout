@@ -902,6 +902,16 @@ namespace SharpConstraintLayout.Maui.Widget
                     }
                 }
             }
+
+            int helperCount = mConstraintHelpers.Count;
+            if (helperCount > 0)
+            {
+                for (int i = 0; i < helperCount; i++)
+                {
+                    ConstraintHelper helper = mConstraintHelpers[i];
+                    helper.UpdatePostLayout(this);
+                }
+            }
         }
 
         #endregion Layout

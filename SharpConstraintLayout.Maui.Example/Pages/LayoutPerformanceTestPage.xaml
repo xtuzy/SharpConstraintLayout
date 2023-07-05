@@ -18,6 +18,14 @@
                 x:Name="UseGrid"
                 Clicked="UseGrid_Clicked"
                 Text="UseGrid" />
+            <Label
+                x:Name="fpsLabel"
+                BackgroundColor="Black"
+                HorizontalTextAlignment="Center"
+                Text="FPS"
+                TextColor="AliceBlue"
+                VerticalTextAlignment="Center"
+                WidthRequest="50" />
         </HorizontalStackLayout>
         <CollectionView x:Name="collectionView" Grid.Row="1" />
     </Grid>

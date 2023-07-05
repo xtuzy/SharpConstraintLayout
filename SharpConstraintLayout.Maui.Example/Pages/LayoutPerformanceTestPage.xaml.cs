@@ -10,12 +10,27 @@ namespace SharpConstraintLayout.Maui.Example.Pages;
 
 public partial class LayoutPerformanceTestPage : ContentPage
 {
+#if WINDOWS || __ANDROID__ || __IOS__
+    BlogFrameRate.FrameRateCalculator fr;
+#endif
     public LayoutPerformanceTestPage()
     {
         InitializeComponent();
         var viewmodel = new ViewModel();
         collectionView.BindingContext = viewmodel;
         collectionView.ItemsSource = viewmodel.Models;
+
+#if WINDOWS || __ANDROID__ || __IOS__
+        if (fr == null)
+        {
+            fr = new BlogFrameRate.FrameRateCalculator();
+            fr.FrameRateUpdated += (value) =>
+            {
+                this.Dispatcher.Dispatch(() => fpsLabel.Text = value.Frames.ToString());
+            };
+            fr.Start();
+        }
+#endif
     }
 
     public class ViewModel
@@ -96,14 +111,14 @@ public partial class LayoutPerformanceTestPage : ContentPage
             var PersonImageBlog = new Image() { BackgroundColor = Colors.AliceBlue };
             var TestButton = new Button() { Text = "Hello" };
             var FirstComment = new Label();
-            var likeContainer = new Flow();
+            var likeContainer = new HStack();
             var LikeIcon = new Image() { BackgroundColor = Colors.AliceBlue };
             var LikeCountLabel = new Label { Text = "555" };
 
-            var commentContainer = new Flow() { BackgroundColor = Colors.Red };
+            var commentContainer = new HStack() { BackgroundColor = Colors.Red };
             var CommentIcon = new Image() { BackgroundColor = Colors.AliceBlue };
             var CommentCountLabel = new Label { Text = "1000" };
-            var shareContaner = new Flow();
+            var shareContaner = new HStack();
             var ShareIcon = new Image() { BackgroundColor = Colors.AliceBlue };
             var ShareCountLabel = new Label { Text = "999" };
             layout.AddElement(PersonIconContainer, PersonName, PersonGender, PersonPhone, PersonTextBlogTitle, PersonTextBlog, PersonImageBlog, TestButton
@@ -113,7 +128,7 @@ public partial class LayoutPerformanceTestPage : ContentPage
             likeContainer.RefElement(LikeIcon, LikeCountLabel);
             commentContainer.RefElement(CommentIcon, CommentCountLabel);
             shareContaner.RefElement(ShareIcon, ShareCountLabel);
-            likeContainer.SetOrientation(Flow.Horizontal);
+            /*likeContainer.SetOrientation(Flow.Horizontal);
             likeContainer.SetWrapMode(Flow.WrapChain);
             likeContainer.SetHorizontalStyle(Flow.ChainSpreadInside);
             commentContainer.SetOrientation(Flow.Horizontal);
@@ -121,7 +136,7 @@ public partial class LayoutPerformanceTestPage : ContentPage
             commentContainer.SetHorizontalStyle(Flow.ChainSpreadInside);
             shareContaner.SetOrientation(Flow.Horizontal);
             shareContaner.SetWrapMode(Flow.WrapChain);
-            shareContaner.SetHorizontalStyle(Flow.ChainSpreadInside);
+            shareContaner.SetHorizontalStyle(Flow.ChainSpreadInside);*/
             var guideline1_6 = new Guideline() { };
             var guideline3_6 = new Guideline();
             var guideline5_6 = new Guideline();
@@ -141,7 +156,7 @@ public partial class LayoutPerformanceTestPage : ContentPage
                     .Select(guideline3_6).GuidelineOrientation(Orientation.Y).GuidelinePercent(0.5f)
                     .Select(guideline5_6).GuidelineOrientation(Orientation.Y).GuidelinePercent(5.0f / 6.0f)
                     .Select(LikeIcon, CommentIcon, ShareIcon).Width(30).Height(30)
-                    .Select(likeContainer).LeftToRight(guideline1_6).TopToBottom(PersonTextBlog, 5).Width(SizeBehavier.WrapContent).Height(SizeBehavier.WrapContent)
+                    .Select(likeContainer).LeftToRight(guideline1_6).TopToBottom(PersonTextBlog).Width(SizeBehavier.MatchConstraint).Height(SizeBehavier.MatchConstraint)
                     .Select(commentContainer).CenterXTo(guideline3_6).CenterYTo(likeContainer).Width(SizeBehavier.WrapContent).Height(SizeBehavier.WrapContent)
                     .Select(shareContaner).CenterXTo(guideline5_6).CenterYTo(likeContainer).Width(SizeBehavier.WrapContent).Height(SizeBehavier.WrapContent);
                 ;
