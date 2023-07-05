@@ -4,11 +4,16 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:SharpConstraintLayout.Maui.Example"
-    Shell.FlyoutBehavior="Disabled">
+    xmlns:pages="clr-namespace:SharpConstraintLayout.Maui.Example.Pages"
+    Shell.FlyoutBehavior="Flyout">
 
     <ShellContent
         Title="SharpConstraintLayout"
         ContentTemplate="{DataTemplate local:MainPage}"
         Route="MainPage" />
+    <ShellContent
+        Title="LayoutPerformanceTestPage"
+        ContentTemplate="{DataTemplate pages:LayoutPerformanceTestPage}"
+        Route="LayoutPerformanceTestPage" />
 
 </Shell>

@@ -49,9 +49,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Bogus" Version="34.0.2" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0-preview3" />
     <PackageReference Include="ReloadPreview" Version="3.0.6" />
     <PackageReference Include="Vapolia.MauiGesture" Version="1.0.0-ci2501125632" />
+    <PackageReference Include="WaffleGenerator.Bogus" Version="4.2.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -60,6 +62,9 @@
 
   <ItemGroup>
     <MauiXaml Update="Pages\ConstraintLayoutInListViewView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </MauiXaml>
+    <MauiXaml Update="Pages\LayoutPerformanceTestPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
     <MauiXaml Update="Pages\ShowAnimationView.xaml">

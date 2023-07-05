@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="SharpConstraintLayout.Maui.Example.Pages.LayoutPerformanceTestPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="LayoutPerformanceTestPage">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <HorizontalStackLayout Grid.Row="0">
+            <Button
+                x:Name="UseConstraintLayout"
+                Clicked="UseConstraintLayout_Clicked"
+                Text="UseConstraintLayout" />
+            <Button
+                x:Name="UseGrid"
+                Clicked="UseGrid_Clicked"
+                Text="UseGrid" />
+        </HorizontalStackLayout>
+        <CollectionView x:Name="collectionView" Grid.Row="1" />
+    </Grid>
+</ContentPage>
