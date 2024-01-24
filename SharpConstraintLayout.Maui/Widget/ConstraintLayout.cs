@@ -53,6 +53,7 @@ namespace SharpConstraintLayout.Maui.Widget
     using SharpConstraintLayout.Maui.Widget.Interface;
     using System.Diagnostics;
     using Microsoft.Extensions.Logging;
+    using Microsoft.Maui.Devices;
 
     /// <summary>
     /// ConstraintLayout is a AndroidX layout for <see
@@ -867,7 +868,9 @@ namespace SharpConstraintLayout.Maui.Widget
 
         public void ArrangeLayout()
         {
+#if __MAUI__
             if (DEBUGCONSTRAINTLAYOUTPROCESS) Logger?.LogInformation($"{nameof(ArrangeLayout)} View={nameof(ConstraintLayout)} Id={this.GetId()} Size={this.Bounds.Size}");
+#endif
             //layout child
             foreach (ConstraintWidget child in mLayout.Children)
             {
@@ -914,7 +917,7 @@ namespace SharpConstraintLayout.Maui.Widget
             }
         }
 
-        #endregion Layout
+#endregion Layout
 
         private class MeasurerAnonymousInnerClass : BasicMeasure.Measurer
         {

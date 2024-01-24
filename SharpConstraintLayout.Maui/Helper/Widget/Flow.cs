@@ -24,6 +24,7 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
     using AndroidMeasureSpec = SharpConstraintLayout.Maui.Widget.MeasureSpec;
     using SharpConstraintLayout.Maui.Helper.Widget.Interface;
     using Microsoft.Extensions.Logging;
+    using Microsoft.Maui.Devices;
 
     /// <summary>
     /// Flow VirtualLayout. <b>Added in 2.0</b>

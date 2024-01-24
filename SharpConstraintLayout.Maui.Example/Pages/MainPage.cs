@@ -219,34 +219,39 @@ namespace SharpConstraintLayout.Maui.Example
 
         void StackLayoutInConstraintLayoutTest(ConstraintLayout page)
         {
-            
+            var stackPanelInConstraintLayoutTag = new Label() { Text = "HorizontalStackLayout in ConstraintLayout" };
+            page.AddElement(stackPanelInConstraintLayoutTag);
             var stackPanel = new HorizontalStackLayout()
             {
-                Background = new SolidColorBrush(Colors.Aqua),
+                Background = new SolidColorBrush(Colors.MediumPurple),
             };
             page.AddElement(stackPanel);
-            stackPanel.Add(new Button() { Text = "InHorizontalStackPanel" });
-            stackPanel.Add(new Label() { Text = "InHorizontalStackPanel" });
-            stackPanel.Add(new Editor() { Text = "InHorizontalStackPanel" });
-
-            var grid = new Grid();
+            stackPanel.Add(new Button() { Text = "InHorizontalStackPanel", VerticalOptions = LayoutOptions.Center });
+            stackPanel.Add(new Entry() { Text = "InHorizontalStackPanel", VerticalOptions = LayoutOptions.Center });
+            stackPanel.Add(new Editor() { Text = "InHorizontalStackPanel", VerticalOptions = LayoutOptions.Center });
+            
+            var horizontalStackLayoutInGridTag = new Label() { Text = "HorizontalStackLayout in Grid" };
+            page.AddElement(horizontalStackLayoutInGridTag);
+            var grid = new Grid() { BackgroundColor = Colors.MediumPurple };
             page.AddElement(grid);
             var normalStackLayout = new HorizontalStackLayout();
             grid.Add(normalStackLayout);
-            normalStackLayout.Add(new Button() { Text = "InHorizontalStackPanel" });
-            normalStackLayout.Add(new Label() { Text = "InHorizontalStackPanel" });
-            normalStackLayout.Add(new Editor() { Text = "InHorizontalStackPanel" });
+            normalStackLayout.Add(new Button() { Text = "InHorizontalStackPanel", VerticalOptions = LayoutOptions.Center });
+            normalStackLayout.Add(new Entry() { Text = "InHorizontalStackPanel", VerticalOptions = LayoutOptions.Center });
+            normalStackLayout.Add(new Editor() { Text = "InHorizontalStackPanel", VerticalOptions = LayoutOptions.Center });
 
             using (var layoutSet = new FluentConstraintSet())
             {
                 layoutSet.Clone(page);
-                layoutSet.Select(stackPanel)
-                    .TopToTop().LeftToLeft()
+                layoutSet.Select(stackPanelInConstraintLayoutTag).TopToTop().LeftToLeft()
+                    .Select(stackPanel)
+                    .TopToBottom(stackPanelInConstraintLayoutTag).LeftToLeft()
                     .Width(SizeBehavier.WrapContent)
                     //.Height(SizeBehavier.WrapContent)//HorizontalStackLayout's height be decide by parent, WrapContent will let it as big as possible
                     .Height(SizeBehavier.MatchConstraint)
+                    .Select(horizontalStackLayoutInGridTag).TopToBottom(stackPanel)
                     .Select(grid)
-                    .LeftToLeft().TopToBottom(stackPanel).RightToRight().BottomToBottom()
+                    .LeftToLeft().TopToBottom(horizontalStackLayoutInGridTag).RightToRight().BottomToBottom()
                     .Width(SizeBehavier.MatchConstraint).Height(SizeBehavier.MatchConstraint);
                 layoutSet.ApplyTo(page);
             }
@@ -357,8 +362,8 @@ namespace SharpConstraintLayout.Maui.Example
                     .Width(SizeBehavier.MatchConstraint)
                     .Height(SizeBehavier.WrapContent)
                     .Select(FirstButton, SecondButton, FouthTextBlock, FifthTextBox, SixthRichTextBlock)
-                    .Width(SizeBehavier.WrapContent)
-                    .Height(SizeBehavier.WrapContent)
+                    .Select(SixthRichTextBlock)
+                    .Width(SizeBehavier.MatchParent)
                     .Select(ThirdCanvas).EdgesTo(flow)
                     .Width(SizeBehavier.MatchConstraint)
                     .Height(SizeBehavier.MatchConstraint);

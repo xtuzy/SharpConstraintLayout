@@ -1,6 +1,8 @@
 ﻿using System;
 using static SharpConstraintLayout.Maui.Widget.FluentConstraintSet;
 using static SharpConstraintLayout.Maui.Widget.FluentConstraintSet.Element;
+using Microsoft.Maui.Devices;
+
 
 #if __MAUI__
 using UIElement = Microsoft.Maui.Controls.View;

@@ -38,9 +38,9 @@ namespace SharpConstraintLayout.Maui.Example.Pages
         public override void onMeasure(androidx.constraintlayout.core.widgets.VirtualLayout layout, int widthMeasureSpec, int heightMeasureSpec)
         {
             base.onMeasure(layout, widthMeasureSpec, heightMeasureSpec);
-            int widthMode = MeasureSpec.GetMode(widthMeasureSpec);
+            int widthMode = (int)MeasureSpec.GetMode(widthMeasureSpec);
             int widthSize = MeasureSpec.GetSize(widthMeasureSpec);
-            int heightMode = MeasureSpec.GetMode(heightMeasureSpec);
+            int heightMode = (int)MeasureSpec.GetMode(heightMeasureSpec);
             int heightSize = MeasureSpec.GetSize(heightMeasureSpec);
             if (layout != null)
             {

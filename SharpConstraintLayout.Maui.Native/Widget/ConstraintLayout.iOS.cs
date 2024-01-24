@@ -150,8 +150,8 @@ namespace SharpConstraintLayout.Maui.Widget
             }
 
             (int horizontalSpec, int verticalSpec) = MakeSpec(this, availableSize);
-
-            return MeasureLayout(availableSize, horizontalSpec, verticalSpec);
+            var size = MeasureLayout(availableSize, horizontalSpec, verticalSpec);
+            return new CGSize(size.Width, size.Height);
         }
 
         /// <summary>

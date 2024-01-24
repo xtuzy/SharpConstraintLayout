@@ -64,7 +64,8 @@ namespace SharpConstraintLayout.Maui.Widget
              */
             (int horizontalSpec, int verticalSpec) = MakeSpec(this, availableSize);
 
-            return MeasureLayout(availableSize, horizontalSpec, verticalSpec);
+            var size = MeasureLayout(availableSize, horizontalSpec, verticalSpec);
+            return new Size(size.Width, size.Height);
         }
 
         /// <summary>
@@ -98,7 +99,8 @@ namespace SharpConstraintLayout.Maui.Widget
             {
                 // We haven't received our desired size. We need to refresh the rows.
                 (int horizontalSpec, int verticalSpec) = MakeSpec(this, finalSize);
-                finalSize = MeasureLayout(finalSize, horizontalSpec, verticalSpec);
+                var size = MeasureLayout(finalSize, horizontalSpec, verticalSpec);
+                finalSize = new Size(size.Width, size.Height);
             }
 
             ArrangeLayout();

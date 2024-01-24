@@ -45,8 +45,8 @@ public partial class MainPage : ContentPage
     /// </summary>
     void FitGridTest()
     {
-        var myHorizontalStackLayout = new MyHorizontalStackLayout();
-        var myConstraintLayout = new ConstraintLayout(new Log());
+        var myHorizontalStackLayout = new MyHorizontalStackLayout() { BackgroundColor = Colors.Gray };
+        var myConstraintLayout = new ConstraintLayout(new Log()) { BackgroundColor = Colors.Gray };
         compareWithGridLayout.Add(myHorizontalStackLayout);
         compareWithGridLayout.Add(myConstraintLayout);
         Grid.SetRow(myHorizontalStackLayout, 0);
@@ -113,7 +113,7 @@ public partial class MainPage : ContentPage
         var FirstButton = new Button()
         {
             Text = "FirstButton",
-            WidthRequest = 100
+            //WidthRequest = 100
             //Background = new SolidColorBrush(Colors.Red)
         };
 

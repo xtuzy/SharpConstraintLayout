@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0-android;net6.0-ios;net6.0-maccatalyst</TargetFrameworks>
-    <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows')) and '$(MSBuildRuntimeType)' == 'Full'">$(TargetFrameworks);net6.0-windows10.0.19041</TargetFrameworks>
+    <TargetFrameworks>net7.0-android;net7.0-ios;net7.0-maccatalyst</TargetFrameworks>
+    <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows')) and '$(MSBuildRuntimeType)' == 'Full'">$(TargetFrameworks);net7.0-windows10.0.19041</TargetFrameworks>
     <OutputType>Exe</OutputType>
     <UseMaui>true</UseMaui>
     <RootNamespace>SharpConstraintLayout.Core.Benchmark</RootNamespace>
@@ -23,14 +23,14 @@
     <!-- Required for C# Hot Reload -->
     <UseInterpreter Condition="'$(Configuration)' == 'Debug'">True</UseInterpreter>
 
-    <SupportedOSPlatformsVersion Condition="'$(TargetFramework)' == 'net6.0-ios'">14.2</SupportedOSPlatformsVersion>
-    <SupportedOSPlatformsVersion Condition="'$(TargetFramework)' == 'net6.0-maccatalyst'">14.0</SupportedOSPlatformsVersion>
-    <SupportedOSPlatformsVersion Condition="'$(TargetFramework)' == 'net6.0-android'">21.0</SupportedOSPlatformsVersion>
+    <SupportedOSPlatformsVersion Condition="'$(TargetFramework)' == 'net7.0-ios'">14.2</SupportedOSPlatformsVersion>
+    <SupportedOSPlatformsVersion Condition="'$(TargetFramework)' == 'net7.0-maccatalyst'">14.0</SupportedOSPlatformsVersion>
+    <SupportedOSPlatformsVersion Condition="'$(TargetFramework)' == 'net7.0-android'">21.0</SupportedOSPlatformsVersion>
     <SupportedOSPlatformsVersion Condition="$(TargetFramework.Contains('-windows'))">10.0.17763.0</SupportedOSPlatformsVersion>
     <TargetPlatformsMinVersion Condition="$(TargetFramework.Contains('-windows'))">10.0.17763.0</TargetPlatformsMinVersion>
   </PropertyGroup>
   <!--Copy form android template, deploy to device need EmbedAssembliesIntoApk = false -->
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU' and '$(TargetFramework)' == 'net6.0-android'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU' and '$(TargetFramework)' == 'net7.0-android'">
     <EmbedAssembliesIntoApk>False</EmbedAssembliesIntoApk>
     <PublishTrimmed>False</PublishTrimmed>
     <TrimMode>copyused</TrimMode>
@@ -64,21 +64,21 @@
     <PackageReference Include="ReloadPreview" Version="3.0.6" />
   </ItemGroup>
   <!--only ios and maccatalyst have these-->
-  <ItemGroup Condition="'$(TargetFramework)'!= 'net6.0-ios' and '$(TargetFramework)' != 'net6.0-maccatalyst'">
+  <ItemGroup Condition="'$(TargetFramework)'!= 'net7.0-ios' and '$(TargetFramework)' != 'net7.0-maccatalyst'">
     <Compile Remove="**\*.iOS.cs" />
     <None Include="**\*.iOS.cs" />
     <Compile Remove="**\*.MaciOS.cs" />
     <None Include="**\*.MaciOS.cs" />
   </ItemGroup>
   <!--ony ios have these-->
-  <ItemGroup Condition="'$(TargetFramework)'!= 'net6.0-ios'">
+  <ItemGroup Condition="'$(TargetFramework)'!= 'net7.0-ios'">
     <Compile Remove="**\iOS\*.cs" />
     <None Include="**\iOS\*.cs" />
     <Compile Remove="**\iOS\**\*.cs" />
     <None Include="**\iOS\**\*.cs" />
   </ItemGroup>
   <!--only maccatalyst have these-->
-  <ItemGroup Condition="'$(TargetFramework)' != 'net6.0-maccatalyst'">
+  <ItemGroup Condition="'$(TargetFramework)' != 'net7.0-maccatalyst'">
     <Compile Remove="**\*.MacCatalyst.cs" />
     <None Include="**\*.MacCatalyst.cs" />
     <Compile Remove="**\MacCatalyst\*.cs" />
@@ -87,7 +87,7 @@
     <None Include="**\MacCatalyst\**\*.cs" />
   </ItemGroup>
   <!--only macos have these-->
-  <ItemGroup Condition="'$(TargetFramework)' != 'net6.0-macos'">
+  <ItemGroup Condition="'$(TargetFramework)' != 'net7.0-macos'">
     <Compile Remove="**\*.MacOS.cs" />
     <None Include="**\*.MacOS.cs" />
     <Compile Remove="**\MacOS\*.cs" />
@@ -96,7 +96,7 @@
     <None Include="**\MacOS\**\*.cs" />
   </ItemGroup>
   <!--only android have these-->
-  <ItemGroup Condition="'$(TargetFramework)'!= 'net6.0-android'">
+  <ItemGroup Condition="'$(TargetFramework)'!= 'net7.0-android'">
     <Compile Remove="**\*.Android.cs" />
     <None Include="**\*.Android.cs" />
     <Compile Remove="**\Android\*.cs" />

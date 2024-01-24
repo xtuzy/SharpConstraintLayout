@@ -230,7 +230,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// </summary>
         /// <param name="element"></param>
         /// <returns>unit is pixel</returns>
-        public static (int Width, int Height) GetWrapContentSize(this UIElement element, double density)
+        public static (int Width, int Height) GetWrapContentSize(this UIElement element, double density = 0)
         {
 #if __MAUI__
             return ((int)(element.DesiredSize.Width * density + 0.5), (int)(element.DesiredSize.Height * density + 0.5));

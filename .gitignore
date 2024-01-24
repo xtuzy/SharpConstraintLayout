@@ -364,3 +364,5 @@ FodyWeavers.xsd
 /cso.db
 *.stignore
 *.DS_Store
+/.vscode
+/SharpConstraintLayout.Maui.Example/.meteor/generated
