@@ -11,11 +11,15 @@ namespace SharpConstraintLayout.Maui.Widget
         internal static void Invoke(Action action, ConstraintLayout constraintLayout)
         {
 #if __MAUI__
+#if !ANDROID && !WINDOWS && !IOS && !MACCATALYST
+            action.Invoke();
+#else
             constraintLayout.Dispatcher.Dispatch(() =>
             {
                 action.Invoke();
             });
-#elif WINDOWS
+#endif
+#elif WINDOWS        
             if (constraintLayout.DispatcherQueue == null)
             {
                 throw new Exception("UIThread.Invoke: ConstraintLayout.DispatcherQueue == null");
@@ -27,12 +31,12 @@ namespace SharpConstraintLayout.Maui.Widget
                     action.Invoke();
                 });
             }
-#elif __IOS__
+#elif __IOS__        
             CoreFoundation.DispatchQueue.MainQueue.DispatchAsync(() =>
                      {
                          action.Invoke();
                      });
-#elif __ANDROID__
+#elif __ANDROID__            
             constraintLayout.Post(() =>
             {
                 action.Invoke();
