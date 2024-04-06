@@ -225,6 +225,24 @@ namespace SharpConstraintLayout.Maui.Widget
 #endif
         }
 
+        public static int PxToDp(int px, double density)
+        {
+            return (int)(px / density + 0.5f);
+        }
+
+        /// <summary>
+        /// The value of dp could be an infinite value, ConstraintLayout use int to calculate, i use int.MaxValue to instead of it.
+        /// </summary>
+        /// <param name="dp"></param>
+        /// <param name="density"></param>
+        /// <returns></returns>
+        public static int DpToPx(double dp, double density)
+        {
+            if (double.IsInfinity(dp))
+                return int.MaxValue;
+            return (int)(dp * density + 0.5f);
+        }
+
         /// <summary>
         /// 获取控件自身测量的大小,这个大小是控件的内容大小或者平台的原生布局赋予的大小,由平台自身去计算
         /// </summary>
@@ -233,7 +251,7 @@ namespace SharpConstraintLayout.Maui.Widget
         public static (int Width, int Height) GetWrapContentSize(this UIElement element, double density = 0)
         {
 #if __MAUI__
-            return ((int)(element.DesiredSize.Width * density + 0.5), (int)(element.DesiredSize.Height * density + 0.5));
+            return (DpToPx(element.DesiredSize.Width, density), DpToPx(element.DesiredSize.Height, density));
 #elif WINDOWS
             return ((int)element.DesiredSize.Width, (int)element.DesiredSize.Height);
 #elif __IOS__
@@ -274,9 +292,9 @@ namespace SharpConstraintLayout.Maui.Widget
             Size sizeRequest = default;
             w = MeasureSpec.GetSize(horizontalSpec);//px
             h = MeasureSpec.GetSize(verticalSpec);
-            sizeRequest = (element as IView).Measure(w/density, h/density);//px to dp
-            w = GetDefaultSize((int)(sizeRequest.Width * density+ 0.5), horizontalSpec);
-            h = GetDefaultSize((int)(sizeRequest.Height * density + 0.5), verticalSpec);
+            sizeRequest = (element as IView).Measure(PxToDp(w, density), PxToDp(h, density));//measure use dp as params, return dp
+            w = GetDefaultSize(DpToPx(sizeRequest.Width, density), horizontalSpec);
+            h = GetDefaultSize(DpToPx(sizeRequest.Height, density), verticalSpec);
 #elif WINDOWS
             w = MeasureSpec.GetSize(horizontalSpec);
             h = MeasureSpec.GetSize(verticalSpec);
@@ -354,7 +372,7 @@ namespace SharpConstraintLayout.Maui.Widget
         internal static void SetWidth(this UIElement element, double width)
         {
             if (width > 0)
-                element.WidthRequest = width;
+                element.WidthRequest = width; 
             else
                 element.WidthRequest = ConstraintSet.Unset;
         }

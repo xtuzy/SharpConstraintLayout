@@ -42,6 +42,6 @@ namespace SharpConstraintLayout.Maui.Widget.Interface
         //void SetOnConstraintsChanged(ConstraintsChangedListener constraintsChangedListener);
         //void SetState(int id, int screenWidth, int screenHeight);//?
 
-        (bool isInfinityAvailabelWidth, bool isInfinityAvailabelHeight) IsInfinitable(ConstraintLayout layout, int constrainWidth, int constrainHeight, Size availableSize);
+        (bool isInfinityAvailabelWidth, bool isInfinityAvailabelHeight) IsInfinitable(ConstraintLayout layout, int constrainWidth, int constrainHeight, SizeI availableSize);
     }
 }
