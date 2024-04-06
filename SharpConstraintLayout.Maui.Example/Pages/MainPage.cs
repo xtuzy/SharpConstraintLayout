@@ -35,6 +35,7 @@ namespace SharpConstraintLayout.Maui.Example
                 set.ApplyTo(layout);
 
             }
+            SecondButton.Clicked -= Button_Clicked_ShowPopup;
             SecondButton.Clicked += (sender, e) =>
             {
                 if (group.ConstrainVisibility == ConstraintSet.Gone)
@@ -72,6 +73,7 @@ namespace SharpConstraintLayout.Maui.Example
             page.AddElement(SecondButton);
 
             FirstButton.Text = "Add Button";
+            FirstButton.Clicked -= Button_Clicked_ShowPopup;
             FirstButton.Clicked += (sender, e) =>
             {
                 var newbutton = new Button();
@@ -102,6 +104,7 @@ namespace SharpConstraintLayout.Maui.Example
             }
 
             SecondButton.Text = "Add Char";
+            SecondButton.Clicked -= Button_Clicked_ShowPopup;
             SecondButton.Clicked += (sender, e) =>
             {
                 buttonList[0].Text = buttonList[0].Text + "A";//not use entry to add char, because entry will measure twice
@@ -412,6 +415,7 @@ namespace SharpConstraintLayout.Maui.Example
 
             int index = 2;
 
+            FirstButton.Clicked -= Button_Clicked_ShowPopup;
             FirstButton.Clicked += (sender, e) =>
             {
                 if (index == 1)
@@ -501,6 +505,9 @@ namespace SharpConstraintLayout.Maui.Example
             {
                 Background = new SolidColorBrush(Colors.Black)
             };
+            var tab = new TapGestureRecognizer();
+            tab.Tapped += Button_Clicked_ShowPopup;
+            layout.GestureRecognizers.Add(tab);
 
             var guide = new Guideline();
 
@@ -530,20 +537,20 @@ namespace SharpConstraintLayout.Maui.Example
             (Button FirstButton, Button SecondButton, ContentView ThirdCanvas, Label FouthTextBlock, Entry FifthTextBox, Editor SixthRichTextBlock) = CreateControls();
 
             FirstButton.Text = "CenterTo Width=100";
-            SecondButton.Text = "RightToRight & TopToBottom";
+            SecondButton.Text = "RightToRight(-100) & TopToBottom";
             FouthTextBlock.Text = "CenterXTo & BottomToTop(100)";
             FifthTextBox.Text = "CenterXTo & TopToBottom";
             SixthRichTextBlock.Text = "CenterXTo & TopToBottom";
             var layout = page;
 
-            layout.AddElement(FirstButton, SecondButton, ThirdCanvas, FouthTextBlock, FifthTextBox, SixthRichTextBlock);
+            layout.AddElement(ThirdCanvas, FirstButton, SecondButton,  FouthTextBlock, FifthTextBox, SixthRichTextBlock);
 
             var layoutSet = new FluentConstraintSet();
             layoutSet.Clone(layout);
             layoutSet
-                .Select(FirstButton).CenterTo()
+                .Select(FirstButton).CenterTo().Width(100)
                 .Select(ThirdCanvas).Width(SizeBehavier.MatchConstraint).Height(SizeBehavier.MatchConstraint)
-                .Select(SecondButton).RightToRight(FirstButton).TopToBottom(FirstButton)
+                .Select(SecondButton).RightToRight(FirstButton, -100).TopToBottom(FirstButton)
                 .Select(ThirdCanvas).LeftToRight(FirstButton).RightToRight().EdgesYTo()
                 .Select(FouthTextBlock).CenterXTo().BottomToTop(FirstButton, 100).Width(SizeBehavier.MatchConstraint)
                 .Select(FifthTextBox).CenterXTo().TopToBottom(SecondButton).Width(SizeBehavier.MatchConstraint)

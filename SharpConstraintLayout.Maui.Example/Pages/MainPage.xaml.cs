@@ -116,17 +116,22 @@ public partial class MainPage : ContentPage
             //WidthRequest = 100
             //Background = new SolidColorBrush(Colors.Red)
         };
+        FirstButton.Clicked += Button_Clicked_ShowPopup;
 
         var SecondButton = new Button()
         {
             Text = "SecondBotton",
             //Background = new SolidColorBrush(Colors.Black)
         };
+        SecondButton.Clicked += Button_Clicked_ShowPopup;
 
         var ThirdCanvas = new ContentView()
         {
             Background = new SolidColorBrush(Colors.LightGreen)
         };
+        var tab = new TapGestureRecognizer();
+        tab.Tapped += Button_Clicked_ShowPopup;
+        ThirdCanvas.GestureRecognizers.Add(tab);
 
         var FouthTextBlock = new Label()
         {
@@ -136,6 +141,7 @@ public partial class MainPage : ContentPage
             VerticalTextAlignment = TextAlignment.Center,
             BackgroundColor = Colors.Black
         };
+        FouthTextBlock.GestureRecognizers.Add(tab);
 
         var FifthTextBox = new Entry()
         {
@@ -146,6 +152,7 @@ public partial class MainPage : ContentPage
         {
             //(FifthTextBox.Parent as ConstraintLayout)?.RequestReLayout();
         };
+        FifthTextBox.Completed += Button_Clicked_ShowPopup;
 
         //https://stackoverflow.com/questions/35710355/uwpc-adding-text-to-richtextblock
         var SixthRichTextBlock = new Editor()
@@ -153,8 +160,15 @@ public partial class MainPage : ContentPage
             Text = "SixthEditor",
             AutoSize = EditorAutoSizeOption.TextChanges
         };
+        SixthRichTextBlock.Completed += Button_Clicked_ShowPopup;
 
         return (FirstButton, SecondButton, ThirdCanvas, FouthTextBlock, FifthTextBox, SixthRichTextBlock);
+    }
+
+    private async void Button_Clicked_ShowPopup(object sender, EventArgs e)
+    {
+        var view = (sender as VisualElement);
+        await DisplayAlert(sender.GetType().Name+" Information", $"[{view.Bounds.Left.ToString("0.0")}, {view.Bounds.Top.ToString("0.0")}, {view.Bounds.Right.ToString("0.0")}, {view.Bounds.Bottom.ToString("0.0")}][{view.Bounds.Width.ToString("0.0")}, {view.Bounds.Height.ToString("0.0")}]", "OK");
     }
 
     ConstraintLayout CreateConstraintLayout(ILogger log = null)
@@ -169,7 +183,7 @@ public partial class MainPage : ContentPage
             Background = new SolidColorBrush(Colors.HotPink),
         };
         gridLayout.RemoveAt(gridLayout.Count - 1);
-        gridLayout.Add(content);
+        gridLayout.Add(content); 
         return content;
     }
 
