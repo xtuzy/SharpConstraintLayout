@@ -18,11 +18,11 @@
         void SetLastVerticalStyle(int style);
         void SetMaxElementsWrap(int max);
         void SetOrientation(int orientation);
-        void SetPadding(int padding);
-        void SetPaddingBottom(int paddingBottom);
-        void SetPaddingLeft(int paddingLeft);
-        void SetPaddingRight(int paddingRight);
-        void SetPaddingTop(int paddingTop);
+        //void SetPadding(int padding);
+        //void SetPaddingBottom(int paddingBottom);
+        //void SetPaddingLeft(int paddingLeft);
+        //void SetPaddingRight(int paddingRight);
+        //void SetPaddingTop(int paddingTop);
         void SetVerticalAlign(int align);
         void SetVerticalBias(float bias);
         void SetVerticalGap(int gap);

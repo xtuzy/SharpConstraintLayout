@@ -59,20 +59,21 @@ namespace SharpConstraintLayout.Maui.Widget
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            /*
-             * Analysis available size
-             */
-            (int horizontalSpec, int verticalSpec) = MakeSpec(this, availableSize);
+            //availableSize use dp as unit, convert it to px
+            var availableSizeI = new SizeI(UIElementExtension.DpToPx(availableSize.Width, Density), UIElementExtension.DpToPx(availableSize.Height, Density));
 
-            var size = MeasureLayout(availableSize, horizontalSpec, verticalSpec);
-            return new Size(size.Width, size.Height);
+            (int horizontalSpec, int verticalSpec) = MakeSpec(this, availableSizeI);
+
+            var finalSize = MeasureLayout(availableSizeI, horizontalSpec, verticalSpec);
+            //return dp
+            return new Size(UIElementExtension.PxToDp(finalSize.Width, Density), UIElementExtension.PxToDp(finalSize.Height, Density));
         }
 
         /// <summary>
         /// 判断是否可以无限大小
         /// </summary>
         /// <returns></returns>
-        public (bool isInfinityAvailabelWidth, bool isInfinityAvailabelHeight) IsInfinitable(ConstraintLayout layout, int constrainWidth, int constrainHeight, Size availableSize)
+        public (bool isInfinityAvailabelWidth, bool isInfinityAvailabelHeight) IsInfinitable(ConstraintLayout layout, int constrainWidth, int constrainHeight, SizeI availableSize)
         {
             bool isInfinityAvailabelWidth = false;
             bool isInfinityAvailabelHeight = false;
@@ -98,9 +99,10 @@ namespace SharpConstraintLayout.Maui.Widget
             if (finalSize.Width != mLastMeasureWidth || finalSize.Height != mLastMeasureHeight)
             {
                 // We haven't received our desired size. We need to refresh the rows.
-                (int horizontalSpec, int verticalSpec) = MakeSpec(this, finalSize);
-                var size = MeasureLayout(finalSize, horizontalSpec, verticalSpec);
-                finalSize = new Size(size.Width, size.Height);
+                var finalSizeI = new SizeI(UIElementExtension.DpToPx(finalSize.Width, Density), UIElementExtension.DpToPx(finalSize.Height, Density));//maui's dp to px
+                (int horizontalSpec, int verticalSpec) = MakeSpec(this, finalSizeI);
+                var size = MeasureLayout(finalSizeI, horizontalSpec, verticalSpec);
+                finalSize = new Size(UIElementExtension.PxToDp(size.Width, Density), UIElementExtension.PxToDp(size.Height, Density));
             }
 
             ArrangeLayout();
@@ -109,9 +111,9 @@ namespace SharpConstraintLayout.Maui.Widget
             return finalSize;
         }
 
-        void LayoutChild(UIElement element, int x, int y, int w, int h)
+        internal partial void LayoutChild(UIElement element, int x, int y, int w, int h)
         {
-            element.Arrange(new Rect(x, y, w, h));
+            element.Arrange(new Rect(UIElementExtension.PxToDp(x, Density), UIElementExtension.PxToDp(y, Density), UIElementExtension.PxToDp(w, Density), UIElementExtension.PxToDp(h, Density)));
         }
 
         #endregion

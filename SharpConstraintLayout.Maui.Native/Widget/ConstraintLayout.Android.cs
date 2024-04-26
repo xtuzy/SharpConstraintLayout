@@ -85,14 +85,14 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <param name="availableSize"></param>
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
-        public (bool isInfinityAvailabelWidth, bool isInfinityAvailabelHeight) IsInfinitable(ConstraintLayout layout, int constrainWidth, int constrainHeight, Size availableSize)
+        public (bool isInfinityAvailabelWidth, bool isInfinityAvailabelHeight) IsInfinitable(ConstraintLayout layout, int constrainWidth, int constrainHeight, SizeI availableSize)
         {
             throw new NotImplementedException();
         }
         protected override void OnMeasure(int widthMeasureSpec, int heightMeasureSpec)
         {
-            //base.OnMeasure(widthMeasureSpec, heightMeasureSpec);
-            MeasureLayout(new Size(SharpConstraintLayout.Maui.Widget.MeasureSpec.GetSize(widthMeasureSpec), SharpConstraintLayout.Maui.Widget.MeasureSpec.GetSize(heightMeasureSpec)), widthMeasureSpec, heightMeasureSpec);
+            var size = MeasureLayout(new SizeI(SharpConstraintLayout.Maui.Widget.MeasureSpec.GetSize(widthMeasureSpec), SharpConstraintLayout.Maui.Widget.MeasureSpec.GetSize(heightMeasureSpec)), widthMeasureSpec, heightMeasureSpec);
+            SetMeasuredDimension(size.Width, size.Height);
         }
 
         protected override void OnLayout(bool changed, int l, int t, int r, int b)
@@ -100,7 +100,7 @@ namespace SharpConstraintLayout.Maui.Widget
             ArrangeLayout();
         }
 
-        void LayoutChild(UIElement element, int x, int y, int w, int h)
+        internal partial void LayoutChild(UIElement element, int x, int y, int w, int h)
         {
             element.Layout(x, y, x + w, y + h);
         }

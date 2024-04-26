@@ -6,8 +6,8 @@ namespace SharpConstraintLayout.Maui.Widget.Interface
     {
         bool AllowsGoneWidget { get; set; }
         //JniPeerMembers JniPeerMembers { get; }
-        int ConstrainMargin { get; set; }
+        //int ConstrainMargin { get; set; }
         int ConstrainType { get; set; }
-        void SetMarginDp(int margin);
+        //void SetMarginDp(int margin);
     }
 }

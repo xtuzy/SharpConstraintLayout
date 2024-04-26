@@ -196,19 +196,18 @@ namespace SharpConstraintLayout.Maui.Widget
         /// Set a margin on the barrier
         /// </summary>
         /// <param name="margin"> in dp </param>
-        public virtual void SetMarginDp(int margin)
+        public virtual void SetMarginDp(float margin)
         {
-            //float density = Resources.DisplayMetrics.density;
-            float density = (float)Microsoft.Maui.Devices.DeviceDisplay.MainDisplayInfo.Density;
-            int px = (int)(0.5f + margin * density);
-            mBarrier.Margin = px;
+            var density = Microsoft.Maui.Devices.DeviceDisplay.MainDisplayInfo.Density;
+            var px = UIElementExtension.DpToPx(margin, density);
+            ConstrainMargin = px;
         }
 
         /// <summary>
         /// Returns the barrier margin
         /// </summary>
         /// <returns> the barrier margin (in pixels) </returns>
-        public virtual int ConstrainMargin
+        internal int ConstrainMargin
         {
             get
             {

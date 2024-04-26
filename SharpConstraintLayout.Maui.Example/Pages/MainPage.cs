@@ -56,8 +56,8 @@ namespace SharpConstraintLayout.Maui.Example
         {
             var page = new ConstraintLayout(new Log());
             rootpage.AddElement(page);
-            page.ConstrainWidth = ConstraintSet.MatchParent;
-            page.ConstrainHeight = ConstraintSet.MatchParent;
+            page.ConstrainWidth = SizeBehavier.MatchParent;
+            page.ConstrainHeight = SizeBehavier.MatchParent;
             using(var rootSet = new FluentConstraintSet())
             {
                 rootSet.Clone(rootpage);
@@ -318,7 +318,7 @@ namespace SharpConstraintLayout.Maui.Example
                 {
                     DebugName = "Second",
                     Background = new SolidColorBrush(Colors.Yellow),
-                    ConstrainWidth = ConstraintSet.WrapContent,
+                    ConstrainWidth = SizeBehavier.WrapContent,
                 };
                 rightLayout.AddElement(rightChildView);
                 rightChildView.Add(FirstButton);
@@ -666,7 +666,7 @@ namespace SharpConstraintLayout.Maui.Example
             var dataTemplate = new DataTemplate(() =>
             {
                 var viewCell = new ViewCell();
-                var layout = new ConstraintLayout(new Log()) { ConstrainWidth = ConstraintSet.MatchParent, ConstrainHeight = ConstraintSet.WrapContent, BackgroundColor = Color.FromRgb(66, 66, 66) };
+                var layout = new ConstraintLayout(new Log()) { ConstrainWidth = SizeBehavier.MatchParent, ConstrainHeight = SizeBehavier.WrapContent, BackgroundColor = Color.FromRgb(66, 66, 66) };
                 var title = new Label() { TextColor = Colors.White, FontSize = 30, FontAttributes = FontAttributes.Bold };
                 title.SetBinding(Label.TextProperty, nameof(Models.MicrosoftNews.Title));
                 var image = new Image();
@@ -754,7 +754,7 @@ namespace SharpConstraintLayout.Maui.Example
                 scrollViewForConstraintLayout.Orientation = ScrollOrientation.Vertical;
                 (Button FirstButton, Button SecondButton, ContentView ThirdCanvas, Label FouthTextBlock, Entry FifthTextBox, Editor SixthRichTextBlock) = CreateControls();
                 FirstButton.Text = "ConstraintLayout InScrollView";
-                var constraintlayout = new ConstraintLayout(new Log()) { ConstrainWidth = ConstraintSet.MatchParent, ConstrainHeight = ConstraintSet.WrapContent, BackgroundColor = Colors.Pink };
+                var constraintlayout = new ConstraintLayout(new Log()) { ConstrainWidth = SizeBehavier.MatchParent, ConstrainHeight = SizeBehavier.WrapContent, BackgroundColor = Colors.Pink };
                 scrollViewForConstraintLayout.Content = constraintlayout;
                 constraintlayout.AddElement(FirstButton, SecondButton, ThirdCanvas);
                 using (var set = new FluentConstraintSet())

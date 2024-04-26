@@ -16,15 +16,14 @@
 
 namespace SharpConstraintLayout.Maui.Helper.Widget
 {
-    using androidx.constraintlayout.core.widgets.analyzer;
-    using SharpConstraintLayout.Maui.Widget;
-    using System.Collections.Generic;
-    using ConstraintWidget = androidx.constraintlayout.core.widgets.ConstraintWidget;
-    using HelperWidget = androidx.constraintlayout.core.widgets.HelperWidget;
-    using AndroidMeasureSpec = SharpConstraintLayout.Maui.Widget.MeasureSpec;
-    using SharpConstraintLayout.Maui.Helper.Widget.Interface;
     using Microsoft.Extensions.Logging;
     using Microsoft.Maui.Devices;
+    using SharpConstraintLayout.Maui.Helper.Widget.Interface;
+    using SharpConstraintLayout.Maui.Widget;
+    using System.Collections.Generic;
+    using AndroidMeasureSpec = SharpConstraintLayout.Maui.Widget.MeasureSpec;
+    using ConstraintWidget = androidx.constraintlayout.core.widgets.ConstraintWidget;
+    using HelperWidget = androidx.constraintlayout.core.widgets.HelperWidget;
 
     /// <summary>
     /// Flow VirtualLayout. <b>Added in 2.0</b>
@@ -190,7 +189,7 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
                 //this.WidthRequest = layout.Width;
                 //this.HeightRequest = layout.Height;给WidthRequest赋值造成测量循环
 
-                MeasuredSize = new Size(layout.MeasuredWidth, layout.MeasuredHeight);
+                MeasuredSize = new SizeI(layout.MeasuredWidth, layout.MeasuredHeight);
 #elif __ANDROID__ && !__MAUI__
                 SetMeasuredDimension(layout.MeasuredWidth, layout.MeasuredHeight);//Android中这个的作用应该是设置flow的大小
 #elif __IOS__ && !__MAUI__
@@ -243,12 +242,12 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
         /// doc see <see cref="SetPadding"/>
         /// </summary>
         /// <param name="value">unit is dp</param>
-        public virtual void SetPaddingDp(int value) => SetPadding((int)(value * DeviceDisplay.MainDisplayInfo.Density + 0.5));
+        public virtual void SetPaddingDp(int value) => SetPadding(UIElementExtension.DpToPx(value, DeviceDisplay.MainDisplayInfo.Density));
         /// <summary>
         /// Set padding around the content
         /// </summary>
         /// <param name="padding">unit is pixel</param>
-        public virtual void SetPadding(int value)
+        void SetPadding(int value)
         {
             mFlow.Padding = value;
             this.RequestReLayout();
@@ -258,59 +257,35 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
         /// doc see <see cref="SetPaddingLeft"/>
         /// </summary>
         /// <param name="value">unit is dp</param>
-        public virtual void SetPaddingLeftDp(int value) => SetPaddingLeft((int)(value * DeviceDisplay.MainDisplayInfo.Density + 0.5));
+        public virtual void SetPaddingDp(Edge edge, float value) => SetPadding(edge, UIElementExtension.DpToPx(value, DeviceDisplay.MainDisplayInfo.Density));
         /// <summary>
         /// Set padding left around the content
         /// </summary>
-        /// <param name="paddingLeft"></param>
-        public virtual void SetPaddingLeft(int value)
+        /// <param name="value">pixel as unit</param>
+        void SetPadding(Edge edge, int value)
         {
-            mFlow.PaddingLeft = value;
-            this.RequestReLayout();
-        }
+            switch (edge)
+            {
+                case Edge.Left:
+                    mFlow.PaddingLeft = value;
+                    break;
+                case Edge.Right:
+                    mFlow.PaddingRight = value;
+                    break;
+                case Edge.Top:
+                    mFlow.PaddingTop = value;
+                    break;
+                case Edge.Bottom:
+                    mFlow.PaddingBottom = value;
+                    break;
+                case Edge.Start:
+                    mFlow.PaddingStart = value;
+                    break;
+                case Edge.End:
+                    mFlow.PaddingEnd = value;
+                    break;
+            }
 
-        /// <summary>
-        /// doc see <see cref="SetPaddingTop"/>
-        /// </summary>
-        /// <param name="value">unit is dp</param>
-        public virtual void SetPaddingTopDp(int value) => SetPaddingTop((int)(value * DeviceDisplay.MainDisplayInfo.Density + 0.5));
-        /// <summary>
-        /// Set padding top around the content
-        /// </summary>
-        /// <param name="paddingTop"></param>
-        public virtual void SetPaddingTop(int value)
-        {
-            mFlow.PaddingTop = value;
-            this.RequestReLayout();
-        }
-
-        /// <summary>
-        /// doc see <see cref="SetPaddingRight"/>
-        /// </summary>
-        /// <param name="value">unit is dp</param>
-        public virtual void SetPaddingRightDp(int value) => SetPaddingRight((int)(value * DeviceDisplay.MainDisplayInfo.Density + 0.5));
-        /// <summary>
-        /// Set padding right around the content
-        /// </summary>
-        /// <param name="paddingRight"></param>
-        public virtual void SetPaddingRight(int value)
-        {
-            mFlow.PaddingRight = value;
-            this.RequestReLayout();
-        }
-
-        /// <summary>
-        /// doc see <see cref="SetPaddingBottom"/>
-        /// </summary>
-        /// <param name="value">unit is dp</param>
-        public virtual void SetPaddingBottomDp(int value) => SetPaddingBottom((int)(value * DeviceDisplay.MainDisplayInfo.Density + 0.5));
-        /// <summary>
-        /// Set padding bottom around the content
-        /// </summary>
-        /// <param name="paddingBottom"></param>
-        public virtual void SetPaddingBottom(int value)
-        {
-            mFlow.PaddingBottom = value;
             this.RequestReLayout();
         }
 
@@ -336,7 +311,7 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
         /// doc see <see cref="SetLastHorizontalBias"/>
         /// </summary>
         /// <param name="value">unit is dp</param>
-        public virtual void SetLastHorizontalBiasDp(int value) => SetLastHorizontalBias((int)(value * DeviceDisplay.MainDisplayInfo.Density + 0.5));
+        public virtual void SetLastHorizontalBiasDp(int value) => SetLastHorizontalBias(UIElementExtension.DpToPx(value, DeviceDisplay.MainDisplayInfo.Density));
         /// <summary>
         /// Set the bias of the last Horizontal column.
         /// </summary>
@@ -351,7 +326,7 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
         /// doc see <see cref="SetLastVerticalBias"/>
         /// </summary>
         /// <param name="value">unit is dp</param>
-        public virtual void SetLastVerticalBiasDp(int value) => SetLastVerticalBias((int)(value * DeviceDisplay.MainDisplayInfo.Density + 0.5));
+        public virtual void SetLastVerticalBiasDp(int value) => SetLastVerticalBias(UIElementExtension.DpToPx(value, DeviceDisplay.MainDisplayInfo.Density));
         /// <summary>
         /// Set the bias of the last vertical row.
         /// </summary>
@@ -439,7 +414,7 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
         /// doc see <see cref="SetFirstHorizontalBias"/>
         /// </summary>
         /// <param name="value">unit is dp</param>
-        public virtual void SetFirstHorizontalBiasDp(int value) => SetFirstHorizontalBias((int)(value * DeviceDisplay.MainDisplayInfo.Density + 0.5));
+        public virtual void SetFirstHorizontalBiasDp(int value) => SetFirstHorizontalBias(UIElementExtension.DpToPx(value, DeviceDisplay.MainDisplayInfo.Density));
         /// <summary>
         /// Similar to <see cref="SetHorizontalBias"/>, but only applied to the first chain.
         /// </summary>
@@ -454,7 +429,7 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
         /// doc see <see cref="SetFirstVerticalBias"/>
         /// </summary>
         /// <param name="value">unit is dp</param>
-        public virtual void SetFirstVerticalBiasDp(int value) => SetFirstVerticalBias((int)(value * DeviceDisplay.MainDisplayInfo.Density + 0.5));
+        public virtual void SetFirstVerticalBiasDp(int value) => SetFirstVerticalBias(UIElementExtension.DpToPx(value, DeviceDisplay.MainDisplayInfo.Density));
         /// <summary>
         /// Similar to <see cref="SetVerticalBias"/>, but only applied to the first chain.
         /// </summary>
@@ -495,7 +470,7 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
         /// doc see <see cref="SetHorizontalGap"/>
         /// </summary>
         /// <param name="value">unit is dp</param>
-        public virtual void SetHorizontalGapDp(int value) => SetHorizontalGap((int)(value * DeviceDisplay.MainDisplayInfo.Density + 0.5));
+        public virtual void SetHorizontalGapDp(int value) => SetHorizontalGap(UIElementExtension.DpToPx(value, DeviceDisplay.MainDisplayInfo.Density));
         /// <summary>
         /// Set up the horizontal gap between elements
         /// </summary>
@@ -510,7 +485,7 @@ namespace SharpConstraintLayout.Maui.Helper.Widget
         /// doc see <see cref="SetVerticalGap"/>
         /// </summary>
         /// <param name="value">unit is dp</param>
-        public virtual void SetVerticalGapDp(int value) => SetVerticalGap((int)(value * DeviceDisplay.MainDisplayInfo.Density + 0.5));
+        public virtual void SetVerticalGapDp(int value) => SetVerticalGap(UIElementExtension.DpToPx(value, DeviceDisplay.MainDisplayInfo.Density));
         /// <summary>
         /// Set up the vertical gap between elements
         /// </summary>

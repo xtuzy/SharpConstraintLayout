@@ -116,6 +116,10 @@ namespace SharpConstraintLayout.Maui.Widget
             }
         }
 
+        /// <summary>
+        /// return dp as unit.
+        /// </summary>
+        /// <returns></returns>
         public CGSize MeasureSubviews()
         {
             Size availableSize;
@@ -149,16 +153,17 @@ namespace SharpConstraintLayout.Maui.Widget
 
             }
 
-            (int horizontalSpec, int verticalSpec) = MakeSpec(this, availableSize);
-            var size = MeasureLayout(availableSize, horizontalSpec, verticalSpec);
-            return new CGSize(size.Width, size.Height);
+            var availableSizeI = new SizeI(UIElementExtension.DpToPx(availableSize.Width, Density), UIElementExtension.DpToPx(availableSize.Height, Density));
+            (int horizontalSpec, int verticalSpec) = MakeSpec(this, availableSizeI);
+            availableSizeI = MeasureLayout(availableSizeI, horizontalSpec, verticalSpec);
+            return new CGSize(UIElementExtension.PxToDp(availableSizeI.Width, Density), UIElementExtension.PxToDp(availableSizeI.Height, Density));
         }
 
         /// <summary>
         /// 判断是否可以无限大小,作为UIScrollView的Child时可能.
         /// </summary>
         /// <returns></returns>
-        public (bool isInfinityAvailabelWidth, bool isInfinityAvailabelHeight) IsInfinitable(ConstraintLayout layout, int constrainWidth, int constrainHeight, Size availableSize)
+        public (bool isInfinityAvailabelWidth, bool isInfinityAvailabelHeight) IsInfinitable(ConstraintLayout layout, int constrainWidth, int constrainHeight, SizeI availableSize)
         {
             bool isInfinityAvailabelWidth = false;
             bool isInfinityAvailabelHeight = false;
@@ -210,7 +215,7 @@ namespace SharpConstraintLayout.Maui.Widget
             if (DEBUGCONSTRAINTLAYOUTPROCESS) Debug.WriteLine($"{this.GetType().Name} {nameof(LayoutSubviews)} Finish: Frame={this.Frame} Bounds={this.Bounds} Widget={this.MLayoutWidget.ToString()}");
         }
 
-        private void LayoutChild(UIElement element, int x, int y, int w, int h)
+        internal partial void LayoutChild(UIElement element, int x, int y, int w, int h)
         {
             //参考https://github.com/youngsoft/MyLinearLayout/blob/master/MyLayout/Lib/MyBaseLayout.m,设置Bounds
             //element.Bounds = new CoreGraphics.CGRect(element.Bounds.X, element.Bounds.Y, w, h);
@@ -219,7 +224,7 @@ namespace SharpConstraintLayout.Maui.Widget
             //探讨设置Frame还是Bounds
             //Frame和Bounds在旋转View时是不同的大小,我们使用IntrinsicContentSize得到控件大小,那么IntrinsicContentSize是谁的大小呢?
             //参考https://zhangbuhuai.com/post/auto-layout-part-1.html,这里好像暗示使用Frame去布局
-            element.Frame = new CoreGraphics.CGRect(x, y, w, h);
+            element.Frame = new CoreGraphics.CGRect(UIElementExtension.PxToDp(x, Density), UIElementExtension.PxToDp(y, Density), UIElementExtension.PxToDp(w, Density), UIElementExtension.PxToDp(h, Density));
         }
 
 #endregion

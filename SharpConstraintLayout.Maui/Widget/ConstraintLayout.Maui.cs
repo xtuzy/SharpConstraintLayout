@@ -89,15 +89,7 @@ namespace SharpConstraintLayout.Maui.Widget
             return new ConstraintLayoutManager(this);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="element"></param>
-        /// <param name="x">unit is pixel</param>
-        /// <param name="y"></param>
-        /// <param name="w"></param>
-        /// <param name="h"></param>
-        public void LayoutChild(UIElement element, int x, int y, int w, int h)
+        internal partial void LayoutChild(UIElement element, int x, int y, int w, int h)
         {
             (element as IView).Arrange(new Rect(UIElementExtension.PxToDp(x, this.Density), UIElementExtension.PxToDp(y, this.Density), UIElementExtension.PxToDp(w, this.Density), UIElementExtension.PxToDp(h, this.Density)));//px to maui's dp
         }

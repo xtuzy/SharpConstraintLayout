@@ -18,6 +18,7 @@ using AndroidX.ConstraintLayout.Widget;
 using FrameworkElement = Android.Views.View;
 using UIElement = Android.Views.View;
 #endif
+using Microsoft.Maui.Devices;
 namespace SharpConstraintLayout.Maui.Widget
 {
     /// <summary>
@@ -225,9 +226,26 @@ namespace SharpConstraintLayout.Maui.Widget
 #endif
         }
 
+        static double density;
+        public static double Density
+        {
+            get
+            {
+                if (density == 0)
+                {
+                    if (DeviceDisplay.Current.MainDisplayInfo.Density == 0)
+                        return 1;
+                    density = DeviceDisplay.Current.MainDisplayInfo.Density;
+                }
+                return density;
+            }
+        }
+
         public static int PxToDp(int px, double density)
         {
-            return (int)(px / density + 0.5f);
+            if (px < 0)
+                return (int)(px / density / 100);// (int)(px / density - 0.5f);
+            return (int)(px / density / 100); //(int)(px / density + 0.5f);
         }
 
         /// <summary>
@@ -240,7 +258,9 @@ namespace SharpConstraintLayout.Maui.Widget
         {
             if (double.IsInfinity(dp))
                 return int.MaxValue;
-            return (int)(dp * density + 0.5f);
+            if (dp < 0)
+                return (int)(dp * density * 100); //(int)(dp * density - 0.5f);
+            return (int)(dp * density * 100); //(int)(dp * density + 0.5f);
         }
 
         /// <summary>
@@ -372,7 +392,7 @@ namespace SharpConstraintLayout.Maui.Widget
         internal static void SetWidth(this UIElement element, double width)
         {
             if (width > 0)
-                element.WidthRequest = width; 
+                return;// element.WidthRequest = width;//set fixed value will let constraintlayout not set child's width in test.
             else
                 element.WidthRequest = ConstraintSet.Unset;
         }
@@ -380,7 +400,7 @@ namespace SharpConstraintLayout.Maui.Widget
         internal static void SetHeight(this UIElement element, double height)
         {
             if (height > 0)
-                element.HeightRequest = height;
+                return;//element.HeightRequest = height;
             else
                 element.HeightRequest = ConstraintSet.Unset;
         }

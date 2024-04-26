@@ -62,7 +62,7 @@ namespace SharpConstraintLayout.Maui.Widget
         }
 
 #if __MAUI__
-        public Size MeasuredSize;//创建这个变量专门存储Widget测量值
+        internal SizeI MeasuredSize;//创建这个变量专门存储Widget测量值
 #endif
         public virtual void onMeasure(androidx.constraintlayout.core.widgets.VirtualLayout layout, int widthMeasureSpec, int heightMeasureSpec)
         {
