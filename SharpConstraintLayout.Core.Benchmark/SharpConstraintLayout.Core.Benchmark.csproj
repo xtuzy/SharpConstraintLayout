@@ -29,12 +29,6 @@
     <SupportedOSPlatformsVersion Condition="$(TargetFramework.Contains('-windows'))">10.0.17763.0</SupportedOSPlatformsVersion>
     <TargetPlatformsMinVersion Condition="$(TargetFramework.Contains('-windows'))">10.0.17763.0</TargetPlatformsMinVersion>
   </PropertyGroup>
-  <!--Copy form android template, deploy to device need EmbedAssembliesIntoApk = false -->
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU' and '$(TargetFramework)' == 'net7.0-android'">
-    <EmbedAssembliesIntoApk>False</EmbedAssembliesIntoApk>
-    <PublishTrimmed>False</PublishTrimmed>
-    <TrimMode>copyused</TrimMode>
-  </PropertyGroup>
 
   <ItemGroup>
     <!-- App Icon -->
@@ -57,12 +51,6 @@
     <OutputType>WinExe</OutputType>
     <RuntimeIdentifier>win10-x64</RuntimeIdentifier>
   </PropertyGroup>
-
-  <ItemGroup>
-    <!--use this you can "hotreload" when use pure code write ui-->
-    <PackageReference Include="BenchmarkDotNet" Version="0.13.1" />
-    <PackageReference Include="ReloadPreview" Version="3.0.6" />
-  </ItemGroup>
   <!--only ios and maccatalyst have these-->
   <ItemGroup Condition="'$(TargetFramework)'!= 'net7.0-ios' and '$(TargetFramework)' != 'net7.0-maccatalyst'">
     <Compile Remove="**\*.iOS.cs" />
@@ -114,17 +102,26 @@
     <None Include="**\Windows\**\*.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Remove="App.xaml.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <Folder Remove="bin\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SharpConstraintLayout.Core\SharpConstraintLayout.Core.csproj" />
+    <MauiXaml Remove="App.xaml" />
   </ItemGroup>
   <ItemGroup>
-    <MauiXaml Update="App.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </MauiXaml>
-    <MauiXaml Update="MainPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </MauiXaml>
+    <PackageReference Include="NSubstitute" Version="5.1.0" />
+    <PackageReference Include="Shiny.Xunit.Runners.Maui" Version="1.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SharpConstraintLayout.Core\SharpConstraintLayout.Core.csproj" />
+    <ProjectReference Include="..\SharpConstraintLayout.Maui\SharpConstraintLayout.Maui.csproj" />
+  </ItemGroup>
+  <ItemGroup Condition="$(TargetFramework.Contains('-android')) == true">
+    <PackageReference Include="Xamarin.AndroidX.ConstraintLayout">
+      <Version>2.1.4.10</Version>
+    </PackageReference>
+     <PackageReference Include="Xamarin.AndroidX.Fragment.Ktx" Version="1.6.2.2" />
   </ItemGroup>
 </Project>
