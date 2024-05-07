@@ -198,9 +198,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <param name="margin"> in dp </param>
         public virtual void SetMarginDp(float margin)
         {
-            var density = Microsoft.Maui.Devices.DeviceDisplay.MainDisplayInfo.Density;
-            var px = UIElementExtension.DpToPx(margin, density);
-            ConstrainMargin = px;
+            ConstrainMargin = UIElementExtension.DpToScaledPx(margin);
         }
 
         /// <summary>
@@ -218,20 +216,5 @@ namespace SharpConstraintLayout.Maui.Widget
                 mBarrier.Margin = value;
             }
         }
-
-        public override void LoadParameters(ConstraintSet.Constraint constraint, HelperWidget child, Dictionary<int, ConstraintWidget> mapIdToWidget)
-        {
-            base.LoadParameters(constraint, child, mapIdToWidget);
-            if (child is androidx.constraintlayout.core.widgets.Barrier)
-            {
-                androidx.constraintlayout.core.widgets.Barrier barrier = (androidx.constraintlayout.core.widgets.Barrier)child;
-                ConstraintWidgetContainer container = (ConstraintWidgetContainer)child.Parent;
-                bool isRtl = container.Rtl;
-                updateType(barrier, constraint.layout.mBarrierDirection, isRtl);
-                barrier.AllowsGoneWidget = constraint.layout.mBarrierAllowsGoneWidgets;
-                barrier.Margin = constraint.layout.mBarrierMargin;
-            }
-        }
     }
-
 }

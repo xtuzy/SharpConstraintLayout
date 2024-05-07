@@ -60,13 +60,13 @@ namespace SharpConstraintLayout.Maui.Widget
         protected override Size MeasureOverride(Size availableSize)
         {
             //availableSize use dp as unit, convert it to px
-            var availableSizeI = new SizeI(UIElementExtension.DpToPx(availableSize.Width, Density), UIElementExtension.DpToPx(availableSize.Height, Density));
+            var availableSizeI = new SizeI(UIElementExtension.DpToScaledPx(availableSize.Width), UIElementExtension.DpToScaledPx(availableSize.Height));
 
             (int horizontalSpec, int verticalSpec) = MakeSpec(this, availableSizeI);
 
             var finalSize = MeasureLayout(availableSizeI, horizontalSpec, verticalSpec);
             //return dp
-            return new Size(UIElementExtension.PxToDp(finalSize.Width, Density), UIElementExtension.PxToDp(finalSize.Height, Density));
+            return new Size(UIElementExtension.ScaledPxToDp(finalSize.Width), UIElementExtension.ScaledPxToDp(finalSize.Height));
         }
 
         /// <summary>
@@ -99,10 +99,10 @@ namespace SharpConstraintLayout.Maui.Widget
             if (finalSize.Width != mLastMeasureWidth || finalSize.Height != mLastMeasureHeight)
             {
                 // We haven't received our desired size. We need to refresh the rows.
-                var finalSizeI = new SizeI(UIElementExtension.DpToPx(finalSize.Width, Density), UIElementExtension.DpToPx(finalSize.Height, Density));//maui's dp to px
+                var finalSizeI = new SizeI(UIElementExtension.DpToScaledPx(finalSize.Width), UIElementExtension.DpToScaledPx(finalSize.Height));//maui's dp to px
                 (int horizontalSpec, int verticalSpec) = MakeSpec(this, finalSizeI);
                 var size = MeasureLayout(finalSizeI, horizontalSpec, verticalSpec);
-                finalSize = new Size(UIElementExtension.PxToDp(size.Width, Density), UIElementExtension.PxToDp(size.Height, Density));
+                finalSize = new Size(UIElementExtension.ScaledPxToDp(size.Width), UIElementExtension.ScaledPxToDp(size.Height));
             }
 
             ArrangeLayout();
@@ -113,7 +113,7 @@ namespace SharpConstraintLayout.Maui.Widget
 
         internal partial void LayoutChild(UIElement element, int x, int y, int w, int h)
         {
-            element.Arrange(new Rect(UIElementExtension.PxToDp(x, Density), UIElementExtension.PxToDp(y, Density), UIElementExtension.PxToDp(w, Density), UIElementExtension.PxToDp(h, Density)));
+            element.Arrange(new Rect(UIElementExtension.ScaledPxToDp(x), UIElementExtension.ScaledPxToDp(y), UIElementExtension.ScaledPxToDp(w), UIElementExtension.ScaledPxToDp(h)));
         }
 
         #endregion

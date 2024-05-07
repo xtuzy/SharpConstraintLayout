@@ -25,7 +25,7 @@ public partial class MainPage : ContentPage
             App.WindowWidth = (int)(sender as Page).Bounds.Width;
         };
 
-        FitGridTest();
+        //FitGridTest();
 
 #if WINDOWS || __ANDROID__ || __IOS__
         if (fr == null)

@@ -69,6 +69,7 @@ namespace SharpConstraintLayout.Maui.Example
             int buttonCount = 50;
 
             var flow = new Flow() { };
+            flow.BackgroundColor = Colors.Gray;
             page.AddElement(FirstButton);
             page.AddElement(SecondButton);
 

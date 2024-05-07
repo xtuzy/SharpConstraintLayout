@@ -226,8 +226,8 @@ namespace SharpConstraintLayout.Maui.Widget
 #endif
         }
 
-        static double density;
-        public static double Density
+        static float density;
+        public static float Density
         {
             get
             {
@@ -235,17 +235,18 @@ namespace SharpConstraintLayout.Maui.Widget
                 {
                     if (DeviceDisplay.Current.MainDisplayInfo.Density == 0)
                         return 1;
-                    density = DeviceDisplay.Current.MainDisplayInfo.Density;
+                    density = (float)DeviceDisplay.Current.MainDisplayInfo.Density;
                 }
                 return density;
             }
         }
 
-        public static int PxToDp(int px, double density)
+        const int scale = 100;
+        internal static float ScaledPxToDp(int px)
         {
             if (px < 0)
-                return (int)(px / density / 100);// (int)(px / density - 0.5f);
-            return (int)(px / density / 100); //(int)(px / density + 0.5f);
+                return (px / Density / scale);// (int)(px / density - 0.5f);
+            return (px / Density / scale); //(int)(px / density + 0.5f);
         }
 
         /// <summary>
@@ -254,24 +255,34 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <param name="dp"></param>
         /// <param name="density"></param>
         /// <returns></returns>
-        public static int DpToPx(double dp, double density)
+        internal static int DpToScaledPx(double dp)
         {
             if (double.IsInfinity(dp))
                 return int.MaxValue;
             if (dp < 0)
-                return (int)(dp * density * 100); //(int)(dp * density - 0.5f);
-            return (int)(dp * density * 100); //(int)(dp * density + 0.5f);
+                return (int)(dp * Density * scale); //(int)(dp * density - 0.5f);
+            return (int)(dp * Density * scale); //(int)(dp * density + 0.5f);
+        }
+
+        public static double PxToDp(int px)
+        {
+            return (int)(px / Density + 0.5);
+        }
+
+        public static int DpToPx(double dp)
+        {
+            return (int)(dp * Density + 0.5);
         }
 
         /// <summary>
-        /// 获取控件自身测量的大小,这个大小是控件的内容大小或者平台的原生布局赋予的大小,由平台自身去计算
+        /// 获取控件自身测量过的大小, 这个大小是控件的内容大小或者平台的原生布局赋予的大小, 是平台自身去计算得到的
         /// </summary>
         /// <param name="element"></param>
-        /// <returns>unit is pixel</returns>
-        public static (int Width, int Height) GetWrapContentSize(this UIElement element, double density = 0)
+        /// <returns>return scaled pixel</returns>
+        internal static (int Width, int Height) GetWrapContentSize(this UIElement element, double density = 0)
         {
 #if __MAUI__
-            return (DpToPx(element.DesiredSize.Width, density), DpToPx(element.DesiredSize.Height, density));
+            return (DpToScaledPx(element.DesiredSize.Width), DpToScaledPx(element.DesiredSize.Height));
 #elif WINDOWS
             return ((int)element.DesiredSize.Width, (int)element.DesiredSize.Height);
 #elif __IOS__
@@ -300,21 +311,29 @@ namespace SharpConstraintLayout.Maui.Widget
                 size.Height = 0;
             return ((int)size.Width, (int)size.Height);
 #elif __ANDROID__
-            return (element.MeasuredWidth, element.MeasuredHeight);
+            return (DpToScaledPx(PxToDp(element.MeasuredWidth)), DpToScaledPx(PxToDp(element.MeasuredHeight)));
 #endif
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="element"></param>
+        /// <param name="horizontalSpec"></param>
+        /// <param name="verticalSpec"></param>
+        /// <param name="density"></param>
+        /// <returns>return scaled pixel</returns>
         public static (int measuredWidth, int measureWidth) MeasureSelf(this UIElement element, int horizontalSpec, int verticalSpec, double density)
         {
             int w;
             int h;
 #if __MAUI__
             Size sizeRequest = default;
-            w = MeasureSpec.GetSize(horizontalSpec);//px
+            w = MeasureSpec.GetSize(horizontalSpec);//get scaled px
             h = MeasureSpec.GetSize(verticalSpec);
-            sizeRequest = (element as IView).Measure(PxToDp(w, density), PxToDp(h, density));//measure use dp as params, return dp
-            w = GetDefaultSize(DpToPx(sizeRequest.Width, density), horizontalSpec);
-            h = GetDefaultSize(DpToPx(sizeRequest.Height, density), verticalSpec);
+            sizeRequest = (element as IView).Measure(ScaledPxToDp(w), ScaledPxToDp(h));//measure use dp as params, return dp
+            w = GetDefaultSize(DpToScaledPx(sizeRequest.Width), horizontalSpec);
+            h = GetDefaultSize(DpToScaledPx(sizeRequest.Height), verticalSpec);
 #elif WINDOWS
             w = MeasureSpec.GetSize(horizontalSpec);
             h = MeasureSpec.GetSize(verticalSpec);
@@ -327,9 +346,15 @@ namespace SharpConstraintLayout.Maui.Widget
             w = GetDefaultSize(w, horizontalSpec);
             h = GetDefaultSize(h, verticalSpec);
 #elif __ANDROID__
+            var scaledPxSizeI = new SizeI(MeasureSpec.GetSize(horizontalSpec), MeasureSpec.GetSize(verticalSpec));
+            var correctDpSizeI = new Microsoft.Maui.Graphics.Size(ScaledPxToDp(scaledPxSizeI.Width), ScaledPxToDp(scaledPxSizeI.Height));
+            var correctPxSizeI = new SizeI(DpToPx(correctDpSizeI.Width), DpToPx(correctDpSizeI.Height));
+            var parent = element.Parent as ConstraintLayout;
+            horizontalSpec= MeasureSpec.MakeMeasureSpec(correctPxSizeI.Width, MeasureSpec.GetMode(horizontalSpec));
+            verticalSpec = MeasureSpec.MakeMeasureSpec(correctPxSizeI.Height, MeasureSpec.GetMode(horizontalSpec));
             element.Measure(horizontalSpec, verticalSpec);//Android中的measure会根据大小和MeasureSpec来测量,最后会存储测量值,其它平台不知道怎么存储,所以全返回
-            w = element.MeasuredWidth;
-            h = element.MeasuredHeight;
+            w = DpToScaledPx(PxToDp(element.MeasuredWidth));
+            h = DpToScaledPx(PxToDp(element.MeasuredHeight));
 #endif
             return (w, h);
         }
@@ -388,71 +413,39 @@ namespace SharpConstraintLayout.Maui.Widget
 #endif
         }
 
+        /// <summary>
+        /// params use scaled pixel.
+        /// </summary>
+        /// <param name="width">it can be scaled pixel, or <see cref="ConstraintSet.MatchParent"/>, or <see cref="ConstraintSet.MatchConstraint"/>, or <see cref="ConstraintSet.WrapContent"/></param>
+        internal static void SetSizeAndMargin(this UIElement element, int width = 0, int height = 0, int minWidth = 0, int minHeight = 0, int maxWidth = 0, int maxHeight = 0, int left = 0, int top = 0, int right = 0, int bottom = 0)
+        {
+            bool IsFixedValue(int wOrH)
+            {
+                if (wOrH == ConstraintSet.MatchConstraint
+                    || wOrH == ConstraintSet.MatchParent
+                    || wOrH == ConstraintSet.WrapContent)
+                {
+                    return false;
+                }
+                return true;
+            }
+
+            var correctWidthDp = UIElementExtension.ScaledPxToDp(width);
+            var correctHeightDp = UIElementExtension.ScaledPxToDp(height);
+            var correctMinWidthDp = UIElementExtension.ScaledPxToDp(minWidth);
+            var correctMinHeightDp = UIElementExtension.ScaledPxToDp(minHeight);
+            var correctMaxWidthDp = UIElementExtension.ScaledPxToDp(maxWidth);
+            var correctMaxHeightDp = UIElementExtension.ScaledPxToDp(maxHeight);
 #if __MAUI__
-        internal static void SetWidth(this UIElement element, double width)
-        {
-            if (width > 0)
-                return;// element.WidthRequest = width;//set fixed value will let constraintlayout not set child's width in test.
-            else
-                element.WidthRequest = ConstraintSet.Unset;
-        }
-
-        internal static void SetHeight(this UIElement element, double height)
-        {
-            if (height > 0)
-                return;//element.HeightRequest = height;
-            else
-                element.HeightRequest = ConstraintSet.Unset;
-        }
-
-        internal static void SetMinWidth(this UIElement element, double minWidth)
-        {
-            if (minWidth > 0)
-                element.MinimumWidthRequest = minWidth;
-            else;
-            //element.MinimumWidthRequest = ConstraintSet.Unset;
-        }
-
-        internal static void SetMinHeight(this UIElement element, double minHeight)
-        {
-            if (minHeight > 0)
-                element.MinimumHeightRequest = minHeight;
-            else;
-            //element.MinimumHeightRequest = ConstraintSet.Unset;
-        }
-
-        internal static void SetMaxWidth(this UIElement element, double maxWidth)
-        {
-            if (maxWidth > 0)
-                element.MaximumWidthRequest = maxWidth;
-            else;
-            //element.MaximumWidthRequest = double.PositiveInfinity;
-        }
-
-        internal static void SetMaxHeight(this UIElement element, double maxHeight)
-        {
-            if (maxHeight > 0)
-                element.MaximumHeightRequest = maxHeight;
-            else;
-            //element.MaximumHeightRequest = double.PositiveInfinity;
-        }
-#endif
-
-        internal static void SetSizeAndMargin(this UIElement element, int width, int height, int minWidth, int minHeight, int maxWidth, int maxHeight, int left, int top, int right, int bottom)
-        {
-#if __MAUI__
-            if (width > 0)
-                element.WidthRequest = width;
-            if (height > 0)
-                element.HeightRequest = height;
-            if (minWidth > 0)
-                element.MinimumWidthRequest = minWidth;
-            if (minHeight > 0)
-                element.MinimumHeightRequest = minHeight;
-            if (maxWidth > 0)
-                element.MaximumWidthRequest = maxWidth;
-            if (maxHeight > 0)
-                element.MaximumHeightRequest = maxHeight;
+            // set fixed WidthRequest and HeightRequest will get 0 in test.
+            if (width > 0) ;// element.WidthRequest = correctWidthDp; 
+            else element.WidthRequest = ConstraintSet.Unset;
+            if (height > 0) ;// element.HeightRequest = correctHeightDp;
+            else element.HeightRequest = ConstraintSet.Unset;
+            if (minWidth > 0) element.MinimumWidthRequest = correctMinWidthDp;
+            if (minHeight > 0) element.MinimumHeightRequest = correctMinHeightDp;
+            if (maxWidth > 0) element.MaximumWidthRequest = correctMaxWidthDp;
+            if (maxHeight > 0) element.MaximumHeightRequest = correctMaxHeightDp;
             //element.Margin = new Thickness(left, top, right, bottom);//Maui中会将Margin计算入Size,我们需要的只是控件间间距
 #elif WINDOWS
             var view = element as FrameworkElement;
@@ -479,6 +472,23 @@ namespace SharpConstraintLayout.Maui.Widget
                 element.Frame = new CoreGraphics.CGRect(element.Frame.X, element.Frame.Y, element.Frame.Width, height);
             //element.LayoutMargins = new UIEdgeInsets(top, left, bottom, right);
 #elif __ANDROID__
+            var correctLeftDp = UIElementExtension.ScaledPxToDp(left);
+            var correctTopDp = UIElementExtension.ScaledPxToDp(top);
+            var correctRightDp = UIElementExtension.ScaledPxToDp(right);
+            var correctBottomDp = UIElementExtension.ScaledPxToDp(bottom);
+            if (IsFixedValue(width))
+                width = DpToPx(correctWidthDp);
+            if (IsFixedValue(height))
+                height = DpToPx(correctHeightDp);
+            minWidth = DpToPx(correctMinWidthDp);
+            minHeight = DpToPx(correctMinHeightDp);
+            maxWidth = DpToPx(correctMaxWidthDp);
+            maxHeight = DpToPx(correctMaxHeightDp);
+            left = DpToPx(correctLeftDp);
+            top = DpToPx(correctTopDp);
+            right = DpToPx(correctRightDp);
+            bottom = DpToPx(correctBottomDp);
+
             if (element.LayoutParameters == null)
                 element.LayoutParameters = new ViewGroup.MarginLayoutParams(ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.WrapContent);
             if (width > 0 || width == -1 || width == -2)//width==0是设置MatchConstraint,我没有在LayoutParams中实现,因此等于0作为不设置处理

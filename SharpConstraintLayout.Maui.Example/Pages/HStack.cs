@@ -45,7 +45,7 @@ namespace SharpConstraintLayout.Maui.Example.Pages
             if (layout != null)
             {
                 layout.measure(widthMode, widthSize, heightMode, heightSize);
-                MeasuredSize = new Size(layout.MeasuredWidth, layout.MeasuredHeight);
+                SetMeasuredSize(layout.MeasuredWidth, layout.MeasuredHeight);
             }
         }
 

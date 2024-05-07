@@ -95,7 +95,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// doc see <see cref="SetGuidelineBegin"/>
         /// </summary>
         /// <param name="value">unit is dp</param>
-        public virtual void SetGuidelineBeginDp(float value) => SetGuidelineBegin(UIElementExtension.DpToPx(value, DeviceDisplay.MainDisplayInfo.Density));
+        public virtual void SetGuidelineBeginDp(float value) => SetGuidelineBegin(UIElementExtension.DpToScaledPx(value));
         /// <summary>
         /// Set the guideline's distance from the top or left edge.
         /// </summary>
@@ -109,7 +109,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// doc see <see cref="SetGuidelineEnd"/>
         /// </summary>
         /// <param name="value">unit is dp</param>
-        public virtual void SetGuidelineEndDp(float value) => SetGuidelineEnd(UIElementExtension.DpToPx(value, DeviceDisplay.MainDisplayInfo.Density));
+        public virtual void SetGuidelineEndDp(float value) => SetGuidelineEnd(UIElementExtension.DpToScaledPx(value));
         /// <summary>
         /// Set a guideline's distance to end.
         /// </summary>

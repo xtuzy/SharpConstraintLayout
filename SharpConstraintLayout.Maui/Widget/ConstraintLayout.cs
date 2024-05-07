@@ -278,12 +278,12 @@ namespace SharpConstraintLayout.Maui.Widget
 
         #region LayoutProperty
 
-        public float ConstrainPaddingTopDp { set => ConstrainPaddingTop = UIElementExtension.DpToPx(value, Density); get => UIElementExtension.PxToDp(ConstrainPaddingTop, Density); }
-        public float ConstrainPaddingBottomDp { set => ConstrainPaddingBottom = UIElementExtension.DpToPx(value, Density); get => UIElementExtension.PxToDp(ConstrainPaddingBottom, Density); }
-        public float ConstrainPaddingLeftDp { set => ConstrainPaddingLeft = UIElementExtension.DpToPx(value, Density); get => UIElementExtension.PxToDp(ConstrainPaddingLeft, Density); }
-        public float ConstrainPaddingRightDp { set => ConstrainPaddingRight = UIElementExtension.DpToPx(value, Density); get => UIElementExtension.PxToDp(ConstrainPaddingRight, Density); }
-        public float ConstrainPaddingStartDp { set => ConstrainPaddingStart = UIElementExtension.DpToPx(value, Density); get => UIElementExtension.PxToDp(ConstrainPaddingStart, Density); }
-        public float ConstrainPaddingEndDp { set => ConstrainPaddingEnd = UIElementExtension.DpToPx(value, Density); get => UIElementExtension.PxToDp(ConstrainPaddingEnd, Density); }
+        public float ConstrainPaddingTopDp { set => ConstrainPaddingTop = UIElementExtension.DpToScaledPx(value); get => UIElementExtension.ScaledPxToDp(ConstrainPaddingTop); }
+        public float ConstrainPaddingBottomDp { set => ConstrainPaddingBottom = UIElementExtension.DpToScaledPx(value); get => UIElementExtension.ScaledPxToDp(ConstrainPaddingBottom); }
+        public float ConstrainPaddingLeftDp { set => ConstrainPaddingLeft = UIElementExtension.DpToScaledPx(value); get => UIElementExtension.ScaledPxToDp(ConstrainPaddingLeft); }
+        public float ConstrainPaddingRightDp { set => ConstrainPaddingRight = UIElementExtension.DpToScaledPx(value); get => UIElementExtension.ScaledPxToDp(ConstrainPaddingRight); }
+        public float ConstrainPaddingStartDp { set => ConstrainPaddingStart = UIElementExtension.DpToScaledPx(value); get => UIElementExtension.ScaledPxToDp(ConstrainPaddingStart); }
+        public float ConstrainPaddingEndDp { set => ConstrainPaddingEnd = UIElementExtension.DpToScaledPx(value); get => UIElementExtension.ScaledPxToDp(ConstrainPaddingEnd); }
         /// <summary>
         /// ConstraintLayout的内边距
         /// </summary>
@@ -328,7 +328,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <summary>
         /// unit use dp. doc see <see cref="ConstrainMinWidth"/>
         /// </summary>
-        public float ConstrainMinWidthDp{ set=> ConstrainMinWidth = UIElementExtension.DpToPx(value, Density); get => UIElementExtension.PxToDp(ConstrainMinWidth, Density); }
+        public float ConstrainMinWidthDp{ set=> ConstrainMinWidth = UIElementExtension.DpToScaledPx(value); get => UIElementExtension.ScaledPxToDp(ConstrainMinWidth); }
         /// <summary>
         /// unit use pixel
         /// </summary>
@@ -347,7 +347,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <summary>
         /// unit use dp. doc see <see cref="ConstrainMinHeight"/>
         /// </summary>
-        public float ConstrainMinHeightDp { set => ConstrainMinHeight = UIElementExtension.DpToPx(value, Density); get => UIElementExtension.PxToDp(ConstrainMinHeight, Density); }
+        public float ConstrainMinHeightDp { set => ConstrainMinHeight = UIElementExtension.DpToScaledPx(value); get => UIElementExtension.ScaledPxToDp(ConstrainMinHeight); }
         int ConstrainMinHeight
         {
             get => mMinHeight;
@@ -363,7 +363,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <summary>
         /// unit use dp. doc see <see cref="ConstrainMaxWidth"/>
         /// </summary>
-        public float ConstrainMaxWidthDp { set => ConstrainMaxWidth = UIElementExtension.DpToPx(value, Density); get => UIElementExtension.PxToDp(ConstrainMaxWidth, Density); }
+        public float ConstrainMaxWidthDp { set => ConstrainMaxWidth = UIElementExtension.DpToScaledPx(value); get => UIElementExtension.ScaledPxToDp(ConstrainMaxWidth); }
         int ConstrainMaxWidth
         {
             get => mMaxWidth;
@@ -379,7 +379,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <summary>
         /// unit use dp. doc see <see cref="ConstrainMaxHeight"/>
         /// </summary>
-        public float ConstrainMaxHeightDp { set => ConstrainMaxHeight = UIElementExtension.DpToPx(value, Density); get => UIElementExtension.PxToDp(ConstrainMaxHeight, Density); }
+        public float ConstrainMaxHeightDp { set => ConstrainMaxHeight = UIElementExtension.DpToScaledPx(value); get => UIElementExtension.ScaledPxToDp(ConstrainMaxHeight); }
         int ConstrainMaxHeight
         {
             get => mMaxHeight;
@@ -395,7 +395,7 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <summary>
         /// unit use dp. doc see <see cref="ConstrainHeight"/>
         /// </summary>
-        public float ConstrainHeightDp { set => constrainHeight = UIElementExtension.DpToPx(value, Density); get => UIElementExtension.PxToDp(constrainHeight, Density); }
+        public float ConstrainHeightDp { set => constrainHeight = UIElementExtension.DpToScaledPx(value); get => UIElementExtension.ScaledPxToDp(constrainHeight); }
         /// <summary>
         /// set this ConstraintLayout how to deal with own size. size of this ConstraintLayout is determined by this property and parent.
         /// Value of this property is fixed value, or <see cref="ConstraintSet.WrapContent"/>, or <see cref="ConstraintSet.MatchConstraint"/>, or <see cref="ConstraintSet.MatchParent"/>.
@@ -411,6 +411,9 @@ namespace SharpConstraintLayout.Maui.Widget
             }
         }
 
+        /// <summary>
+        /// scaled pixel, or <see cref="SizeBehavier"/>
+        /// </summary>
         int constrainHeight
         {
             get
@@ -421,11 +424,7 @@ namespace SharpConstraintLayout.Maui.Widget
             {
                 if (value > 0)
                 {
-#if __MAUI__
-                    this.SetHeight(value);
-#else
-                    this.SetSizeAndMargin(0, value, 0, 0, 0, 0, 0, 0, 0, 0);
-#endif
+                    this.SetSizeAndMargin(height:value);
                 }
                 this.mConstraintSet.GetConstraint(ConstraintSet.ParentId).layout.mHeight = value;
                 this.mConstraintSet.IsChanged = true;
@@ -435,13 +434,13 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <summary>
         /// unit use dp. doc see <see cref="ConstrainWidth"/>
         /// </summary>
-        public float ConstrainWidthDp { set => constrainWidth = UIElementExtension.DpToPx(value, Density); get => UIElementExtension.PxToDp(constrainWidth, Density); }
+        public float ConstrainWidthDp { set => constrainWidth = UIElementExtension.DpToScaledPx(value); get => UIElementExtension.ScaledPxToDp(constrainWidth); }
         public SizeBehavier ConstrainWidth
         {
             set => constrainWidth = (int)value;
         }
         /// <summary>
-        /// see doc of <see cref="ConstrainHeight"/>.
+        /// scaled pixel, or <see cref="SizeBehavier"/>
         /// </summary>
         int constrainWidth
         {
@@ -453,12 +452,7 @@ namespace SharpConstraintLayout.Maui.Widget
             {
                 if (value > 0)
                 {
-#if __MAUI__
-                    this.SetWidth(value);
-#else
-                    this.SetSizeAndMargin(value, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-#endif
-
+                    this.SetSizeAndMargin(width:value);
                 }
                 this.mConstraintSet.GetConstraint(ConstraintSet.ParentId).layout.mWidth = value;
                 this.mConstraintSet.IsChanged = true;
@@ -721,9 +715,6 @@ namespace SharpConstraintLayout.Maui.Widget
             {
                 resolvedHeightSize |= AndroidMeasureSpec.MEASURED_STATE_TOO_SMALL;
             }
-/*#if __ANDROID__ && !__MAUI__
-            SetMeasuredDimension(resolvedWidthSize, resolvedHeightSize);//存储大小到布局树,iOS通过设置Bounds,Windows通过返回大小
-#endif*/
             mLastMeasureWidth = resolvedWidthSize;
             mLastMeasureHeight = resolvedHeightSize;
         }
@@ -1045,10 +1036,8 @@ namespace SharpConstraintLayout.Maui.Widget
                     sw.Start();
                 }
 
-#if __MAUI__
-                var childCurrentPlatformMeasuredSize = child.GetWrapContentSize(outerInstance.Density);
-#else
-                var childCurrentPlatformMeasuredSize = child.GetWrapContentSize();//Windows上DesireSize会随TextBox变化,iOS的ContentSize也会变,安卓的好像指挥先标记需要测量,之后MeasuredSize才变.这里放在最前面,是因为获取iOS的ContentSize可能需要计算,避免重复计算就放在最前.MAUI同Android
+                var childCurrentPlatformMeasuredSize = child.GetWrapContentSize(outerInstance.Density);//Windows上DesireSize会随TextBox变化,iOS的ContentSize也会变,安卓的好像指挥先标记需要测量,之后MeasuredSize才变.这里放在最前面,是因为获取iOS的ContentSize可能需要计算,避免重复计算就放在最前.MAUI同Android
+#if !__MAUI__              
                 var childCurrentPlatformBaseline = child.GetBaseline(childCurrentPlatformMeasuredSize.Height);//缓存Baseline为iOS;MAUI因为不进行Pass判断,因此不提前计算
 #endif
                 if (MEASUREEVERYCHILD)
@@ -1196,7 +1185,6 @@ namespace SharpConstraintLayout.Maui.Widget
                 {
                     return;
                 }
-                //LayoutParams @params = (LayoutParams)child.LayoutParams;//Windows中没有LayoutParams,大多数布局数据使用Constraint.Layout存储
                 var @params = outerInstance.mConstraintSet.GetConstraint(child.GetId()).layout;
 
                 int width = 0;
@@ -1218,17 +1206,9 @@ namespace SharpConstraintLayout.Maui.Widget
                         if (DEBUGCHILDMEASUREPROCESS) outerInstance.Logger?.LogDebug($"{child.GetType().Name} before onMeasure: widget={widget},spec=({MeasureSpec.GetSize(horizontalSpec)} x {MeasureSpec.GetSize(verticalSpec)})");
                         ((VirtualLayout)child).onMeasure(layout, horizontalSpec, verticalSpec);
                         if (DEBUGCHILDMEASUREPROCESS) outerInstance.Logger?.LogDebug($"{child.GetType().Name}  after onMeasure: widget={widget},control={child.GetViewLayoutInfo()}");
-#if __MAUI__
-                        //(w, h) = ((int)child.WidthRequest, (int)child.HeightRequest);
-                        var size = (child as VirtualLayout).MeasuredSize;
-                        (w, h) = ((int)size.Width, (int)size.Height);
-#elif __IOS__ && !__MAUI__
-                        (w, h) = ((int)child.Bounds.Width, (int)child.Bounds.Height);//我在iOS的Flow中,将测量值存储到了Bounds
-#elif WINDOWS && !__MAUI__
-                        (w, h) = ((int)(child as FrameworkElement).Width, (int)(child as FrameworkElement).Height);
-#else
-                        (w, h) = child.GetWrapContentSize();
-#endif
+
+                        var size = (child as VirtualLayout).GetMeasuredSize(child);
+                        (w, h) = (size.Width, size.Height);
                     }
                     else
                     {
@@ -1369,20 +1349,8 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <returns></returns>
         private bool updateHierarchy()
         {
-            //int count = ChildCount;
-
-            //Android中的逻辑是只要有一个布局变了, 就需要调用setChildrenConstraints更新全部的内容, Maui中没有布局请求的Tag, 所以这里我直接标记为重新计算
-            //bool recompute = false;
+            //Android中的逻辑是只要有一个child有LayoutRequested, 就需要调用setChildrenConstraints更新全部的内容, Maui中没有布局请求的Tag, 所以这里我直接标记为重新计算
             bool recompute = true;
-            /*for (int i = 0; i < count; i++)
-            {
-                UIElement child = Children[i];
-                if (child.LayoutRequested)
-                {
-                    recompute = true;
-                    break;
-                }
-            }*/
             if (recompute)
             {
                 setChildrenConstraints();
@@ -1409,24 +1377,6 @@ namespace SharpConstraintLayout.Maui.Widget
                 }
                 widget.reset();//全部widget的数据重置
             }
-
-            /*if (USE_CONSTRAINTS_HELPER && mConstraintSetId != -1)
-            {
-                for (int i = 0; i < count; i++)
-                {
-                    View child = (View)Children[i];
-                    if (child.GetHashCode() == mConstraintSetId && child is Constraints)//不理解view为什么是Constraints
-                    {
-                        mConstraintSet = ((Constraints)child).ConstraintSet;
-                    }
-                }
-            }*/
-
-            /*if (ConstraintSet != null)
-            {
-                //这一步我不执行,因为这一步会清除ConstraintSet,我需要保留这个信息去替换LayoutParams的功能
-                //ConstraintSet.applyToInternal(this, true);
-            }*/
 
             MLayoutWidget.removeAllChildren();
 

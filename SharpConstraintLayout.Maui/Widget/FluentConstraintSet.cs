@@ -109,7 +109,7 @@ namespace SharpConstraintLayout.Maui.Widget
             {
                 if (value == 0)
                     return 0;
-                return UIElementExtension.DpToPx(value, UIElementExtension.Density);
+                return UIElementExtension.DpToScaledPx(value);
             }
 
             WeakReference<ConstraintSet> setReference;

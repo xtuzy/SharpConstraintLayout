@@ -91,7 +91,7 @@ namespace SharpConstraintLayout.Maui.Widget
 
         internal partial void LayoutChild(UIElement element, int x, int y, int w, int h)
         {
-            (element as IView).Arrange(new Rect(UIElementExtension.PxToDp(x, this.Density), UIElementExtension.PxToDp(y, this.Density), UIElementExtension.PxToDp(w, this.Density), UIElementExtension.PxToDp(h, this.Density)));//px to maui's dp
+            (element as IView).Arrange(new Rect(UIElementExtension.ScaledPxToDp(x), UIElementExtension.ScaledPxToDp(y), UIElementExtension.ScaledPxToDp(w), UIElementExtension.ScaledPxToDp(h)));//px to maui's dp
         }
         #endregion
 
@@ -187,18 +187,18 @@ namespace SharpConstraintLayout.Maui.Widget
         public override Size Measure(double widthConstraint, double heightConstraint)
         {
             var layout = Layout as ConstraintLayout;
-            var availableSize = new SizeI(UIElementExtension.DpToPx(widthConstraint, layout.Density), UIElementExtension.DpToPx(heightConstraint, layout.Density));//maui's dp to px
+            var availableSize = new SizeI(UIElementExtension.DpToScaledPx(widthConstraint), UIElementExtension.DpToScaledPx(heightConstraint));//maui's dp to px
             (int horizontalSpec, int verticalSpec) = layout.MakeSpec(layout, availableSize);
-
             var finalSize = layout.MeasureLayout(availableSize, horizontalSpec, verticalSpec);
-
-            return new Size(UIElementExtension.PxToDp(finalSize.Width, layout.Density), UIElementExtension.PxToDp(finalSize.Height, layout.Density));//px to maui's dp
+            var resultW = UIElementExtension.ScaledPxToDp(finalSize.Width);
+            var resultH = UIElementExtension.ScaledPxToDp(finalSize.Height);
+            return new Size(resultW, resultH);//px to maui's dp
         }
 
         public override Size ArrangeChildren(Rect bounds)
         {
             var layout = Layout as ConstraintLayout;
-            var finalSize = new SizeI(UIElementExtension.DpToPx(bounds.Size.Width, layout.Density), UIElementExtension.DpToPx(bounds.Height, layout.Density));//maui's dp to px, when measure, MakeSpec will add 0.5
+            var finalSize = new SizeI(UIElementExtension.DpToScaledPx(bounds.Size.Width), UIElementExtension.DpToScaledPx(bounds.Height));//maui's dp to px, when measure, MakeSpec will add 0.5
             if (layout.mConstraintSet.IsForAnimation)
             {
                 //如果是动画,那么此时计算布局完毕,但我们不能让其布局,因此直接返回.另外如果给WidthRequest等赋固定值,会造成下次的控件显示大小为固定值,因此需要重置
@@ -206,9 +206,9 @@ namespace SharpConstraintLayout.Maui.Widget
                 {
                     var view = child as View;
                     if (view.WidthRequest > 0)
-                        view.SetWidth(ConstraintSet.Unset);
+                        view.SetSizeAndMargin(width:ConstraintSet.Unset);
                     if (view.HeightRequest > 0)
-                        view.SetHeight(ConstraintSet.Unset);
+                        view.SetSizeAndMargin(height:ConstraintSet.Unset);
                 }
                 return bounds.Size;
             }
@@ -220,7 +220,9 @@ namespace SharpConstraintLayout.Maui.Widget
                 finalSize = layout.MeasureLayout(finalSize, horizontalSpec, verticalSpec);
             }
             layout.ArrangeLayout();
-            return new Size(UIElementExtension.PxToDp(finalSize.Width , layout.Density), UIElementExtension.PxToDp(finalSize.Height, layout.Density));//px to maui's dp
+            var resultW = UIElementExtension.ScaledPxToDp(finalSize.Width);
+            var resultH = UIElementExtension.ScaledPxToDp(finalSize.Height);
+            return new Size(resultW, resultH);//px to maui's dp
         }
     }
 

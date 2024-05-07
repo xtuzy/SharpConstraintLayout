@@ -80,10 +80,11 @@ namespace SharpConstraintLayout.Core.Benchmark
             for (var index = 0; index < constraintlayout.ChildCount; index++)
             {
                 var child = constraintlayout.GetChildAt(index);
-                Assert.Equal(0 + (index * space), child.Left);
-                Assert.Equal(0 + (index * space), child.Top);
-                Assert.Equal(100, child.Width);
-                Assert.Equal(100, child.Height);
+                var id = child.Id;
+                Assert.Equal(0 + (index * space), GetDp(child.Left));
+                Assert.Equal(0 + (index * space), GetDp(child.Top));
+                Assert.Equal(100, GetDp(child.Width));
+                Assert.Equal(100, GetDp(child.Height));
             }
         }
 
@@ -127,18 +128,23 @@ namespace SharpConstraintLayout.Core.Benchmark
             constraintlayout.Measure(px, px);
             constraintlayout.Layout(0, 0, px, px);
 
-            Assert.Equal(0, leftView.Left);
-            Assert.Equal(1000 / 2, leftView.Right);
-            Assert.Equal(1000 / 2 - fixedHeight / 2, leftView.Top);
-            Assert.Equal(1000 / 2 + fixedHeight / 2, leftView.Bottom);
-            Assert.Equal(1000 / 2, leftView.Width);
-            Assert.Equal(fixedHeight, leftView.Height);
+            Assert.Equal(0, GetDp(leftView.Left));
+            Assert.Equal(1000 / 2, GetDp(leftView.Right));
+            Assert.Equal(1000 / 2 - fixedHeight / 2, GetDp(leftView.Top));
+            Assert.Equal(1000 / 2 + fixedHeight / 2, GetDp(leftView.Bottom));
+            Assert.Equal(1000 / 2, GetDp(leftView.Width));
+            Assert.Equal(fixedHeight, GetDp(leftView.Height));
 
-            Assert.Equal(500, rightView.Left);
-            Assert.Equal(1000, rightView.Right);
-            Assert.Equal(1000 / 2, rightView.Top);
-            Assert.Equal(1000 / 2, rightView.Width);
-            Assert.Equal(0, rightView.Height);
+            Assert.Equal(500, GetDp(rightView.Left));
+            Assert.Equal(1000, GetDp(rightView.Right));
+            Assert.Equal(1000 / 2, GetDp(rightView.Top));
+            Assert.Equal(1000 / 2, GetDp(rightView.Width));
+            Assert.Equal(0, GetDp(rightView.Height));
+        }
+
+        double GetDp(int px)
+        {
+            return UIElementExtension.PxToDp(px);
         }
 
         [Fact]
@@ -190,9 +196,11 @@ namespace SharpConstraintLayout.Core.Benchmark
             constraintlayout.Measure(px, px);
             constraintlayout.Layout(0, 0, px, px);
 
-            Assert.Equal(150, barrier.Left);
-            Assert.Equal(150, rightView.Left);
-            Assert.Equal(1000, rightView.Right);
+            Assert.Equal(100, GetDp(left1View.Right));
+            Assert.Equal(150, GetDp(left2View.Right));
+            Assert.Equal(150, GetDp(barrier.Left));
+            Assert.Equal(150, GetDp(rightView.Left));
+            Assert.Equal(1000, GetDp(rightView.Right));
 
             //test adjust position
             using (var set = new FluentConstraintSet())
@@ -205,10 +213,12 @@ namespace SharpConstraintLayout.Core.Benchmark
 
             constraintlayout.Measure(px, px);
             constraintlayout.Layout(0, 0, px, px);
-
-            Assert.Equal(200, barrier.Left);
-            Assert.Equal(200, rightView.Left);
-            Assert.Equal(1000, rightView.Right);
+            constraintlayout.RequestLayout();
+            Assert.Equal(200, GetDp(left1View.Right));
+            Assert.Equal(150, GetDp(left2View.Right));
+            Assert.Equal(200, GetDp(barrier.Left));
+            Assert.Equal(200, GetDp(rightView.Left));
+            Assert.Equal(1000, GetDp(rightView.Right));
         }
 
         [Fact]
@@ -247,7 +257,7 @@ namespace SharpConstraintLayout.Core.Benchmark
             constraintlayout.Measure(px, px);
             constraintlayout.Layout(0, 0, px, px);
 
-            Assert.Equal(250, leftView.Right);
+            Assert.Equal(250, GetDp(leftView.Right));
         }
     }
 }

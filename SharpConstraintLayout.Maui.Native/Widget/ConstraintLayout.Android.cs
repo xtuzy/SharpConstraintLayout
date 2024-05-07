@@ -87,12 +87,33 @@ namespace SharpConstraintLayout.Maui.Widget
         /// <exception cref="NotImplementedException"></exception>
         public (bool isInfinityAvailabelWidth, bool isInfinityAvailabelHeight) IsInfinitable(ConstraintLayout layout, int constrainWidth, int constrainHeight, SizeI availableSize)
         {
-            throw new NotImplementedException();
+            bool isInfinityAvailabelWidth = false;
+            bool isInfinityAvailabelHeight = false;
+            if (layout.Parent is Android.Widget.ScrollView)//ScrollView的内容可以是无限值,ConstraintLayout作为其子View时,只有在WrapContent时才有无限值
+            {
+                if (constrainWidth == ConstraintSet.WrapContent)
+                {
+                    isInfinityAvailabelWidth = true;
+                }
+                if (constrainHeight == ConstraintSet.WrapContent)
+                {
+                    isInfinityAvailabelHeight = true;
+                }
+            }
+            return (isInfinityAvailabelWidth, isInfinityAvailabelHeight);
         }
+
         protected override void OnMeasure(int widthMeasureSpec, int heightMeasureSpec)
         {
-            var size = MeasureLayout(new SizeI(SharpConstraintLayout.Maui.Widget.MeasureSpec.GetSize(widthMeasureSpec), SharpConstraintLayout.Maui.Widget.MeasureSpec.GetSize(heightMeasureSpec)), widthMeasureSpec, heightMeasureSpec);
-            SetMeasuredDimension(size.Width, size.Height);
+            var availableSize = new Size(UIElementExtension.PxToDp(SharpConstraintLayout.Maui.Widget.MeasureSpec.GetSize(widthMeasureSpec)), UIElementExtension.PxToDp(SharpConstraintLayout.Maui.Widget.MeasureSpec.GetSize(heightMeasureSpec)));
+            var availableSizeI = new SizeI(UIElementExtension.DpToScaledPx(availableSize.Width), UIElementExtension.DpToScaledPx(availableSize.Height));
+
+            (int horizontalSpec, int verticalSpec) = MakeSpec(this, availableSizeI);
+
+            var size = MeasureLayout(availableSizeI, horizontalSpec, verticalSpec);
+            var w = UIElementExtension.DpToPx(UIElementExtension.ScaledPxToDp(size.Width));
+            var h = UIElementExtension.DpToPx(UIElementExtension.ScaledPxToDp(size.Height));
+            SetMeasuredDimension(w, h);
         }
 
         protected override void OnLayout(bool changed, int l, int t, int r, int b)
@@ -102,7 +123,11 @@ namespace SharpConstraintLayout.Maui.Widget
 
         internal partial void LayoutChild(UIElement element, int x, int y, int w, int h)
         {
-            element.Layout(x, y, x + w, y + h);
+            var left = UIElementExtension.DpToPx(UIElementExtension.ScaledPxToDp(x));
+            var top = UIElementExtension.DpToPx(UIElementExtension.ScaledPxToDp(y));
+            var right = UIElementExtension.DpToPx(UIElementExtension.ScaledPxToDp(x + w));
+            var bottom = UIElementExtension.DpToPx(UIElementExtension.ScaledPxToDp(y + h));
+            element.Layout(left, top , right, bottom);
         }
 
 #endregion

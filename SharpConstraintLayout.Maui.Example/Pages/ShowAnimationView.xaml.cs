@@ -288,7 +288,7 @@ namespace SharpConstraintLayout.Maui.Example.Pages
 
                     circleViewNextRect.X = circleViewCenterX - circleViewNextRect.Width / 2;
                     circleViewNextRect.Y = circleViewCenterY - circleViewNextRect.Height / 2;
-                    layout.LayoutChild(circleView, (int)circleViewNextRect.X, (int)circleViewNextRect.Y, (int)circleViewNextRect.Width, (int)circleViewNextRect.Height);
+                    //layout.LayoutChild(circleView, (int)circleViewNextRect.X, (int)circleViewNextRect.Y, (int)circleViewNextRect.Width, (int)circleViewNextRect.Height);
                 }
 
                 return centerViewnNextRect;

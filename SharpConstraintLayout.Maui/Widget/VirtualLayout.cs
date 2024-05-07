@@ -21,16 +21,16 @@ using UIElement = Microsoft.Maui.Controls.View;
 using Microsoft.UI.Xaml;
 using SharpConstraintLayout.Maui.Widget.Interface;
 using System.Diagnostics;
-using FrameworkElement = Microsoft.UI.Xaml.FrameworkElement;
+using UIElement = Microsoft.UI.Xaml.UIElement;
 #elif __IOS__
 using SharpConstraintLayout.Maui.Widget.Interface;
 using System;
 using System.Diagnostics;
-using FrameworkElement = UIKit.UIView;
+using UIElement = UIKit.UIView;
 #elif __ANDROID__
 using Android.Content;
 using SharpConstraintLayout.Maui.Widget.Interface;
-using FrameworkElement = Android.Views.View;
+using UIElement = Android.Views.View;
 #endif
 using Microsoft.Extensions.Logging;
 namespace SharpConstraintLayout.Maui.Widget
@@ -44,7 +44,7 @@ namespace SharpConstraintLayout.Maui.Widget
     /// </summary>
     public abstract class VirtualLayout : ConstraintHelper, IVirtualLayout
     {
-        protected ILogger Logger {  get; set; }
+        protected ILogger Logger { get; set; }
         private bool mApplyVisibilityOnAttach;
         private bool mApplyElevationOnAttach;
 
@@ -62,11 +62,56 @@ namespace SharpConstraintLayout.Maui.Widget
         }
 
 #if __MAUI__
-        internal SizeI MeasuredSize;//创建这个变量专门存储Widget测量值
+        /// <summary>
+        /// store scaled pixel during measure.
+        /// </summary>
+        SizeI MeasuredSize;
 #endif
         public virtual void onMeasure(androidx.constraintlayout.core.widgets.VirtualLayout layout, int widthMeasureSpec, int heightMeasureSpec)
         {
             // nothing
+        }
+
+        /// <summary>
+        /// return scaled pixel.
+        /// </summary>
+        /// <param name="child"></param>
+        /// <returns></returns>
+        public SizeI GetMeasuredSize(UIElement child)
+        {
+#if __MAUI__
+            return (child as VirtualLayout).MeasuredSize;
+#elif __IOS__ && !__MAUI__
+            return new SizeI(UIElementExtension.DpToScaledPx(child.Bounds.Width), UIElementExtension.DpToScaledPx(child.Bounds.Height));//我在iOS的Flow中,将测量值存储到了Bounds
+#elif WINDOWS && !__MAUI__
+            return new SizeI(UIElementExtension.DpToScaledPx((child as FrameworkElement).Width), UIElementExtension.DpToScaledPx((child as FrameworkElement).Height));
+#elif __ANDROID__
+            var size = child.GetWrapContentSize();
+            return new SizeI(size.Width, size.Height);
+#endif
+        }
+
+        /// <summary>
+        /// params use scaled pixel. it be use to store measured size by platform way.
+        /// </summary>
+        /// <param name="w"></param>
+        /// <param name="h"></param>
+        public void SetMeasuredSize(int w, int h)
+        {
+#if __MAUI__
+            // Setting WidthRequest and HeightRequest during measurement will causes a measurement loop.
+            //this.WidthRequest = layout.Width;
+            //this.HeightRequest = layout.Height;
+
+            MeasuredSize = new SizeI(w, h);
+#elif __ANDROID__ && !__MAUI__
+            SetMeasuredDimension(UIElementExtension.DpToPx(UIElementExtension.ScaledPxToDp(w)), UIElementExtension.DpToPx(UIElementExtension.ScaledPxToDp(h)));//Android中这个的作用应该是设置flow的大小
+#elif __IOS__ && !__MAUI__
+            this.Bounds = new CoreGraphics.CGRect(this.Bounds.X, this.Bounds.Y, UIElementExtension.ScaledPxToDp(w), UIElementExtension.ScaledPxToDp(h));
+#elif WINDOWS && !__MAUI__
+            this.Width = UIElementExtension.ScaledPxToDp(w);
+            this.Height = UIElementExtension.ScaledPxToDp(h);
+#endif
         }
 
         /// <summary>
@@ -89,7 +134,7 @@ namespace SharpConstraintLayout.Maui.Widget
                     for (int i = 0; i < mCount; i++)
                     {
                         int id = mIds[i];
-                        FrameworkElement view = (FrameworkElement)container.FindElementById(id);
+                        var view = container.FindElementById(id);
                         if (view != null)
                         {
                             if (mApplyVisibilityOnAttach)

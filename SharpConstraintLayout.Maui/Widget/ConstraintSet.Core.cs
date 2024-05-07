@@ -257,16 +257,8 @@ namespace SharpConstraintLayout.Maui.Widget
                     constraint.ApplyTo(param.layout);//Android源码ApplyTo是应用到Params,Params中具有负责View布局的属性,其中Margin,Width,Height是ViewGroup自带的,其他是ConstraintLayout中新增的,也就是说,这里使用ConstraintSet替代Params,需要添加ViewGroup的属性
 
                     //设置原本在ViewGroup.Params中的属性,这些属性影响Android中View的Measure值,因此我们需要在其他平台单独设置
-#if __MAUI__
-                    view.SetWidth(UIElementExtension.PxToDp(constraint.layout.mWidth, constraintLayout.Density));
-                    view.SetHeight(UIElementExtension.PxToDp(constraint.layout.mHeight, constraintLayout.Density));
-                    view.SetMinWidth(UIElementExtension.PxToDp(constraint.layout.matchConstraintMinWidth, constraintLayout.Density));
-                    view.SetMinHeight(UIElementExtension.PxToDp(constraint.layout.matchConstraintMinHeight, constraintLayout.Density));
-                    view.SetMaxWidth(UIElementExtension.PxToDp(constraint.layout.matchConstraintMaxWidth, constraintLayout.Density));
-                    view.SetMaxHeight(UIElementExtension.PxToDp(constraint.layout.matchConstraintMaxHeight, constraintLayout.Density));
-#else
+
                     view.SetSizeAndMargin(constraint.layout.mWidth, constraint.layout.mHeight, constraint.layout.matchConstraintMinWidth, constraint.layout.matchConstraintMinHeight, constraint.layout.matchConstraintMaxWidth, constraint.layout.matchConstraintMaxHeight, constraint.layout.leftMargin, constraint.layout.topMargin, constraint.layout.rightMargin, constraint.layout.bottomMargin);
-#endif
 
                     if (view is Guideline)//不像Android一样用户提供指定约束是isGuideline就创建Guideline,必须通过Guideline控件实现
                     {

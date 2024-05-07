@@ -97,7 +97,7 @@ public partial class LayoutPerformanceTestPage : ContentPage
         return new DataTemplate(() =>
         {
             var root = new ContainerLayout();
-            var layout = new ConstraintLayout() { ConstrainWidth = ConstraintSet.MatchParent, ConstrainHeight = ConstraintSet.WrapContent, BackgroundColor = Color.FromRgb(66, 66, 66) };
+            var layout = new ConstraintLayout() { ConstrainWidth = SizeBehavier.MatchParent, ConstrainHeight = SizeBehavier.WrapContent, BackgroundColor = Color.FromRgb(66, 66, 66) };
             root.Add(layout);
             var PersonIconContainer = new Border() { StrokeShape = new RoundRectangle() { CornerRadius = new CornerRadius(20) } };
             var PersonIcon = new Image() { BackgroundColor = Colors.AliceBlue };

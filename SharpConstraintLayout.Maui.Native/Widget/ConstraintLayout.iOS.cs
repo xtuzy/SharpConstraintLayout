@@ -153,10 +153,10 @@ namespace SharpConstraintLayout.Maui.Widget
 
             }
 
-            var availableSizeI = new SizeI(UIElementExtension.DpToPx(availableSize.Width, Density), UIElementExtension.DpToPx(availableSize.Height, Density));
+            var availableSizeI = new SizeI(UIElementExtension.DpToScaledPx(availableSize.Width), UIElementExtension.DpToScaledPx(availableSize.Height));
             (int horizontalSpec, int verticalSpec) = MakeSpec(this, availableSizeI);
             availableSizeI = MeasureLayout(availableSizeI, horizontalSpec, verticalSpec);
-            return new CGSize(UIElementExtension.PxToDp(availableSizeI.Width, Density), UIElementExtension.PxToDp(availableSizeI.Height, Density));
+            return new CGSize(UIElementExtension.ScaledPxToDp(availableSizeI.Width), UIElementExtension.ScaledPxToDp(availableSizeI.Height));
         }
 
         /// <summary>
@@ -224,7 +224,7 @@ namespace SharpConstraintLayout.Maui.Widget
             //探讨设置Frame还是Bounds
             //Frame和Bounds在旋转View时是不同的大小,我们使用IntrinsicContentSize得到控件大小,那么IntrinsicContentSize是谁的大小呢?
             //参考https://zhangbuhuai.com/post/auto-layout-part-1.html,这里好像暗示使用Frame去布局
-            element.Frame = new CoreGraphics.CGRect(UIElementExtension.PxToDp(x, Density), UIElementExtension.PxToDp(y, Density), UIElementExtension.PxToDp(w, Density), UIElementExtension.PxToDp(h, Density));
+            element.Frame = new CoreGraphics.CGRect(UIElementExtension.ScaledPxToDp(x), UIElementExtension.ScaledPxToDp(y), UIElementExtension.ScaledPxToDp(w), UIElementExtension.ScaledPxToDp(h));
         }
 
 #endregion

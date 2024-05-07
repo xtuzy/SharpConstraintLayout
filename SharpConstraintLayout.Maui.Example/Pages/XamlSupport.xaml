@@ -7,7 +7,7 @@
     <constrain:ConstraintLayout
         x:Name="layout"
         BackgroundColor="AliceBlue"
-        ConstrainHeight="{x:Static constrain:ConstraintSet.WrapContent}"
+        ConstrainHeight="{x:Static constrain:SizeBehavier.WrapContent}"
         SizeChanged="layout_SizeChanged">
         <Label
             x:Name="first"
